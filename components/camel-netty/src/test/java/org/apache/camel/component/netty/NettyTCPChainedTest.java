@@ -29,8 +29,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.IOHelper;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * In this test we are checking that same netty endpoint can be safely called twice
@@ -60,7 +61,7 @@ public class NettyTCPChainedTest extends BaseNettyTest {
         if (exchange.getException() != null) {
             throw new AssertionError(exchange.getException());
         }
-        Assert.assertFalse(exchange.isFailed());
+        assertFalse(exchange.isFailed());
     }
 
     @BindToRegistry("encoder")

@@ -31,7 +31,10 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import io.netty.util.CharsetUtil;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyUdpConnectionlessSendTest extends BaseNettyTest {
     private static final String SEND_STRING = "***<We all love camel>***";
@@ -71,7 +74,7 @@ public class NettyUdpConnectionlessSendTest extends BaseNettyTest {
             template.sendBody("direct:in", SEND_STRING);
         }
         stop();
-        assertTrue("We should have received some datagrams", receivedCount > 0);
+        assertTrue(receivedCount > 0, "We should have received some datagrams");
 
     }
 
@@ -85,7 +88,7 @@ public class NettyUdpConnectionlessSendTest extends BaseNettyTest {
                 ++exceptionCount;
             }
         }
-        assertEquals("No exception should occur", 0, exceptionCount);
+        assertEquals(0, exceptionCount, "No exception should occur");
     }
 
     @Override

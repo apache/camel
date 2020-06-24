@@ -29,8 +29,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.codec.ObjectDecoder;
 import org.apache.camel.component.netty.codec.ObjectEncoder;
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Object Serialization is not allowed by default. However it can be enabled by adding specific encoders/decoders.
@@ -39,7 +42,7 @@ public class ObjectSerializationTest extends BaseNettyTest {
 
     private static volatile int port2;
 
-    @BeforeClass
+    @BeforeAll
     public static void initPort2() throws Exception {
         port2 = AvailablePortFinder.getNextAvailable();
     }

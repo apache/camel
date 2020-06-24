@@ -20,7 +20,11 @@ import java.io.File;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class NettySSLClientCertHeadersTest extends BaseNettyTest {
 
@@ -42,9 +46,7 @@ public class NettySSLClientCertHeadersTest extends BaseNettyTest {
     @Test
     public void testSSLInOutWithNettyConsumer() throws Exception {
         // ibm jdks dont have sun security algorithms
-        if (isJavaVendor("ibm")) {
-            return;
-        }
+        assumeFalse(isJavaVendor("ibm"));
 
         getMockEndpoint("mock:input").expectedMessageCount(1);
 
