@@ -21,7 +21,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * To test timeout.
@@ -36,12 +39,8 @@ public class MinaExchangeTimeOutTest extends BaseMinaTest {
         producer.start();
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World");
-        try {
-            producer.process(exchange);
-            fail("Should have thrown an ExchangeTimedOutException wrapped in a RuntimeCamelException");
-        } catch (Exception e) {
-            assertTrue("Should have thrown an ExchangeTimedOutException", e instanceof ExchangeTimedOutException);
-        }
+        assertThrows(ExchangeTimedOutException.class,
+            () -> producer.process(exchange));
         producer.stop();
     }
 

@@ -19,7 +19,10 @@ package org.apache.camel.component.mina;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * To unit test CAMEL-364.
@@ -31,8 +34,8 @@ public class MinaTcpWithIoOutProcessorExceptionTest extends BaseMinaTest {
         String body = "Hello World";
         Object result = template.requestBody(String.format("mina:tcp://localhost:%1$s?textline=true&sync=true", getPort()), body);
         // The exception should be passed to the client
-        assertNotNull("the result should not be null", result);
-        assertEquals("result is IllegalArgumentException", result, "java.lang.IllegalArgumentException: Forced exception");
+        assertNotNull(result, "the result should not be null");
+        assertEquals("java.lang.IllegalArgumentException: Forced exception", result, "result is IllegalArgumentException");
     }
 
     @Override

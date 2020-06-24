@@ -27,10 +27,10 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.textline.LineDelimiter;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("fix me")
+@Disabled("fix me")
 public class MinaClientModeTcpTextlineDelimiterTest extends BaseMinaTest {
 
     @Test
