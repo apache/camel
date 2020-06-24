@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SshComponentSecurityTest extends SshComponentTestSupport {
 
