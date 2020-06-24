@@ -20,7 +20,7 @@ import facebook4j.Post;
 import facebook4j.ResponseList;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FacebookComponentPageIdProducerTest extends CamelFacebookTestSupport {
     public static final String APACHE_FOUNDATION_PAGE_ID = "6538157161";

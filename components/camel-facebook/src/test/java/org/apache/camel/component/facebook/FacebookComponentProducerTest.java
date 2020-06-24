@@ -17,7 +17,11 @@
 package org.apache.camel.component.facebook;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import facebook4j.Facebook;
 import facebook4j.FacebookException;
@@ -27,7 +31,10 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.facebook.data.FacebookMethodsType;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FacebookComponentProducerTest extends CamelFacebookTestSupport {
 
@@ -110,7 +117,7 @@ public class FacebookComponentProducerTest extends CamelFacebookTestSupport {
     public void testJsonStoreEnabled() throws Exception {
         final String rawJSON = template().requestBody("direct://testJsonStoreEnabled", new String[]{"me"}, String.class);
         assertNotNull("NULL rawJSON", rawJSON);
-        assertFalse("Empty rawJSON", rawJSON.isEmpty());
+        assertFalse(rawJSON.isEmpty(), "Empty rawJSON");
     }
 
     @Override
