@@ -1,9 +1,10 @@
 [[hystrixConfiguration-eip]]
-= Hystrix Configuration EIP
+= Hystrix Configuration EIP (deprecated)
 :docTitle: Hystrix Configuration
 :description: Hystrix Circuit Breaker EIP configuration
 :since: 
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 
 
 // eip options: START
