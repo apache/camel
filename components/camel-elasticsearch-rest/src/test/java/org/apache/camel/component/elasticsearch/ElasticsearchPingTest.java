@@ -17,14 +17,16 @@
 package org.apache.camel.component.elasticsearch;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ElasticsearchPingTest extends ElasticsearchBaseTest {
 
     @Test
     public void testPing() throws Exception {
         boolean pingResult = template.requestBody("direct:ping", "test", Boolean.class);
-        assertTrue("indexId should be set", pingResult);
+        assertTrue(pingResult, "indexId should be set");
     }
 
     @Override
