@@ -29,7 +29,7 @@ The Circuit Breaker EIP supports 4 options which are listed below:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *hystrixConfiguration* | *Deprecated:* Configures the circuit breaker to use Hystrix with the given configuration. |  | HystrixConfigurationDefinition
+| *hystrixConfiguration* | Configures the circuit breaker to use Hystrix with the given configuration. |  | HystrixConfigurationDefinition
 | *resilience4jConfiguration* | Configures the circuit breaker to use Resilience4j with the given configuration. |  | Resilience4jConfigurationDefinition
 | *faultToleranceConfiguration* | Configures the circuit breaker to use MicroProfile Fault Tolerance with the given configuration. |  | FaultToleranceConfigurationDefinition
 | *configurationRef* | Refers to a circuit breaker configuration (such as hystrix, resillience4j, or microprofile-fault-tolerance) to use for configuring the circuit breaker EIP. |  | String

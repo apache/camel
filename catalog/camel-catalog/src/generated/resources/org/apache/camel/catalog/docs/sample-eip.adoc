@@ -16,9 +16,9 @@ The Sample EIP supports 3 options which are listed below:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *samplePeriod* | Sets the sample period during which only a single Exchange will pass through. | 1 | Long
+| *samplePeriod* | Sets the sample period during which only a single Exchange will pass through. | 1s | String
 | *messageFrequency* | Sets the sample message count which only a single Exchange will pass through after this many received. |  | Long
-| *units* | Sets the time units for the sample period, defaulting to seconds. | SECONDS | TimeUnit
+| *units* | *Deprecated* Sets the time units for the sample period, defaulting to seconds. Deprecation note: Use samplePeriod extended syntax instead | SECONDS | TimeUnit
 |===
 // eip options: END
 

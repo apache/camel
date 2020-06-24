@@ -74,9 +74,69 @@ are required to use this component. Here is an example of how to
 configure these objects in Spring XML using the Spring Security
 namespace:
 
+[source,xml]
+----
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:spring-security="http://www.springframework.org/schema/security"
+   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+   <bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+      <property name="allowIfAllAbstainDecisions" value="true"/>
+      <property name="decisionVoters">
+         <list>
+            <bean class="org.springframework.security.access.vote.RoleVoter"/>
+         </list>
+      </property>
+   </bean>
+
+   <spring-security:authentication-manager alias="authenticationManager">
+      <spring-security:authentication-provider user-service-ref="userDetailsService"/>
+   </spring-security:authentication-manager>
+
+   <spring-security:user-service id="userDetailsService">
+      <spring-security:user name="jim" password="jimspassword" authorities="ROLE_USER, ROLE_ADMIN"/>
+      <spring-security:user name="bob" password="bobspassword" authorities="ROLE_USER"/>
+   </spring-security:user-service>
+
+</beans>
+----
+
 Now that the underlying security objects are set up, we can use them to
 configure an authorization policy and use that policy to control access
 to a route:
+
+[source,xml]
+----
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:spring-security="http://www.springframework.org/schema/security"
+   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+    http://camel.apache.org/schema/spring-security http://camel.apache.org/schema/spring-security/camel-spring-security.xsd
+    http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <!-- import the Spring security configuration  -->
+    <import resource= "classpath:org/apache/camel/component/spring/security/commonSecurity.xml"/>
+
+    <authorizationPolicy id="admin" access="ROLE_ADMIN"
+      authenticationManager="authenticationManager"
+      accessDecisionManager="accessDecisionManager"
+      xmlns="http://camel.apache.org/schema/spring-security"/>
+
+    <camelContext id="myCamelContext" xmlns="http://camel.apache.org/schema/spring">
+      <route>
+         <from uri="direct:start"/>
+         <!-- The exchange should be authenticated with the role -->
+         <!-- of ADMIN before it is send to mock:endpoint -->
+         <policy ref="admin">
+            <to uri="mock:end"/>
+         </policy>
+      </route>
+    </camelContext>
+</beans>
+----
 
 In this example, the endpoint `mock:end` will not be executed unless a
 Spring Security `Authentication` object that has been or can be
@@ -97,7 +157,7 @@ are collected, they need to be placed in the In message or the
 Security] component can access them:
 
 [source,java]
-----------------------------------------------------------------------------------------------------------------------
+----
 import javax.security.auth.Subject;
 import org.apache.camel.*;
 import org.apache.commons.codec.binary.Base64;
@@ -125,7 +185,7 @@ public class MyAuthService implements Processor {
         // SecurityContextHolder.getContext().setAuthentication(authToken);
     }
 }
-----------------------------------------------------------------------------------------------------------------------
+----
 
 The `SpringSecurityAuthorizationPolicy` will automatically authenticate
 the `Authentication` object if necessary.
@@ -165,7 +225,7 @@ policy which threw the exception so you can handle errors based on the
 policy as well as the type of exception:
 
 [source,xml]
-------------------------------------------------------------------------------------------
+----
 <onException>
   <exception>org.springframework.security.authentication.AccessDeniedException</exception>
   <choice>
@@ -183,24 +243,5 @@ policy as well as the type of exception:
     </when>
   </choice>
 </onException>
-------------------------------------------------------------------------------------------
+----
 
-[[SpringSecurity-Dependencies]]
-== Dependencies
-
-Maven users will need to add the following dependency to their `pom.xml`
-for this component:
-
-[source,xml]
--------------------------------------------------
- 
-<dependency> 
-  <groupId>org.apache.camel</groupId> 
-  <artifactId>camel-spring-security</artifactId> 
-  <version>x.y.z</version>
-</dependency> 
--------------------------------------------------
-
-This dependency will also pull in
-`org.springframework.security:spring-security-core:3.0.3.RELEASE` and
-`org.springframework.security:spring-security-config:3.0.3.RELEASE`.
