@@ -22,8 +22,8 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class HL7MLLPNettyDecoderResourceLeakTest extends HL7TestSupport {
 
@@ -33,7 +33,7 @@ public class HL7MLLPNettyDecoderResourceLeakTest extends HL7TestSupport {
     @BindToRegistry("hl7encoder")
     HL7MLLPNettyEncoderFactory encoder = new HL7MLLPNettyEncoderFactory();
 
-    @BeforeClass
+    @BeforeAll
     // As the ResourceLeakDetector just write error log when it find the leak,
     // We need to check the log file to see if there is a leak.
     public static void enableNettyResourceLeakDetector() {

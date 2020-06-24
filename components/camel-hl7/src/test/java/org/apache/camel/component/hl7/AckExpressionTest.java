@@ -23,11 +23,12 @@ import ca.uhn.hl7v2.model.v24.message.ACK;
 import ca.uhn.hl7v2.model.v24.message.ADT_A01;
 import ca.uhn.hl7v2.model.v24.segment.PID;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.hl7.HL7.ack;
 import static org.apache.camel.component.hl7.HL7.hl7terser;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AckExpressionTest extends CamelTestSupport {
 

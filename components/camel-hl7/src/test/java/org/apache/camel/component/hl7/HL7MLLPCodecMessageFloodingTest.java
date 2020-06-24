@@ -28,7 +28,9 @@ import java.util.concurrent.TimeUnit;
 import ca.uhn.hl7v2.model.Message;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for the HL7MLLP Codec.

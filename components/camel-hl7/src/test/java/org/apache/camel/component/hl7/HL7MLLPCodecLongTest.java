@@ -25,7 +25,9 @@ import ca.uhn.hl7v2.model.v25.segment.MSH;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for the HL7MLLP Codec.

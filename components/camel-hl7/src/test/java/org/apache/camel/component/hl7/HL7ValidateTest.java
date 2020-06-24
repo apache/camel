@@ -34,8 +34,12 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class HL7ValidateTest extends CamelTestSupport {
 
@@ -53,7 +57,7 @@ public class HL7ValidateTest extends CamelTestSupport {
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(HL7Exception.class, e.getCause());
             assertIsInstanceOf(DataTypeException.class, e.getCause());
-            assertTrue("Should be a validation error message", e.getCause().getMessage().startsWith("ca.uhn.hl7v2.validation.ValidationException: Validation failed:"));
+            assertTrue(e.getCause().getMessage().startsWith("ca.uhn.hl7v2.validation.ValidationException: Validation failed:"), "Should be a validation error message");
         }
 
         assertMockEndpointsSatisfied();
@@ -95,7 +99,7 @@ public class HL7ValidateTest extends CamelTestSupport {
             assertIsInstanceOf(HL7Exception.class, e.getCause());
             assertIsInstanceOf(ValidationException.class, e.getCause().getCause());
             System.out.println(e.getCause().getCause().getMessage());
-            assertTrue("Should be a validation error message", e.getCause().getCause().getMessage().startsWith("Validation failed:"));
+            assertTrue(e.getCause().getCause().getMessage().startsWith("Validation failed:"), "Should be a validation error message");
         }
 
         assertMockEndpointsSatisfied();
