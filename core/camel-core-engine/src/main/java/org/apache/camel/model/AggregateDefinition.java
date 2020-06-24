@@ -731,6 +731,44 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition> i
     }
 
     /**
+     * A repeating period in millis by which the aggregator will complete all
+     * current aggregated exchanges. Camel has a background task which is
+     * triggered every period. You cannot use this option together with
+     * completionTimeout, only one of them can be used.
+     *
+     * @param completionInterval the interval in millis, must be a positive
+     *            value
+     * @return the builder
+     */
+    public AggregateDefinition completionInterval(String completionInterval) {
+        setCompletionInterval(completionInterval);
+        return this;
+    }
+
+    /**
+     * Time in millis that an aggregated exchange should be inactive before its
+     * complete (timeout). This option can be set as either a fixed value or
+     * using an Expression which allows you to evaluate a timeout dynamically -
+     * will use Long as result. If both are set Camel will fallback to use the
+     * fixed value if the Expression result was null or 0. You cannot use this
+     * option together with completionInterval, only one of the two can be used.
+     * <p/>
+     * By default the timeout checker runs every second, you can use the
+     * completionTimeoutCheckerInterval option to configure how frequently to
+     * run the checker. The timeout is an approximation and there is no
+     * guarantee that the a timeout is triggered exactly after the timeout
+     * value. It is not recommended to use very low timeout values or checker
+     * intervals.
+     *
+     * @param completionTimeout the timeout in millis, must be a positive value
+     * @return the builder
+     */
+    public AggregateDefinition completionTimeout(String completionTimeout) {
+        setCompletionTimeout(completionTimeout);
+        return this;
+    }
+
+    /**
      * Time in millis that an aggregated exchange should be inactive before its
      * complete (timeout). This option can be set as either a fixed value or
      * using an Expression which allows you to evaluate a timeout dynamically -
