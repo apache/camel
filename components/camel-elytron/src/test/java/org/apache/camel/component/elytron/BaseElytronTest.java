@@ -31,8 +31,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.undertow.UndertowComponent;
 import org.apache.camel.component.undertow.spi.UndertowSecurityProvider;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.BeforeClass;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
 import org.wildfly.security.WildFlyElytronBaseProvider;
 import org.wildfly.security.auth.permission.LoginPermission;
 import org.wildfly.security.auth.realm.token.TokenSecurityRealm;
@@ -57,7 +57,7 @@ public abstract class BaseElytronTest extends CamelTestSupport {
 
     abstract WildFlyElytronBaseProvider getElytronProvider();
 
-    @BeforeClass
+    @BeforeAll
     public static void initPort() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
         keyPair = null;
