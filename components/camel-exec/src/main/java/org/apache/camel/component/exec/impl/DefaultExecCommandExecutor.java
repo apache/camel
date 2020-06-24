@@ -94,7 +94,7 @@ public class DefaultExecCommandExecutor implements ExecCommandExecutor {
                 exitValue = ((ExecDefaultExecutor) executor).getExitValue();
             }
 
-            // workaround to ignore if the stream was already closes due some race condition in commons-exec
+            // workaround to Disabled if the stream was already closes due some race condition in commons-exec
             String msg = ioe.getMessage();
             if (msg != null && "stream closed".equals(msg.toLowerCase(Locale.ENGLISH))) {
                 LOG.debug("Ignoring Stream closed IOException", ioe);

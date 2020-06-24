@@ -27,27 +27,28 @@ import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.exec.impl.ExecCommandExecutorMock;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_ARGS;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_EXECUTABLE;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_TIMEOUT;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_WORKING_DIR;
 import static org.apache.commons.io.IOUtils.LINE_SEPARATOR;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test the functionality of {@link ExecProducer}
  */
+@CamelSpringTest
 @ContextConfiguration(locations = {"exec-mock-executor-context.xml"})
-public class ExecProducerTest extends AbstractJUnit4SpringContextTests {
+public class ExecProducerTest {
 
     @Produce("direct:input")
     private ProducerTemplate producerTemplate;
