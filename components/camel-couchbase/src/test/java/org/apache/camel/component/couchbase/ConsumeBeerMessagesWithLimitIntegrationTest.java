@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.couchbase;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -39,7 +41,8 @@ public class ConsumeBeerMessagesWithLimitIntegrationTest extends CamelTestSuppor
             public void configure() throws Exception {
 
                 // need couchbase installed on localhost with beer-sample data
-                from("couchbase:http://localhost/beer-sample?designDocumentName=beer&viewName=brewery_beers&limit=10").to("mock:result");
+                from("couchbase:http://localhost/beer-sample?username=root&password=123456&designDocumentName=beer&viewName=brewery_beers&limit=10").
+                    to("mock:result");
             }
         };
 

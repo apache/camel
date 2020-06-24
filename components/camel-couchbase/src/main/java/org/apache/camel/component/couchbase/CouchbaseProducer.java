@@ -16,13 +16,17 @@
  */
 package org.apache.camel.component.couchbase;
 
+import java.time.Duration;
 import java.util.Map;
-import java.util.concurrent.Future;
 
-import com.couchbase.client.CouchbaseClientIF;
-import net.spy.memcached.PersistTo;
-import net.spy.memcached.ReplicateTo;
-import net.spy.memcached.internal.OperationFuture;
+import com.couchbase.client.core.retry.BestEffortRetryStrategy;
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.Collection;
+import com.couchbase.client.java.Scope;
+import com.couchbase.client.java.kv.MutationResult;
+import com.couchbase.client.java.kv.PersistTo;
+import com.couchbase.client.java.kv.ReplicateTo;
+import com.couchbase.client.java.kv.UpsertOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
@@ -35,6 +39,7 @@ import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_TT
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_ID;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_TTL;
 
+
 /**
  * Couchbase producer generates various type of operations. PUT, GET, and DELETE
  * are currently supported
@@ -44,17 +49,32 @@ public class CouchbaseProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(CouchbaseProducer.class);
 
     private CouchbaseEndpoint endpoint;
-    private CouchbaseClientIF client;
+    private Bucket client;
+    private Collection collection;
     private long startId;
     private PersistTo persistTo;
     private ReplicateTo replicateTo;
     private int producerRetryAttempts;
     private int producerRetryPause;
 
-    public CouchbaseProducer(CouchbaseEndpoint endpoint, CouchbaseClientIF client, int persistTo, int replicateTo) throws Exception {
+    public CouchbaseProducer(CouchbaseEndpoint endpoint, Bucket client, int persistTo, int replicateTo) throws Exception {
         super(endpoint);
         this.endpoint = endpoint;
         this.client = client;
+        Scope scope;
+
+        if (endpoint.getScope() != null) {
+            scope = client.scope(endpoint.getScope());
+        } else {
+            scope = client.defaultScope();
+        }
+
+        if (endpoint.getCollection() != null) {
+            this.collection = scope.collection(endpoint.getCollection());
+        } else {
+            this.collection = client.defaultCollection();
+        }
+
         if (endpoint.isAutoStartIdForInserts()) {
             this.startId = endpoint.getStartingIdForInsertsFrom();
         }
@@ -63,13 +83,10 @@ public class CouchbaseProducer extends DefaultProducer {
 
         switch (persistTo) {
             case 0:
-                this.persistTo = PersistTo.ZERO;
+                this.persistTo = PersistTo.NONE;
                 break;
             case 1:
-                this.persistTo = PersistTo.MASTER;
-                break;
-            case 2:
-                this.persistTo = PersistTo.TWO;
+                this.persistTo = PersistTo.ACTIVE;
                 break;
             case 3:
                 this.persistTo = PersistTo.THREE;
@@ -83,7 +100,7 @@ public class CouchbaseProducer extends DefaultProducer {
 
         switch (replicateTo) {
             case 0:
-                this.replicateTo = ReplicateTo.ZERO;
+                this.replicateTo = ReplicateTo.NONE;
                 break;
             case 1:
                 this.replicateTo = ReplicateTo.ONE;
@@ -102,7 +119,7 @@ public class CouchbaseProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-
+//
         Map<String, Object> headers = exchange.getIn().getHeaders();
 
         String id = (headers.containsKey(HEADER_ID)) ? exchange.getIn().getHeader(HEADER_ID, String.class) : endpoint.getId();
@@ -119,17 +136,16 @@ public class CouchbaseProducer extends DefaultProducer {
         if (endpoint.getOperation().equals(COUCHBASE_PUT)) {
             LOG.debug("Type of operation: PUT");
             Object obj = exchange.getIn().getBody();
-            exchange.getOut().setBody(setDocument(id, ttl, obj, persistTo, replicateTo));
+            exchange.getMessage().setBody(setDocument(id, ttl, obj, persistTo, replicateTo));
         } else if (endpoint.getOperation().equals(COUCHBASE_GET)) {
             LOG.debug("Type of operation: GET");
-            Object result = client.get(id);
-            exchange.getOut().setBody(result);
+            Object result = collection.get(id);
+            exchange.getMessage().setBody(result);
         } else if (endpoint.getOperation().equals(COUCHBASE_DELETE)) {
             LOG.debug("Type of operation: DELETE");
-            Future<Boolean> result = client.delete(id);
-            exchange.getOut().setBody(result.get());
+            MutationResult result = collection.remove(id);
+            exchange.getMessage().setBody(result.toString());
         }
-
         // cleanup the cache headers
         exchange.getIn().removeHeader(HEADER_ID);
 
@@ -139,7 +155,7 @@ public class CouchbaseProducer extends DefaultProducer {
     protected void doStop() throws Exception {
         super.doStop();
         if (client != null) {
-            client.shutdown();
+            client.core().shutdown();
         }
     }
 
@@ -149,21 +165,17 @@ public class CouchbaseProducer extends DefaultProducer {
 
     private Boolean setDocument(String id, int expiry, Object obj, int retryAttempts, PersistTo persistTo, ReplicateTo replicateTo) throws Exception {
 
-        OperationFuture<Boolean> result = client.set(id, expiry, obj, persistTo, replicateTo);
-        try {
-            if (!result.get()) {
-                throw new Exception("Unable to save Document. " + id);
-            }
-            return true;
-        } catch (Exception e) {
-            if (retryAttempts <= 0) {
-                throw e;
-            } else {
-                LOG.info("Unable to save Document, retrying in " + producerRetryPause + "ms (" + retryAttempts + ")");
-                Thread.sleep(producerRetryPause);
-                return setDocument(id, expiry, obj, retryAttempts - 1, persistTo, replicateTo);
-            }
-        }
-    }
+        UpsertOptions options = UpsertOptions.upsertOptions()
+                .expiry(Duration.ofSeconds(expiry))
+                .durability(persistTo, replicateTo)
+                .timeout(Duration.ofMillis(retryAttempts * producerRetryPause))
+                .retryStrategy(BestEffortRetryStrategy.withExponentialBackoff(Duration.ofMillis(producerRetryPause), Duration.ofMillis(producerRetryPause), 1));
 
+        MutationResult result = collection.upsert(id, obj, options);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(result.toString());
+        }
+
+        return true;
+    }
 }

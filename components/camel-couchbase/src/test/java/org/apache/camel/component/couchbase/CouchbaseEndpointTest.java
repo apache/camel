@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.couchbase;
 
-import org.apache.camel.Exchange;
+import com.couchbase.client.core.error.InvalidArgumentException;
 import org.apache.camel.Processor;
 import org.junit.jupiter.api.Test;
 
@@ -64,7 +64,7 @@ public class CouchbaseEndpointTest {
 
     @Test
     public void testCouchbaseEndpointWithoutProtocol() throws Exception {
-        assertThrows(IllegalArgumentException.class, 
+        assertThrows(IllegalArgumentException.class,
             () -> new CouchbaseEndpoint("localhost:80/bucket", "localhost:80/bucket", new CouchbaseComponent()));
     }
 
@@ -75,7 +75,7 @@ public class CouchbaseEndpointTest {
 
     @Test
     public void testCouchbaseEndpointCreateProducer() throws Exception {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidArgumentException.class,
             () -> new CouchbaseEndpoint("couchbase:localhost:80/bucket", new CouchbaseComponent()).createProducer());
     }
 
@@ -84,7 +84,7 @@ public class CouchbaseEndpointTest {
         Processor p = exchange -> {
             // Nothing to do
         };
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidArgumentException.class,
             () -> new CouchbaseEndpoint("couchbase:localhost:80/bucket", new CouchbaseComponent()).createConsumer(p));
     }
 
@@ -97,6 +97,12 @@ public class CouchbaseEndpointTest {
 
         endpoint.setBucket("bucket");
         assertEquals("bucket", endpoint.getBucket());
+
+        endpoint.setCollection("collection");
+        assertEquals("collection", endpoint.getCollection());
+
+        endpoint.setScope("scope");
+        assertEquals("scope", endpoint.getScope());
 
         endpoint.setHostname("localhost");
         assertEquals("localhost", endpoint.getHostname());
@@ -137,29 +143,8 @@ public class CouchbaseEndpointTest {
         endpoint.setConsumerProcessedStrategy("delete");
         assertEquals("delete", endpoint.getConsumerProcessedStrategy());
 
-        endpoint.setOpTimeOut(1L);
-        assertEquals(1L, endpoint.getOpTimeOut());
-
-        endpoint.setTimeoutExceptionThreshold(1);
-        assertEquals(1, endpoint.getTimeoutExceptionThreshold());
-
-        endpoint.setReadBufferSize(1);
-        assertEquals(1, endpoint.getReadBufferSize());
-
-        endpoint.setShouldOptimize(true);
-        assertTrue(endpoint.isShouldOptimize());
-
-        endpoint.setMaxReconnectDelay(1L);
-        assertEquals(1L, endpoint.getMaxReconnectDelay());
-
-        endpoint.setOpQueueMaxBlockTime(1L);
-        assertEquals(1L, endpoint.getOpQueueMaxBlockTime());
-
-        endpoint.setObsPollInterval(1L);
-        assertEquals(1L, endpoint.getObsPollInterval());
-
-        endpoint.setObsTimeout(1L);
-        assertEquals(1L, endpoint.getObsTimeout());
+        endpoint.setQueryTimeout(1L);
+        assertEquals(1L, endpoint.getQueryTimeout());
 
         endpoint.setDescending(false);
     }

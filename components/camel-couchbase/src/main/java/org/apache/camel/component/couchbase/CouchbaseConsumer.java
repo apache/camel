@@ -16,11 +16,15 @@
  */
 package org.apache.camel.component.couchbase;
 
-import com.couchbase.client.CouchbaseClient;
-import com.couchbase.client.protocol.views.Query;
-import com.couchbase.client.protocol.views.View;
-import com.couchbase.client.protocol.views.ViewResponse;
-import com.couchbase.client.protocol.views.ViewRow;
+import java.util.List;
+
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.Collection;
+import com.couchbase.client.java.Scope;
+import com.couchbase.client.java.view.ViewOptions;
+import com.couchbase.client.java.view.ViewOrdering;
+import com.couchbase.client.java.view.ViewResult;
+import com.couchbase.client.java.view.ViewRow;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultScheduledPollConsumer;
@@ -37,44 +41,54 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(CouchbaseConsumer.class);
 
     private final CouchbaseEndpoint endpoint;
-    private final CouchbaseClient client;
-    private final View view;
-    private final Query query;
+    private final Bucket bucket;
+    private ViewOptions viewOptions;
+    private Collection collection;
 
-    public CouchbaseConsumer(CouchbaseEndpoint endpoint, CouchbaseClient client, Processor processor) {
-
+    public CouchbaseConsumer(CouchbaseEndpoint endpoint, Bucket client, Processor processor) {
         super(endpoint, processor);
-        this.client = client;
+        this.bucket = client;
         this.endpoint = endpoint;
-        this.view = client.getView(endpoint.getDesignDocumentName(), endpoint.getViewName());
-        this.query = new Query();
+        Scope scope;
+        if (endpoint.getScope() != null) {
+            scope = client.scope(endpoint.getScope());
+        } else {
+            scope = client.defaultScope();
+        }
+
+        if (endpoint.getCollection() != null) {
+            this.collection = scope.collection(endpoint.getCollection());
+        } else {
+            this.collection = client.defaultCollection();
+        }
         init();
     }
 
     @Override
     protected void doInit() {
 
-        query.setIncludeDocs(true);
-
+        //   query.setIncludeDocs(true);
+        this.viewOptions = ViewOptions.viewOptions();
         int limit = endpoint.getLimit();
         if (limit > 0) {
-            query.setLimit(limit);
+            viewOptions.limit(limit);
         }
 
         int skip = endpoint.getSkip();
         if (skip > 0) {
-            query.setSkip(skip);
+            viewOptions.skip(skip);
         }
 
-        query.setDescending(endpoint.isDescending());
+        if (endpoint.isDescending()) {
+            viewOptions.order(ViewOrdering.DESCENDING);
+        }
 
         String rangeStartKey = endpoint.getRangeStartKey();
         String rangeEndKey = endpoint.getRangeEndKey();
         if ("".equals(rangeStartKey) || "".equals(rangeEndKey)) {
             return;
         }
-        query.setRange(rangeStartKey, rangeEndKey);
-
+        viewOptions.startKey(rangeEndKey).endKey(rangeEndKey);
     }
 
     @Override
@@ -87,28 +101,30 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
     protected void doStop() throws Exception {
         LOG.info("Stopping Couchbase consumer");
         super.doStop();
-        if (client != null) {
-            client.shutdown();
+        if (bucket != null) {
+            bucket.core().shutdown();
         }
     }
 
     @Override
     protected synchronized int poll() throws Exception {
-        ViewResponse result = client.query(view, query);
+        ViewResult result = bucket.viewQuery(endpoint.getDesignDocumentName(), endpoint.getViewName(), this.viewOptions);
+
         LOG.info("Received result set from Couchbase");
+        Collection collection = bucket.defaultCollection();
+
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("ViewResponse = {}", result);
+            LOG.trace("ViewResponse =  {}", result);
         }
 
         String consumerProcessedStrategy = endpoint.getConsumerProcessedStrategy();
+        for (ViewRow row : result.rows()) {
 
-        for (ViewRow row : result) {
+            String id = row.id().get();
+            Object doc = collection.get(id);
 
-            String id = row.getId();
-            Object doc = row.getDocument();
-
-            String key = row.getKey();
+            String key = (String) row.keyAs(List.class).get().get(0);
             String designDocumentName = endpoint.getDesignDocumentName();
             String viewName = endpoint.getViewName();
 
@@ -123,7 +139,8 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Deleting doc with ID {}", id);
                 }
-                client.delete(id);
+
+                collection.remove(id);
             } else if ("filter".equalsIgnoreCase(consumerProcessedStrategy)) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Filtering out ID {}", id);
@@ -142,11 +159,10 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
             }
         }
 
-        return result.size();
+        return result.rows().size();
     }
 
     private void logDetails(String id, Object doc, String key, String designDocumentName, String viewName, Exchange exchange) {
-
         if (LOG.isTraceEnabled()) {
             LOG.trace("Created exchange = {}", exchange);
             LOG.trace("Added Document in body = {}", doc);

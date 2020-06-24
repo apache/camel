@@ -72,14 +72,16 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (50 parameters):
+=== Query Parameters (45 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *bucket* (common) | The bucket to use |  | String
+| *collection* (common) | The collection to use |  | String
 | *key* (common) | The key to use |  | String
+| *scope* (common) | The scope to use |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *consumerProcessedStrategy* (consumer) | Define the consumer Processed strategy to use | none | String
 | *descending* (consumer) | Define if this operation is descending or not | false | boolean
@@ -103,15 +105,8 @@ with the following path and query parameters:
 | *startingIdForInsertsFrom* (producer) | Define the starting Id where we are doing an insert operation |  | long
 | *additionalHosts* (advanced) | The additional hosts |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *maxReconnectDelay* (advanced) | Define the max delay during a reconnection | 30000 | long
-| *obsPollInterval* (advanced) | Define the observation polling interval | 400 | long
-| *obsTimeout* (advanced) | Define the observation timeout | -1 | long
-| *opQueueMaxBlockTime* (advanced) | Define the max time an operation can be in queue blocked | 10000 | long
-| *opTimeOut* (advanced) | Define the operation timeout | 2500 | long
-| *readBufferSize* (advanced) | Define the buffer size | 16384 | int
-| *shouldOptimize* (advanced) | Define if we want to use optimization or not where possible | false | boolean
+| *queryTimeout* (advanced) | Define the operation timeout in milliseconds | 2500 | long
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *timeoutExceptionThreshold* (advanced) | Define the threshold for throwing a timeout Exception | 998 | int
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
@@ -132,9 +127,9 @@ with the following path and query parameters:
 // endpoint options: END
 
 == Couchbase SDK compatibility
-This component is currently using a "Legacy SDK" version of couchbase-client.
+Using collections and scopes is supported only for Couchbase Enterprise Server 6.5+.
 
-In order to authenticate with newer versions of Couchbase Server 5.0 and beyond, as per instructions on the  https://docs.couchbase.com/java-sdk/2.7/sdk-authentication-overview.html/[CouchBase Java SDK Authentication]:
+This component is currently using Java SDK 3.x so it might be not compatible with older Couchbase servers anymore. See the compatibility https://docs.couchbase.com/java-sdk/current/project-docs/compatibility.html[page].
 
  * The value formerly interpreted as a bucket-name is now interpreted as a username. The username must correspond to a user defined on the cluster that is being accessed.
  * The value formerly interpreted as a bucket-password is now interpreted as the password of the defined user.
