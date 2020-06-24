@@ -18,17 +18,15 @@ package org.apache.camel.component.corda;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.corda.CordaConstants.OPERATION;
-import static org.apache.camel.component.corda.CordaConstants.STATE_MACHINE_RECORDED_TRANSACTION_MAPPING_FEED;
+import static org.apache.camel.component.corda.CordaConstants.STATE_MACHINE_FEED;
 
-@Ignore("This integration test requires a locally running corda node such cordapp-template-java")
-public class CordaConsumerTransactionMapFeedTest extends CordaConsumerTestSupport {
+public class CordaConsumerStateMachineFeedIntegrationTest extends CordaConsumerTestSupport {
 
     @Test
-    public void transactionMapFeedTest() throws Exception {
+    public void stateMachineFeedTest() throws Exception {
         mockResult.expectedMinimumMessageCount(1);
         mockError.expectedMessageCount(0);
         MockEndpoint.assertIsSatisfied(context);
@@ -40,7 +38,7 @@ public class CordaConsumerTransactionMapFeedTest extends CordaConsumerTestSuppor
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + STATE_MACHINE_RECORDED_TRANSACTION_MAPPING_FEED)
+                from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + STATE_MACHINE_FEED)
                         .to("mock:result");
             }
         };

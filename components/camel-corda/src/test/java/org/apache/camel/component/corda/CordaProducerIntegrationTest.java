@@ -48,52 +48,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static net.corda.core.node.services.vault.QueryCriteriaUtils.DEFAULT_PAGE_NUM;
 import static net.corda.core.node.services.vault.QueryCriteriaUtils.MAX_PAGE_SIZE;
-import static org.apache.camel.component.corda.CordaConstants.ADD_VAULT_TRANSACTION_NOTE;
-import static org.apache.camel.component.corda.CordaConstants.ARGUMENTS;
-import static org.apache.camel.component.corda.CordaConstants.ATTACHMENT_EXISTS;
-import static org.apache.camel.component.corda.CordaConstants.ATTACHMENT_QUERY_CRITERIA;
-import static org.apache.camel.component.corda.CordaConstants.CLEAR_NETWORK_MAP_CACHE;
-import static org.apache.camel.component.corda.CordaConstants.CURRENT_NODE_TIME;
-import static org.apache.camel.component.corda.CordaConstants.DRAINING_MODE;
-import static org.apache.camel.component.corda.CordaConstants.EXACT_MATCH;
-import static org.apache.camel.component.corda.CordaConstants.GET_PROTOCOL_VERSION;
-import static org.apache.camel.component.corda.CordaConstants.GET_VAULT_TRANSACTION_NOTES;
-import static org.apache.camel.component.corda.CordaConstants.IS_FLOWS_DRAINING_MODE_ENABLED;
-import static org.apache.camel.component.corda.CordaConstants.NETWORK_MAP_SNAPSHOT;
-import static org.apache.camel.component.corda.CordaConstants.NODE_INFO;
-import static org.apache.camel.component.corda.CordaConstants.NODE_INFO_FROM_PARTY;
-import static org.apache.camel.component.corda.CordaConstants.NOTARY_IDENTITIES;
-import static org.apache.camel.component.corda.CordaConstants.NOTARY_PARTY_FROM_X500_NAME;
-import static org.apache.camel.component.corda.CordaConstants.OPEN_ATTACHMENT;
-import static org.apache.camel.component.corda.CordaConstants.OPERATION;
-import static org.apache.camel.component.corda.CordaConstants.PAGE_SPECIFICATION;
-import static org.apache.camel.component.corda.CordaConstants.PARTIES_FROM_KEY;
-import static org.apache.camel.component.corda.CordaConstants.PARTIES_FROM_NAME;
-import static org.apache.camel.component.corda.CordaConstants.QUERY_ATTACHMENTS;
-import static org.apache.camel.component.corda.CordaConstants.QUERY_CRITERIA;
-import static org.apache.camel.component.corda.CordaConstants.REGISTERED_FLOWS;
-import static org.apache.camel.component.corda.CordaConstants.SECURE_HASH;
-import static org.apache.camel.component.corda.CordaConstants.SET_FLOWS_DRAINING_MODE_ENABLED;
-import static org.apache.camel.component.corda.CordaConstants.SORT;
-import static org.apache.camel.component.corda.CordaConstants.START_FLOW_DYNAMIC;
-import static org.apache.camel.component.corda.CordaConstants.STATE_MACHINE_RECORDED_TRANSACTION_MAPPING_SNAPSHOT;
-import static org.apache.camel.component.corda.CordaConstants.STATE_MACHINE_SNAPSHOT;
-import static org.apache.camel.component.corda.CordaConstants.UPLOAD_ATTACHMENT;
-import static org.apache.camel.component.corda.CordaConstants.VAULT_QUERY;
-import static org.apache.camel.component.corda.CordaConstants.VAULT_QUERY_BY;
-import static org.apache.camel.component.corda.CordaConstants.VAULT_QUERY_BY_CRITERIA;
-import static org.apache.camel.component.corda.CordaConstants.VAULT_QUERY_BY_WITH_PAGING_SPEC;
-import static org.apache.camel.component.corda.CordaConstants.VAULT_QUERY_BY_WITH_SORTING;
-import static org.apache.camel.component.corda.CordaConstants.WELL_KNOWN_PARTY_FROM_ANONYMOUS;
-import static org.apache.camel.component.corda.CordaConstants.WELL_KNOWN_PARTY_FROM_X500_NAME;
+import static org.apache.camel.component.corda.CordaConstants.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@Ignore("This integration test requires a locally running corda node such cordapp-template-java")
-public class CordaProducerTest extends CordaTestSupport {
+public class CordaProducerIntegrationTest extends CordaTestSupport {
     private static final SecureHash.SHA256 TEST_SHA_256 = SecureHash.parse("6D1687C143DF792A011A1E80670A4E4E0C25D0D87A39514409B1ABFC2043581F");
 
     @Produce("direct:start")
@@ -168,7 +132,7 @@ public class CordaProducerTest extends CordaTestSupport {
     public void clearNetworkMapCacheTest() throws Exception {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, CLEAR_NETWORK_MAP_CACHE);
         template.send(exchange);
-        Object body = exchange.getException();
+        Object body = exchange.getIn().getBody();
         assertNull(body);
         Object exception = exchange.getException();
         assertNull(exception);

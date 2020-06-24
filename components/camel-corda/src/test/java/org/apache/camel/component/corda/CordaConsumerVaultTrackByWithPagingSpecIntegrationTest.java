@@ -18,23 +18,18 @@ package org.apache.camel.component.corda;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.corda.CordaConstants.OPERATION;
-import static org.apache.camel.component.corda.CordaConstants.START_TRACKED_FLOW_DYNAMIC;
+import static org.apache.camel.component.corda.CordaConstants.VAULT_TRACK_BY_WITH_PAGING_SPEC;
 
-@Ignore("This integration test requires a locally running corda node such cordapp-template-java")
-public class CordaConsumerStartTrackedFlowDynamicTest extends CordaConsumerTestSupport {
-
+public class CordaConsumerVaultTrackByWithPagingSpecIntegrationTest extends CordaConsumerTestSupport {
 
     @Test
-    public void startTrackedFlowDynamicTest() throws Exception {
-        //Expects CamelFlow is deployed on the node
+    public void vaultTrackByWithPagingSpecTest() throws Exception {
         mockResult.expectedMinimumMessageCount(1);
         mockError.expectedMessageCount(0);
         MockEndpoint.assertIsSatisfied(context);
-        assertEquals("Hello world!", mockResult.getExchanges().get(0).getIn().getBody());
     }
 
     @Override
@@ -43,9 +38,10 @@ public class CordaConsumerStartTrackedFlowDynamicTest extends CordaConsumerTestS
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + START_TRACKED_FLOW_DYNAMIC
-                    + "&flowLociClass=#flowLociClass"
-                    + "&arguments=#arguments")
+                from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + VAULT_TRACK_BY_WITH_PAGING_SPEC
+                        + "&contractStateClass=#contractStateClass"
+                        + "&queryCriteria=#queryCriteria"
+                        + "&pageSpecification=#pageSpecification")
                         .to("mock:result");
             }
         };
