@@ -18,14 +18,14 @@ package org.apache.camel.component.couchbase;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class ProduceMessagesSimpleTest extends CamelTestSupport {
 
     // Ignore test since build environment does not have any couchbase instance
-    @Ignore
+    @Disabled
     @Test
     public void testInsert() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

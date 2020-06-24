@@ -23,25 +23,26 @@ import com.couchbase.client.CouchbaseClient;
 import net.spy.memcached.internal.OperationFuture;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_TTL;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CouchbaseProducerTest {
 
     @Mock
@@ -64,45 +65,46 @@ public class CouchbaseProducerTest {
 
     private CouchbaseProducer producer;
 
-    @Before
+    @BeforeEach
     public void before() throws Exception {
-        when(endpoint.getProducerRetryAttempts()).thenReturn(CouchbaseConstants.DEFAULT_PRODUCER_RETRIES);
+        lenient().when(endpoint.getProducerRetryAttempts()).thenReturn(CouchbaseConstants.DEFAULT_PRODUCER_RETRIES);
         producer = new CouchbaseProducer(endpoint, client, 0, 0);
-        when(exchange.getIn()).thenReturn(msg);
+        lenient().when(exchange.getIn()).thenReturn(msg);
     }
 
-    @Test(expected = CouchbaseException.class)
+    @Test
     public void testBodyMandatory() throws Exception {
-        producer.process(exchange);
+        assertThrows(CouchbaseException.class,
+            () -> producer.process(exchange));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testPersistToLowerThanSupported() throws Exception {
-        producer = new CouchbaseProducer(endpoint, client, -1, 0);
+        assertThrows(IllegalArgumentException.class,
+            () -> new CouchbaseProducer(endpoint, client, -1, 0));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testPersistToHigherThanSupported() throws Exception {
-        producer = new CouchbaseProducer(endpoint, client, 5, 0);
+        assertThrows(IllegalArgumentException.class,
+            () -> new CouchbaseProducer(endpoint, client, 5, 0));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testReplicateToLowerThanSupported() throws Exception {
-        producer = new CouchbaseProducer(endpoint, client, 0, -1);
+        assertThrows(IllegalArgumentException.class,
+            () -> new CouchbaseProducer(endpoint, client, 0, -1));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testReplicateToHigherThanSupported() throws Exception {
-        producer = new CouchbaseProducer(endpoint, client, 0, 4);
+        assertThrows(IllegalArgumentException.class,
+            () -> new CouchbaseProducer(endpoint, client, 0, 4));
     }
 
     @Test
     public void testMaximumValuesForPersistToAndRepicateTo() throws Exception {
-        try {
-            producer = new CouchbaseProducer(endpoint, client, 4, 3);
-        } catch (IllegalArgumentException e) {
-            Assert.fail("Exception was thrown while testing maximum values for persistTo and replicateTo parameters " + e.getMessage());
-        }
+        producer = new CouchbaseProducer(endpoint, client, 4, 3);
     }
 
     @Test
