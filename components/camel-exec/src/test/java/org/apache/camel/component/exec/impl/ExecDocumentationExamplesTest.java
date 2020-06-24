@@ -26,16 +26,22 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.exec.ExecResult;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.exec.ExecTestUtils.buildJavaExecutablePath;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The tests are ignored by default, because they are OS-specific. On demand
+ * The tests are Disabledd by default, because they are OS-specific. On demand
  * they can be run manually to validate the documentation examples for that OS.
  */
 
@@ -48,6 +54,8 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
     private static final String ANT_BUILD_FILE_CONTENT = buildAntFileContent();
 
     private static final String TEST_MSG = "Hello Camel Exec!";
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExecDocumentationExamplesTest.class);
 
     @Produce("direct:javaVersion")
     protected ProducerTemplate templateJavaVersion;
@@ -65,7 +73,7 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
     protected ProducerTemplate templateWordCount;
 
     @Test
-    @Ignore
+    @Disabled
     public void testExecLinuxWordCount() throws Exception {
         // use type conversion here
         ExecResult body = templateWordCount.requestBody((Object)"test", ExecResult.class);
@@ -77,7 +85,7 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
      * The test assumes, that java is in the system path
      */
     @Test
-    @Ignore
+    @Disabled
     public void testJavaVersion() throws Exception {
         ExecResult body = templateJavaVersion.requestBody((Object)"test", ExecResult.class);
         InputStream out = body.getStdout();
@@ -86,12 +94,12 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
         assertNull(out);
         assertNotNull(err);
         String outString = IOUtils.toString(err, Charset.defaultCharset());
-        log.info("Received stdout: " + outString);
+        LOGGER.info("Received stdout: " + outString);
         assertTrue(outString.contains("java version"));
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testWinJavaVersionWorkingDir() throws Exception {
         ExecResult body = templateJavaVersionWorkingDir.requestBody((Object)"test", ExecResult.class);
         InputStream out = body.getStdout();
@@ -100,7 +108,7 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
         assertNull(out);
         assertNotNull(err);
         String outerr = IOUtils.toString(err, Charset.defaultCharset());
-        log.info("Received stderr: " + outerr);
+        LOGGER.info("Received stderr: " + outerr);
         assertTrue(outerr.contains("java version"));
     }
 
@@ -108,16 +116,16 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
      * The test assumes that Apache ant is installed
      */
     @Test
-    @Ignore
+    @Disabled
     public void testExecWinAnt() throws Exception {
         File f = new File(ANT_BUILD_FILE_NAME);
         f.createNewFile();
         FileUtils.writeStringToFile(f, ANT_BUILD_FILE_CONTENT, Charset.defaultCharset());
-        assertTrue("You must create a sample build file!", f.exists());
+        assertTrue(f.exists(), "You must create a sample build file!");
         ExecResult body = templateExecAnt.requestBody((Object)"test", ExecResult.class);
         String stdout = IOUtils.toString(body.getStdout(), Charset.defaultCharset());
         assertNull(body.getStderr());
-        assertTrue("The ant script should print" + TEST_MSG, stdout.contains(TEST_MSG));
+        assertTrue(stdout.contains(TEST_MSG), "The ant script should print" + TEST_MSG);
         f.delete();
     }
 
@@ -125,16 +133,16 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
      * The test assumes that Apache ant is installed
      */
     @Test
-    @Ignore
+    @Disabled
     public void testExecWinAntWithOutFile() throws Exception {
         File f = new File(ANT_BUILD_FILE_NAME);
         f.createNewFile();
         FileUtils.writeStringToFile(f, ANT_BUILD_FILE_CONTENT, Charset.defaultCharset());
-        assertTrue("You must create a sample build file!", f.exists());
+        assertTrue(f.exists(), "You must create a sample build file!");
         // use type conversion here
         InputStream body = templateExecAntWithOutFile.requestBody((Object)"test", InputStream.class);
         String bodyString = IOUtils.toString(body, Charset.defaultCharset());
-        assertTrue("The ant script should print" + TEST_MSG, bodyString.contains(TEST_MSG));
+        assertTrue(bodyString.contains(TEST_MSG), "The ant script should print" + TEST_MSG);
         f.delete();
     }
 

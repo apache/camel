@@ -41,7 +41,7 @@ public class ExecDefaultExecutor extends DefaultExecutor {
             try {
                 return process.exitValue();
             } catch (IllegalThreadStateException e) {
-                // ignore the process is alive
+                // Disabled the process is alive
             }
         }
         return 0;
