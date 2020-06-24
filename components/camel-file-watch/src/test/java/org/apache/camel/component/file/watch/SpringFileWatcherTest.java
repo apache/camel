@@ -23,9 +23,9 @@ import java.nio.file.StandardOpenOption;
 import java.util.UUID;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -34,7 +34,7 @@ public class SpringFileWatcherTest extends CamelSpringTestSupport {
     private File springTestFile;
     private File springTestCustomHasherFile;
 
-    @Before
+    @BeforeEach
     public void createTestFiles() throws Exception {
         Files.createDirectories(Paths.get("target/fileWatchSpringTest"));
         Files.createDirectories(Paths.get("target/fileWatchSpringTestCustomHasher"));
