@@ -89,6 +89,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "subscriptionInitialPosition": getOrCreateConfiguration(target).setSubscriptionInitialPosition(property(camelContext, org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition.class, value)); return true;
         case "subscriptionname":
         case "subscriptionName": getOrCreateConfiguration(target).setSubscriptionName(property(camelContext, java.lang.String.class, value)); return true;
+        case "subscriptiontopicsmode":
+        case "subscriptionTopicsMode": getOrCreateConfiguration(target).setSubscriptionTopicsMode(property(camelContext, org.apache.pulsar.client.api.RegexSubscriptionMode.class, value)); return true;
         case "subscriptiontype":
         case "subscriptionType": getOrCreateConfiguration(target).setSubscriptionType(property(camelContext, org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.class, value)); return true;
         case "topicspattern":
@@ -132,6 +134,7 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         answer.put("sendTimeoutMs", int.class);
         answer.put("subscriptionInitialPosition", org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition.class);
         answer.put("subscriptionName", java.lang.String.class);
+        answer.put("subscriptionTopicsMode", org.apache.pulsar.client.api.RegexSubscriptionMode.class);
         answer.put("subscriptionType", org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.class);
         answer.put("topicsPattern", boolean.class);
         return answer;
@@ -204,6 +207,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "subscriptionInitialPosition": return getOrCreateConfiguration(target).getSubscriptionInitialPosition();
         case "subscriptionname":
         case "subscriptionName": return getOrCreateConfiguration(target).getSubscriptionName();
+        case "subscriptiontopicsmode":
+        case "subscriptionTopicsMode": return getOrCreateConfiguration(target).getSubscriptionTopicsMode();
         case "subscriptiontype":
         case "subscriptionType": return getOrCreateConfiguration(target).getSubscriptionType();
         case "topicspattern":

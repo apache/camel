@@ -362,6 +362,38 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
+         * Determines to which topics this consumer should be subscribed to -
+         * Persistent, Non-Persistent, or both. Only used with pattern
+         * subscriptions.
+         * 
+         * The option is a:
+         * <code>org.apache.pulsar.client.api.RegexSubscriptionMode</code> type.
+         * 
+         * Default: PersistentOnly
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder subscriptionTopicsMode(
+                RegexSubscriptionMode subscriptionTopicsMode) {
+            doSetProperty("subscriptionTopicsMode", subscriptionTopicsMode);
+            return this;
+        }
+        /**
+         * Determines to which topics this consumer should be subscribed to -
+         * Persistent, Non-Persistent, or both. Only used with pattern
+         * subscriptions.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.pulsar.client.api.RegexSubscriptionMode</code> type.
+         * 
+         * Default: PersistentOnly
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder subscriptionTopicsMode(
+                String subscriptionTopicsMode) {
+            doSetProperty("subscriptionTopicsMode", subscriptionTopicsMode);
+            return this;
+        }
+        /**
          * Type of the subscription EXCLUSIVESHAREDFAILOVERKEY_SHARED, defaults
          * to EXCLUSIVE.
          * 
@@ -1091,6 +1123,16 @@ public interface PulsarEndpointBuilderFactory {
     enum SubscriptionInitialPosition {
         EARLIEST,
         LATEST;
+    }
+
+    /**
+     * Proxy enum for
+     * <code>org.apache.pulsar.client.api.RegexSubscriptionMode</code> enum.
+     */
+    enum RegexSubscriptionMode {
+        PersistentOnly,
+        NonPersistentOnly,
+        AllTopics;
     }
 
     /**

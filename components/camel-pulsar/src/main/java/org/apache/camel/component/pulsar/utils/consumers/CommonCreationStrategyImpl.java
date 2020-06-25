@@ -38,9 +38,10 @@ public final class CommonCreationStrategyImpl {
 
         ConsumerBuilder<byte[]> builder = pulsarEndpoint.getPulsarClient().newConsumer();
         if (endpointConfiguration.isTopicsPattern()) {
-            Pattern pattern = Pattern.compile("public/default/camel-.*");
-//            builder.topicsPattern(pulsarEndpoint.getUri());
-            builder.topicsPattern(pattern);
+            builder.topicsPattern(pulsarEndpoint.getUri());
+            if (endpointConfiguration.getSubscriptionTopicsMode() != null) {
+                builder.subscriptionTopicsMode(endpointConfiguration.getSubscriptionTopicsMode());
+            }
         } else {
             builder.topic(pulsarEndpoint.getUri());
         }

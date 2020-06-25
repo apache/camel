@@ -20,13 +20,13 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
+import org.apache.pulsar.client.admin.PulsarAdmin;
+import org.apache.pulsar.client.admin.internal.PulsarAdminBuilderImpl;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
@@ -53,21 +53,8 @@ public class PulsarConsumerPatternInTest extends PulsarTestSupport {
     private MockEndpoint to;
 
     @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-
-            Processor processor = new Processor() {
-                @Override
-                public void process(final Exchange exchange) {
-                    LOGGER.info("Processing message {}", exchange.getIn().getBody());
-                }
-            };
-
-            @Override
-            public void configure() {
-                from(from).to(to).process(processor);
-            }
-        };
+    public boolean isUseRouteBuilder() {
+        return false;
     }
 
     @Override
@@ -88,16 +75,31 @@ public class PulsarConsumerPatternInTest extends PulsarTestSupport {
         comp.setAutoConfiguration(autoConfiguration);
         comp.setPulsarClient(pulsarClient);
         registry.bind("pulsar", comp);
-
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
         return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
     }
 
+    private PulsarAdmin givenPulsarAdmin() throws PulsarClientException {
+        return new PulsarAdminBuilderImpl().serviceHttpUrl(getPulsarAdminUrl()).build();
+    }
+
     @Test
     public void testAMessageToClusterIsConsumed() throws Exception {
-        to.expectedMessageCount(2);
+        // must create topics first when using topic patterns for the consumer
+        givenPulsarAdmin().topics().createNonPartitionedTopic("camel-foo");
+        givenPulsarAdmin().topics().createNonPartitionedTopic("camel-bar");
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from(from).to(to).process(e -> LOGGER.info("Processing message {}", e.getIn().getBody(String.class)));
+            }
+        });
+        context.start();
+
+        to.expectedBodiesReceivedInAnyOrder("Hello World!", "Bye World!");
 
         Producer<String> producer = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
         producer.send("Hello World!");

@@ -42,4 +42,8 @@ public class PulsarTestSupport extends ContainerAwareTestSupport {
     public String getPulsarBrokerUrl() {
         return String.format("pulsar://%s:%s", getContainer(CONTAINER_NAME).getContainerIpAddress(), getContainer(CONTAINER_NAME).getMappedPort(BROKER_PORT));
     }
+
+    public String getPulsarAdminUrl() {
+        return String.format("http://%s:%s", getContainer(CONTAINER_NAME).getContainerIpAddress(), getContainer(CONTAINER_NAME).getMappedPort(BROKER_HTTP_PORT));
+    }
 }

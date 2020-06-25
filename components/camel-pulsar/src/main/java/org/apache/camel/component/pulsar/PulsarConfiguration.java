@@ -27,6 +27,8 @@ import org.apache.pulsar.client.api.BatcherBuilder;
 import org.apache.pulsar.client.api.CompressionType;
 import org.apache.pulsar.client.api.MessageRouter;
 import org.apache.pulsar.client.api.MessageRoutingMode;
+import org.apache.pulsar.client.api.RegexSubscriptionMode;
+
 
 import static org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition.LATEST;
 import static org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.EXCLUSIVE;
@@ -36,6 +38,8 @@ public class PulsarConfiguration implements Cloneable {
 
     @UriParam(label = "consumer")
     private boolean topicsPattern;
+    @UriParam(label = "consumer", defaultValue = "PersistentOnly")
+    private RegexSubscriptionMode subscriptionTopicsMode;
     @UriParam(label = "consumer", defaultValue = "subs")
     private String subscriptionName = "subs";
     @UriParam(label = "consumer", defaultValue = "EXCLUSIVE")
@@ -111,6 +115,18 @@ public class PulsarConfiguration implements Cloneable {
      */
     public void setTopicsPattern(boolean topicsPattern) {
         this.topicsPattern = topicsPattern;
+    }
+
+    public RegexSubscriptionMode getSubscriptionTopicsMode() {
+        return subscriptionTopicsMode;
+    }
+
+    /**
+     * Determines to which topics this consumer should be subscribed to - Persistent, Non-Persistent, or both. Only used
+     * with pattern subscriptions.
+     */
+    public void setSubscriptionTopicsMode(RegexSubscriptionMode subscriptionTopicsMode) {
+        this.subscriptionTopicsMode = subscriptionTopicsMode;
     }
 
     public String getSubscriptionName() {

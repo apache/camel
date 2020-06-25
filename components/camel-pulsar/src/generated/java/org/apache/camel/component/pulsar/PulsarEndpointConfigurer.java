@@ -79,6 +79,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "subscriptionInitialPosition": target.getPulsarConfiguration().setSubscriptionInitialPosition(property(camelContext, org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition.class, value)); return true;
         case "subscriptionname":
         case "subscriptionName": target.getPulsarConfiguration().setSubscriptionName(property(camelContext, java.lang.String.class, value)); return true;
+        case "subscriptiontopicsmode":
+        case "subscriptionTopicsMode": target.getPulsarConfiguration().setSubscriptionTopicsMode(property(camelContext, org.apache.pulsar.client.api.RegexSubscriptionMode.class, value)); return true;
         case "subscriptiontype":
         case "subscriptionType": target.getPulsarConfiguration().setSubscriptionType(property(camelContext, org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
@@ -121,6 +123,7 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         answer.put("sendTimeoutMs", int.class);
         answer.put("subscriptionInitialPosition", org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition.class);
         answer.put("subscriptionName", java.lang.String.class);
+        answer.put("subscriptionTopicsMode", org.apache.pulsar.client.api.RegexSubscriptionMode.class);
         answer.put("subscriptionType", org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.class);
         answer.put("synchronous", boolean.class);
         answer.put("topicsPattern", boolean.class);
@@ -191,6 +194,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "subscriptionInitialPosition": return target.getPulsarConfiguration().getSubscriptionInitialPosition();
         case "subscriptionname":
         case "subscriptionName": return target.getPulsarConfiguration().getSubscriptionName();
+        case "subscriptiontopicsmode":
+        case "subscriptionTopicsMode": return target.getPulsarConfiguration().getSubscriptionTopicsMode();
         case "subscriptiontype":
         case "subscriptionType": return target.getPulsarConfiguration().getSubscriptionType();
         case "synchronous": return target.isSynchronous();

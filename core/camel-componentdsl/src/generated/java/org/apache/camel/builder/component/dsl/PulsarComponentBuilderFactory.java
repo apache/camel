@@ -248,6 +248,22 @@ public interface PulsarComponentBuilderFactory {
             return this;
         }
         /**
+         * Determines to which topics this consumer should be subscribed to -
+         * Persistent, Non-Persistent, or both. Only used with pattern
+         * subscriptions.
+         * 
+         * The option is a:
+         * <code>org.apache.pulsar.client.api.RegexSubscriptionMode</code> type.
+         * 
+         * Default: PersistentOnly
+         * Group: consumer
+         */
+        default PulsarComponentBuilder subscriptionTopicsMode(
+                org.apache.pulsar.client.api.RegexSubscriptionMode subscriptionTopicsMode) {
+            doSetProperty("subscriptionTopicsMode", subscriptionTopicsMode);
+            return this;
+        }
+        /**
          * Type of the subscription EXCLUSIVESHAREDFAILOVERKEY_SHARED, defaults
          * to EXCLUSIVE.
          * 
@@ -563,6 +579,7 @@ public interface PulsarComponentBuilderFactory {
             case "numberOfConsumers": getOrCreateConfiguration((PulsarComponent) component).setNumberOfConsumers((int) value); return true;
             case "subscriptionInitialPosition": getOrCreateConfiguration((PulsarComponent) component).setSubscriptionInitialPosition((org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition) value); return true;
             case "subscriptionName": getOrCreateConfiguration((PulsarComponent) component).setSubscriptionName((java.lang.String) value); return true;
+            case "subscriptionTopicsMode": getOrCreateConfiguration((PulsarComponent) component).setSubscriptionTopicsMode((org.apache.pulsar.client.api.RegexSubscriptionMode) value); return true;
             case "subscriptionType": getOrCreateConfiguration((PulsarComponent) component).setSubscriptionType((org.apache.camel.component.pulsar.utils.consumers.SubscriptionType) value); return true;
             case "topicsPattern": getOrCreateConfiguration((PulsarComponent) component).setTopicsPattern((boolean) value); return true;
             case "pulsarMessageReceiptFactory": ((PulsarComponent) component).setPulsarMessageReceiptFactory((org.apache.camel.component.pulsar.PulsarMessageReceiptFactory) value); return true;
