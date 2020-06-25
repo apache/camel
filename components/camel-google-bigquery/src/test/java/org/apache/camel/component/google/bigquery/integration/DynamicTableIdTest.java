@@ -29,8 +29,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DynamicTableIdTest extends BigQueryTestSupport {
     private static final String TABLE_ID_1 = "dynamic_table_1";
@@ -48,7 +48,7 @@ public class DynamicTableIdTest extends BigQueryTestSupport {
     @Produce("direct:in")
     private ProducerTemplate producer;
 
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         createBqTable(TABLE_ID_1);
         createBqTable(TABLE_ID_2);

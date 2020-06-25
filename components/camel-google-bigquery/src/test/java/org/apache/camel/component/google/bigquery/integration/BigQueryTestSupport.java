@@ -35,7 +35,11 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryComponent;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BigQueryTestSupport extends CamelTestSupport {
     public static final String SERVICE_KEY;
@@ -44,6 +48,8 @@ public class BigQueryTestSupport extends CamelTestSupport {
     public static final String DATASET_ID;
     public static final String SERVICE_URL;
     public static final String CREDENTIALS_FILE_LOCATION;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BigQueryTestSupport.class);
 
     private GoogleBigQueryConnectionFactory connectionFactory;
 
@@ -106,7 +112,7 @@ public class BigQueryTestSupport extends CamelTestSupport {
                 + row.entrySet().stream()
                 .map(e -> e.getKey() + " = '" + e.getValue() + "'")
                 .collect(Collectors.joining(" AND "));
-        log.debug("Query: {}", query);
+        LOGGER.debug("Query: {}", query);
         queryRequest.setQuery(query);
         QueryResponse queryResponse = getConnectionFactory()
                 .getDefaultClient()
@@ -132,7 +138,7 @@ public class BigQueryTestSupport extends CamelTestSupport {
                     .execute();
         } catch (GoogleJsonResponseException e) {
             if (e.getDetails().getCode() == 409) {
-                log.info("Table {} already exist");
+                LOGGER.info("Table {} already exist");
             } else {
                 throw e;
             }
