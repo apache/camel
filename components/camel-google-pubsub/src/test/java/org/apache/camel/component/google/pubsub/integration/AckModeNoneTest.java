@@ -27,11 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.pubsub.PubsubTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.MethodOrderer.Alphanumeric;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(Alphanumeric.class)
 public class AckModeNoneTest extends PubsubTestSupport {
 
     private static final String TOPIC_NAME = "ackNoneTopic";

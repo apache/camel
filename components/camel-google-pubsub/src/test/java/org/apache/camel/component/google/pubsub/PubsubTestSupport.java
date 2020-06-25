@@ -34,12 +34,11 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.ClassRule;
+import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 
-public class PubsubTestSupport extends CamelTestSupport {
+public class PubsubTestSupport extends ContainerAwareTestSupport {
 
     public static final String PROJECT_ID;
 
@@ -48,8 +47,7 @@ public class PubsubTestSupport extends CamelTestSupport {
         PROJECT_ID = testProperties.getProperty("project.id");
     }
 
-    @ClassRule
-    public static GenericContainer container = new GenericContainer("google/cloud-sdk:latest")
+    protected GenericContainer<?> container = new GenericContainer<>("google/cloud-sdk:latest")
             .withExposedPorts(8383)
             .withCommand("/bin/sh", "-c",
                     String.format("gcloud beta emulators pubsub start --project %s --host-port=0.0.0.0:%d",
@@ -67,6 +65,11 @@ public class PubsubTestSupport extends CamelTestSupport {
         }
 
         return testProperties;
+    }
+
+    @Override
+    protected GenericContainer<?> createContainer() {
+        return super.createContainer();
     }
 
     protected void addPubsubComponent(CamelContext context) {
