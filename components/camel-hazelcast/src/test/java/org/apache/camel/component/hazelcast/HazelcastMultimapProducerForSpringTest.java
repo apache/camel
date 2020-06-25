@@ -21,12 +21,14 @@ import java.util.Collection;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.multimap.MultiMap;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -47,7 +49,7 @@ public class HazelcastMultimapProducerForSpringTest extends HazelcastCamelSpring
         verify(hazelcastInstance, atLeastOnce()).getMultiMap("bar");
     }
 
-    @After
+    @AfterEach
     public void verifyMapMock() {
         verifyNoMoreInteractions(map);
     }

@@ -21,10 +21,14 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
 
@@ -36,7 +40,7 @@ public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
     private String key02 = "456";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         hazelcastInstance = Hazelcast.newHazelcastInstance(null);
         cache = hazelcastInstance.getMap("myRepo");
@@ -47,7 +51,7 @@ public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         repo.stop();
         super.tearDown();
@@ -123,7 +127,7 @@ public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
         // c is a duplicate
 
         // should be started
-        assertEquals("Should be started", true, repo.getStatus().isStarted());
+        assertTrue(repo.getStatus().isStarted(), "Should be started");
 
         // send 3 message with one duplicated key (key01)
         template.sendBodyAndHeader("direct://in", "a", "messageId", key01);
