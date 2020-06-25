@@ -17,6 +17,7 @@
 package org.apache.camel.component.pulsar.utils.consumers;
 
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import org.apache.camel.component.pulsar.PulsarConfiguration;
 import org.apache.camel.component.pulsar.PulsarConsumer;
@@ -25,6 +26,7 @@ import org.apache.camel.component.pulsar.PulsarMessageListener;
 import org.apache.pulsar.client.api.ConsumerBuilder;
 import org.apache.pulsar.client.api.DeadLetterPolicy;
 import org.apache.pulsar.client.api.DeadLetterPolicy.DeadLetterPolicyBuilder;
+import org.apache.pulsar.client.api.RegexSubscriptionMode;
 
 public final class CommonCreationStrategyImpl {
 
@@ -34,7 +36,16 @@ public final class CommonCreationStrategyImpl {
     public static ConsumerBuilder<byte[]> create(final String name, final PulsarEndpoint pulsarEndpoint, final PulsarConsumer pulsarConsumer) {
         final PulsarConfiguration endpointConfiguration = pulsarEndpoint.getPulsarConfiguration();
 
-        ConsumerBuilder<byte[]> builder = pulsarEndpoint.getPulsarClient().newConsumer().topic(pulsarEndpoint.getUri()).subscriptionName(endpointConfiguration.getSubscriptionName())
+        ConsumerBuilder<byte[]> builder = pulsarEndpoint.getPulsarClient().newConsumer();
+        if (endpointConfiguration.isTopicsPattern()) {
+            builder.topicsPattern(pulsarEndpoint.getUri());
+            if (endpointConfiguration.getSubscriptionTopicsMode() != null) {
+                builder.subscriptionTopicsMode(endpointConfiguration.getSubscriptionTopicsMode());
+            }
+        } else {
+            builder.topic(pulsarEndpoint.getUri());
+        }
+        builder.subscriptionName(endpointConfiguration.getSubscriptionName())
             .receiverQueueSize(endpointConfiguration.getConsumerQueueSize()).consumerName(name).ackTimeout(endpointConfiguration.getAckTimeoutMillis(), TimeUnit.MILLISECONDS)
             .subscriptionInitialPosition(endpointConfiguration.getSubscriptionInitialPosition().toPulsarSubscriptionInitialPosition())
             .acknowledgmentGroupTime(endpointConfiguration.getAckGroupTimeMillis(), TimeUnit.MILLISECONDS)

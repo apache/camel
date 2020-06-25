@@ -362,6 +362,38 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
+         * Determines to which topics this consumer should be subscribed to -
+         * Persistent, Non-Persistent, or both. Only used with pattern
+         * subscriptions.
+         * 
+         * The option is a:
+         * <code>org.apache.pulsar.client.api.RegexSubscriptionMode</code> type.
+         * 
+         * Default: PersistentOnly
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder subscriptionTopicsMode(
+                RegexSubscriptionMode subscriptionTopicsMode) {
+            doSetProperty("subscriptionTopicsMode", subscriptionTopicsMode);
+            return this;
+        }
+        /**
+         * Determines to which topics this consumer should be subscribed to -
+         * Persistent, Non-Persistent, or both. Only used with pattern
+         * subscriptions.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.pulsar.client.api.RegexSubscriptionMode</code> type.
+         * 
+         * Default: PersistentOnly
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder subscriptionTopicsMode(
+                String subscriptionTopicsMode) {
+            doSetProperty("subscriptionTopicsMode", subscriptionTopicsMode);
+            return this;
+        }
+        /**
          * Type of the subscription EXCLUSIVESHAREDFAILOVERKEY_SHARED, defaults
          * to EXCLUSIVE.
          * 
@@ -389,6 +421,33 @@ public interface PulsarEndpointBuilderFactory {
         default PulsarEndpointConsumerBuilder subscriptionType(
                 String subscriptionType) {
             doSetProperty("subscriptionType", subscriptionType);
+            return this;
+        }
+        /**
+         * Whether the topic is a pattern (regular expression) that allows the
+         * consumer to subscribe to all matching topics in the namespace.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder topicsPattern(
+                boolean topicsPattern) {
+            doSetProperty("topicsPattern", topicsPattern);
+            return this;
+        }
+        /**
+         * Whether the topic is a pattern (regular expression) that allows the
+         * consumer to subscribe to all matching topics in the namespace.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder topicsPattern(String topicsPattern) {
+            doSetProperty("topicsPattern", topicsPattern);
             return this;
         }
     }
@@ -1064,6 +1123,16 @@ public interface PulsarEndpointBuilderFactory {
     enum SubscriptionInitialPosition {
         EARLIEST,
         LATEST;
+    }
+
+    /**
+     * Proxy enum for
+     * <code>org.apache.pulsar.client.api.RegexSubscriptionMode</code> enum.
+     */
+    enum RegexSubscriptionMode {
+        PersistentOnly,
+        NonPersistentOnly,
+        AllTopics;
     }
 
     /**

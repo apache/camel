@@ -248,6 +248,22 @@ public interface PulsarComponentBuilderFactory {
             return this;
         }
         /**
+         * Determines to which topics this consumer should be subscribed to -
+         * Persistent, Non-Persistent, or both. Only used with pattern
+         * subscriptions.
+         * 
+         * The option is a:
+         * <code>org.apache.pulsar.client.api.RegexSubscriptionMode</code> type.
+         * 
+         * Default: PersistentOnly
+         * Group: consumer
+         */
+        default PulsarComponentBuilder subscriptionTopicsMode(
+                org.apache.pulsar.client.api.RegexSubscriptionMode subscriptionTopicsMode) {
+            doSetProperty("subscriptionTopicsMode", subscriptionTopicsMode);
+            return this;
+        }
+        /**
          * Type of the subscription EXCLUSIVESHAREDFAILOVERKEY_SHARED, defaults
          * to EXCLUSIVE.
          * 
@@ -260,6 +276,19 @@ public interface PulsarComponentBuilderFactory {
         default PulsarComponentBuilder subscriptionType(
                 org.apache.camel.component.pulsar.utils.consumers.SubscriptionType subscriptionType) {
             doSetProperty("subscriptionType", subscriptionType);
+            return this;
+        }
+        /**
+         * Whether the topic is a pattern (regular expression) that allows the
+         * consumer to subscribe to all matching topics in the namespace.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default PulsarComponentBuilder topicsPattern(boolean topicsPattern) {
+            doSetProperty("topicsPattern", topicsPattern);
             return this;
         }
         /**
@@ -550,7 +579,9 @@ public interface PulsarComponentBuilderFactory {
             case "numberOfConsumers": getOrCreateConfiguration((PulsarComponent) component).setNumberOfConsumers((int) value); return true;
             case "subscriptionInitialPosition": getOrCreateConfiguration((PulsarComponent) component).setSubscriptionInitialPosition((org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition) value); return true;
             case "subscriptionName": getOrCreateConfiguration((PulsarComponent) component).setSubscriptionName((java.lang.String) value); return true;
+            case "subscriptionTopicsMode": getOrCreateConfiguration((PulsarComponent) component).setSubscriptionTopicsMode((org.apache.pulsar.client.api.RegexSubscriptionMode) value); return true;
             case "subscriptionType": getOrCreateConfiguration((PulsarComponent) component).setSubscriptionType((org.apache.camel.component.pulsar.utils.consumers.SubscriptionType) value); return true;
+            case "topicsPattern": getOrCreateConfiguration((PulsarComponent) component).setTopicsPattern((boolean) value); return true;
             case "pulsarMessageReceiptFactory": ((PulsarComponent) component).setPulsarMessageReceiptFactory((org.apache.camel.component.pulsar.PulsarMessageReceiptFactory) value); return true;
             case "batcherBuilder": getOrCreateConfiguration((PulsarComponent) component).setBatcherBuilder((org.apache.pulsar.client.api.BatcherBuilder) value); return true;
             case "batchingEnabled": getOrCreateConfiguration((PulsarComponent) component).setBatchingEnabled((boolean) value); return true;
