@@ -206,7 +206,7 @@ The message body if is not `null` (in case of tombstones), it contains the state
 Here is a very simple route that you can use in order to listen to Debezium events from MongoDB connector.
 [source,java]
 ----
-from("debezium-mongodb:dbz-test-1?offsetStorageFileName=/usr/offset-file-1.dat&mongodbHosts=rs0/localhost:27017&mongodbUser=debezium&mongodbPassword=dbz&mongodbName=dbserver1&databaseHistoryFileName=/usr/history-file-1.dat")
+from("debezium-mongodb:dbz-test-1?offsetStorageFileName=/usr/offset-file-1.dat&mongodbHosts=rs0/localhost:27017&mongodbUser=debezium&mongodbPassword=dbz&mongodbName=dbserver1&databaseHistoryFileFilename=/usr/history-file-1.dat")
     .log("Event received from Debezium : ${body}")
     .log("    with this identifier ${headers.CamelDebeziumIdentifier}")
     .log("    with these source metadata ${headers.CamelDebeziumSourceMetadata}")
