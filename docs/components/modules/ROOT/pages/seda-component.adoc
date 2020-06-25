@@ -133,7 +133,7 @@ BlockingQueue implementation, in this case the size option is not used
 
 [source,xml]
 ----
-<bean id="arrayQueue" class="java.util.concurrent.ArrayBlockingQueue">
+<bean id="arrayQueue" class="java.util.ArrayBlockingQueue">
   <constructor-arg index="0" value="10" ><!-- size -->
   <constructor-arg index="1" value="true" ><!-- fairness -->
 </bean>
