@@ -29,8 +29,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.bigquery.integration.BigQueryTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SqlQueryFromResourceTest extends BigQueryTestSupport {
     private static final String TABLE_ID = "test_sql_table";
@@ -47,7 +47,7 @@ public class SqlQueryFromResourceTest extends BigQueryTestSupport {
     @Produce("direct:in")
     private ProducerTemplate producer;
 
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         createBqTable(TABLE_ID);
     }

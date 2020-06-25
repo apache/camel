@@ -19,10 +19,10 @@ package org.apache.camel.component.google.bigquery.unit.sql;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLComponent;
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GoogleBigQuerySQLComponentTest {
     private CamelContext context = Mockito.mock(CamelContext.class);
