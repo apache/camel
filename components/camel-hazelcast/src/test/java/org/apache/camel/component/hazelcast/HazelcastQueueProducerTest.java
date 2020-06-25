@@ -25,13 +25,16 @@ import java.util.function.Predicate;
 
 import com.hazelcast.collection.IQueue;
 import com.hazelcast.core.HazelcastInstance;
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class HazelcastQueueProducerTest extends HazelcastCamelTestSupport {
 
@@ -48,14 +51,9 @@ public class HazelcastQueueProducerTest extends HazelcastCamelTestSupport {
         verify(hazelcastInstance, atLeastOnce()).getQueue("bar");
     }
 
-    @After
+    @AfterEach
     public void verifyQueueMock() {
         verifyNoMoreInteractions(queue);
-    }
-
-    @Test(expected = CamelExecutionException.class)
-    public void testWithInvalidOperation() {
-        template.sendBody("direct:putInvalid", "foo");
     }
 
     @Test

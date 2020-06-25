@@ -25,20 +25,22 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HdfsProducerSplitTest extends HdfsTestSupport {
 
     private static final Path BASE_FILE = new Path(new File("target/test/test-camel-simple-write-BASE_FILE").getAbsolutePath());
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        if (skipTest()) {
-            return;
-        }
+        checkTest();
         super.setUp();
     }
 
@@ -54,10 +56,6 @@ public class HdfsProducerSplitTest extends HdfsTestSupport {
 
     @Test
     public void testSimpleWriteFileWithIdleSplit() throws Exception {
-        if (skipTest()) {
-            return;
-        }
-
         for (int i = 0; i < 3; ++i) {
             template.sendBody("direct:start3", "CIAO" + i);
             Thread.sleep(2000);
@@ -87,10 +85,6 @@ public class HdfsProducerSplitTest extends HdfsTestSupport {
     }
 
     private void doTest(int routeNr) throws Exception {
-        if (skipTest()) {
-            return;
-        }
-
         for (int i = 0; i < 10; ++i) {
             template.sendBody("direct:start" + routeNr, "CIAO" + i);
         }
@@ -107,12 +101,8 @@ public class HdfsProducerSplitTest extends HdfsTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
-        if (skipTest()) {
-            return;
-        }
-
         super.tearDown();
         Thread.sleep(100);
         Configuration conf = new Configuration();

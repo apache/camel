@@ -23,11 +23,16 @@ import com.hazelcast.collection.IList;
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class HazelcastListProducerTest extends HazelcastCamelTestSupport {
 
@@ -44,14 +49,15 @@ public class HazelcastListProducerTest extends HazelcastCamelTestSupport {
         verify(hazelcastInstance, atLeastOnce()).getList("bar");
     }
 
-    @After
+    @AfterEach
     public final void verifyListMock() {
         verifyNoMoreInteractions(list);
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void testWithInvalidOperation() {
-        template.sendBody("direct:addInvalid", "bar");
+        assertThrows(CamelExecutionException.class,
+            () -> template.sendBody("direct:addInvalid", "bar"));
     }
 
     @Test

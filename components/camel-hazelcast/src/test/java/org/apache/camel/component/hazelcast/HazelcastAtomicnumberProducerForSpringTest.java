@@ -22,13 +22,18 @@ import java.util.Map;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.cp.CPSubsystem;
 import com.hazelcast.cp.IAtomicLong;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class HazelcastAtomicnumberProducerForSpringTest extends HazelcastCamelSpringTestSupport {
 
@@ -50,7 +55,7 @@ public class HazelcastAtomicnumberProducerForSpringTest extends HazelcastCamelSp
         verify(cpSubsystem, atLeastOnce()).getAtomicLong("foo");
     }
 
-    @After
+    @AfterEach
     public void verifyAtomicNumberMock() {
         verifyNoMoreInteractions(atomicNumber);
     }

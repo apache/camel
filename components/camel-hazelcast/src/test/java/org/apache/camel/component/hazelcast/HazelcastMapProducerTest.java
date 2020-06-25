@@ -31,11 +31,20 @@ import com.hazelcast.query.impl.predicates.SqlPredicate;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.hazelcast.testutil.Dummy;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anySet;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implements Serializable {
 
@@ -53,14 +62,15 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
         verify(hazelcastInstance, atLeastOnce()).getMap("foo");
     }
 
-    @After
+    @AfterEach
     public void verifyMapMock() {
         verifyNoMoreInteractions(map);
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void testWithInvalidOperation() {
-        template.sendBody("direct:putInvalid", "my-foo");
+        assertThrows(CamelExecutionException.class,
+            () -> template.sendBody("direct:putInvalid", "my-foo"));
     }
 
     @Test

@@ -23,11 +23,17 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.replicatedmap.ReplicatedMap;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class HazelcastReplicatedmapProducerTest extends HazelcastCamelTestSupport {
 
@@ -44,14 +50,15 @@ public class HazelcastReplicatedmapProducerTest extends HazelcastCamelTestSuppor
         verify(hazelcastInstance, atLeastOnce()).getReplicatedMap("bar");
     }
 
-    @After
+    @AfterEach
     public void verifyMapMock() {
         verifyNoMoreInteractions(map);
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void testWithInvalidOperation() {
-        template.sendBodyAndHeader("direct:putInvalid", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
+        assertThrows(CamelExecutionException.class,
+            () -> template.sendBodyAndHeader("direct:putInvalid", "my-foo", HazelcastConstants.OBJECT_ID, "4711"));
     }
 
     @Test

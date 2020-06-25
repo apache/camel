@@ -19,7 +19,12 @@ package org.apache.camel.processor.aggregate.hazelcast;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertCollectionSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggregationRepositoryCamelTestSupport {
 
@@ -42,13 +47,13 @@ public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggre
             Exchange newEx = createExchangeWithBody(testBody);
             Exchange oldEx = repoOne.add(context(), key, null, newEx);
 
-            assertNull("Old exchange should be null.", oldEx);
+            assertNull(oldEx, "Old exchange should be null.");
 
             final String theNewestBody = "This is the newest test body.";
             Exchange theNewestEx = createExchangeWithBody(theNewestBody);
 
             oldEx = repoTwo.add(context(), key, newEx, theNewestEx);
-            assertNotNull("oldEx is null", oldEx);
+            assertNotNull(oldEx, "oldEx is null");
             assertEquals(newEx.getIn().getBody(), oldEx.getIn().getBody());
 
         } finally {
@@ -71,13 +76,13 @@ public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggre
             Exchange newEx = createExchangeWithBody(testBody);
             Exchange oldEx = repoOne.add(context(), key, newEx);
 
-            assertNull("Old exchange should be null.", oldEx);
+            assertNull(oldEx, "Old exchange should be null.");
 
             final String theNewestBody = "This is the newest test body.";
             Exchange theNewestEx = createExchangeWithBody(theNewestBody);
 
             oldEx = repoTwo.add(context(), key, theNewestEx);
-            assertNotNull("oldEx is null", oldEx);
+            assertNotNull(oldEx, "oldEx is null");
             assertEquals(newEx.getIn().getBody(), oldEx.getIn().getBody());
 
         } finally {
@@ -104,8 +109,8 @@ public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggre
             assertEquals(1, getSecondInstance().getMap(THREAD_SAFE_REPO).size());
 
             Exchange gotEx = repoTwo.get(context(), key);
-            assertNotNull("gotEx is null", gotEx);
-            assertEquals("ex and gotEx should be equal", gotEx.getIn().getBody(), ex.getIn().getBody());
+            assertNotNull(gotEx, "gotEx is null");
+            assertEquals(gotEx.getIn().getBody(), ex.getIn().getBody(), "ex and gotEx should be equal");
         } finally {
             repoOne.doStop();
             repoTwo.doStop();
@@ -129,8 +134,8 @@ public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggre
             repoOne.add(context(), key, ex);
 
             Exchange gotEx = repoTwo.get(context(), key);
-            assertNotNull("gotEx is null", gotEx);
-            assertEquals("ex and gotEx should be equal", gotEx.getIn().getBody(), ex.getIn().getBody());
+            assertNotNull(gotEx, "gotEx is null");
+            assertEquals(gotEx.getIn().getBody(), ex.getIn().getBody(), "ex and gotEx should be equal");
         } finally {
             repoOne.doStop();
             repoTwo.doStop();
@@ -155,18 +160,18 @@ public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggre
             repoOne.add(context(), key, null, ex);
 
             Exchange getBackEx = repoTwo.get(context(), key);
-            assertNotNull("getBackEx should not be null.", getBackEx);
+            assertNotNull(getBackEx, "getBackEx should not be null.");
 
             repoTwo.remove(context(), key, ex);
 
             getBackEx = repoOne.get(context(), key);
-            assertNull("getBackEx should be null here.", getBackEx);
+            assertNull(getBackEx, "getBackEx should be null here.");
 
             Set<String> keys = repoTwo.scan(context());
             assertCollectionSize(keys, 1);
 
             getBackEx = repoOne.recover(context(), keys.iterator().next());
-            assertNotNull("getBackEx got from persistent repo should not be null.", getBackEx);
+            assertNotNull(getBackEx, "getBackEx got from persistent repo should not be null.");
 
 
         } finally {

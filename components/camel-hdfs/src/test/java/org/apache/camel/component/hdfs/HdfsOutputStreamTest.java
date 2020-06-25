@@ -23,13 +23,13 @@ import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.util.Progressable;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -50,7 +50,7 @@ public class HdfsOutputStreamTest {
 
     private HdfsOutputStream underTest;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         hdfsInfoFactory = mock(HdfsInfoFactory.class);
         HdfsInfo hdfsInfo = mock(HdfsInfo.class);

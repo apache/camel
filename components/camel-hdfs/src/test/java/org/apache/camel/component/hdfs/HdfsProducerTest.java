@@ -41,30 +41,26 @@ import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.util.ReflectionUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.language.simple.SimpleLanguage.simple;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HdfsProducerTest extends HdfsTestSupport {
 
     private static final Path TEMP_DIR = new Path(new File("target/test/").getAbsolutePath());
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        if (skipTest()) {
-            return;
-        }
+        checkTest();
         super.setUp();
     }
 
     @Test
     public void testProducer() throws Exception {
-        if (skipTest()) {
-            return;
-        }
         template.sendBody("direct:start1", "PAPPO");
 
         Configuration conf = new Configuration();
@@ -80,9 +76,6 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testProducerClose() throws Exception {
-        if (skipTest()) {
-            return;
-        }
         for (int i = 0; i < 10; ++i) {
             // send 10 messages, and mark to close in last message
             template.sendBodyAndHeader("direct:start1", "PAPPO" + i, HdfsConstants.HDFS_CLOSE, i == 9 ? true : false);
@@ -106,9 +99,6 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testWriteBoolean() throws Exception {
-        if (skipTest()) {
-            return;
-        }
         Boolean aBoolean = true;
         template.sendBody("direct:write_boolean", aBoolean);
 
@@ -126,9 +116,6 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testWriteByte() throws Exception {
-        if (skipTest()) {
-            return;
-        }
         byte aByte = 8;
         template.sendBody("direct:write_byte", aByte);
 
@@ -146,9 +133,6 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testWriteInt() throws Exception {
-        if (skipTest()) {
-            return;
-        }
         int anInt = 1234;
         template.sendBody("direct:write_int", anInt);
 
@@ -166,9 +150,6 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testWriteFloat() throws Exception {
-        if (skipTest()) {
-            return;
-        }
         float aFloat = 12.34f;
         template.sendBody("direct:write_float", aFloat);
 
@@ -186,9 +167,6 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testWriteDouble() throws Exception {
-        if (skipTest()) {
-            return;
-        }
         Double aDouble = 12.34D;
         template.sendBody("direct:write_double", aDouble);
 
@@ -206,9 +184,6 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testWriteLong() throws Exception {
-        if (skipTest()) {
-            return;
-        }
         long aLong = 1234567890;
         template.sendBody("direct:write_long", aLong);
 
@@ -226,9 +201,6 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testWriteText() throws Exception {
-        if (skipTest()) {
-            return;
-        }
         String txt = "CIAO MONDO !";
         template.sendBody("direct:write_text1", txt);
 
@@ -246,9 +218,6 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testWriteTextWithKey() throws Exception {
-        if (skipTest()) {
-            return;
-        }
         String txtKey = "THEKEY";
         String txtValue = "CIAO MONDO !";
         template.sendBodyAndHeader("direct:write_text2", txtValue, "KEY", txtKey);
@@ -267,9 +236,6 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testMapWriteTextWithKey() throws Exception {
-        if (skipTest()) {
-            return;
-        }
         String txtKey = "THEKEY";
         String txtValue = "CIAO MONDO !";
         template.sendBodyAndHeader("direct:write_text3", txtValue, "KEY", txtKey);
@@ -287,9 +253,6 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testArrayWriteText() throws Exception {
-        if (skipTest()) {
-            return;
-        }
         String txtValue = "CIAO MONDO !";
         template.sendBody("direct:write_text4", txtValue);
 
@@ -306,9 +269,6 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testBloomMapWriteText() throws Exception {
-        if (skipTest()) {
-            return;
-        }
         String txtKey = "THEKEY";
         String txtValue = "CIAO MONDO !";
         template.sendBodyAndHeader("direct:write_text5", txtValue, "KEY", txtKey);
@@ -326,10 +286,6 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testWriteTextWithDynamicFilename() throws Exception {
-        if (skipTest()) {
-            return;
-        }
-
         for (int i = 0; i < 5; i++) {
             template.sendBodyAndHeader("direct:write_dynamic_filename", "CIAO" + i, Exchange.FILE_NAME, "file" + i);
         }
@@ -349,10 +305,6 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testWriteTextWithDynamicFilenameExpression() throws Exception {
-        if (skipTest()) {
-            return;
-        }
-
         for (int i = 0; i < 5; i++) {
             template.sendBodyAndHeader("direct:write_dynamic_filename", "CIAO" + i, Exchange.FILE_NAME, simple("file-${body}"));
         }
@@ -371,11 +323,8 @@ public class HdfsProducerTest extends HdfsTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
-        if (skipTest()) {
-            return;
-        }
         super.tearDown();
 
         Thread.sleep(250);
