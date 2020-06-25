@@ -180,7 +180,7 @@ dynamically via a header, so for example:
 --------------------------------------------------------------------------------------------
 from("direct:in").
 setHeader(MustacheConstants.MUSTACHE_RESOURCE_URI).constant("path/to/my/template.mustache").
-to("mustache:dummy");
+to("mustache:dummy?allowTemplateFromHeader=true");
 --------------------------------------------------------------------------------------------
 
 == The Email Sample
