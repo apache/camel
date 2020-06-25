@@ -41,7 +41,13 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GitProducerTest extends GitTestSupport {
 
@@ -129,12 +135,14 @@ public class GitProducerTest extends GitTestSupport {
         git.close();
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void doubleCloneOperationTest() throws Exception {
-        template.sendBody("direct:clone", "");
-        template.sendBody("direct:clone", "");
-        File gitDir = new File(gitLocalRepo, ".git");
-        assertEquals(gitDir.exists(), true);
+        assertThrows(CamelExecutionException.class, () -> {
+            template.sendBody("direct:clone", "");
+            template.sendBody("direct:clone", "");
+            File gitDir = new File(gitLocalRepo, ".git");
+            assertEquals(gitDir.exists(), true);
+        });
     }
 
     @Test
@@ -226,7 +234,7 @@ public class GitProducerTest extends GitTestSupport {
         git.close();
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void commitTestAllowEmptyFalse() throws Exception {
         // Init
         Git git = getGitTestRepository();
@@ -242,7 +250,8 @@ public class GitProducerTest extends GitTestSupport {
         // Test camel-git commit (with allowEmpty set to false)
         Map<String, Object> headers = new HashMap<>();
         headers.put(GitConstants.GIT_COMMIT_MESSAGE, commitMessage);
-        template.requestBodyAndHeaders("direct:commit-not-allow-empty", "", headers);
+        assertThrows(CamelExecutionException.class,
+            () -> template.requestBodyAndHeaders("direct:commit-not-allow-empty", "", headers));
 
         // Check : An exception should have been raised
     }
