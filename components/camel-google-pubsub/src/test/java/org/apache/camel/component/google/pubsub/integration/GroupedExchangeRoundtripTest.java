@@ -28,7 +28,9 @@ import org.apache.camel.component.google.pubsub.PubsubTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GroupedExchangeRoundtripTest extends PubsubTestSupport {
 
@@ -100,6 +102,6 @@ public class GroupedExchangeRoundtripTest extends PubsubTestSupport {
 
         // Send result section
         List<Exchange> results = sendResult.getExchanges();
-        assertEquals("Received exchanges", 1, results.size());
+        assertEquals(1, results.size(), "Received exchanges");
     }
 }

@@ -23,7 +23,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.pubsub.GooglePubsubConstants;
 import org.apache.camel.component.google.pubsub.GooglePubsubEndpoint;
 import org.apache.camel.component.google.pubsub.PubsubTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PubsubEndpointTest extends PubsubTestSupport {
 
@@ -44,7 +48,7 @@ public class PubsubEndpointTest extends PubsubTestSupport {
 
         // :1 identifies the first registered endpoint fo a type in the context
         Endpoint endpoint = context.hasEndpoint(String.format("google-pubsub:%s:%s:1", PROJECT_ID, SUBSCRIPTION_URI));
-        assertNotNull(String.format("Endpoint 'google-pubsub:%s:%s' is not found in Camel Context", PROJECT_ID, SUBSCRIPTION_URI), endpoint);
+        assertNotNull(endpoint, String.format("Endpoint 'google-pubsub:%s:%s' is not found in Camel Context", PROJECT_ID, SUBSCRIPTION_URI));
 
         assertTrue(endpoint instanceof GooglePubsubEndpoint);
         GooglePubsubEndpoint pubsubEndpoint = (GooglePubsubEndpoint)endpoint;

@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.pubsub.PubsubTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AcknowledgementTest extends PubsubTestSupport {
 
