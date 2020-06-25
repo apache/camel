@@ -234,7 +234,7 @@ should use dynamically via a header, so for example:
 ----
 from("direct:in")
     .setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI).constant("path/to/my/template.robot")
-    .to("robotframework:dummy");
+    .to("robotframework:dummy?allowTemplateFromHeader=true");
 ----
 
 Robotframework component helps you pass values into robot test cases 
@@ -247,7 +247,7 @@ different ways. Exchange body, headers and properties.
 from("direct:in")
     .setBody(constant("Hello Robot"))
     .setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI).constant("path/to/my/template.robot")
-    .to("robotframework:dummy");
+    .to("robotframework:dummy?allowTemplateFromHeader=true");
 ----
 
 And the `template.robot` file:
@@ -265,7 +265,7 @@ And the `template.robot` file:
 from("direct:in")
     .setHeader("testHeader", constant("testHeaderValue"))
     .setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI).constant("path/to/my/template.robot")
-    .to("robotframework:dummy");
+    .to("robotframework:dummy?allowTemplateFromHeader=true");
 ----
 
 And the `template.robot` file:
@@ -283,7 +283,7 @@ And the `template.robot` file:
 from("direct:in")
     .setProperty"testProperty", constant("testPropertyValue"))
     .setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI).constant("path/to/my/template.robot")
-    .to("robotframework:dummy");
+    .to("robotframework:dummy?allowTemplateFromHeader=true");
 ----
 
 And the `template.robot` file:
