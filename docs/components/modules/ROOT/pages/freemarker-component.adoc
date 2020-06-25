@@ -235,7 +235,7 @@ should use dynamically via a header, so for example:
 ---------------------------------------------------------------------------------------------
 from("direct:in").
   setHeader(FreemarkerConstants.FREEMARKER_RESOURCE_URI).constant("path/to/my/template.ftl").
-  to("freemarker:dummy");
+  to("freemarker:dummy?allowTemplateFromHeader=true");
 ---------------------------------------------------------------------------------------------
 
 == The Email Sample
