@@ -187,7 +187,7 @@ header, so for example:
 -------------------------------------------------------------------------
 from("direct:in").
   setHeader("CamelMvelResourceUri").constant("path/to/my/template.mvel").
-  to("mvel:dummy");
+  to("mvel:dummy?allowTemplateFromHeader=true");
 -------------------------------------------------------------------------
 
 To specify a template directly as a header the component should use
@@ -197,7 +197,7 @@ dynamically via a header, so for example:
 ------------------------------------------------------------------------------------------
 from("direct:in").
   setHeader("CamelMvelTemplate").constant("@{\"The result is \" + request.body * 3}\" }").
-  to("velocity:dummy");
+  to("velocity:dummy?allowTemplateFromHeader=true");
 ------------------------------------------------------------------------------------------
 
 
