@@ -19,9 +19,10 @@ package org.apache.camel.component.hipchat;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HipchatEndpointTest {
     @Test
@@ -35,6 +36,6 @@ public class HipchatEndpointTest {
             }
         });
 
-        Assert.assertEquals(5000, consumer.getDelay());
+        assertEquals(5000, consumer.getDelay());
     }
 }
