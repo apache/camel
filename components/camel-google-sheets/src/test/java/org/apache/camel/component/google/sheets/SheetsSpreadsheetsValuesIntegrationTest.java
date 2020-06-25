@@ -34,11 +34,14 @@ import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiCollecti
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsConstants;
 import org.apache.camel.component.google.sheets.internal.SheetsSpreadsheetsValuesApiMethod;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.google.sheets.server.GoogleSheetsApiTestServerAssert.assertThatGoogleApi;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for {@link com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values} APIs.
@@ -69,9 +72,9 @@ public class SheetsSpreadsheetsValuesIntegrationTest extends AbstractGoogleSheet
 
         final ValueRange result = requestBodyAndHeaders("direct://GET", null, headers);
 
-        assertNotNull("get result is null", result);
+        assertNotNull(result, "get result is null");
         assertEquals(TEST_SHEET + "!A1:B2", result.getRange());
-        assertTrue("expected empty value range but found entries", ObjectHelper.isEmpty(result.getValues()));
+        assertTrue(ObjectHelper.isEmpty(result.getValues()), "expected empty value range but found entries");
 
         LOG.debug("get: " + result);
     }
@@ -110,7 +113,7 @@ public class SheetsSpreadsheetsValuesIntegrationTest extends AbstractGoogleSheet
 
         final UpdateValuesResponse result = requestBodyAndHeaders("direct://UPDATE", null, headers);
 
-        assertNotNull("update result is null", result);
+        assertNotNull(result, "update result is null");
         assertEquals(testSheet.getSpreadsheetId(), result.getSpreadsheetId());
         assertEquals(TEST_SHEET + "!A1:B2", result.getUpdatedRange());
         assertEquals(Integer.valueOf(2), result.getUpdatedRows());
@@ -147,7 +150,7 @@ public class SheetsSpreadsheetsValuesIntegrationTest extends AbstractGoogleSheet
 
         final AppendValuesResponse result = requestBodyAndHeaders("direct://APPEND", null, headers);
 
-        assertNotNull("append result is null", result);
+        assertNotNull(result, "append result is null");
         assertEquals(testSheet.getSpreadsheetId(), result.getSpreadsheetId());
         assertEquals(TEST_SHEET + "!A10:C10", result.getUpdates().getUpdatedRange());
         assertEquals(Integer.valueOf(1), result.getUpdates().getUpdatedRows());
@@ -187,7 +190,7 @@ public class SheetsSpreadsheetsValuesIntegrationTest extends AbstractGoogleSheet
 
         final ClearValuesResponse result = requestBodyAndHeaders("direct://CLEAR", null, headers);
 
-        assertNotNull("clear result is null", result);
+        assertNotNull(result, "clear result is null");
         assertEquals(testSheet.getSpreadsheetId(), result.getSpreadsheetId());
         assertEquals(TEST_SHEET + "!A1:B2", result.getClearedRange());
 
