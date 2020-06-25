@@ -33,7 +33,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.pubsub.PubsubTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BodyTypesTest extends PubsubTestSupport {
 
@@ -90,25 +94,25 @@ public class BodyTypesTest extends PubsubTestSupport {
         producer.send(exchange);
 
         List<Exchange> sentExchanges = sendResult.getExchanges();
-        assertEquals("Sent exchanges", 1, sentExchanges.size());
+        assertEquals(1, sentExchanges.size(), "Sent exchanges");
 
         Exchange sentExchange = sentExchanges.get(0);
 
-        assertTrue("Sent body type is byte[]", sentExchange.getIn().getBody() instanceof byte[]);
+        assertTrue(sentExchange.getIn().getBody() instanceof byte[], "Sent body type is byte[]");
 
-        assertTrue("Sent body type is the one sent", sentExchange.getIn().getBody() == body);
+        assertTrue(sentExchange.getIn().getBody() == body, "Sent body type is the one sent");
 
         receiveResult.assertIsSatisfied(5000);
 
         List<Exchange> receivedExchanges = receiveResult.getExchanges();
 
-        assertNotNull("Received exchanges", receivedExchanges);
+        assertNotNull(receivedExchanges, "Received exchanges");
 
         Exchange receivedExchange = receivedExchanges.get(0);
 
-        assertTrue("Received body is of byte[] type", receivedExchange.getIn().getBody() instanceof byte[]);
+        assertTrue(receivedExchange.getIn().getBody() instanceof byte[], "Received body is of byte[] type");
 
-        assertTrue("Received body equals sent", Arrays.equals(body, (byte[]) receivedExchange.getIn().getBody()));
+        assertTrue(Arrays.equals(body, (byte[]) receivedExchange.getIn().getBody()), "Received body equals sent");
 
     }
 
@@ -127,25 +131,25 @@ public class BodyTypesTest extends PubsubTestSupport {
         producer.send(exchange);
 
         List<Exchange> sentExchanges = sendResult.getExchanges();
-        assertEquals("Sent exchanges", 1, sentExchanges.size());
+        assertEquals(1, sentExchanges.size(), "Sent exchanges");
 
         Exchange sentExchange = sentExchanges.get(0);
 
-        assertTrue("Sent body type is byte[]", sentExchange.getIn().getBody() instanceof Map);
+        assertTrue(sentExchange.getIn().getBody() instanceof Map, "Sent body type is byte[]");
 
         receiveResult.assertIsSatisfied(5000);
 
         List<Exchange> receivedExchanges = receiveResult.getExchanges();
 
-        assertNotNull("Received exchanges", receivedExchanges);
+        assertNotNull(receivedExchanges, "Received exchanges");
 
         Exchange receivedExchange = receivedExchanges.get(0);
 
-        assertTrue("Received body is of byte[] type", receivedExchange.getIn().getBody() instanceof byte[]);
+        assertTrue(receivedExchange.getIn().getBody() instanceof byte[], "Received body is of byte[] type");
 
         Object bodyReceived = deserialize((byte[]) receivedExchange.getIn().getBody());
 
-        assertTrue("Received body is a Map ", ((Map) bodyReceived).get("KEY").equals("VALUE1212"));
+        assertTrue(((Map) bodyReceived).get("KEY").equals("VALUE1212"), "Received body is a Map");
 
     }
 

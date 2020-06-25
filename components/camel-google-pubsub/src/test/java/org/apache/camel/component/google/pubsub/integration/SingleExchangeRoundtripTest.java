@@ -30,7 +30,10 @@ import org.apache.camel.component.google.pubsub.GooglePubsubConstants;
 import org.apache.camel.component.google.pubsub.PubsubTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SingleExchangeRoundtripTest extends PubsubTestSupport {
 
@@ -93,24 +96,24 @@ public class SingleExchangeRoundtripTest extends PubsubTestSupport {
         producer.send(exchange);
 
         List<Exchange> sentExchanges = sendResult.getExchanges();
-        assertEquals("Sent exchanges", 1, sentExchanges.size());
+        assertEquals(1, sentExchanges.size(), "Sent exchanges");
 
         Exchange sentExchange = sentExchanges.get(0);
 
-        assertEquals("Sent ID", exchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID), sentExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID));
+        assertEquals(exchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID), sentExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID), "Sent ID");
 
         receiveResult.assertIsSatisfied(5000);
 
         List<Exchange> receivedExchanges = receiveResult.getExchanges();
 
-        assertNotNull("Received exchanges", receivedExchanges);
+        assertNotNull(receivedExchanges, "Received exchanges");
 
         Exchange receivedExchange = receivedExchanges.get(0);
 
-        assertNotNull("PUBSUB Message ID Property", receivedExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID));
-        assertNotNull("PUBSUB Published Time", receivedExchange.getIn().getHeader(GooglePubsubConstants.PUBLISH_TIME));
+        assertNotNull(receivedExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID), "PUBSUB Message ID Property");
+        assertNotNull(receivedExchange.getIn().getHeader(GooglePubsubConstants.PUBLISH_TIME), "PUBSUB Published Time");
 
-        assertEquals("PUBSUB Header Attribute", attributeValue, ((Map)receivedExchange.getIn().getHeader(GooglePubsubConstants.ATTRIBUTES)).get(attributeKey));
+        assertEquals(attributeValue, ((Map)receivedExchange.getIn().getHeader(GooglePubsubConstants.ATTRIBUTES)).get(attributeKey), "PUBSUB Header Attribute");
 
         assertEquals(sentExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID), receivedExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID));
     }
