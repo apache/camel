@@ -122,7 +122,6 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-
 == Examples
 
 * `flatpack:fixed:foo.pzmap.xml` creates a fixed-width endpoint using
@@ -326,6 +325,5 @@ the download page for the latest versions).
   <version>x.x.x</version>
 </dependency>
 -----------------------------------------
-
 
 include::camel-spring-boot::page$flatpack-starter.adoc[]
