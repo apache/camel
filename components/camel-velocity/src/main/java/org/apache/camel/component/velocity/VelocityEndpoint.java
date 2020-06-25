@@ -87,8 +87,8 @@ public class VelocityEndpoint extends ResourceEndpoint {
             Properties properties = new Properties();
             properties.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_CACHE, isLoaderCache() ? "true" : "false");
             properties.setProperty(RuntimeConstants.RESOURCE_LOADER, "file, class");
-            properties.setProperty("class.resource.loader.description", "Camel Velocity Classpath Resource Loader");
-            properties.setProperty("class.resource.loader.class", CamelVelocityClasspathResourceLoader.class.getName());
+            properties.setProperty("resource.loader.class.description", "Camel Velocity Classpath Resource Loader");
+            properties.setProperty("resource.loader.class.class", CamelVelocityClasspathResourceLoader.class.getName());
             final Logger velocityLogger = LoggerFactory.getLogger("org.apache.camel.maven.Velocity");
             properties.setProperty(RuntimeConstants.RUNTIME_LOG_NAME, velocityLogger.getName());
 
