@@ -181,7 +181,7 @@ dynamically via a header, so for example:
 ------------------------------------------------------------------
 from("direct:in").
 setHeader(ChunkConstants.CHUNK_RESOURCE_URI).constant("template").
-to("chunk:dummy");
+to("chunk:dummy?allowTemplateFromHeader=true");
 ------------------------------------------------------------------
 
 An example of Chunk component options use:
