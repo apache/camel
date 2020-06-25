@@ -26,12 +26,15 @@ import org.apache.camel.component.git.GitTestSupport;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.lib.Repository;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GitRemoteProducerTest extends GitTestSupport {
 
-    @Ignore("Require a remote git repository")
+    @Disabled("Require a remote git repository")
     @Test
     public void pushTest() throws Exception {
 
