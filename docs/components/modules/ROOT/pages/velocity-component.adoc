@@ -252,7 +252,7 @@ should use dynamically via a header, so for example:
 ---------------------------------------------------------------------------
 from("direct:in").
   setHeader("CamelVelocityResourceUri").constant("path/to/my/template.vm").
-  to("velocity:dummy");
+  to("velocity:dummy?allowTemplateFromHeader=true"");
 ---------------------------------------------------------------------------
 
 It's possible to specify a template directly as a header
@@ -262,7 +262,7 @@ the component should use dynamically via a header, so for example:
 ---------------------------------------------------------------------------------------------------------------
 from("direct:in").
   setHeader("CamelVelocityTemplate").constant("Hi this is a velocity template that can do templating ${body}").
-  to("velocity:dummy");
+  to("velocity:dummy?allowTemplateFromHeader=true"");
 ---------------------------------------------------------------------------------------------------------------
 
 == The Email Sample
