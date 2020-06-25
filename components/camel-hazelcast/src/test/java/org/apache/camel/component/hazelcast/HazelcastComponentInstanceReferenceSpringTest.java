@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.hazelcast;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HazelcastComponentInstanceReferenceSpringTest extends HazelcastCamelSpringTestSupport {
 

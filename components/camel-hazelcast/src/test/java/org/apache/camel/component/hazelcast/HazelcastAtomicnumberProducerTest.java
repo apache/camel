@@ -24,11 +24,17 @@ import com.hazelcast.cp.CPSubsystem;
 import com.hazelcast.cp.IAtomicLong;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class HazelcastAtomicnumberProducerTest extends HazelcastCamelTestSupport {
 
@@ -50,14 +56,15 @@ public class HazelcastAtomicnumberProducerTest extends HazelcastCamelTestSupport
         verify(cpSubsystem, atLeastOnce()).getAtomicLong("foo");
     }
 
-    @After
+    @AfterEach
     public void verifyAtomicNumberMock() {
         verifyNoMoreInteractions(atomicNumber);
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void testWithInvalidOperationName() {
-        template.sendBody("direct:setInvalid", 4711);
+        assertThrows(CamelExecutionException.class,
+            () -> template.sendBody("direct:setInvalid", 4711));
     }
 
     @Test
