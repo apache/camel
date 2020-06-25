@@ -28,7 +28,9 @@ import org.apache.camel.component.github.GitHubComponentTestBase;
 import org.apache.camel.component.github.GitHubConstants;
 import org.eclipse.egit.github.core.Issue;
 import org.eclipse.egit.github.core.Repository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CreateIssueProducerTest extends GitHubComponentTestBase {
 

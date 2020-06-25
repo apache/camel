@@ -23,10 +23,14 @@ import org.apache.camel.component.github.services.MockIssueService;
 import org.apache.camel.component.github.services.MockPullRequestService;
 import org.apache.camel.component.github.services.MockRepositoryService;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class GitHubComponentTestBase extends CamelTestSupport {
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @BindToRegistry(GitHubConstants.GITHUB_COMMIT_SERVICE)
     protected MockCommitService commitService = new MockCommitService();
