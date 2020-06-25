@@ -13,4 +13,4 @@ jobs:
     steps:
     - uses: syndesisio/backport-action@v1
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.GITHUB_TOKEN }}
