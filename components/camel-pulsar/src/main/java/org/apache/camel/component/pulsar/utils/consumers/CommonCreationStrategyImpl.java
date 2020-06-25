@@ -17,6 +17,7 @@
 package org.apache.camel.component.pulsar.utils.consumers;
 
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import org.apache.camel.component.pulsar.PulsarConfiguration;
 import org.apache.camel.component.pulsar.PulsarConsumer;
@@ -25,6 +26,7 @@ import org.apache.camel.component.pulsar.PulsarMessageListener;
 import org.apache.pulsar.client.api.ConsumerBuilder;
 import org.apache.pulsar.client.api.DeadLetterPolicy;
 import org.apache.pulsar.client.api.DeadLetterPolicy.DeadLetterPolicyBuilder;
+import org.apache.pulsar.client.api.RegexSubscriptionMode;
 
 public final class CommonCreationStrategyImpl {
 
@@ -36,7 +38,9 @@ public final class CommonCreationStrategyImpl {
 
         ConsumerBuilder<byte[]> builder = pulsarEndpoint.getPulsarClient().newConsumer();
         if (endpointConfiguration.isTopicsPattern()) {
-            builder.topicsPattern(pulsarEndpoint.getUri());
+            Pattern pattern = Pattern.compile("public/default/camel-.*");
+//            builder.topicsPattern(pulsarEndpoint.getUri());
+            builder.topicsPattern(pattern);
         } else {
             builder.topic(pulsarEndpoint.getUri());
         }
