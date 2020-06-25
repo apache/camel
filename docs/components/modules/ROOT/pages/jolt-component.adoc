@@ -137,7 +137,7 @@ dynamically via a header, so for example:
 ---------------------------------------------------------------------
 from("direct:in").
   setHeader("CamelJoltResourceUri").constant("path/to/my/spec.json").
-  to("jolt:dummy");
+  to("jolt:dummy?allowTemplateFromHeader=true");
 ---------------------------------------------------------------------
 
  
