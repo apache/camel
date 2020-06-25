@@ -56,7 +56,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         MinioClient minioClient = getConfiguration().getMinioClient();
         String objectName = getConfiguration().getObjectName();
         String bucketName = getConfiguration().getBucketName();
-        Queue<Exchange> exchanges = null;
+        Queue<Exchange> exchanges;
 
         if (objectName != null) {
             LOG.trace("Getting object in bucket [{}] with object name [{}]...", bucketName, objectName);
@@ -77,18 +77,49 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
 
             LOG.trace("Queueing objects in bucket [{}]...", bucketName);
 
-            Iterable<Result<Item>> results = minioClient.listObjects(bucketName,
-                    getConfiguration().getPrefix(),
-                    getConfiguration().isRecursive(),
-                    getConfiguration().isUseVersion1()
-            );
-
             // if there was a marker from previous poll then use that to
             // continue from where we left last time
             if (marker == null) {
-                marker = results.iterator();
+
+                try {
+                    Iterable<Result<Item>> results = minioClient.listObjects(bucketName,
+                            getConfiguration().getPrefix(),
+                            getConfiguration().isRecursive(),
+                            getConfiguration().isUseVersion1()
+                    );
+
+                    marker = results.iterator();
+                } catch (Exception e) {
+                    LOG.trace("Failed to get object list in bucket [{}], Error message [{}]", bucketName, e);
+                }
             }
-            exchanges = pollMarker(bucketName, minioClient);
+
+            LOG.trace("Resuming from marker: {}", marker);
+            Queue<Exchange> bucketQueue = new LinkedList<>();
+            for (int i = 0; i < maxMessagesPerPoll; i++) {
+                assert marker != null;
+                if (marker.hasNext()) {
+                    Item item = marker.next().get();
+                    LOG.trace("Getting object name: [{}] in [{}]", item.objectName(), bucketName);
+                    try {
+                        InputStream resumeStream = minioClient.getObject(
+                                bucketName,
+                                item.objectName(),
+                                getConfiguration().getOffset(),
+                                getConfiguration().getLength(),
+                                getConfiguration().getServerSideEncryption());
+
+                        Exchange exchange = getEndpoint().createExchange(minioObject, item.objectName());
+                        bucketQueue.add(exchange);
+
+                    } catch (Exception e) {
+                        LOG.trace("Failed to get object in bucket [{}] with object name [{}], Error message [{}]", bucketName, item.objectName(), e);
+                    }
+                } else {
+                    // no more data so clear marker
+                    marker = null;
+                }
+            }
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Found {} objects in bucket [{}]...", ((Collection<?>) results).size(), bucketName);
@@ -96,30 +127,6 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
 
         }
         return processBatch(CastUtils.cast(exchanges));
-    }
-
-    private Queue<Object> pollMarker(String bucketName, MinioClient minioClient) throws Exception {
-        LOG.trace("Resuming from marker: {}", marker);
-        Queue<Object> bucketQueue = null;
-        while (marker.hasNext()) {
-            Item item = marker.next().get();
-            LOG.trace("Getting object name: [{}] in [{}]", item.objectName(), bucketName);
-            try {
-                InputStream resumeStream = minioClient.getObject(bucketName,
-                        item.objectName(),
-                        getConfiguration().getOffset(),
-                        getConfiguration().getLength(),
-                        getConfiguration().getServerSideEncryption());
-
-                bucketQueue.add(createExchanges(resumeStream, item.objectName()));
-
-            } catch (Exception e) {
-                LOG.trace("Failed to get object in bucket [{}] with object name [{}], Error message [{}]", bucketName, item.objectName(), e);
-            }
-        }
-        // no more data so clear marker
-        marker = null;
-        return bucketQueue;
     }
 
     protected Queue<Exchange> createExchanges(InputStream stream, String key) {

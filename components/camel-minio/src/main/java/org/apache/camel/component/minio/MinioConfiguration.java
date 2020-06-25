@@ -18,23 +18,38 @@ package org.apache.camel.component.minio;
 
 import io.minio.MinioClient;
 import io.minio.ServerSideEncryption;
+import okhttp3.OkHttpClient;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 @UriParams
 public class MinioConfiguration implements Cloneable {
 
-    private String bucketName;
     @UriParam
-    private MinioClient minioClient;
+    private String endpoint;
+    @UriParam
+    private Integer proxyPort;
+
     @UriParam(label = "security", secret = true)
     private String accessKey;
     @UriParam(label = "security", secret = true)
     private String secretKey;
     @UriParam(defaultValue = "false")
     private boolean useAWSIAMCredentials;
+    @UriParam(defaultValue = "false")
+    private boolean isSecure;
+
     @UriParam
     private String region;
+
+    @UriParam
+    private OkHttpClient customHttpClient;
+
+    @UriParam
+    private String bucketName;
+    @UriParam
+    private MinioClient minioClient;
+
     @UriParam(label = "consumer")
     private String objectName;
     @UriParam(label = "consumer")
@@ -71,6 +86,99 @@ public class MinioConfiguration implements Cloneable {
     @UriParam
     private boolean pathStyleAccess;
 
+
+    public String getEndpoint() {
+        return endpoint;
+    }
+    /**
+     * Endpoint can be an URL, domain name, IPv4 address or IPv6 address
+     */
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    /**
+     * (Optional) TCP/IP port number. 80 and 443 are used as defaults for HTTP and HTTPS.
+     */
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+
+    public String getAccessKey() {
+        return accessKey;
+    }
+
+    /**
+     * Amazon AWS Secret Access Key or Minio Access Key.
+     * If not set camel will connect to service for anonymous access.
+     */
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    /**
+     * Amazon AWS Access Key Id or Minio Secret Key.
+     * If not set camel will connect to service for anonymous access.
+     */
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
+    public boolean isUseAWSIAMCredentials() {
+        return useAWSIAMCredentials;
+    }
+
+    /**
+     * Set this flag true if you use AWS IAM Credentials to create MinIO client object
+     * if this is set to false (as by default value) camel will not look for AWS connection.
+     */
+    public void setUseAWSIAMCredentials(boolean useAWSIAMCredentials) {
+        this.useAWSIAMCredentials = useAWSIAMCredentials;
+    }
+
+    public boolean isSecure() {
+        return isSecure;
+    }
+
+    /**
+     * (Optional) Flag to indicate to use secure connection to minio service or not.
+     */
+    public void setSecure(boolean secure) {
+        isSecure = secure;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    /**
+     * (Optional) The region in which Minio client needs to work. When using this parameter,
+     * the configuration will expect the lowercase name of the region (for
+     * example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
+     */
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public OkHttpClient getCustomHttpClient() {
+        return customHttpClient;
+    }
+
+    /**
+     * (Optional) Set custom HTTP client for authenticated access.
+     */
+    public void setCustomHttpClient(OkHttpClient customHttpClient) {
+        this.customHttpClient = customHttpClient;
+    }
+
     public String getBucketName() {
         return bucketName;
     }
@@ -92,52 +200,6 @@ public class MinioConfiguration implements Cloneable {
      */
     public void setMinioClient(MinioClient minioClient) {
         this.minioClient = minioClient;
-    }
-
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Secret Access Key or Minio Access Key
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Access Key Id or Minio Secret Key
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    public boolean isUseAWSIAMCredentials() {
-        return useAWSIAMCredentials;
-    }
-
-    /**
-     * Set this flag true if you use AWS IAM Credentials to create MinIO client object
-     */
-    public void setUseAWSIAMCredentials(boolean useAWSIAMCredentials) {
-        this.useAWSIAMCredentials = useAWSIAMCredentials;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    /**
-     * The region in which Minio client needs to work. When using this parameter,
-     * the configuration will expect the lowercase name of the region (for
-     * example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
-     */
-    public void setRegion(String region) {
-        this.region = region;
     }
 
     public String getObjectName() {

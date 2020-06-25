@@ -14,30 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.minio;
+package org.apache.camel.component.minio.client;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.support.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.component.minio.MinioConfiguration;
 
 /**
- * The Minio producer.
+ * Factory class to return the correct type of MinioClient.
  */
-public class MinioProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(MinioProducer.class);
-    private MinioEndpoint endpoint;
+public final class MinioClientFactory {
 
-    public MinioProducer(final MinioEndpoint endpoint) {
-        super(endpoint);
-        this.endpoint = endpoint;
+    private MinioClientFactory() {
+        // Prevent instantiation of this factory class.
+        throw new RuntimeException("Do not instantiate a Factory class! Refer to the class " + "to learn how to properly use this factory implementation.");
     }
 
-    public void process(Exchange exchange) throws Exception {
-        System.out.println(exchange.getIn().getBody());
-    }
-
-    protected MinioConfiguration getConfiguration() {
-        return getEndpoint().getConfiguration();
+    /**
+     * Return the correct minio client (based on remote vs local).
+     * 
+     * @param configuration configuration
+     * @return MinioClient
+     */
+    public static MinioCamelInternalClient getMinioClient(MinioConfiguration configuration) {
+        return new GetMinioClient(configuration);
     }
 }
