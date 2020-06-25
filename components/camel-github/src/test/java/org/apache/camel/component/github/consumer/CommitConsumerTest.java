@@ -24,7 +24,7 @@ import org.apache.camel.component.github.GitHubComponent;
 import org.apache.camel.component.github.GitHubComponentTestBase;
 import org.eclipse.egit.github.core.RepositoryCommit;
 import org.eclipse.egit.github.core.User;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CommitConsumerTest extends GitHubComponentTestBase {
     @Override

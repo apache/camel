@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.github.GitHubComponent;
 import org.apache.camel.component.github.GitHubComponentTestBase;
 import org.eclipse.egit.github.core.RepositoryTag;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TagConsumerTest extends GitHubComponentTestBase {
 
