@@ -70,7 +70,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
     private final AtomicBoolean jobAdded = new AtomicBoolean(false);
     private final AtomicBoolean jobPaused = new AtomicBoolean(false);
 
-    @UriPath(description = "The quartz group name to use. The combination of group name and timer name should be unique.", defaultValue = "Camel")
+    @UriPath(description = "The quartz group name to use. The combination of group name and trigger name should be unique.", defaultValue = "Camel")
     private String groupName;
     @UriPath @Metadata(required = true)
     private String triggerName;
@@ -110,7 +110,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     public String getGroupName() {
-        return triggerKey.getName();
+        return triggerKey.getGroup();
     }
 
     public String getTriggerName() {

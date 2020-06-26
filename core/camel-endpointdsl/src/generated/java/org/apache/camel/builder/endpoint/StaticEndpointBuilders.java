@@ -11491,7 +11491,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>quartz:groupName/triggerName</code>
      * 
      * Path parameter: groupName
-     * The quartz group name to use. The combination of group name and timer
+     * The quartz group name to use. The combination of group name and trigger
      * name should be unique.
      * Default value: Camel
      * 
@@ -11516,7 +11516,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>quartz:groupName/triggerName</code>
      * 
      * Path parameter: groupName
-     * The quartz group name to use. The combination of group name and timer
+     * The quartz group name to use. The combination of group name and trigger
      * name should be unique.
      * Default value: Camel
      * 
