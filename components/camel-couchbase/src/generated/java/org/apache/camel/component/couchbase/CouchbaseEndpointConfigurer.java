@@ -34,6 +34,7 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "bucket": target.setBucket(property(camelContext, java.lang.String.class, value)); return true;
+        case "collection": target.setCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "consumerprocessedstrategy":
         case "consumerProcessedStrategy": target.setConsumerProcessedStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
@@ -51,16 +52,6 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "limit": target.setLimit(property(camelContext, int.class, value)); return true;
-        case "maxreconnectdelay":
-        case "maxReconnectDelay": target.setMaxReconnectDelay(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "obspollinterval":
-        case "obsPollInterval": target.setObsPollInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "obstimeout":
-        case "obsTimeout": target.setObsTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "opqueuemaxblocktime":
-        case "opQueueMaxBlockTime": target.setOpQueueMaxBlockTime(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "optimeout":
-        case "opTimeOut": target.setOpTimeOut(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "operation": target.setOperation(property(camelContext, java.lang.String.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "persistto":
@@ -71,12 +62,12 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "producerRetryAttempts": target.setProducerRetryAttempts(property(camelContext, int.class, value)); return true;
         case "producerretrypause":
         case "producerRetryPause": target.setProducerRetryPause(property(camelContext, int.class, value)); return true;
+        case "querytimeout":
+        case "queryTimeout": target.setQueryTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "rangeendkey":
         case "rangeEndKey": target.setRangeEndKey(property(camelContext, java.lang.String.class, value)); return true;
         case "rangestartkey":
         case "rangeStartKey": target.setRangeStartKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "readbuffersize":
-        case "readBufferSize": target.setReadBufferSize(property(camelContext, int.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
         case "replicateto":
@@ -88,10 +79,9 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
         case "schedulerproperties":
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "scope": target.setScope(property(camelContext, java.lang.String.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "shouldoptimize":
-        case "shouldOptimize": target.setShouldOptimize(property(camelContext, boolean.class, value)); return true;
         case "skip": target.setSkip(property(camelContext, int.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
@@ -100,8 +90,6 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "timeoutexceptionthreshold":
-        case "timeoutExceptionThreshold": target.setTimeoutExceptionThreshold(property(camelContext, int.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
@@ -122,6 +110,7 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("bridgeErrorHandler", boolean.class);
         answer.put("bucket", java.lang.String.class);
+        answer.put("collection", java.lang.String.class);
         answer.put("consumerProcessedStrategy", java.lang.String.class);
         answer.put("delay", long.class);
         answer.put("descending", boolean.class);
@@ -133,34 +122,28 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         answer.put("key", java.lang.String.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("limit", int.class);
-        answer.put("maxReconnectDelay", long.class);
-        answer.put("obsPollInterval", long.class);
-        answer.put("obsTimeout", long.class);
-        answer.put("opQueueMaxBlockTime", long.class);
-        answer.put("opTimeOut", long.class);
         answer.put("operation", java.lang.String.class);
         answer.put("password", java.lang.String.class);
         answer.put("persistTo", int.class);
         answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
         answer.put("producerRetryAttempts", int.class);
         answer.put("producerRetryPause", int.class);
+        answer.put("queryTimeout", long.class);
         answer.put("rangeEndKey", java.lang.String.class);
         answer.put("rangeStartKey", java.lang.String.class);
-        answer.put("readBufferSize", int.class);
         answer.put("repeatCount", long.class);
         answer.put("replicateTo", int.class);
         answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
         answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
         answer.put("scheduler", java.lang.String.class);
         answer.put("schedulerProperties", java.util.Map.class);
+        answer.put("scope", java.lang.String.class);
         answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("shouldOptimize", boolean.class);
         answer.put("skip", int.class);
         answer.put("startScheduler", boolean.class);
         answer.put("startingIdForInsertsFrom", long.class);
         answer.put("synchronous", boolean.class);
         answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        answer.put("timeoutExceptionThreshold", int.class);
         answer.put("useFixedDelay", boolean.class);
         answer.put("username", java.lang.String.class);
         answer.put("viewName", java.lang.String.class);
@@ -186,6 +169,7 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "bucket": return target.getBucket();
+        case "collection": return target.getCollection();
         case "consumerprocessedstrategy":
         case "consumerProcessedStrategy": return target.getConsumerProcessedStrategy();
         case "delay": return target.getDelay();
@@ -203,16 +187,6 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "limit": return target.getLimit();
-        case "maxreconnectdelay":
-        case "maxReconnectDelay": return target.getMaxReconnectDelay();
-        case "obspollinterval":
-        case "obsPollInterval": return target.getObsPollInterval();
-        case "obstimeout":
-        case "obsTimeout": return target.getObsTimeout();
-        case "opqueuemaxblocktime":
-        case "opQueueMaxBlockTime": return target.getOpQueueMaxBlockTime();
-        case "optimeout":
-        case "opTimeOut": return target.getOpTimeOut();
         case "operation": return target.getOperation();
         case "password": return target.getPassword();
         case "persistto":
@@ -223,12 +197,12 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "producerRetryAttempts": return target.getProducerRetryAttempts();
         case "producerretrypause":
         case "producerRetryPause": return target.getProducerRetryPause();
+        case "querytimeout":
+        case "queryTimeout": return target.getQueryTimeout();
         case "rangeendkey":
         case "rangeEndKey": return target.getRangeEndKey();
         case "rangestartkey":
         case "rangeStartKey": return target.getRangeStartKey();
-        case "readbuffersize":
-        case "readBufferSize": return target.getReadBufferSize();
         case "repeatcount":
         case "repeatCount": return target.getRepeatCount();
         case "replicateto":
@@ -240,10 +214,9 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "scheduler": return target.getScheduler();
         case "schedulerproperties":
         case "schedulerProperties": return target.getSchedulerProperties();
+        case "scope": return target.getScope();
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
-        case "shouldoptimize":
-        case "shouldOptimize": return target.isShouldOptimize();
         case "skip": return target.getSkip();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
@@ -252,8 +225,6 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "synchronous": return target.isSynchronous();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
-        case "timeoutexceptionthreshold":
-        case "timeoutExceptionThreshold": return target.getTimeoutExceptionThreshold();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
         case "username": return target.getUsername();

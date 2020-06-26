@@ -19,14 +19,18 @@ package org.apache.camel.component.couchbase;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import com.couchbase.client.CouchbaseClient;
-import com.couchbase.client.CouchbaseConnectionFactoryBuilder;
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.Cluster;
+import com.couchbase.client.java.ClusterOptions;
+import com.couchbase.client.java.env.ClusterEnvironment;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -38,20 +42,15 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ScheduledPollEndpoint;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_PUT;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_URI_ERROR;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_CONSUME_PROCESSED_STRATEGY;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_COUCHBASE_PORT;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_DESIGN_DOCUMENT_NAME;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_MAX_RECONNECT_DELAY;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_OBS_POLL_INTERVAL;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_OBS_TIMEOUT;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_OP_QUEUE_MAX_BLOCK_TIME;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_OP_TIMEOUT;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_PAUSE_BETWEEN_RETRIES;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_PRODUCER_RETRIES;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_READ_BUFFER_SIZE;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_TIMEOUT_EXCEPTION_THRESHOLD;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_CONSUME_PROCESSED_STRATEGY;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_DESIGN_DOCUMENT_NAME;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_VIEWNAME;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_PAUSE_BETWEEN_RETRIES;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_QUERY_TIMEOUT;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_URI_ERROR;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_COUCHBASE_PORT;
+
 
 /**
  * Query Couchbase Views with a poll strategy and/or perform various operations against Couchbase databases.
@@ -70,6 +69,12 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
 
     @UriParam
     private String bucket;
+
+    @UriParam
+    private String collection;
+
+    @UriParam
+    private String scope;
 
     // Couchbase key
     @UriParam
@@ -126,21 +131,8 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
 
     // Connection fine tuning parameters
     @UriParam(label = "advanced", defaultValue = "2500", javaType = "java.time.Duration")
-    private long opTimeOut = DEFAULT_OP_TIMEOUT;
-    @UriParam(label = "advanced", defaultValue = "998")
-    private int timeoutExceptionThreshold = DEFAULT_TIMEOUT_EXCEPTION_THRESHOLD;
-    @UriParam(label = "advanced", defaultValue = "16384")
-    private int readBufferSize = DEFAULT_READ_BUFFER_SIZE;
-    @UriParam(label = "advanced", defaultValue = "false")
-    private boolean shouldOptimize;
-    @UriParam(label = "advanced", defaultValue = "30000", javaType = "java.time.Duration")
-    private long maxReconnectDelay = DEFAULT_MAX_RECONNECT_DELAY;
-    @UriParam(label = "advanced", defaultValue = "10000", javaType = "java.time.Duration")
-    private long opQueueMaxBlockTime = DEFAULT_OP_QUEUE_MAX_BLOCK_TIME;
-    @UriParam(label = "advanced", defaultValue = "400", javaType = "java.time.Duration")
-    private long obsPollInterval = DEFAULT_OBS_POLL_INTERVAL;
-    @UriParam(label = "advanced", defaultValue = "-1", javaType = "java.time.Duration")
-    private long obsTimeout = DEFAULT_OBS_TIMEOUT;
+    private long queryTimeout = DEFAULT_QUERY_TIMEOUT;
+
 
     public CouchbaseEndpoint() {
     }
@@ -223,6 +215,28 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
      */
     public void setPort(int port) {
         this.port = port;
+    }
+
+    /**
+     * The collection to use
+     */
+    public String getCollection() {
+        return this.collection;
+    }
+
+    public void setCollection(String collection) {
+        this.collection = collection;
+    }
+
+    public String getScope() {
+        return this.scope;
+    }
+
+    /**
+     * The scope to use
+     */
+    public void setScope(String scope) {
+        this.scope = scope;
     }
 
     public String getKey() {
@@ -434,98 +448,21 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
         this.consumerProcessedStrategy = consumerProcessedStrategy;
     }
 
-    public long getOpTimeOut() {
-        return opTimeOut;
+    public long getQueryTimeout() {
+        return queryTimeout;
     }
 
     /**
-     * Define the operation timeout
+     * Define the operation timeout in milliseconds
      */
-    public void setOpTimeOut(long opTimeOut) {
-        this.opTimeOut = opTimeOut;
-    }
-
-    public int getTimeoutExceptionThreshold() {
-        return timeoutExceptionThreshold;
-    }
-
-    /**
-     * Define the threshold for throwing a timeout Exception
-     */
-    public void setTimeoutExceptionThreshold(int timeoutExceptionThreshold) {
-        this.timeoutExceptionThreshold = timeoutExceptionThreshold;
-    }
-
-    public int getReadBufferSize() {
-        return readBufferSize;
-    }
-
-    /**
-     * Define the buffer size
-     */
-    public void setReadBufferSize(int readBufferSize) {
-        this.readBufferSize = readBufferSize;
-    }
-
-    public boolean isShouldOptimize() {
-        return shouldOptimize;
-    }
-
-    /**
-     * Define if we want to use optimization or not where possible
-     */
-    public void setShouldOptimize(boolean shouldOptimize) {
-        this.shouldOptimize = shouldOptimize;
-    }
-
-    public long getMaxReconnectDelay() {
-        return maxReconnectDelay;
-    }
-
-    /**
-     * Define the max delay during a reconnection
-     */
-    public void setMaxReconnectDelay(long maxReconnectDelay) {
-        this.maxReconnectDelay = maxReconnectDelay;
-    }
-
-    public long getOpQueueMaxBlockTime() {
-        return opQueueMaxBlockTime;
-    }
-
-    /**
-     * Define the max time an operation can be in queue blocked
-     */
-    public void setOpQueueMaxBlockTime(long opQueueMaxBlockTime) {
-        this.opQueueMaxBlockTime = opQueueMaxBlockTime;
-    }
-
-    public long getObsPollInterval() {
-        return obsPollInterval;
-    }
-
-    /**
-     * Define the observation polling interval
-     */
-    public void setObsPollInterval(long obsPollInterval) {
-        this.obsPollInterval = obsPollInterval;
-    }
-
-    public long getObsTimeout() {
-        return obsTimeout;
-    }
-
-    /**
-     * Define the observation timeout
-     */
-    public void setObsTimeout(long obsTimeout) {
-        this.obsTimeout = obsTimeout;
+    public void setQueryTimeout(long queryTimeout) {
+        this.queryTimeout = queryTimeout;
     }
 
     public URI[] makeBootstrapURI() throws URISyntaxException {
 
         if (additionalHosts == null || "".equals(additionalHosts)) {
-            return new URI[] {new URI(protocol + "://" + hostname + ":" + port + "/pools")};
+            return new URI[]{new URI(protocol + "://" + hostname + ":" + port + "/pools")};
         }
         return getAllUris();
 
@@ -554,37 +491,32 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
         return uriArray;
     }
 
-    private CouchbaseClient createClient() throws IOException, URISyntaxException {
+    //create from couchbase-client
+    private Bucket createClient() throws IOException, URISyntaxException {
         List<URI> hosts = Arrays.asList(makeBootstrapURI());
+        String connectionString;
 
-        CouchbaseConnectionFactoryBuilder cfb = new CouchbaseConnectionFactoryBuilder();
-
-        if (opTimeOut != DEFAULT_OP_TIMEOUT) {
-            cfb.setOpTimeout(opTimeOut);
-        }
-        if (timeoutExceptionThreshold != DEFAULT_TIMEOUT_EXCEPTION_THRESHOLD) {
-            cfb.setTimeoutExceptionThreshold(timeoutExceptionThreshold);
-        }
-        if (readBufferSize != DEFAULT_READ_BUFFER_SIZE) {
-            cfb.setReadBufferSize(readBufferSize);
-        }
-        if (shouldOptimize) {
-            cfb.setShouldOptimize(true);
-        }
-        if (maxReconnectDelay != DEFAULT_MAX_RECONNECT_DELAY) {
-            cfb.setMaxReconnectDelay(maxReconnectDelay);
-        }
-        if (opQueueMaxBlockTime != DEFAULT_OP_QUEUE_MAX_BLOCK_TIME) {
-            cfb.setOpQueueMaxBlockTime(opQueueMaxBlockTime);
-        }
-        if (obsPollInterval != DEFAULT_OBS_POLL_INTERVAL) {
-            cfb.setObsPollInterval(obsPollInterval);
-        }
-        if (obsTimeout != DEFAULT_OBS_TIMEOUT) {
-            cfb.setObsTimeout(obsTimeout);
+        ClusterEnvironment.Builder cfb = ClusterEnvironment.builder();
+        if (queryTimeout != DEFAULT_QUERY_TIMEOUT) {
+            cfb.timeoutConfig().queryTimeout(Duration.ofMillis(queryTimeout));
         }
 
-        return new CouchbaseClient(cfb.buildCouchbaseConnection(hosts, bucket, username, password));
+        ClusterEnvironment env = cfb.build();
 
+        String addHosts = hosts.stream()
+                .map(URI::getHost)
+                .collect(Collectors.joining(","));
+
+        if (!addHosts.isEmpty()) {
+            connectionString = addHosts;
+        } else {
+            connectionString = hostname;
+        }
+
+        Cluster cluster = Cluster.connect(connectionString, ClusterOptions
+                .clusterOptions(username, password)
+                .environment(env));
+
+        return cluster.bucket(bucket);
     }
 }

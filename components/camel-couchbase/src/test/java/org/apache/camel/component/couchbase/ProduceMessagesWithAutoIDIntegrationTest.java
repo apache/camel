@@ -42,7 +42,7 @@ public class ProduceMessagesWithAutoIDIntegrationTest extends CamelTestSupport {
             public void configure() throws Exception {
 
                 // need couchbase installed on localhost
-                from("direct:start").to("couchbase:http://localhost/default?autoStartIdForInserts=true&startingIdForInsertsFrom=1000").to("mock:result");
+                from("direct:start").to("couchbase:http://localhost/test?username=root&password=123456&autoStartIdForInserts=true&startingIdForInsertsFrom=1000").to("mock:result");
             }
         };
     }

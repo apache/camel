@@ -59,6 +59,17 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
+         * The collection to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default CouchbaseEndpointConsumerBuilder collection(String collection) {
+            doSetProperty("collection", collection);
+            return this;
+        }
+        /**
          * The key to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -67,6 +78,17 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder key(String key) {
             doSetProperty("key", key);
+            return this;
+        }
+        /**
+         * The scope to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default CouchbaseEndpointConsumerBuilder scope(String scope) {
+            doSetProperty("scope", scope);
             return this;
         }
         /**
@@ -805,185 +827,29 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the max delay during a reconnection.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 30000
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointConsumerBuilder maxReconnectDelay(
-                long maxReconnectDelay) {
-            doSetProperty("maxReconnectDelay", maxReconnectDelay);
-            return this;
-        }
-        /**
-         * Define the max delay during a reconnection.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 30000
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointConsumerBuilder maxReconnectDelay(
-                String maxReconnectDelay) {
-            doSetProperty("maxReconnectDelay", maxReconnectDelay);
-            return this;
-        }
-        /**
-         * Define the observation polling interval.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 400
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointConsumerBuilder obsPollInterval(
-                long obsPollInterval) {
-            doSetProperty("obsPollInterval", obsPollInterval);
-            return this;
-        }
-        /**
-         * Define the observation polling interval.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 400
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointConsumerBuilder obsPollInterval(
-                String obsPollInterval) {
-            doSetProperty("obsPollInterval", obsPollInterval);
-            return this;
-        }
-        /**
-         * Define the observation timeout.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: -1
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointConsumerBuilder obsTimeout(
-                long obsTimeout) {
-            doSetProperty("obsTimeout", obsTimeout);
-            return this;
-        }
-        /**
-         * Define the observation timeout.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: -1
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointConsumerBuilder obsTimeout(
-                String obsTimeout) {
-            doSetProperty("obsTimeout", obsTimeout);
-            return this;
-        }
-        /**
-         * Define the max time an operation can be in queue blocked.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 10000
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointConsumerBuilder opQueueMaxBlockTime(
-                long opQueueMaxBlockTime) {
-            doSetProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
-            return this;
-        }
-        /**
-         * Define the max time an operation can be in queue blocked.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 10000
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointConsumerBuilder opQueueMaxBlockTime(
-                String opQueueMaxBlockTime) {
-            doSetProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
-            return this;
-        }
-        /**
-         * Define the operation timeout.
+         * Define the operation timeout in milliseconds.
          * 
          * The option is a: <code>long</code> type.
          * 
          * Default: 2500
          * Group: advanced
          */
-        default AdvancedCouchbaseEndpointConsumerBuilder opTimeOut(
-                long opTimeOut) {
-            doSetProperty("opTimeOut", opTimeOut);
+        default AdvancedCouchbaseEndpointConsumerBuilder queryTimeout(
+                long queryTimeout) {
+            doSetProperty("queryTimeout", queryTimeout);
             return this;
         }
         /**
-         * Define the operation timeout.
+         * Define the operation timeout in milliseconds.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
          * Default: 2500
          * Group: advanced
          */
-        default AdvancedCouchbaseEndpointConsumerBuilder opTimeOut(
-                String opTimeOut) {
-            doSetProperty("opTimeOut", opTimeOut);
-            return this;
-        }
-        /**
-         * Define the buffer size.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 16384
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointConsumerBuilder readBufferSize(
-                int readBufferSize) {
-            doSetProperty("readBufferSize", readBufferSize);
-            return this;
-        }
-        /**
-         * Define the buffer size.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 16384
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointConsumerBuilder readBufferSize(
-                String readBufferSize) {
-            doSetProperty("readBufferSize", readBufferSize);
-            return this;
-        }
-        /**
-         * Define if we want to use optimization or not where possible.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointConsumerBuilder shouldOptimize(
-                boolean shouldOptimize) {
-            doSetProperty("shouldOptimize", shouldOptimize);
-            return this;
-        }
-        /**
-         * Define if we want to use optimization or not where possible.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointConsumerBuilder shouldOptimize(
-                String shouldOptimize) {
-            doSetProperty("shouldOptimize", shouldOptimize);
+        default AdvancedCouchbaseEndpointConsumerBuilder queryTimeout(
+                String queryTimeout) {
+            doSetProperty("queryTimeout", queryTimeout);
             return this;
         }
         /**
@@ -1014,32 +880,6 @@ public interface CouchbaseEndpointBuilderFactory {
             doSetProperty("synchronous", synchronous);
             return this;
         }
-        /**
-         * Define the threshold for throwing a timeout Exception.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 998
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointConsumerBuilder timeoutExceptionThreshold(
-                int timeoutExceptionThreshold) {
-            doSetProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
-            return this;
-        }
-        /**
-         * Define the threshold for throwing a timeout Exception.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 998
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointConsumerBuilder timeoutExceptionThreshold(
-                String timeoutExceptionThreshold) {
-            doSetProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
-            return this;
-        }
     }
 
     /**
@@ -1063,6 +903,17 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
+         * The collection to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default CouchbaseEndpointProducerBuilder collection(String collection) {
+            doSetProperty("collection", collection);
+            return this;
+        }
+        /**
          * The key to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1071,6 +922,17 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointProducerBuilder key(String key) {
             doSetProperty("key", key);
+            return this;
+        }
+        /**
+         * The scope to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default CouchbaseEndpointProducerBuilder scope(String scope) {
+            doSetProperty("scope", scope);
             return this;
         }
         /**
@@ -1353,185 +1215,29 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the max delay during a reconnection.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 30000
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointProducerBuilder maxReconnectDelay(
-                long maxReconnectDelay) {
-            doSetProperty("maxReconnectDelay", maxReconnectDelay);
-            return this;
-        }
-        /**
-         * Define the max delay during a reconnection.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 30000
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointProducerBuilder maxReconnectDelay(
-                String maxReconnectDelay) {
-            doSetProperty("maxReconnectDelay", maxReconnectDelay);
-            return this;
-        }
-        /**
-         * Define the observation polling interval.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 400
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointProducerBuilder obsPollInterval(
-                long obsPollInterval) {
-            doSetProperty("obsPollInterval", obsPollInterval);
-            return this;
-        }
-        /**
-         * Define the observation polling interval.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 400
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointProducerBuilder obsPollInterval(
-                String obsPollInterval) {
-            doSetProperty("obsPollInterval", obsPollInterval);
-            return this;
-        }
-        /**
-         * Define the observation timeout.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: -1
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointProducerBuilder obsTimeout(
-                long obsTimeout) {
-            doSetProperty("obsTimeout", obsTimeout);
-            return this;
-        }
-        /**
-         * Define the observation timeout.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: -1
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointProducerBuilder obsTimeout(
-                String obsTimeout) {
-            doSetProperty("obsTimeout", obsTimeout);
-            return this;
-        }
-        /**
-         * Define the max time an operation can be in queue blocked.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 10000
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointProducerBuilder opQueueMaxBlockTime(
-                long opQueueMaxBlockTime) {
-            doSetProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
-            return this;
-        }
-        /**
-         * Define the max time an operation can be in queue blocked.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 10000
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointProducerBuilder opQueueMaxBlockTime(
-                String opQueueMaxBlockTime) {
-            doSetProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
-            return this;
-        }
-        /**
-         * Define the operation timeout.
+         * Define the operation timeout in milliseconds.
          * 
          * The option is a: <code>long</code> type.
          * 
          * Default: 2500
          * Group: advanced
          */
-        default AdvancedCouchbaseEndpointProducerBuilder opTimeOut(
-                long opTimeOut) {
-            doSetProperty("opTimeOut", opTimeOut);
+        default AdvancedCouchbaseEndpointProducerBuilder queryTimeout(
+                long queryTimeout) {
+            doSetProperty("queryTimeout", queryTimeout);
             return this;
         }
         /**
-         * Define the operation timeout.
+         * Define the operation timeout in milliseconds.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
          * Default: 2500
          * Group: advanced
          */
-        default AdvancedCouchbaseEndpointProducerBuilder opTimeOut(
-                String opTimeOut) {
-            doSetProperty("opTimeOut", opTimeOut);
-            return this;
-        }
-        /**
-         * Define the buffer size.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 16384
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointProducerBuilder readBufferSize(
-                int readBufferSize) {
-            doSetProperty("readBufferSize", readBufferSize);
-            return this;
-        }
-        /**
-         * Define the buffer size.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 16384
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointProducerBuilder readBufferSize(
-                String readBufferSize) {
-            doSetProperty("readBufferSize", readBufferSize);
-            return this;
-        }
-        /**
-         * Define if we want to use optimization or not where possible.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointProducerBuilder shouldOptimize(
-                boolean shouldOptimize) {
-            doSetProperty("shouldOptimize", shouldOptimize);
-            return this;
-        }
-        /**
-         * Define if we want to use optimization or not where possible.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointProducerBuilder shouldOptimize(
-                String shouldOptimize) {
-            doSetProperty("shouldOptimize", shouldOptimize);
+        default AdvancedCouchbaseEndpointProducerBuilder queryTimeout(
+                String queryTimeout) {
+            doSetProperty("queryTimeout", queryTimeout);
             return this;
         }
         /**
@@ -1562,32 +1268,6 @@ public interface CouchbaseEndpointBuilderFactory {
             doSetProperty("synchronous", synchronous);
             return this;
         }
-        /**
-         * Define the threshold for throwing a timeout Exception.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 998
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointProducerBuilder timeoutExceptionThreshold(
-                int timeoutExceptionThreshold) {
-            doSetProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
-            return this;
-        }
-        /**
-         * Define the threshold for throwing a timeout Exception.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 998
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointProducerBuilder timeoutExceptionThreshold(
-                String timeoutExceptionThreshold) {
-            doSetProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
-            return this;
-        }
     }
 
     /**
@@ -1612,6 +1292,17 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
+         * The collection to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default CouchbaseEndpointBuilder collection(String collection) {
+            doSetProperty("collection", collection);
+            return this;
+        }
+        /**
          * The key to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1620,6 +1311,17 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointBuilder key(String key) {
             doSetProperty("key", key);
+            return this;
+        }
+        /**
+         * The scope to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default CouchbaseEndpointBuilder scope(String scope) {
+            doSetProperty("scope", scope);
             return this;
         }
         /**
@@ -1697,181 +1399,28 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the max delay during a reconnection.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 30000
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointBuilder maxReconnectDelay(
-                long maxReconnectDelay) {
-            doSetProperty("maxReconnectDelay", maxReconnectDelay);
-            return this;
-        }
-        /**
-         * Define the max delay during a reconnection.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 30000
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointBuilder maxReconnectDelay(
-                String maxReconnectDelay) {
-            doSetProperty("maxReconnectDelay", maxReconnectDelay);
-            return this;
-        }
-        /**
-         * Define the observation polling interval.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 400
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointBuilder obsPollInterval(
-                long obsPollInterval) {
-            doSetProperty("obsPollInterval", obsPollInterval);
-            return this;
-        }
-        /**
-         * Define the observation polling interval.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 400
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointBuilder obsPollInterval(
-                String obsPollInterval) {
-            doSetProperty("obsPollInterval", obsPollInterval);
-            return this;
-        }
-        /**
-         * Define the observation timeout.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: -1
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointBuilder obsTimeout(long obsTimeout) {
-            doSetProperty("obsTimeout", obsTimeout);
-            return this;
-        }
-        /**
-         * Define the observation timeout.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: -1
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointBuilder obsTimeout(String obsTimeout) {
-            doSetProperty("obsTimeout", obsTimeout);
-            return this;
-        }
-        /**
-         * Define the max time an operation can be in queue blocked.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 10000
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointBuilder opQueueMaxBlockTime(
-                long opQueueMaxBlockTime) {
-            doSetProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
-            return this;
-        }
-        /**
-         * Define the max time an operation can be in queue blocked.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 10000
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointBuilder opQueueMaxBlockTime(
-                String opQueueMaxBlockTime) {
-            doSetProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
-            return this;
-        }
-        /**
-         * Define the operation timeout.
+         * Define the operation timeout in milliseconds.
          * 
          * The option is a: <code>long</code> type.
          * 
          * Default: 2500
          * Group: advanced
          */
-        default AdvancedCouchbaseEndpointBuilder opTimeOut(long opTimeOut) {
-            doSetProperty("opTimeOut", opTimeOut);
+        default AdvancedCouchbaseEndpointBuilder queryTimeout(long queryTimeout) {
+            doSetProperty("queryTimeout", queryTimeout);
             return this;
         }
         /**
-         * Define the operation timeout.
+         * Define the operation timeout in milliseconds.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
          * Default: 2500
          * Group: advanced
          */
-        default AdvancedCouchbaseEndpointBuilder opTimeOut(String opTimeOut) {
-            doSetProperty("opTimeOut", opTimeOut);
-            return this;
-        }
-        /**
-         * Define the buffer size.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 16384
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointBuilder readBufferSize(
-                int readBufferSize) {
-            doSetProperty("readBufferSize", readBufferSize);
-            return this;
-        }
-        /**
-         * Define the buffer size.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 16384
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointBuilder readBufferSize(
-                String readBufferSize) {
-            doSetProperty("readBufferSize", readBufferSize);
-            return this;
-        }
-        /**
-         * Define if we want to use optimization or not where possible.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointBuilder shouldOptimize(
-                boolean shouldOptimize) {
-            doSetProperty("shouldOptimize", shouldOptimize);
-            return this;
-        }
-        /**
-         * Define if we want to use optimization or not where possible.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointBuilder shouldOptimize(
-                String shouldOptimize) {
-            doSetProperty("shouldOptimize", shouldOptimize);
+        default AdvancedCouchbaseEndpointBuilder queryTimeout(
+                String queryTimeout) {
+            doSetProperty("queryTimeout", queryTimeout);
             return this;
         }
         /**
@@ -1898,32 +1447,6 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Define the threshold for throwing a timeout Exception.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 998
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointBuilder timeoutExceptionThreshold(
-                int timeoutExceptionThreshold) {
-            doSetProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
-            return this;
-        }
-        /**
-         * Define the threshold for throwing a timeout Exception.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 998
-         * Group: advanced
-         */
-        default AdvancedCouchbaseEndpointBuilder timeoutExceptionThreshold(
-                String timeoutExceptionThreshold) {
-            doSetProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
             return this;
         }
     }
