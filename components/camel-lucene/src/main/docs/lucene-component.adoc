@@ -149,7 +149,7 @@ The query uses the searchable index to perform score & relevance based
 searches. Queries are sent via the incoming exchange contains a header
 property name called 'QUERY'. The value of the header property 'QUERY'
 is a Lucene Query. For more details on how to create Lucene Queries
-check out http://lucene.apache.org/java/3_0_0/queryparsersyntax.html[http://lucene.apache.org/java/3_0_0/queryparsersyntax.html]
+check out https://lucene.apache.org/core/8_4_1/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package.description[Query Parser Classic syntax]
 
 === Lucene Processor
 
