@@ -229,6 +229,7 @@ public interface ExecutorServiceManager extends ShutdownableService, StaticServi
      * @param name        name which is appended to the thread name
      * @return the created thread pool
      */
+    @Deprecated
     ExecutorService newCachedThreadPool(Object source, String name);
 
     /**
