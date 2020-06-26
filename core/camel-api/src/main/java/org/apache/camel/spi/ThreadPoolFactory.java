@@ -37,6 +37,7 @@ public interface ThreadPoolFactory {
      * @param threadFactory factory for creating threads
      * @return the created thread pool
      */
+    @Deprecated
     ExecutorService newCachedThreadPool(ThreadFactory threadFactory);
     
     /**
