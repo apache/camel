@@ -81,9 +81,9 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *bucket* (common) | The bucket to use |  | String
-| *collection* (common) | The collection to use | _default | String
+| *collection* (common) | The collection to use |  | String
 | *key* (common) | The key to use |  | String
-| *scope* (common) | The scope to use | _default | String
+| *scope* (common) | The scope to use |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *consumerProcessedStrategy* (consumer) | Define the consumer Processed strategy to use | none | String
 | *descending* (consumer) | Define if this operation is descending or not | false | boolean
@@ -107,7 +107,7 @@ with the following path and query parameters:
 | *startingIdForInsertsFrom* (producer) | Define the starting Id where we are doing an insert operation |  | long
 | *additionalHosts* (advanced) | The additional hosts |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *queryTimeout* (advanced) | Define the operation timeout | 2500 | long
+| *queryTimeout* (advanced) | Define the operation timeout in milliseconds | 2500 | long
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
