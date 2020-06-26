@@ -14,8 +14,7 @@
 *{component-header}*
 
 The Kubernetes Namespaces component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
-provides a producer to execute kubernetes namespace operations and a consumer to consume
-kubernetes namespace events.
+provides a producer to execute Kubernetes Namespace operations and a consumer to consume events related to Namespace events.
 
 
 
