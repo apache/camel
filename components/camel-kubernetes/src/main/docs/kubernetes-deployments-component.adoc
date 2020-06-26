@@ -14,7 +14,7 @@
 *{component-header}*
 
 The Kubernetes Deployments component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
-provides a producer to execute kubernetes secret operations.
+provides a producer to execute Kubernetes Deployments operations and a consumer to consume events related to Deployments objects.
 
 
 
