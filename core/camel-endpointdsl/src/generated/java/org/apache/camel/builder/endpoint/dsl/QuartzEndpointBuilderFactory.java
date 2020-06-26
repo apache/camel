@@ -623,8 +623,8 @@ public interface QuartzEndpointBuilderFactory {
          * Default value: Camel
          * 
          * Path parameter: triggerName (required)
-         * The quartz timer name to use. The combination of group name and timer
-         * name should be unique.
+         * The quartz trigger name to use. The combination of group name and
+         * trigger name should be unique.
          * 
          * @param path groupName/triggerName
          */
@@ -647,8 +647,8 @@ public interface QuartzEndpointBuilderFactory {
          * Default value: Camel
          * 
          * Path parameter: triggerName (required)
-         * The quartz timer name to use. The combination of group name and timer
-         * name should be unique.
+         * The quartz trigger name to use. The combination of group name and
+         * trigger name should be unique.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
