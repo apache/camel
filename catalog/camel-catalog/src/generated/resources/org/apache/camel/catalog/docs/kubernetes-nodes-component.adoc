@@ -14,8 +14,7 @@
 *{component-header}*
 
 The Kubernetes Nodes component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
-provides a producer to execute kubernetes node operations and a consumer to consume kubernetes
-node events.
+provides a producer to execute Kubernetes Node operations and a consumer to consume events related to Node objects.
  
 
 
