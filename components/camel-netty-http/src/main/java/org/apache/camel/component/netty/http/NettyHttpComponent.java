@@ -428,11 +428,11 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             url += "/" + uriTemplate;
         }
 
-        RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), "netty-http");
+        RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), null, "netty-http");
 
         Map<String, Object> map = new HashMap<>();
         // build query string, and append any endpoint configuration properties
-        if (config.getComponent() == null || config.getComponent().equals("netty-http")) {
+        if (config.getProducerComponent() == null || config.getProducerComponent().equals("netty-http")) {
             // setup endpoint options
             if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
                 map.putAll(config.getEndpointProperties());

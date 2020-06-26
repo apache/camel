@@ -224,7 +224,7 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
                 uriTemplate = null;
             }
 
-            RestConfiguration config = CamelContextHelper.getRestConfiguration(camelContext, componentName);
+            RestConfiguration config = CamelContextHelper.getRestConfiguration(camelContext, null, componentName);
             return factory.createProducer(camelContext, host, verb, basePath, uriTemplate, queryParameters, consumes, produces, config, parameters);
 
         } else {
