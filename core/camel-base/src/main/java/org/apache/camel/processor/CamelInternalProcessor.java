@@ -225,14 +225,13 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             // force shutdown so we should not continue
             originalCallback.done(true);
             return true;
-
         }
 
         // optimise to use object array for states, and only for the number of advices that keep state
         final Object[] states = statefulAdvices > 0 ? new Object[statefulAdvices] : EMPTY_STATES;
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0, j = 0; i < advices.size(); i++) {
-            CamelInternalProcessorAdvice task = advices.get(i);
+            CamelInternalProcessorAdvice<?> task = advices.get(i);
             try {
                 Object state = task.before(exchange);
                 if (task.hasState()) {
