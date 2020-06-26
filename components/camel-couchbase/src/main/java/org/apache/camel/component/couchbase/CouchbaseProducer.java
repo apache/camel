@@ -119,7 +119,7 @@ public class CouchbaseProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-//
+
         Map<String, Object> headers = exchange.getIn().getHeaders();
 
         String id = (headers.containsKey(HEADER_ID)) ? exchange.getIn().getHeader(HEADER_ID, String.class) : endpoint.getId();
