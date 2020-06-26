@@ -24,17 +24,17 @@ import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-/**
- *
- */
 public class HttpJmsAsyncTimeoutTest extends HttpAsyncTestSupport {
 
     @Test
-    public void testHttpJmsAsync() throws Exception {
+    void testHttpJmsAsync() {
         try {
             template.requestBody("http://0.0.0.0:"  + getPort() + "/myservice", "Hello World", String.class);
             fail("Should have thrown exception");
@@ -45,7 +45,7 @@ public class HttpJmsAsyncTimeoutTest extends HttpAsyncTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         // add ActiveMQ with embedded broker
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
@@ -54,10 +54,10 @@ public class HttpJmsAsyncTimeoutTest extends HttpAsyncTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // a lot of timeouts in the play :)
 
                 // jetty will timeout after 2 seconds

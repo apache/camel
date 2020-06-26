@@ -23,15 +23,16 @@ import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class JmsPollEnrichTest extends CamelTestSupport {
 
     @Test
-    public void testPollEnrichJms() throws Exception {
+    void testPollEnrichJms() throws Exception {
         template.sendBody("jms:queue:foo", "Bye World");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -43,7 +44,7 @@ public class JmsPollEnrichTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").pollEnrich("jms:queue:foo", 5000).to("mock:result");
@@ -52,7 +53,7 @@ public class JmsPollEnrichTest extends CamelTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         deleteDirectory("activemq-data");
 
         // add ActiveMQ with embedded broker which must be persistent

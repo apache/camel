@@ -23,14 +23,18 @@ import javax.xml.ws.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class CamelFileGreeterOneWayTest extends CamelSpringTestSupport {
     
@@ -45,7 +49,7 @@ public class CamelFileGreeterOneWayTest extends CamelSpringTestSupport {
         System.setProperty("CamelFileGreeterOneWayTest.port", Integer.toString(port));
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startServer() throws Exception {
         // Start the Greeter Server
         greeterImpl = new GreeterImpl();
@@ -54,7 +58,7 @@ public class CamelFileGreeterOneWayTest extends CamelSpringTestSupport {
         LOG.info("The WS endpoint is published! ");
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopServer() throws Exception {
         // Shutdown the Greeter Server
         if (endpoint != null) {
@@ -64,7 +68,7 @@ public class CamelFileGreeterOneWayTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testFileWithOnewayOperation() throws Exception {
+    void testFileWithOnewayOperation() throws Exception {
         deleteDirectory("target/messages/input/");
         greeterImpl.resetOneWayCounter();
         ProducerTemplate template = context.createProducerTemplate();
@@ -75,10 +79,10 @@ public class CamelFileGreeterOneWayTest extends CamelSpringTestSupport {
         template.stop();
         
         // make sure the greeter is called
-        assertEquals("The oneway operation of greeter should be called", 1, greeterImpl.getOneWayCounter());
+        assertEquals(1, greeterImpl.getOneWayCounter(), "The oneway operation of greeter should be called");
 
         File file = new File("target/messages/input/hello.txt");
-        assertFalse("File " + file + " should be deleted", file.exists());
+        assertFalse(file.exists(), "File " + file + " should be deleted");
     }    
 
     @Override

@@ -19,8 +19,10 @@ package org.apache.camel.itest.issues;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.reifier.RouteReifier;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Advice with tests
@@ -33,11 +35,11 @@ public class AdviceWithWeaveFirstLastTest extends CamelTestSupport {
     }
  
     @Test
-    public void testWeaveAddFirst() throws Exception {
+    void testWeaveAddFirst() throws Exception {
         // START SNIPPET: e1
         RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // insert at first the given piece of route to the existing route
                 weaveAddFirst().to("mock:a").transform(constant("Bye World"));
             }
@@ -57,11 +59,11 @@ public class AdviceWithWeaveFirstLastTest extends CamelTestSupport {
     }
  
     @Test
-    public void testWeaveAddLast() throws Exception {
+    void testWeaveAddLast() throws Exception {
         // START SNIPPET: e2
         RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // insert at the end of the existing route, the given piece of route
                 weaveAddLast().to("mock:a").transform(constant("Bye World"));
             }
@@ -83,10 +85,10 @@ public class AdviceWithWeaveFirstLastTest extends CamelTestSupport {
     }
  
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e5
                 from("direct:start")
                         .to("mock:foo")

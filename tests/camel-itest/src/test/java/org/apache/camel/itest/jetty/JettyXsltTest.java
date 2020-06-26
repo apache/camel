@@ -24,23 +24,27 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class JettyXsltTest extends CamelTestSupport {
 
     private int port;
 
     @Test
-    public void testClasspath() throws Exception {
+    void testClasspath() {
         String response = template.requestBody("xslt:org/apache/camel/itest/jetty/greeting.xsl", "<hello>Camel</hello>", String.class);
 
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>Camel</goodbye>", response);
     }
 
     @Test
-    public void testClasspathInvalidParameter() throws Exception {
+    void testClasspathInvalidParameter() {
         try {
             template.requestBody("xslt:org/apache/camel/itest/jetty/greeting.xsl?name=greeting.xsl", "<hello>Camel</hello>", String.class);
             fail("Should have thrown exception");
@@ -50,14 +54,14 @@ public class JettyXsltTest extends CamelTestSupport {
     }
 
     @Test
-    public void testHttp() throws Exception {
+    void testHttp() {
         String response = template.requestBody("xslt://http://localhost:" + port + "/test?name=greeting.xsl", "<hello>Camel</hello>", String.class);
 
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>Camel</goodbye>", response);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
@@ -73,8 +77,8 @@ public class JettyXsltTest extends CamelTestSupport {
                             InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), name);
                             String xml = exchange.getContext().getTypeConverter().convertTo(String.class, is);
 
-                            exchange.getOut().setBody(xml);
-                            exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "text/xml");
+                            exchange.getMessage().setBody(xml);
+                            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/xml");
                         }
                     });
             }

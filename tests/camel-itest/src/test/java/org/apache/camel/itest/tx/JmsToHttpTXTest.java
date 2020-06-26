@@ -19,21 +19,20 @@ package org.apache.camel.itest.tx;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test will look for the spring .xml file with the same class name
  * but postfixed with -config.xml as filename.
  * <p/>
- * We use Spring Testing for unit test, eg we extend AbstractJUnit4SpringContextTests
- * that is a Spring class.
  */
+@CamelSpringTest
 @ContextConfiguration
-public class JmsToHttpTXTest extends AbstractJUnit4SpringContextTests {
+public class JmsToHttpTXTest {
 
     // use uri to refer to our mock
     @EndpointInject("mock:rollback")
@@ -49,7 +48,7 @@ public class JmsToHttpTXTest extends AbstractJUnit4SpringContextTests {
     private String ok  = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
 
     @Test
-    public void testSendToTXJms() throws Exception {
+    void testSendToTXJms() throws Exception {
         // we assume 2 rollbacks
         mock.expectedMessageCount(2);
 

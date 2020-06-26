@@ -20,22 +20,24 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyRestRedirectTest extends CamelTestSupport {
 
     private int port;
 
     @Test
-    public void testRedirectInvocation() throws Exception {
+    void testRedirectInvocation() {
         String response = template.requestBody("http://localhost:" + port + "/metadata/profile/tag", "<hello>Camel</hello>", String.class);
-        assertEquals("It should support the redirect out of box.", "Mock profile", response);
+        assertEquals("Mock profile", response, "It should support the redirect out of box.");
     }
 
     
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
@@ -48,9 +50,9 @@ public class JettyRestRedirectTest extends CamelTestSupport {
                 from("direct:profileLookup").transform().constant("Mock profile");
                 from("direct:tag").log("${headers}").process(new Processor() {
                     @Override
-                    public void process(Exchange ex) throws Exception {
-                        ex.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 303);
-                        ex.getOut().setHeader("Location", "/metadata/profile/1");
+                    public void process(Exchange ex) {
+                        ex.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 303);
+                        ex.getMessage().setHeader("Location", "/metadata/profile/1");
                     }
                 }).log("${headers}").transform().constant("Redirecting...");
             }

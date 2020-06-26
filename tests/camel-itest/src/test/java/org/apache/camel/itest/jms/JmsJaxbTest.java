@@ -25,15 +25,15 @@ import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 public class JmsJaxbTest extends CamelTestSupport {
 
     @Test
-    public void testOk() throws Exception {
+    void testOk() throws Exception {
         PurchaseOrder order = new PurchaseOrder();
         order.setName("Wine");
         order.setAmount(123.45);
@@ -48,7 +48,7 @@ public class JmsJaxbTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUnmarshalError() throws Exception {
+    void testUnmarshalError() throws Exception {
         MockEndpoint error = getMockEndpoint("mock:error");
         error.expectedBodiesReceived("<foo/>");
         getMockEndpoint("mock:invalid").expectedMessageCount(0);
@@ -60,7 +60,7 @@ public class JmsJaxbTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNotWine() throws Exception {
+    void testNotWine() throws Exception {
         PurchaseOrder order = new PurchaseOrder();
         order.setName("Beer");
         order.setAmount(2);
@@ -77,7 +77,7 @@ public class JmsJaxbTest extends CamelTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         // add ActiveMQ with embedded broker
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
@@ -87,10 +87,10 @@ public class JmsJaxbTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("jms:queue:error").redeliveryDelay(0));
 
                 onException(InvalidOrderException.class).maximumRedeliveries(0).handled(true)

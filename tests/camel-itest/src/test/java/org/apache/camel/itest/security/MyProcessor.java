@@ -26,7 +26,7 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 public class MyProcessor implements Processor {
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) {
         Message in = exchange.getIn();
         // Get the parameter list
         List<?> parameter = in.getBody(List.class);
@@ -40,7 +40,7 @@ public class MyProcessor implements Processor {
             result = " Hello " +  (String)parameter.get(0);            
         }
         // Put the result back
-        exchange.getOut().setBody(result);        
+        exchange.getMessage().setBody(result);        
     }
 
 }

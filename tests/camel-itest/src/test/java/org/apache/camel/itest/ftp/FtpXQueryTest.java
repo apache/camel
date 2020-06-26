@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.filesystem.nativefs.NativeFileSystemFactory;
@@ -30,25 +30,23 @@ import org.apache.ftpserver.ftplet.UserManager;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
 import org.apache.ftpserver.usermanager.impl.PropertiesUserManager;
-import org.junit.After;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-/**
- *
- */
 public class FtpXQueryTest extends CamelTestSupport {
     protected static int ftpPort;
     protected FtpServer ftpServer;
     private String ftp = "ftp:localhost:" + ftpPort + "/myapp?password=admin&username=admin";
     
-    @BeforeClass
+    @BeforeAll
     public static void initPort() throws Exception {
         ftpPort = AvailablePortFinder.getNextAvailable();
     }
 
     @Test
-    public void testXQueryFromFtp() throws Exception {
+    void testXQueryFromFtp() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:davsclaus");
         mock.expectedMessageCount(1);
         mock.message(0).body(String.class).contains("Hello World");
@@ -67,10 +65,10 @@ public class FtpXQueryTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(ftp)
                     .choice()
                         .when().xquery("/mail/@from = 'davsclaus@apache.org'")
@@ -82,6 +80,7 @@ public class FtpXQueryTest extends CamelTestSupport {
     }
 
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         initFtpServer();
@@ -89,14 +88,14 @@ public class FtpXQueryTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         ftpServer.stop();
         ftpServer = null;
     }
 
-    protected void initFtpServer() throws Exception {
+    protected void initFtpServer() {
         FtpServerFactory serverFactory = new FtpServerFactory();
 
         // setup user management to read our users.properties and use clear text passwords

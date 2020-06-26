@@ -27,22 +27,21 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Ignore("TODO: ActiveMQ 5.14.1 or better, due AMQ-6402")
+@CamelSpringTest
 @ContextConfiguration
-public class CamelGreeterTest extends AbstractJUnit4SpringContextTests {
+public class CamelGreeterTest {
     private static final Logger LOG = LoggerFactory.getLogger(CamelGreeterTest.class);
     
     private static Endpoint endpoint;
@@ -60,8 +59,8 @@ public class CamelGreeterTest extends AbstractJUnit4SpringContextTests {
     @EndpointInject("mock:resultEndpoint")
     protected MockEndpoint resultEndpoint;
 
-    @BeforeClass
-    public static void startServer() throws Exception {
+    @BeforeAll
+    public static void startServer() {
         // Start the Greeter Server
         Object implementor = new GreeterImpl();
         String address = "http://localhost:" + port + "/SoapContext/SoapPort";
@@ -69,8 +68,8 @@ public class CamelGreeterTest extends AbstractJUnit4SpringContextTests {
         LOG.info("The WS endpoint is published! ");
     }
 
-    @AfterClass
-    public static void stopServer() throws Exception {
+    @AfterAll
+    public static void stopServer() {
         // Shutdown the Greeter Server
         if (endpoint != null) {
             endpoint.stop();
@@ -79,7 +78,7 @@ public class CamelGreeterTest extends AbstractJUnit4SpringContextTests {
     }
 
     @Test
-    public void testMocksAreValid() throws Exception {
+    void testMocksAreValid() throws Exception {
         assertNotNull(camelContext);
         assertNotNull(resultEndpoint);
 
@@ -92,10 +91,10 @@ public class CamelGreeterTest extends AbstractJUnit4SpringContextTests {
 
         MockEndpoint.assertIsSatisfied(camelContext);
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
-        assertEquals("Should get one message", list.size(), 1);
+        assertEquals(list.size(), 1, "Should get one message");
         for (Exchange exchange : list) {
             String result = (String) exchange.getIn().getBody();
-            assertEquals("Get the wrong result ", result, "Hello Willem");
+            assertEquals(result, "Hello Willem", "Get the wrong result ");
         }
     }
 

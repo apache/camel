@@ -17,10 +17,12 @@
 package org.apache.camel.itest.jetty;
 
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettySpringFailoverRoundRobinTest extends CamelSpringTestSupport {
 
@@ -44,7 +46,7 @@ public class JettySpringFailoverRoundRobinTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testJettySpringFailoverRoundRobin() throws Exception {
+    void testJettySpringFailoverRoundRobin() throws Exception {
         getMockEndpoint("mock:bad").expectedMessageCount(1);
         getMockEndpoint("mock:bad2").expectedMessageCount(1);
         getMockEndpoint("mock:good").expectedMessageCount(1);

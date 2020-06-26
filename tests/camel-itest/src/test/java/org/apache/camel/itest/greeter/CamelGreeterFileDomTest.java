@@ -23,22 +23,23 @@ import javax.xml.ws.Endpoint;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.TestSupport;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.junit5.TestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@CamelSpringTest
 @ContextConfiguration
-public class CamelGreeterFileDomTest extends AbstractJUnit4SpringContextTests {
+public class CamelGreeterFileDomTest {
     private static final Logger LOG = LoggerFactory.getLogger(CamelGreeterFileDomTest.class);
     
     private static final String REQUEST = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
@@ -54,8 +55,8 @@ public class CamelGreeterFileDomTest extends AbstractJUnit4SpringContextTests {
     @Autowired
     protected CamelContext camelContext;
     
-    @BeforeClass
-    public static void startServer() throws Exception {
+    @BeforeAll
+    public static void startServer() {
         // Start the Greeter Server
         Object implementor = new GreeterImpl();
         String address = "http://localhost:" + port + "/SoapContext/SoapPort";
@@ -63,8 +64,8 @@ public class CamelGreeterFileDomTest extends AbstractJUnit4SpringContextTests {
         LOG.info("The WS endpoint is published! ");
     }
 
-    @AfterClass
-    public static void stopServer() throws Exception {
+    @AfterAll
+    public static void stopServer() {
         // Shutdown the Greeter Server
         if (endpoint != null) {
             endpoint.stop();
@@ -73,7 +74,7 @@ public class CamelGreeterFileDomTest extends AbstractJUnit4SpringContextTests {
     }
 
     @Test
-    public void testCamelGreeter() throws Exception {
+    void testCamelGreeter() {
         TestSupport.deleteDirectory("target/greeter/response");
         assertNotNull(camelContext);
         
@@ -81,10 +82,10 @@ public class CamelGreeterFileDomTest extends AbstractJUnit4SpringContextTests {
         Object result = template.requestBody("direct:start", REQUEST);
         template.stop();
 
-        assertEquals("The result is wrong.", "Hello Willem", result);
+        assertEquals("Hello Willem", result, "The result is wrong.");
         
         File file = new File("target/greeter/response/response.txt");
-        assertTrue("File " + file + " should be there.", file.exists());
+        assertTrue(file.exists(), "File " + file + " should be there.");
     }
 
 }

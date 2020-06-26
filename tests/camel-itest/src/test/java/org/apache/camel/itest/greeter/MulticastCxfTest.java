@@ -20,10 +20,12 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MulticastCxfTest extends CamelSpringTestSupport {
     private static int port = AvailablePortFinder.getNextAvailable();
@@ -50,7 +52,7 @@ public class MulticastCxfTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testMulticastCXF() throws Exception {
+    void testMulticastCXF() throws Exception {
         replyEndpoint.expectedBodiesReceived("Hello Willem", "Hello Claus", "Hello Jonathan");
         reply2Endpoint.expectedBodiesReceived("Bye Willem", "Bye Claus", "Bye Jonathan");
         outputEndpoint.expectedBodiesReceived("Bye Willem", "Bye Claus", "Bye Jonathan");
