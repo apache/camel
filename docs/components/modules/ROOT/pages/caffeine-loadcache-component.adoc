@@ -14,7 +14,7 @@
 *{component-header}*
 
 The Caffeine Loadcache component enables you to perform caching operations using
-The Load cache from Caffeine.
+the LoadingCache from Caffeine.
 
 Maven users will need to add the following dependency to
 their `pom.xml` for this component:
