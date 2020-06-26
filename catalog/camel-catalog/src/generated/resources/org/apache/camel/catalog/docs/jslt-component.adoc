@@ -154,7 +154,7 @@ dynamically via a header, so for example:
 ---------------------------------------------------------------------
 from("direct:in").
   setHeader("CamelJsltResourceUri").constant("path/to/my/spec.json").
-  to("jslt:dummy");
+  to("jslt:dummy?allowTemplateFromHeader=true");
 ---------------------------------------------------------------------
 
 Or send whole jslt expression via header: (suitable for querying)
@@ -163,7 +163,7 @@ Or send whole jslt expression via header: (suitable for querying)
 ---------------------------------------------------------------------
 from("direct:in").
   setHeader("CamelJsltResourceUri").constant(".published").
-  to("jslt:dummy");
+  to("jslt:dummy?allowTemplateFromHeader=true");
 ---------------------------------------------------------------------
 
 Passing exchange properties to the jslt expression can be done like this
