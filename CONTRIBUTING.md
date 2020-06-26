@@ -30,9 +30,8 @@ There are many ways you can help make Camel a better piece of software - please 
 ## Getting in touch
 
 There are various ways of communicating with the Camel community.
-- Join us on the [Discussion Forums](http://camel.apache.org/discussion-forums.html) and take part in any conversations
-- Pop by on [IRC](http://camel.apache.org/irc-room.html) and say hi
-- Add some comments to the [wiki](http://camel.apache.org/navigation.html)
+- Join us on the [Discussion Forums](https://camel.465427.n5.nabble.com) and take part in any conversations
+- Pop by on [Gitter](https://gitter.im/apache/apache-camel) and say hi
 
 
 ## Improving the documentation
