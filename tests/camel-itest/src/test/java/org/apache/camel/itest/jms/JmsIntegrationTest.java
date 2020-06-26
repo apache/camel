@@ -25,26 +25,32 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JmsIntegrationTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JmsIntegrationTest.class);
+
     protected CountDownLatch receivedCountDown = new CountDownLatch(1);
     protected MyBean myBean = new MyBean();
 
     @Test
-    public void testOneWayInJmsOutPojo() throws Exception {
+    void testOneWayInJmsOutPojo() throws Exception {
         // Send a message to the JMS endpoint
         template.sendBodyAndHeader("jms:test", "Hello", "cheese", 123);
 
         // The Activated endpoint should send it to the pojo due to the configured route.
-        assertTrue("The message ware received by the Pojo", receivedCountDown.await(5, TimeUnit.SECONDS));
+        assertTrue(receivedCountDown.await(5, TimeUnit.SECONDS), "The message ware received by the Pojo");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("jms:test").to("bean:myBean");
@@ -53,7 +59,7 @@ public class JmsIntegrationTest extends CamelTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         // add ActiveMQ with embedded broker
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
@@ -65,7 +71,7 @@ public class JmsIntegrationTest extends CamelTestSupport {
 
     protected class MyBean {
         public void onMessage(String body) {
-            log.info("Received: " + body);
+            LOG.info("Received: " + body);
             receivedCountDown.countDown();
         }
     }

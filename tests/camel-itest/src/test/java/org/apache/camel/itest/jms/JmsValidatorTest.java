@@ -23,15 +23,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 public class JmsValidatorTest extends CamelTestSupport {
 
     @Test
-    public void testJmsValidator() throws Exception {
+    void testJmsValidator() throws Exception {
         getMockEndpoint("mock:valid").expectedMessageCount(1);
         getMockEndpoint("mock:invalid").expectedMessageCount(0);
         getMockEndpoint("mock:finally").expectedMessageCount(1);
@@ -43,7 +43,7 @@ public class JmsValidatorTest extends CamelTestSupport {
     }
 
     @Test
-    public void testJmsValidatorInvalid() throws Exception {
+    void testJmsValidatorInvalid() throws Exception {
         getMockEndpoint("mock:valid").expectedMessageCount(0);
         getMockEndpoint("mock:invalid").expectedMessageCount(1);
         getMockEndpoint("mock:finally").expectedMessageCount(1);
@@ -55,7 +55,7 @@ public class JmsValidatorTest extends CamelTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         // add ActiveMQ with embedded broker
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
@@ -65,10 +65,10 @@ public class JmsValidatorTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jms:queue:inbox")
                     .convertBodyTo(String.class)
                     .doTry()

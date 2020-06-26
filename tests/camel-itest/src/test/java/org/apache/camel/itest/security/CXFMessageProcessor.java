@@ -26,7 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CXFMessageProcessor implements Processor {
     static final String RESPONSE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
@@ -39,9 +39,9 @@ public class CXFMessageProcessor implements Processor {
         Message in = exchange.getIn();
         String request = in.getBody(String.class);
         // just make sure the request is greetme
-        assertTrue("It should be GreetMe request.", request.indexOf("<greetMe") > 0);
+        assertTrue(request.indexOf("<greetMe") > 0, "It should be GreetMe request.");
         InputStream is = new ByteArrayInputStream(RESPONSE.getBytes());
         SOAPMessage message = MessageFactory.newInstance().createMessage(null, is);
-        exchange.getOut().setBody(message);
+        exchange.getMessage().setBody(message);
     }
 }

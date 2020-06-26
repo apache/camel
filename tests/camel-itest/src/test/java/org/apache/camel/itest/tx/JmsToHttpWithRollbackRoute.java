@@ -30,7 +30,7 @@ import org.apache.camel.test.AvailablePortFinder;
 public class JmsToHttpWithRollbackRoute extends JmsToHttpRoute {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         port = AvailablePortFinder.getNextAvailable();
 
         // configure a global transacted error handler
@@ -60,11 +60,11 @@ public class JmsToHttpWithRollbackRoute extends JmsToHttpRoute {
         // this is our http route that will fail the first 2 attempts
         // before it sends an ok response
         from("jetty:http://localhost:" + port + "/sender").process(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 if (counter++ < 2) {
-                    exchange.getOut().setBody(nok);
+                    exchange.getMessage().setBody(nok);
                 } else {
-                    exchange.getOut().setBody(ok);
+                    exchange.getMessage().setBody(ok);
                 }
             }
         });

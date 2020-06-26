@@ -27,10 +27,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Based on user forum.
@@ -40,7 +42,7 @@ public class JmsHttpJmsTest extends CamelTestSupport {
     private int port;
 
     @Test
-    public void testJmsHttpJms() throws Exception {
+    void testJmsHttpJms() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Bye World");
@@ -49,7 +51,7 @@ public class JmsHttpJmsTest extends CamelTestSupport {
 
         Endpoint endpoint = context.getEndpoint("jms:out");
         endpoint.createConsumer(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 assertEquals("Bye World", exchange.getIn().getBody(String.class));
             }
         });
@@ -58,21 +60,21 @@ public class JmsHttpJmsTest extends CamelTestSupport {
     }
     
     @Test
-    public void testResultReplyJms() throws Exception {
+    void testResultReplyJms() throws Exception {
         Exchange exchange = template.request("jms:reply?replyTo=bar", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
             }
         });
-        assertEquals("Bye World", exchange.getOut().getBody(String.class));
-        assertTrue("Should have headers", exchange.getOut().hasHeaders());
-        assertEquals("queue://bar", exchange.getOut().getHeader("JMSReplyTo", String.class));
+        assertEquals("Bye World", exchange.getMessage().getBody(String.class));
+        assertTrue(exchange.getMessage().hasHeaders(), "Should have headers");
+        assertEquals("queue://bar", exchange.getMessage().getHeader("JMSReplyTo", String.class));
         
       
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
@@ -87,7 +89,7 @@ public class JmsHttpJmsTest extends CamelTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         // add ActiveMQ with embedded broker
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);

@@ -19,13 +19,12 @@ package org.apache.camel.itest.validator;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-/**
- *
- */
+import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
+
 public class ValidatorSchemaImportTest extends CamelTestSupport {
 
     protected MockEndpoint validEndpoint;
@@ -37,10 +36,10 @@ public class ValidatorSchemaImportTest extends CamelTestSupport {
      * @throws Exception
      */
     @Test
-    public void testRelativeParentSchemaImport() throws Exception {
+    void testRelativeParentSchemaImport() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                     .doTry()
                         .to("validator:org/apache/camel/component/validator/relativeparent/child/child.xsd")
@@ -58,7 +57,7 @@ public class ValidatorSchemaImportTest extends CamelTestSupport {
         template.sendBody("direct:start",
                 "<childuser xmlns='http://foo.com/bar'><user><id>1</id><username>Test User</username></user></childuser>");
 
-        MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
+        assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
     
     /**
@@ -67,10 +66,10 @@ public class ValidatorSchemaImportTest extends CamelTestSupport {
      * @throws Exception
      */
     @Test
-    public void testDotSlashSchemaImport() throws Exception {
+    void testDotSlashSchemaImport() throws Exception {
         this.context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").doTry()
                     .to("validator:org/apache/camel/component/validator/dotslash/child.xsd").to("mock:valid")
                     .doCatch(ValidationException.class).to("mock:invalid").doFinally().to("mock:finally")
@@ -84,7 +83,7 @@ public class ValidatorSchemaImportTest extends CamelTestSupport {
             .sendBody("direct:start",
                       "<childuser xmlns='http://foo.com/bar'><user><id>1</id><username>Test User</username></user></childuser>");
 
-        MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
+        assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
 
     /**
@@ -93,10 +92,10 @@ public class ValidatorSchemaImportTest extends CamelTestSupport {
      * @throws Exception
      */
     @Test
-    public void testRelativeDoubleSlashSchemaImport() throws Exception {
+    void testRelativeDoubleSlashSchemaImport() throws Exception {
         this.context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").doTry()
                     .to("validator:org/apache/camel/component/validator/doubleslash/child.xsd")
                     .to("mock:valid").doCatch(ValidationException.class).to("mock:invalid").doFinally()
@@ -110,7 +109,7 @@ public class ValidatorSchemaImportTest extends CamelTestSupport {
             .sendBody("direct:start",
                       "<childuser xmlns='http://foo.com/bar'><user><id>1</id><username>Test User</username></user></childuser>");
 
-        MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
+        assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
     
     /**
@@ -118,10 +117,10 @@ public class ValidatorSchemaImportTest extends CamelTestSupport {
      * @throws Exception
      */
     @Test
-    public void testChildParentUncleSchemaImport() throws Exception {
+    void testChildParentUncleSchemaImport() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                     .doTry()
                         .to("validator:org/apache/camel/component/validator/childparentuncle/child/child.xsd")
@@ -139,11 +138,11 @@ public class ValidatorSchemaImportTest extends CamelTestSupport {
         template.sendBody("direct:start",
                 "<childuser xmlns='http://foo.com/bar'><user><id>1</id><username>Test User</username></user></childuser>");
 
-        MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
+        assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         validEndpoint = resolveMandatoryEndpoint("mock:valid", MockEndpoint.class);

@@ -20,16 +20,17 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.TestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.TestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@CamelSpringTest
 @ContextConfiguration
-public class JettyMulticastJmsFileTest extends AbstractJUnit4SpringContextTests {
+public class JettyMulticastJmsFileTest {
     
     private static int port = AvailablePortFinder.getNextAvailable();
     private static final String URL = "http://localhost:" + port + "/test";
@@ -43,7 +44,7 @@ public class JettyMulticastJmsFileTest extends AbstractJUnit4SpringContextTests 
     protected CamelContext camelContext;
 
     @Test
-    public void testJettyMulticastJmsFile() throws Exception {
+    void testJettyMulticastJmsFile() {
         TestSupport.deleteDirectory("target/jetty");
 
         ProducerTemplate template = camelContext.createProducerTemplate();

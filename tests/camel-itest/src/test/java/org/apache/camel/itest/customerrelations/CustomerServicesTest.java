@@ -26,21 +26,23 @@ import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CustomerServicesTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+public class CustomerServicesTest {
 
     @Test
-    public void testCustomerService() throws Exception {
+    void testCustomerService() throws Exception {
         ClassPathXmlApplicationContext serverContext = null;
         ClassPathXmlApplicationContext clientContext = null;
         try {
             serverContext = new ClassPathXmlApplicationContext(
                 new String[] {"spring-config/server-applicationContext.xml"});
             Object server = serverContext.getBean("org.apache.camel.itest.customerrelations.CustomerServiceV1");
-            assertNotNull("We should get server here", server);
+            assertNotNull(server, "We should get server here");
 
             // add an interceptor to verify headers
             EndpointImpl.class.cast(server).getServer().getEndpoint().getInInterceptors()
@@ -57,7 +59,7 @@ public class CustomerServicesTest extends Assert {
                 .getClient().getInInterceptors().add(new HeaderChecker(Phase.READ));*/
 
             Customer customer = customerService.getCustomer("12345");
-            assertNotNull("We should get Customer here", customer);
+            assertNotNull(customer, "We should get Customer here");
         } finally {
             // we're done so let's properly close the application contexts
             IOHelper.close(clientContext, serverContext);

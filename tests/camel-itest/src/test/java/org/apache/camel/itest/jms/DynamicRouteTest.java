@@ -24,15 +24,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DynamicRouteTest extends CamelTestSupport {
     
     @Test
-    public void testDynamicRouteWithJms() throws Exception {
+    void testDynamicRouteWithJms() {
         String response = template.requestBody("jms:queue:request?replyTo=bar", "foo", String.class);
         assertEquals("response is foo", response);
         response = template.requestBody("jms:queue:request", "bar", String.class);
@@ -42,18 +43,16 @@ public class DynamicRouteTest extends CamelTestSupport {
     }
     
     @Test
-    public void testDynamicRouteWithDirect() throws Exception {
+    void testDynamicRouteWithDirect() {
         String response = template.requestBody("direct:start", "foo", String.class);
         assertEquals("response is foo", response);
         response = template.requestBody("direct:start", "bar", String.class);
         assertEquals("response is bar", response);
-        
-      
     }
     
     
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
        
         return new RouteBuilder() {
             public void configure() {
@@ -67,7 +66,7 @@ public class DynamicRouteTest extends CamelTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         // add ActiveMQ with embedded broker
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);

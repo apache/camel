@@ -26,14 +26,15 @@ import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RemoveEndpointsTest extends CamelTestSupport {
     @Test
-    public void testRemoveAllEndpoints() throws Exception {
+    void testRemoveAllEndpoints() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:jms-queue");
         mock.expectedMessageCount(1);
 
@@ -58,10 +59,10 @@ public class RemoveEndpointsTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").to("jms:queue:foo");
                 from("jms:queue:foo").to("mock:jms-queue");
                 from("jms:topic:bar").to("mock:jms-topic");

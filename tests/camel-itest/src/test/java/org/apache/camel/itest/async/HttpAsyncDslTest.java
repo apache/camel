@@ -23,18 +23,20 @@ import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpAsyncDslTest extends CamelTestSupport {
 
     private static volatile String order = "";
 
     @Test
-    public void testRequestOnly() throws Exception {
+    void testRequestOnly() throws Exception {
         getMockEndpoint("mock:validate").expectedMessageCount(1);
         // even though its request only the message is still continued being processed
         getMockEndpoint("mock:order").expectedMessageCount(1);
@@ -50,7 +52,7 @@ public class HttpAsyncDslTest extends CamelTestSupport {
     }
 
     @Test
-    public void testRequestReply() throws Exception {
+    void testRequestReply() throws Exception {
         getMockEndpoint("mock:validate").expectedMessageCount(1);
         // even though its request only the message is still continued being processed
         getMockEndpoint("mock:order").expectedMessageCount(1);
@@ -66,7 +68,7 @@ public class HttpAsyncDslTest extends CamelTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         order = "";
         super.setUp();
@@ -90,10 +92,10 @@ public class HttpAsyncDslTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
 
                 // list on the JMS queue for new orders

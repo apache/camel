@@ -17,7 +17,6 @@
 package org.apache.camel.itest.ftp;
 
 import java.io.File;
-import java.util.Locale;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
@@ -25,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.filesystem.nativefs.NativeFileSystemFactory;
@@ -32,18 +32,20 @@ import org.apache.ftpserver.ftplet.UserManager;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
 import org.apache.ftpserver.usermanager.impl.PropertiesUserManager;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /**
  * Unit testing FTP ant path matcher
  */
+@CamelSpringTest
 @ContextConfiguration
-public class SpringFileAntPathMatcherRemoteFileFilterTest extends AbstractJUnit4SpringContextTests {
+public class SpringFileAntPathMatcherRemoteFileFilterTest {
    
     private static int ftpPort = AvailablePortFinder.getNextAvailable();
     static {
@@ -62,24 +64,9 @@ public class SpringFileAntPathMatcherRemoteFileFilterTest extends AbstractJUnit4
     @EndpointInject("mock:result")
     protected MockEndpoint result;
 
-    protected boolean canRunOnThisPlatform() {
-        String os = System.getProperty("os.name");
-        boolean aix = os.toLowerCase(Locale.ENGLISH).contains("aix");
-        boolean windows = os.toLowerCase(Locale.ENGLISH).contains("windows");
-        boolean solaris = os.toLowerCase(Locale.ENGLISH).contains("sunos");
-
-        // Does not work on AIX / solaris and the problem is hard to identify, could be issues not allowing to use a custom port
-        // java.io.IOException: Failed to retrieve RMIServer stub: javax.naming.NameNotFoundException: jmxrmi/camel
-
-        // windows CI servers is often slow/tricky so skip as well
-        return !aix && !solaris && !windows;
-    }
-
+    @DisabledOnOs({OS.AIX, OS.WINDOWS, OS.SOLARIS})
     @Test
-    public void testAntPatchMatherFilter() throws Exception {
-        if (!canRunOnThisPlatform()) {
-            return;
-        }
+    void testAntPatchMatherFilter() throws Exception {
 
         result.expectedBodiesReceived(expectedBody);
 
@@ -92,19 +79,19 @@ public class SpringFileAntPathMatcherRemoteFileFilterTest extends AbstractJUnit4
         result.assertIsSatisfied();
     }
 
-    @Before
-    public void setUp() throws Exception {        
+    @BeforeEach
+    public void setUp() throws Exception {
         initFtpServer();
         ftpServer.start();
     }
 
-    @After
-    public void tearDown() throws Exception {        
+    @AfterEach
+    public void tearDown() throws Exception {
         ftpServer.stop();
         ftpServer = null;
     }
 
-    protected void initFtpServer() throws Exception {
+    protected void initFtpServer() {
         FtpServerFactory serverFactory = new FtpServerFactory();
 
         // setup user management to read our users.properties and use clear text passwords

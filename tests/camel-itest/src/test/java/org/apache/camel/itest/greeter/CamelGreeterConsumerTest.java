@@ -25,19 +25,20 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.apache.hello_world_soap_http.PingMeFault;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
+@CamelSpringTest
 @ContextConfiguration
-public class CamelGreeterConsumerTest extends AbstractJUnit4SpringContextTests {
+public class CamelGreeterConsumerTest {
     private static int port = AvailablePortFinder.getNextAvailable();
     static {
         //set them as system properties so Spring can use the property placeholder
@@ -49,7 +50,7 @@ public class CamelGreeterConsumerTest extends AbstractJUnit4SpringContextTests {
     protected CamelContext camelContext;
 
     @Test
-    public void testInvokeServers() throws Exception {
+    void testInvokeServers() {
         assertNotNull(camelContext);
 
         ProducerTemplate template = camelContext.createProducerTemplate();
@@ -57,15 +58,15 @@ public class CamelGreeterConsumerTest extends AbstractJUnit4SpringContextTests {
         params.add("Willem");
         Object result = template.sendBodyAndHeader("cxf://bean:serviceEndpoint", ExchangePattern.InOut,
                                                    params, CxfConstants.OPERATION_NAME, "greetMe");
-        assertTrue("Result is a list instance ", result instanceof List);
-        assertEquals("Get the wrong response", ((List<?>)result).get(0), "HelloWillem");
+        assertTrue(result instanceof List, "Result is a list instance ");
+        assertEquals(((List<?>)result).get(0), "HelloWillem", "Get the wrong response");
         try {
             template.sendBodyAndHeader("cxf://bean:serviceEndpoint", ExchangePattern.InOut,
                                             params, CxfConstants.OPERATION_NAME, "pingMe");
             fail("Expect exception here.");
         } catch (Exception ex) {
-            assertTrue("Get a wrong exception.", ex instanceof CamelExecutionException);
-            assertTrue("Get a wrong exception cause. ", ex.getCause() instanceof PingMeFault);
+            assertTrue(ex instanceof CamelExecutionException, "Get a wrong exception.");
+            assertTrue(ex.getCause() instanceof PingMeFault, "Get a wrong exception cause. ");
         }
         template.stop();
     }

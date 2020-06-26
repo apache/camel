@@ -22,9 +22,12 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test that exchange.isExternalRedelivered() is kept around even when
@@ -52,10 +55,10 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
     }
 
     @Test
-    public void testTransactionSuccess() throws Exception {
+    void testTransactionSuccess() throws Exception {
         RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(AssertionError.class).to("log:error", "mock:error");
             }
         });
@@ -85,14 +88,14 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
         private int count;
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             ++count;
 
             // the first is not redelivered
             if (count == 1) {
-                assertFalse("Should not be external redelivered", exchange.isExternalRedelivered());
+                assertFalse(exchange.isExternalRedelivered(), "Should not be external redelivered");
             } else {
-                assertTrue("Should be external redelivered", exchange.isExternalRedelivered());
+                assertTrue(exchange.isExternalRedelivered(), "Should be external redelivered");
             }
 
             if (count < 3) {
@@ -104,9 +107,9 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
 
     public static class MyAfterProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             // origin message should be a external redelivered
-            assertTrue("Should be external redelivered", exchange.isExternalRedelivered());
+            assertTrue(exchange.isExternalRedelivered(), "Should be external redelivered");
         }
     }
 
