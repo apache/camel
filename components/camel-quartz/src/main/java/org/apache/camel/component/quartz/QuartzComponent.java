@@ -412,6 +412,14 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
         if (prefixJobNameWithEndpointId != null) {
             result.setPrefixJobNameWithEndpointId(prefixJobNameWithEndpointId);
         }
+        // special for cron where we replace + as space
+        String cron = getAndRemoveParameter(parameters, "cron", String.class);
+        if (cron != null) {
+            // replace + as space
+            cron = cron.replace('+', ' ');
+            result.setCron(cron);
+        }
+        setProperties(result, parameters);
         return result;
     }
 
