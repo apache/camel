@@ -38,7 +38,7 @@
 
         <dependency>
             <groupId>com.couchbase.client</groupId>
-            <artifactId>couchbase-client</artifactId>
+            <artifactId>java-client</artifactId>
             <version>${couchbase-client-version}</version>
         </dependency>
 
