@@ -14,7 +14,7 @@
 *{component-header}*
 
 The Kubernetes Persistent Volume component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
-provides a producer to execute kubernetes persistent volume operations.
+provides a producer to execute Kubernetes Persistent Volume operations.
 
 
 
