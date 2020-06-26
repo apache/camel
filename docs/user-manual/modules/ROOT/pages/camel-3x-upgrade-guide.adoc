@@ -13,3 +13,4 @@ You can find upgrade guide for each release in the following pages:
 - xref:camel-3x-upgrade-guide-3_2.adoc[Upgrade guide from 3.1 to 3.2]
 - xref:camel-3x-upgrade-guide-3_3.adoc[Upgrade guide from 3.2 to 3.3]
 - xref:camel-3x-upgrade-guide-3_4.adoc[Upgrade guide from 3.3 to 3.4]
+- xref:camel-3x-upgrade-guide-3_5.adoc[Upgrade guide from 3.4 to 3.5]
