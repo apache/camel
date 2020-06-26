@@ -68,7 +68,7 @@ public class JmsBatchResequencerJMSPriorityTest extends CamelTestSupport {
                 from("jms:queue:foo")
                     // sort by JMSPriority by allowing duplicates (message can have same JMSPriority)
                     // and use reverse ordering so 9 is first output (most important), and 0 is last
-                    // use batch mode and fire every 3th second
+                    // use batch mode and fire every 3rd second
                     .resequence(header("JMSPriority")).batch().timeout(3000).allowDuplicates().reverse()
                     .to("mock:result");
                 // END SNIPPET: e1
