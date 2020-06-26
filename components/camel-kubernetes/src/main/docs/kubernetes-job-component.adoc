@@ -14,7 +14,7 @@
 *{component-header}*
 
 The Kubernetes Job component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
-provides a producer to execute kubernetes job operations.
+provides a producer to execute kubernetes Job operations and a consumer to consume events related to Job objects.
  
 
 
