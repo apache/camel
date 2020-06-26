@@ -16,7 +16,7 @@
 *{component-header}*
 
 The Kubernetes Pods component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
-provides a producer to execute kubernetes pod operations.
+provides a producer to execute Kubernetes Pods operations and a consumer to consume events related to Pod Objects.
 
 
 

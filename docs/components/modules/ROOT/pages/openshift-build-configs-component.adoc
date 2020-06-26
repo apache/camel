@@ -16,7 +16,7 @@
 *{component-header}*
 
 The OpenShift Build Config component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
-provides a producer to execute kubernetes build config operations. 
+provides a producer to execute Openshift Build Configs operations. 
 
 
 == Component Options
