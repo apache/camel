@@ -16,8 +16,7 @@
 *{component-header}*
 
 The Kubernetes HPA component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
-provides a producer to execute kubernetes hpa operations and a consumer to consume kubernetes
-hpa events.
+provides a producer to execute kubernetes Horizontal Pod Autoscaler operations and a consumer to consume events related to Horizontal Pod Autoscaler objects.
  
 
 
