@@ -16,10 +16,7 @@
  */
 package org.apache.camel.component.minio;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -144,8 +141,8 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         super.doStop();
     }
 
-    public Exchange createExchange(ResponseInputStream<GetObjectResponse> s3Object, String key) {
-        return createExchange(getExchangePattern(), s3Object, key);
+    public Exchange createExchange(InputStream minioObject, String key) {
+        return createExchange(getExchangePattern(), minioObject, key);
     }
 
     public Exchange createExchange(ExchangePattern pattern, ResponseInputStream<GetObjectResponse> s3Object, String key) {
@@ -204,7 +201,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         return exchange;
     }
 
-    public AWS2S3Configuration getConfiguration() {
+    public MinioConfiguration getConfiguration() {
         return configuration;
     }
 
@@ -216,8 +213,8 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         this.s3Client = s3Client;
     }
 
-    public S3Client getS3Client() {
-        return s3Client;
+    public MinioClient getMinioClient() {
+        return minioClient;
     }
 
     public int getMaxMessagesPerPoll() {

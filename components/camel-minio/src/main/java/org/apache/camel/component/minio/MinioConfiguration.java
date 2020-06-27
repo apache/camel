@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.minio;
 
+import io.minio.CopyConditions;
 import io.minio.MinioClient;
 import io.minio.ServerSideEncryption;
 import okhttp3.OkHttpClient;
@@ -47,11 +48,15 @@ public class MinioConfiguration implements Cloneable {
 
     @UriParam
     private String bucketName;
+    @UriParam(label = "consumer")
+    private String srcBucketName;
     @UriParam
     private MinioClient minioClient;
 
     @UriParam(label = "consumer")
     private String objectName;
+    @UriParam(label = "consumer")
+    private String srcObjectName;
     @UriParam(label = "consumer")
     private String prefix;
     @UriParam(label = "consumer", defaultValue = "false")
@@ -62,8 +67,12 @@ public class MinioConfiguration implements Cloneable {
     private long offset;
     @UriParam(label = "consumer")
     private long length;
+    @UriParam(label = "consumer")
+    private String fileName;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean deleteAfterRead = true;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean moveAfterRead;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean includeBody = true;
     @UriParam(label = "consumer", defaultValue = "true")
@@ -81,6 +90,10 @@ public class MinioConfiguration implements Cloneable {
     private String storageClass;
     @UriParam(label = "producer")
     private ServerSideEncryption serverSideEncryption;
+    @UriParam(label = "producer")
+    private ServerSideEncryption srcServerSideEncryption;
+    @UriParam(label = "producer")
+    private CopyConditions copyConditions;
     @UriParam(label = "producer", enums = "copyObject,listObjects,deleteObject,deleteBucket,listBuckets,getObject,getObjectRange")
     private MinioOperations operation;
     @UriParam
@@ -191,6 +204,17 @@ public class MinioConfiguration implements Cloneable {
         this.bucketName = bucketName;
     }
 
+    public String getSrcBucketName() {
+        return srcBucketName;
+    }
+
+    /**
+     *  Source bucket name.
+     */
+    public void setSrcBucketName(String srcBucketName) {
+        this.srcBucketName = srcBucketName;
+    }
+
     public MinioClient getMinioClient() {
         return minioClient;
     }
@@ -213,12 +237,23 @@ public class MinioConfiguration implements Cloneable {
         this.objectName = objectName;
     }
 
+    public String getSrcObjectName() {
+        return srcObjectName;
+    }
+
+    /**
+     * (Optional) Source object name.
+     */
+    public void setSrcObjectName(String srcObjectName) {
+        this.srcObjectName = srcObjectName;
+    }
+
     public String getPrefix() {
         return prefix;
     }
 
     /**
-     * Object name starts with prefix.
+     * (Optional)Object name starts with prefix.
      */
     public void setPrefix(String prefix) {
         this.prefix = prefix;
@@ -229,7 +264,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * List recursively than directory structure emulation.
+     * (Optional)List recursively than directory structure emulation.
      */
     public void setRecursive(boolean recursive) {
         this.recursive = recursive;
@@ -240,7 +275,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * when true, version 1 of REST API is used.
+     * (Optional)when true, version 1 of REST API is used.
      */
     public void setUseVersion1(boolean useVersion1) {
         this.useVersion1 = useVersion1;
@@ -251,14 +286,14 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * Start byte position of object data.
+     * (Optional)Start byte position of object data.
      */
     public void setOffset(long offset) {
         this.offset = offset;
     }
 
     /**
-     *  Number of bytes of object data from offset.
+     *  (Optional)Number of bytes of object data from offset.
      */
     public long getLength() {
         return length;
@@ -268,12 +303,24 @@ public class MinioConfiguration implements Cloneable {
         this.length = length;
     }
 
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    /**
+     *  (Optional) Set destination folder when downloads object in bucket.
+     */
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
     public boolean isDeleteAfterRead() {
         return deleteAfterRead;
     }
 
     /**
-     * Delete objects from Minio after they have been retrieved. The delete is only
+     * (Optional) Delete objects from Minio after they have been retrieved. The delete is only
      * performed if the Exchange is committed. If a rollback occurs, the object
      * is not deleted.
      * <p/>
@@ -285,6 +332,20 @@ public class MinioConfiguration implements Cloneable {
      */
     public void setDeleteAfterRead(boolean deleteAfterRead) {
         this.deleteAfterRead = deleteAfterRead;
+    }
+
+    /**
+     * Move objects from S3 bucket to a different bucket after they have been retrieved. To accomplish the operation
+     * the destinationBucket option must be set.
+     * The copy bucket operation is only performed if the Exchange is committed. If a rollback occurs, the object
+     * is not moved.
+     */
+    public boolean isMoveAfterRead() {
+        return moveAfterRead;
+    }
+
+    public void setMoveAfterRead(boolean moveAfterRead) {
+        this.moveAfterRead = moveAfterRead;
     }
 
     public boolean isIncludeBody() {
@@ -386,6 +447,28 @@ public class MinioConfiguration implements Cloneable {
      */
     public void setServerSideEncryption(ServerSideEncryption serverSideEncryption) {
         this.serverSideEncryption = serverSideEncryption;
+    }
+
+    public ServerSideEncryption getSrcServerSideEncryption() {
+        return srcServerSideEncryption;
+    }
+
+    /**
+     *  (Optional) Server-side encryption for source object while copy/move objects.
+     */
+    public void setSrcServerSideEncryption(ServerSideEncryption srcServerSideEncryption) {
+        this.srcServerSideEncryption = srcServerSideEncryption;
+    }
+
+    public CopyConditions getCopyConditions() {
+        return copyConditions;
+    }
+
+    /**
+     *   (Optional) Conditions to be used in copy operation.
+     */
+    public void setCopyConditions(CopyConditions copyConditions) {
+        this.copyConditions = copyConditions;
     }
 
     public MinioOperations getOperation() {
