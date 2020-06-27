@@ -13,7 +13,7 @@
 
 The Solr component allows you to interface with an
 http://lucene.apache.org/solr/[Apache Lucene Solr] server (based on
-SolrJ 3.5.0).
+SolrJ 8.4.1).
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -108,11 +108,8 @@ The following Solr operations are currently supported. Simply set an
 exchange header with a key of "SolrOperation" and a value set to one of
 the following. Some operations also require the message body to be set.
 
-* the INSERT operations use the
-http://lucene.apache.org/solr/api/org/apache/solr/client/solrj/impl/CommonsHttpSolrServer.html[CommonsHttpSolrServer]
-* the INSERT_STREAMING operations use the
-http://lucene.apache.org/solr/api/org/apache/solr/client/solrj/impl/StreamingUpdateSolrServer.html[StreamingUpdateSolrServer]
-(*Camel 2.9.2*)
+* INSERT
+* INSERT_STREAMING
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -230,7 +227,7 @@ For more information, see these resources...
 http://lucene.apache.org/solr/tutorial.html#Querying+Data[Solr Query
 Tutorial]
 
-http://wiki.apache.org/solr/SolrQuerySyntax[Solr Query Syntax]
+https://lucene.apache.org/solr/guide/8_4/the-standard-query-parser.html[Solr Query Syntax]
 
 
 include::camel-spring-boot::page$solr-starter.adoc[]
