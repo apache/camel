@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 
 import io.minio.MinioClient;
 import io.minio.Result;
+import io.minio.errors.InvalidBucketNameException;
 import io.minio.messages.Item;
 import org.apache.camel.*;
 import org.apache.camel.component.minio.client.MinioClientFactory;
@@ -80,50 +81,39 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
 
         minioClient = configuration.getMinioClient() != null
                 ? configuration.getMinioClient()
-                : MinioClientFactory.getMinioClient(configuration).getMinioClient();
+                : MinioClientFactory.getClient(configuration).getMinioClient();
 
         String fileName = getConfiguration().getFileName();
 
         if (fileName != null) {
-            LOG.trace("File name [{}] requested, so skipping bucket check...", fileName);
+            LOG.trace("File name {} requested, so skipping bucket check...", fileName);
             return;
         }
 
         String bucketName = getConfiguration().getBucketName();
-        LOG.trace("Querying whether bucket [{}] already exists...", bucketName);
+        LOG.trace("Querying whether bucket {} already exists...", bucketName);
 
         String prefix = getConfiguration().getPrefix();
 
-        try {
-            Iterable<Result<Item>> results = minioClient.listObjects(bucketName,
-                    getConfiguration().getPrefix(),
-                    getConfiguration().isRecursive(),
-                    getConfiguration().isUseVersion1()
-            );
-            LOG.trace("Bucket [{}] already exists", bucketName);
-            return;
-        } catch (AwsServiceException ase) {
-            /* 404 means the bucket doesn't exist */
-            if (ase.awsErrorDetails().errorCode().equalsIgnoreCase("404")) {
-                throw ase;
+        if (bucketExists(minioClient, bucketName)) {
+            LOG.trace("Bucket {} already exists", bucketName);
+        } else {
+            if (!getConfiguration().isAutoCreateBucket()) {
+                throw new InvalidBucketNameException("Bucket {} does not exists", bucketName);
+            } else {
+                LOG.trace("Bucket {} doesn't exist yet", bucketName);
+                // creates the new bucket because it doesn't exist yet
+
+                LOG.trace("Creating bucket {} in region {} with request...", bucketName, configuration.getRegion());
+
+                makeBucket(bucketName, configuration.getRegion(), configuration.isObjectLock());
+
+                LOG.trace("Bucket created");
             }
         }
 
-        LOG.trace("Bucket [{}] doesn't exist yet", bucketName);
-
-        if (getConfiguration().isAutoCreateBucket()) {
-            // creates the new bucket because it doesn't exist yet
-            CreateBucketRequest createBucketRequest = CreateBucketRequest.builder().bucket(getConfiguration().getBucketName()).build();
-
-            LOG.trace("Creating bucket [{}] in region [{}] with request [{}]...", configuration.getBucketName(), configuration.getRegion(), createBucketRequest);
-
-            minioClient.createBucket(createBucketRequest);
-
-            LOG.trace("Bucket created");
-        }
-
         if (configuration.getPolicy() != null) {
-            LOG.trace("Updating bucket [{}] with policy [{}]", bucketName, configuration.getPolicy());
+            LOG.trace("Updating bucket {} with policy {}", bucketName, configuration.getPolicy());
 
             minioClient.putBucketPolicy(PutBucketPolicyRequest.builder().bucket(bucketName).policy(configuration.getPolicy()).build());
 
@@ -133,9 +123,9 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public void doStop() throws Exception {
-        if (ObjectHelper.isEmpty(configuration.getAmazonS3Client())) {
-            if (s3Client != null) {
-                s3Client.close();
+        if (ObjectHelper.isEmpty(configuration.getMinioClient())) {
+            if (minioClient != null) {
+                minioClient.close();
             }
         }
         super.doStop();
@@ -146,9 +136,9 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
     }
 
     public Exchange createExchange(ExchangePattern pattern, ResponseInputStream<GetObjectResponse> s3Object, String key) {
-        LOG.trace("Getting object with key [{}] from bucket [{}]...", key, getConfiguration().getBucketName());
+        LOG.trace("Getting object with key {} from bucket {}...", key, getConfiguration().getBucketName());
 
-        LOG.trace("Got object [{}]", s3Object);
+        LOG.trace("Got object {}", s3Object);
 
         Exchange exchange = super.createExchange(pattern);
         Message message = exchange.getIn();
@@ -164,20 +154,20 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
             message.setBody(null);
         }
 
-        message.setHeader(AWS2S3Constants.KEY, key);
-        message.setHeader(AWS2S3Constants.BUCKET_NAME, getConfiguration().getBucketName());
-        message.setHeader(AWS2S3Constants.E_TAG, s3Object.response().eTag());
-        message.setHeader(AWS2S3Constants.LAST_MODIFIED, s3Object.response().lastModified());
-        message.setHeader(AWS2S3Constants.VERSION_ID, s3Object.response().versionId());
-        message.setHeader(AWS2S3Constants.CONTENT_TYPE, s3Object.response().contentType());
-        message.setHeader(AWS2S3Constants.CONTENT_LENGTH, s3Object.response().contentLength());
-        message.setHeader(AWS2S3Constants.CONTENT_ENCODING, s3Object.response().contentEncoding());
-        message.setHeader(AWS2S3Constants.CONTENT_DISPOSITION, s3Object.response().contentDisposition());
-        message.setHeader(AWS2S3Constants.CACHE_CONTROL, s3Object.response().cacheControl());
-        message.setHeader(AWS2S3Constants.SERVER_SIDE_ENCRYPTION, s3Object.response().serverSideEncryption());
-        message.setHeader(AWS2S3Constants.EXPIRATION_TIME, s3Object.response().expiration());
-        message.setHeader(AWS2S3Constants.REPLICATION_STATUS, s3Object.response().replicationStatus());
-        message.setHeader(AWS2S3Constants.STORAGE_CLASS, s3Object.response().storageClass());
+        message.setHeader(MinioConstants.KEY, key);
+        message.setHeader(MinioConstants.BUCKET_NAME, getConfiguration().getBucketName());
+        message.setHeader(MinioConstants.E_TAG, s3Object.response().eTag());
+        message.setHeader(MinioConstants.LAST_MODIFIED, s3Object.response().lastModified());
+        message.setHeader(MinioConstants.VERSION_ID, s3Object.response().versionId());
+        message.setHeader(MinioConstants.CONTENT_TYPE, s3Object.response().contentType());
+        message.setHeader(MinioConstants.CONTENT_LENGTH, s3Object.response().contentLength());
+        message.setHeader(MinioConstants.CONTENT_ENCODING, s3Object.response().contentEncoding());
+        message.setHeader(MinioConstants.CONTENT_DISPOSITION, s3Object.response().contentDisposition());
+        message.setHeader(MinioConstants.CACHE_CONTROL, s3Object.response().cacheControl());
+        message.setHeader(MinioConstants.SERVER_SIDE_ENCRYPTION, s3Object.response().serverSideEncryption());
+        message.setHeader(MinioConstants.EXPIRATION_TIME, s3Object.response().expiration());
+        message.setHeader(MinioConstants.REPLICATION_STATUS, s3Object.response().replicationStatus());
+        message.setHeader(MinioConstants.STORAGE_CLASS, s3Object.response().storageClass());
 
         /**
          * If includeBody != true, it is safe to close the object here. If
@@ -205,12 +195,12 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         return configuration;
     }
 
-    public void setConfiguration(AWS2S3Configuration configuration) {
+    public void setConfiguration(MinioConfiguration configuration) {
         this.configuration = configuration;
     }
 
-    public void setS3Client(S3Client s3Client) {
-        this.s3Client = s3Client;
+    public void setMinioClient(MinioClient minioClient) {
+        this.minioClient = minioClient;
     }
 
     public MinioClient getMinioClient() {
@@ -252,5 +242,19 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
             }
         }
         return textBuilder.toString();
+    }
+
+    private boolean bucketExists(MinioClient minioClient, String bucketName) throws Exception {
+        try {
+            return minioClient.bucketExists(bucketName);
+
+        } catch (Throwable e) {
+            LOG.warn("Error checking bucket, due: {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    private void makeBucket(String bucketName, String region, boolean isObjectLock) {
+        if (getConfiguration().)
     }
 }

@@ -17,8 +17,6 @@
 package org.apache.camel.component.minio.client;
 
 import io.minio.MinioClient;
-import io.minio.errors.InvalidEndpointException;
-import io.minio.errors.InvalidPortException;
 import org.apache.camel.component.minio.MinioConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,49 +43,54 @@ public class GetMinioClient implements MinioCamelInternalClient {
      * @return Minio Client.
      */
     @Override
-    public MinioClient getMinioClient() throws InvalidPortException, InvalidEndpointException {
+    public MinioClient getMinioClient() throws Exception {
         assert configuration.getEndpoint() != null;
-        if (configuration.getCustomHttpClient() != null) {
-            return new MinioClient(configuration.getEndpoint(),
-                    configuration.getProxyPort(),
-                    configuration.getAccessKey(),
-                    configuration.getSecretKey(),
-                    configuration.getRegion(),
-                    configuration.isSecure(),
-                    configuration.getCustomHttpClient());
-        } else {
-            if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
-                if (configuration.getRegion() != null) {
-                    if (configuration.getProxyPort() != null) {
-                        return new MinioClient(configuration.getEndpoint(),
-                                configuration.getProxyPort(),
-                                configuration.getAccessKey(),
-                                configuration.getSecretKey(),
-                                configuration.getRegion(),
-                                configuration.isSecure());
+        try {
+            if (configuration.getCustomHttpClient() != null) {
+                return new MinioClient(configuration.getEndpoint(),
+                        configuration.getProxyPort(),
+                        configuration.getAccessKey(),
+                        configuration.getSecretKey(),
+                        configuration.getRegion(),
+                        configuration.isSecure(),
+                        configuration.getCustomHttpClient());
+            } else {
+                if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
+                    if (configuration.getRegion() != null) {
+                        if (configuration.getProxyPort() != null) {
+                            return new MinioClient(configuration.getEndpoint(),
+                                    configuration.getProxyPort(),
+                                    configuration.getAccessKey(),
+                                    configuration.getSecretKey(),
+                                    configuration.getRegion(),
+                                    configuration.isSecure());
+                        } else {
+                            return new MinioClient(configuration.getEndpoint(),
+                                    configuration.getAccessKey(),
+                                    configuration.getSecretKey(),
+                                    configuration.getRegion());
+                        }
                     } else {
-                        return new MinioClient(configuration.getEndpoint(),
-                                configuration.getAccessKey(),
-                                configuration.getSecretKey(),
-                                configuration.getRegion());
+                        if (configuration.getProxyPort() != null) {
+                            return new MinioClient(configuration.getEndpoint(),
+                                    configuration.getProxyPort(),
+                                    configuration.getAccessKey(),
+                                    configuration.getSecretKey(),
+                                    configuration.isSecure());
+                        } else {
+                            return new MinioClient(configuration.getEndpoint(),
+                                    configuration.getAccessKey(),
+                                    configuration.getSecretKey(),
+                                    configuration.isSecure());
+                        }
                     }
                 } else {
-                    if (configuration.getProxyPort() != null) {
-                        return new MinioClient(configuration.getEndpoint(),
-                                configuration.getProxyPort(),
-                                configuration.getAccessKey(),
-                                configuration.getSecretKey(),
-                                configuration.isSecure());
-                    } else {
-                        return new MinioClient(configuration.getEndpoint(),
-                                configuration.getAccessKey(),
-                                configuration.getSecretKey(),
-                                configuration.isSecure());
-                    }
+                    return new MinioClient(configuration.getEndpoint());
                 }
-            } else {
-                return new MinioClient(configuration.getEndpoint());
             }
+        } catch (Throwable e) {
+            LOG.warn("Error Creating an Minio client, due {}", e.getMessage());
+            throw e;
         }
     }
 }

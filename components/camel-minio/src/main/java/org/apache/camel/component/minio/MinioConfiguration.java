@@ -48,15 +48,19 @@ public class MinioConfiguration implements Cloneable {
 
     @UriParam
     private String bucketName;
-    @UriParam(label = "consumer")
-    private String srcBucketName;
+    @UriParam(defaultValue = "true")
+    private boolean autoCreateBucket = true;
+
+    @UriParam
+    private ServerSideEncryption serverSideEncryption;
+    @UriParam
+    private ServerSideEncryption srcServerSideEncryption;
+
     @UriParam
     private MinioClient minioClient;
 
     @UriParam(label = "consumer")
     private String objectName;
-    @UriParam(label = "consumer")
-    private String srcObjectName;
     @UriParam(label = "consumer")
     private String prefix;
     @UriParam(label = "consumer", defaultValue = "false")
@@ -67,6 +71,12 @@ public class MinioConfiguration implements Cloneable {
     private long offset;
     @UriParam(label = "consumer")
     private long length;
+    @UriParam(label = "consumer")
+    private String srcBucketName;
+    @UriParam(label = "consumer")
+    private String srcObjectName;
+    @UriParam(label = "consumer")
+    private CopyConditions copyConditions;
     @UriParam(label = "consumer")
     private String fileName;
     @UriParam(label = "consumer", defaultValue = "true")
@@ -88,27 +98,21 @@ public class MinioConfiguration implements Cloneable {
     private String policy;
     @UriParam(label = "producer")
     private String storageClass;
-    @UriParam(label = "producer")
-    private ServerSideEncryption serverSideEncryption;
-    @UriParam(label = "producer")
-    private ServerSideEncryption srcServerSideEncryption;
-    @UriParam(label = "producer")
-    private CopyConditions copyConditions;
     @UriParam(label = "producer", enums = "copyObject,listObjects,deleteObject,deleteBucket,listBuckets,getObject,getObjectRange")
     private MinioOperations operation;
     @UriParam
     private boolean pathStyleAccess;
 
 
-    public String getEndpoint() {
-        return endpoint;
-    }
-    /**
-     * Endpoint can be an URL, domain name, IPv4 address or IPv6 address
-     */
-    public void setEndpoint(String endpoint) {
-        this.endpoint = endpoint;
-    }
+//    public String getEndpoint() {
+//        return endpoint;
+//    }
+//    /**
+//     * Endpoint can be an URL, domain name, IPv4 address or IPv6 address
+//     */
+//    public void setEndpoint(String endpoint) {
+//        this.endpoint = endpoint;
+//    }
 
     public Integer getProxyPort() {
         return proxyPort;
@@ -204,15 +208,37 @@ public class MinioConfiguration implements Cloneable {
         this.bucketName = bucketName;
     }
 
-    public String getSrcBucketName() {
-        return srcBucketName;
+    public boolean isAutoCreateBucket() {
+        return autoCreateBucket;
     }
 
     /**
-     *  Source bucket name.
+     * Setting the autocreation of the bucket if bucket name not exist.
      */
-    public void setSrcBucketName(String srcBucketName) {
-        this.srcBucketName = srcBucketName;
+    public void setAutoCreateBucket(boolean autoCreateBucket) {
+        this.autoCreateBucket = autoCreateBucket;
+    }
+
+    public ServerSideEncryption getServerSideEncryption() {
+        return serverSideEncryption;
+    }
+
+    /**
+     *  (Optional) Server-side encryption.
+     */
+    public void setServerSideEncryption(ServerSideEncryption serverSideEncryption) {
+        this.serverSideEncryption = serverSideEncryption;
+    }
+
+    public ServerSideEncryption getSrcServerSideEncryption() {
+        return srcServerSideEncryption;
+    }
+
+    /**
+     *  (Optional) Server-side encryption for source object while copy/move objects.
+     */
+    public void setSrcServerSideEncryption(ServerSideEncryption srcServerSideEncryption) {
+        this.srcServerSideEncryption = srcServerSideEncryption;
     }
 
     public MinioClient getMinioClient() {
@@ -237,23 +263,12 @@ public class MinioConfiguration implements Cloneable {
         this.objectName = objectName;
     }
 
-    public String getSrcObjectName() {
-        return srcObjectName;
-    }
-
-    /**
-     * (Optional) Source object name.
-     */
-    public void setSrcObjectName(String srcObjectName) {
-        this.srcObjectName = srcObjectName;
-    }
-
     public String getPrefix() {
         return prefix;
     }
 
     /**
-     * (Optional)Object name starts with prefix.
+     * (Optional) Object name starts with prefix.
      */
     public void setPrefix(String prefix) {
         this.prefix = prefix;
@@ -264,7 +279,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * (Optional)List recursively than directory structure emulation.
+     * (Optional) List recursively than directory structure emulation.
      */
     public void setRecursive(boolean recursive) {
         this.recursive = recursive;
@@ -275,7 +290,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * (Optional)when true, version 1 of REST API is used.
+     * (Optional) when true, version 1 of REST API is used.
      */
     public void setUseVersion1(boolean useVersion1) {
         this.useVersion1 = useVersion1;
@@ -286,14 +301,14 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * (Optional)Start byte position of object data.
+     * (Optional) Start byte position of object data.
      */
     public void setOffset(long offset) {
         this.offset = offset;
     }
 
     /**
-     *  (Optional)Number of bytes of object data from offset.
+     *  (Optional) Number of bytes of object data from offset.
      */
     public long getLength() {
         return length;
@@ -303,6 +318,27 @@ public class MinioConfiguration implements Cloneable {
         this.length = length;
     }
 
+    public String getSrcBucketName() {
+        return srcBucketName;
+    }
+
+    /**
+     *  Source bucket name.
+     */
+    public void setSrcBucketName(String srcBucketName) {
+        this.srcBucketName = srcBucketName;
+    }
+
+    public String getSrcObjectName() {
+        return srcObjectName;
+    }
+
+    /**
+     * (Optional) Source object name.
+     */
+    public void setSrcObjectName(String srcObjectName) {
+        this.srcObjectName = srcObjectName;
+    }
 
     public String getFileName() {
         return fileName;
@@ -438,28 +474,6 @@ public class MinioConfiguration implements Cloneable {
         this.storageClass = storageClass;
     }
 
-    public ServerSideEncryption getServerSideEncryption() {
-        return serverSideEncryption;
-    }
-
-    /**
-     *  (Optional) Server-side encryption.
-     */
-    public void setServerSideEncryption(ServerSideEncryption serverSideEncryption) {
-        this.serverSideEncryption = serverSideEncryption;
-    }
-
-    public ServerSideEncryption getSrcServerSideEncryption() {
-        return srcServerSideEncryption;
-    }
-
-    /**
-     *  (Optional) Server-side encryption for source object while copy/move objects.
-     */
-    public void setSrcServerSideEncryption(ServerSideEncryption srcServerSideEncryption) {
-        this.srcServerSideEncryption = srcServerSideEncryption;
-    }
-
     public CopyConditions getCopyConditions() {
         return copyConditions;
     }
@@ -492,5 +506,4 @@ public class MinioConfiguration implements Cloneable {
     public void setPathStyleAccess(boolean pathStyleAccess) {
         this.pathStyleAccess = pathStyleAccess;
     }
-
 }

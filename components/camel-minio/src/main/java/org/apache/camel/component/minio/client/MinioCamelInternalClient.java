@@ -33,5 +33,5 @@ public interface MinioCamelInternalClient {
      * 
      * @return Minio Minio
      */
-    MinioClient getMinioClient() throws InvalidPortException, InvalidEndpointException, MalformedURLException;
+    MinioClient getMinioClient() throws InvalidPortException, InvalidEndpointException, MalformedURLException, Exception;
 }

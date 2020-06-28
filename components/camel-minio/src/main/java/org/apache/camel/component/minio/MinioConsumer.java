@@ -24,6 +24,7 @@ import java.util.*;
 
 import io.minio.MinioClient;
 import io.minio.Result;
+import io.minio.errors.InvalidBucketNameException;
 import io.minio.errors.MinioException;
 import io.minio.messages.Bucket;
 import io.minio.messages.Item;
@@ -60,15 +61,21 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         shutdownRunningTask = null;
         pendingExchanges = 0;
 
+        assert getConfiguration().getBucketName() != null;
         String bucketName = getConfiguration().getBucketName();
         MinioClient minioClient = getMinioClient();
         String objectName = getConfiguration().getObjectName();
         InputStream minioObject = null;
         Queue<Exchange> exchanges = null;
 
-        assert bucketExists(minioClient, bucketName);
+        if (bucketExists(minioClient, bucketName)) {
+            LOG.trace("Bucket {} exists", bucketName);
+        } else {
+            throw new InvalidBucketNameException("Bucket {} does not exists", bucketName);
+        }
+
         if (objectName != null) {
-            LOG.trace("Getting object in bucket [{}] with object name [{}]...", bucketName, objectName);
+            LOG.trace("Getting object in bucket {} with object name {}...", bucketName, objectName);
 
             try {
                 minioObject = getObject(bucketName, minioClient, objectName);
@@ -77,7 +84,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 }
 
             } catch (Throwable e) {
-                LOG.warn("Failed to get object in bucket [{}] with object name [{}], Error message [{}]", bucketName, objectName, e);
+                LOG.warn("Failed to get object in bucket {} with object name {}, Error message {}", bucketName, objectName, e.getMessage());
                 throw e;
 
             } finally {
@@ -87,13 +94,13 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                     minioObject.close();
 
                 } catch (IOException e) {
-                    LOG.warn("Error closing MinioObject due: [{}], Could not release network resources properly", e.getMessage());
+                    LOG.warn("Error closing MinioObject due: {}, Could not release network resources properly", e.getMessage());
                 }
             }
 
         } else {
 
-            LOG.trace("Queueing objects in bucket [{}]...", bucketName);
+            LOG.trace("Queueing objects in bucket {}...", bucketName);
             if (marker == null) {
 
                 marker = listObjects(minioClient, bucketName).iterator();
@@ -101,7 +108,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
             }
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Found {} objects in bucket [{}]...", ((Collection<?>) marker).size(), bucketName);
+                LOG.trace("Found {} objects in bucket {}...", ((Collection<?>) marker).size(), bucketName);
             }
 
             // if there was a marker from previous poll then use that to
@@ -135,7 +142,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                     Item item = marker.next().get();
                     String objectName = item.objectName();
                     InputStream minioObject;
-                    LOG.trace("Getting object name: [{}] in [{}]", objectName, bucketName);
+                    LOG.trace("Getting object name: {} in {}", objectName, bucketName);
 
                     minioObject = getObject(bucketName, minioClient, objectName);
 
@@ -154,7 +161,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
             }
 
         } catch (Throwable e) {
-            LOG.warn("Error getting MinioObject due: {}", e.getMessage(), e);
+            LOG.warn("Error getting MinioObject due: {}", e.getMessage());
             throw e;
 
         } finally {
@@ -163,13 +170,13 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 try {
                     minioObject.close();
                 } catch (IOException e) {
-                    LOG.warn("Error closing MinioObject due: [{}], Could not release network resources properly", e.getMessage());
+                    LOG.warn("Error closing MinioObject due: {}, Could not release network resources properly", e.getMessage());
                 }
             });
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Received [{}] messages out of [{}] objects in this poll, Maximum objects per poll is: [{}]",
+            LOG.trace("Received {} messages out of {} objects in this poll, Maximum objects per poll is: {}",
                     minioObjects.size(), ((Collection<?>) objectsList).size(), maxMessagesPerPoll);
         }
 
@@ -178,11 +185,10 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
 
     private boolean bucketExists(MinioClient minioClient, String bucketName) throws Exception {
         try {
-            LOG.trace("bucket name [{}] does not exist", bucketName);
             return minioClient.bucketExists(bucketName);
 
         } catch (Throwable e) {
-            LOG.warn("Error checking bucket due: [{}]", e.getMessage());
+            LOG.warn("Error checking bucket, due: {}", e.getMessage());
             throw e;
         }
     }
@@ -191,7 +197,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         try {
             return minioClient.listBuckets();
         } catch (Throwable e) {
-            LOG.warn("Failed to get bucket list, Error message [{}]", e.getMessage());
+            LOG.warn("Failed to get bucket list, Error message {}", e.getMessage());
             throw e;
         }
     }
@@ -205,7 +211,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
             );
 
         } catch (Throwable e) {
-            LOG.warn("Failed to get object list in bucket [{}], Error message [{}]", bucketName, e);
+            LOG.warn("Failed to get object list in bucket {}, Error message {}", bucketName, e.getMessage());
             throw e;
         }
     }
@@ -288,11 +294,11 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 }
             });
 
-            LOG.trace("Processing exchange [{}]...", exchange);
+            LOG.trace("Processing exchange {}...", exchange);
             getAsyncProcessor().process(exchange, new AsyncCallback() {
                 @Override
                 public void done(boolean doneSync) {
-                    LOG.trace("Processing exchange [{}] done.", exchange);
+                    LOG.trace("Processing exchange {} done.", exchange);
                 }
             });
         }
@@ -307,9 +313,9 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
      */
     protected void processCommit(Exchange exchange) {
         try {
+            String bucketName = exchange.getIn().getHeader(MinioConstants.BUCKET_NAME, String.class);
+            String key = exchange.getIn().getHeader(MinioConstants.KEY, String.class);
             if (getConfiguration().isMoveAfterRead()) {
-                String bucketName = exchange.getIn().getHeader(MinioConstants.BUCKET_NAME, String.class);
-                String key = exchange.getIn().getHeader(MinioConstants.KEY, String.class);
                 String srcObjectName = getConfiguration().getSrcObjectName();
 
                 if (getConfiguration().getSrcObjectName() == null) {
@@ -331,9 +337,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 LOG.trace("Moved object from bucket {} with key {} to bucket {}...",
                         bucketName, key, getConfiguration().getSrcBucketName());
             }
-            if (getConfiguration().isDeleteAfterRead()) {
-                String bucketName = exchange.getIn().getHeader(MinioConstants.BUCKET_NAME, String.class);
-                String key = exchange.getIn().getHeader(MinioConstants.KEY, String.class);
+            if (getConfiguration().isDeleteAfterRead() || getConfiguration().isMoveAfterRead()) {
 
                 LOG.trace("Deleting object from bucket {} with key {}...", bucketName, key);
 
