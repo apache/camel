@@ -300,11 +300,11 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
             url += "/" + uriTemplate;
         }
 
-        RestConfiguration config = CamelContextHelper.getRestConfiguration(camelContext, getComponentName());
+        RestConfiguration config = CamelContextHelper.getRestConfiguration(camelContext, null, getComponentName());
 
         Map<String, Object> map = new HashMap<>();
         // build query string, and append any endpoint configuration properties
-        if (config.getComponent() == null || config.getComponent().equals(getComponentName())) {
+        if (config.getProducerComponent() == null || config.getProducerComponent().equals(getComponentName())) {
             // setup endpoint options
             if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
                 map.putAll(config.getEndpointProperties());
