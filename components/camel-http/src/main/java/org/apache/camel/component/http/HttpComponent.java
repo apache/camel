@@ -429,7 +429,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
         RestConfiguration config = configuration;
         if (config == null) {
-            config = CamelContextHelper.getRestConfiguration(getCamelContext(), "http");
+            config = CamelContextHelper.getRestConfiguration(getCamelContext(), null, "http");
         }
 
         Map<String, Object> map = new HashMap<>();
