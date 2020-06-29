@@ -28,8 +28,12 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.StaticService;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.concurrent.RejectableScheduledThreadPoolExecutor;
 import org.apache.camel.util.concurrent.RejectableThreadPoolExecutor;
 import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
@@ -37,7 +41,19 @@ import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
 /**
  * Factory for thread pools that uses the JDK {@link Executors} for creating the thread pools.
  */
-public class DefaultThreadPoolFactory implements ThreadPoolFactory {
+public class DefaultThreadPoolFactory extends ServiceSupport implements CamelContextAware, ThreadPoolFactory, StaticService {
+
+    private CamelContext camelContext;
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     @Override
     public ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {

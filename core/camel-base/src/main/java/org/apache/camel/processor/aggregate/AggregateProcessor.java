@@ -1541,7 +1541,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         if (optimisticLocking) {
             lock = NoLock.INSTANCE;
             if (getOptimisticLockingExecutorService() == null) {
-                setOptimisticLockingExecutorService(camelContext.getExecutorServiceManager().newScheduledThreadPool(this, AGGREGATE_OPTIMISTIC_LOCKING_EXECUTOR, 1));
+                setOptimisticLockingExecutorService(camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, AGGREGATE_OPTIMISTIC_LOCKING_EXECUTOR));
                 shutdownOptimisticLockingExecutorService = true;
             }
         } else {
