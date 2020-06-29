@@ -52,7 +52,7 @@ from("direct:start")
 
 == VertX instance
 
-This implementation will by default create a default `io.vertx.core.Vertx` instance to be used.
+This implementation will first lookup in the registry for an existing `io.vertx.core.Vertx` to be used.
 However you can configure an existing instance using the getter/setter on the `VertXThreadPoolFactory` class.
 
 == Auto detection from classpath
