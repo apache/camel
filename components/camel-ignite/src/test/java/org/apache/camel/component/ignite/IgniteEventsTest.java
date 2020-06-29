@@ -34,9 +34,11 @@ import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.events.Event;
 import org.apache.ignite.events.EventType;
 import org.assertj.core.api.Assertions;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IgniteEventsTest extends AbstractIgniteTest {
 
     @Override
@@ -119,12 +121,7 @@ public class IgniteEventsTest extends AbstractIgniteTest {
         return eventTypes;
     }
 
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-
-    @After
+    @AfterEach
     public void stopAllRoutes() throws Exception {
         for (Route route : context.getRoutes()) {
             if (context.getRouteController().getRouteStatus(route.getId()) != ServiceStatus.Started) {

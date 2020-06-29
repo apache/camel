@@ -34,9 +34,11 @@ import org.apache.camel.component.ignite.queue.IgniteQueueOperation;
 import org.apache.ignite.cache.CacheMode;
 import org.apache.ignite.configuration.CollectionConfiguration;
 import org.assertj.core.api.Assertions;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IgniteQueueTest extends AbstractIgniteTest {
 
     @Override
@@ -244,12 +246,7 @@ public class IgniteQueueTest extends AbstractIgniteTest {
 
     }
 
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-
-    @After
+    @AfterEach
     public void deleteQueue() {
         ignite().queue(resourceUid, 0, null).close();
     }

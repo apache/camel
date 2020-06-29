@@ -34,9 +34,13 @@ import org.apache.ignite.cache.query.Query;
 import org.apache.ignite.cache.query.ScanQuery;
 import org.apache.ignite.lang.IgniteBiPredicate;
 import org.assertj.core.api.Assertions;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IgniteCacheTest extends AbstractIgniteTest {
 
     @Override
@@ -222,12 +226,7 @@ public class IgniteCacheTest extends AbstractIgniteTest {
         Assertions.assertThat(result).isNull();
     }
 
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-
-    @After
+    @AfterEach
     public void deleteCaches() {
         IgniteCache<?, ?> cache = ignite().cache(resourceUid);
         if (cache != null) {

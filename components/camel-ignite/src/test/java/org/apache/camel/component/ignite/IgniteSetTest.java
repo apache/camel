@@ -29,9 +29,11 @@ import org.apache.camel.component.ignite.set.IgniteSetOperation;
 import org.apache.ignite.cache.CacheMode;
 import org.apache.ignite.configuration.CollectionConfiguration;
 import org.assertj.core.api.Assertions;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IgniteSetTest extends AbstractIgniteTest {
 
     @Override
@@ -169,12 +171,7 @@ public class IgniteSetTest extends AbstractIgniteTest {
         Assertions.assertThat(igniteEndpoint.getConfiguration()).isEqualTo(configuration);
     }
 
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-
-    @After
+    @AfterEach
     public void deleteSet() {
         ignite().set(resourceUid, null).close();
     }
