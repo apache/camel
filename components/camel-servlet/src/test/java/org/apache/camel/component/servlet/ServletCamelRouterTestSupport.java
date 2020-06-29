@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -207,17 +208,21 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
             return con.getResponseCode();
         }
 
-        public String getText() throws IOException {
+        public String getText(Charset charset) throws IOException {
             if (text == null) {
                 try {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     IOHelper.copy(con.getInputStream(), baos);
-                    text = baos.toString();
+                    text = baos.toString(charset.name());
                 } catch (IOException e) {
                     text = "Exception";
                 }
             }
             return text;
+        }
+
+        public String getText() throws IOException {
+            return getText(Charset.defaultCharset());
         }
 
         public String getContentType() {
