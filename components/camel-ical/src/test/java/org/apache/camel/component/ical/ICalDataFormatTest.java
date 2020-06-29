@@ -44,10 +44,10 @@ import net.fortuna.ical4j.model.property.Version;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Small unit test which verifies ical data format.
@@ -57,7 +57,7 @@ public class ICalDataFormatTest extends CamelTestSupport {
     private java.util.TimeZone defaultTimeZone;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         defaultTimeZone = java.util.TimeZone.getDefault();
         java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("America/New_York"));
@@ -66,7 +66,7 @@ public class ICalDataFormatTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         java.util.TimeZone.setDefault(defaultTimeZone);
 
