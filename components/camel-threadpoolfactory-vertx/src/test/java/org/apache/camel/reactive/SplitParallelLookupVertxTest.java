@@ -18,46 +18,32 @@ package org.apache.camel.reactive;
 
 import io.vertx.core.Vertx;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.reactive.vertx.VertXReactiveExecutor;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Assert;
 import org.junit.Test;
 
-public class SimpleMockTest extends CamelTestSupport {
+public class SplitParallelLookupVertxTest extends CamelTestSupport {
 
     private final Vertx vertx = Vertx.vertx();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-
-        VertXReactiveExecutor re = (VertXReactiveExecutor) context.adapt(ExtendedCamelContext.class).getReactiveExecutor();
-        re.setVertx(vertx);
-
+        context.getRegistry().bind("vertx", vertx);
         return context;
     }
 
     @Test
-    public void testSimple() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
+    public void testSplit() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("A,B,C,D,E,F,G,H,I,J");
+        getMockEndpoint("mock:split").expectedBodiesReceivedInAnyOrder("A", "B", "C", "D", "E", "F", "G", "H", "I", "J");
 
-        template.sendBody("direct:start", "Hello World");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testSimpleTwoMessages() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World", "Bye World");
-
-        template.sendBody("direct:start", "Hello World");
-        template.sendBody("direct:start", "Bye World");
+        template.sendBody("direct:start", "A,B,C,D,E,F,G,H,I,J");
 
         assertMockEndpointsSatisfied();
+
+        vertx.close();
     }
 
     @Override
@@ -65,7 +51,18 @@ public class SimpleMockTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("log:foo").to("log:bar").to("mock:result");
+                from("direct:start")
+                    .to("log:foo")
+                    .split(body()).parallelProcessing()
+                        .to("log:bar")
+                        .process(e -> {
+                            String name = Thread.currentThread().getName();
+                            Assert.assertTrue("Should use vertx thread", name.startsWith("vert.x-worker-thread"));
+                        })
+                        .to("mock:split")
+                    .end()
+                    .to("log:result")
+                    .to("mock:result");
             }
         };
     }

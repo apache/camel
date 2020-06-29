@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -199,10 +200,12 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
         // use another thread to perform the shutdowns so we can support timeout
         timeoutOccurred.set(false);
-        currentShutdownTaskFuture = getExecutorService().submit(new ShutdownTask(context, routesOrdered, timeout, timeUnit, suspendOnly,
-            abortAfterTimeout, timeoutOccurred, isLogInflightExchangesOnTimeout()));
         try {
+            currentShutdownTaskFuture = getExecutorService().submit(new ShutdownTask(context, routesOrdered, timeout, timeUnit, suspendOnly,
+                    abortAfterTimeout, timeoutOccurred, isLogInflightExchangesOnTimeout()));
             currentShutdownTaskFuture.get(timeout, timeUnit);
+        } catch (RejectedExecutionException e) {
+            // the task was rejected
         } catch (ExecutionException e) {
             // unwrap execution exception
             throw RuntimeCamelException.wrapRuntimeCamelException(e.getCause());
@@ -430,7 +433,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     private ExecutorService getExecutorService() {
         if (executor == null) {
             // use a thread pool that allow to terminate idle threads so they do not hang around forever
-            executor = camelContext.getExecutorServiceManager().newThreadPool(this, "ShutdownTask", 0, 1);
+            executor = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, "ShutdownTask");
         }
         return executor;
     }

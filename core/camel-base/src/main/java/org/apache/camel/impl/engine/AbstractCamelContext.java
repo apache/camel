@@ -2794,6 +2794,13 @@ public abstract class AbstractCamelContext extends BaseService
             LOG.debug("Using ReactiveExecutor: {}", getReactiveExecutor());
         }
 
+        // lets log at INFO level if we are not using the default thread pool factory
+        if (!getExecutorServiceManager().getThreadPoolFactory().getClass().getSimpleName().equals("DefaultThreadPoolFactory")) {
+            LOG.info("Using ThreadPoolFactory: {}", getExecutorServiceManager().getThreadPoolFactory());
+        } else {
+            LOG.debug("Using ThreadPoolFactory: {}", getExecutorServiceManager().getThreadPoolFactory());
+        }
+
         HealthCheckRegistry hcr = getExtension(HealthCheckRegistry.class);
         if (hcr != null && hcr.isEnabled()) {
             LOG.info("Using HealthCheck: {}", hcr.getId());
@@ -2926,14 +2933,16 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
 
-        // shutdown executor service, reactive executor and management as the last one
-        shutdownServices(executorServiceManager);
-        shutdownServices(reactiveExecutor);
+        // shutdown management and lifecycle after all other services
         shutdownServices(managementStrategy);
         shutdownServices(managementMBeanAssembler);
         shutdownServices(lifecycleStrategies);
         // do not clear lifecycleStrategies as we can start Camel again and get
         // the route back as before
+
+        // shutdown executor service, reactive executor last
+        shutdownServices(executorServiceManager);
+        shutdownServices(reactiveExecutor);
 
         // shutdown type converter as late as possible
         ServiceHelper.stopService(typeConverter);
