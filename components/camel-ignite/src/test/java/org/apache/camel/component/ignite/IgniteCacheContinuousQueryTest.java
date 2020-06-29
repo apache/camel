@@ -38,9 +38,11 @@ import org.apache.ignite.cache.CacheEntryEventSerializableFilter;
 import org.apache.ignite.cache.query.ScanQuery;
 import org.apache.ignite.lang.IgniteBiPredicate;
 import org.assertj.core.api.Assertions;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -187,12 +189,7 @@ public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implement
         return answer;
     }
 
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-
-    @After
+    @AfterEach
     public void deleteCaches() {
         for (String cacheName : ImmutableSet.<String> of("testcontinuous1", "testcontinuous2", "testcontinuous3")) {
             IgniteCache<?, ?> cache = ignite().cache(cacheName);
@@ -203,7 +200,7 @@ public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implement
         }
     }
 
-    @After
+    @AfterEach
     public void stopAllRoutes() throws Exception {
         for (Route route : context.getRoutes()) {
             if (context.getRouteController().getRouteStatus(route.getId()) != ServiceStatus.Started) {

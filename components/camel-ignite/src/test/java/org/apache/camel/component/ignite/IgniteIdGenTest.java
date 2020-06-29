@@ -21,9 +21,11 @@ import org.apache.camel.component.ignite.idgen.IgniteIdGenEndpoint;
 import org.apache.camel.component.ignite.idgen.IgniteIdGenOperation;
 import org.apache.ignite.IgniteAtomicSequence;
 import org.assertj.core.api.Assertions;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IgniteIdGenTest extends AbstractIgniteTest {
 
     @Override
@@ -74,12 +76,7 @@ public class IgniteIdGenTest extends AbstractIgniteTest {
         Assertions.assertThat(endpoint.getBatchSize());
     }
 
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-
-    @After
+    @AfterEach
     public void deleteSets() {
         IgniteAtomicSequence seq = ignite().atomicSequence(resourceUid, 0, false);
         if (seq != null) {
