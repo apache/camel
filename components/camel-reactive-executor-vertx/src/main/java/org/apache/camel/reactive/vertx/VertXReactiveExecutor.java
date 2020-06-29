@@ -16,7 +16,11 @@
  */
 package org.apache.camel.reactive.vertx;
 
+import java.util.Set;
+
 import io.vertx.core.Vertx;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Experimental;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.ReactiveExecutor;
@@ -32,12 +36,22 @@ import org.slf4j.LoggerFactory;
  */
 @Experimental
 @JdkService(ReactiveExecutor.FACTORY)
-public class VertXReactiveExecutor extends ServiceSupport implements ReactiveExecutor, StaticService {
+public class VertXReactiveExecutor extends ServiceSupport implements CamelContextAware, ReactiveExecutor, StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(VertXReactiveExecutor.class);
 
+    private CamelContext camelContext;
     private Vertx vertx;
-    private boolean shouldClose;
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     public Vertx getVertx() {
         return vertx;
@@ -48,6 +62,25 @@ public class VertXReactiveExecutor extends ServiceSupport implements ReactiveExe
      */
     public void setVertx(Vertx vertx) {
         this.vertx = vertx;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        if (vertx == null) {
+            Set<Vertx> set = getCamelContext().getRegistry().findByType(Vertx.class);
+            if (set.size() == 1) {
+                vertx = set.iterator().next();
+            }
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (vertx == null) {
+            throw new IllegalArgumentException("VertX instance must be configured.");
+        }
     }
 
     @Override
@@ -76,23 +109,6 @@ public class VertXReactiveExecutor extends ServiceSupport implements ReactiveExe
     public boolean executeFromQueue() {
         // not supported so return false
         return false;
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        if (vertx == null) {
-            LOG.debug("Starting VertX");
-            shouldClose = true;
-            vertx = Vertx.vertx();
-        }
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        if (vertx != null && shouldClose) {
-            LOG.debug("Stopping VertX");
-            vertx.close();
-        }
     }
 
     @Override

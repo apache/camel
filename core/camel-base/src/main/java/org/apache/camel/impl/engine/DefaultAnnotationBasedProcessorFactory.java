@@ -54,7 +54,7 @@ public final class DefaultAnnotationBasedProcessorFactory implements AnnotationB
         recipientList.setShareUnitOfWork(annotation.shareUnitOfWork());
 
         if (ObjectHelper.isNotEmpty(annotation.executorServiceRef())) {
-            ExecutorService executor = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, annotation.executorServiceRef());
+            ExecutorService executor = camelContext.getExecutorServiceManager().newThreadPool(this, "@RecipientList", annotation.executorServiceRef());
             recipientList.setExecutorService(executor);
         }
 

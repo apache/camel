@@ -354,6 +354,7 @@
         <module>camel-tagsoup</module>
         <module>camel-tarfile</module>
         <module>camel-telegram</module>
+        <module>camel-threadpoolfactory-vertx</module>
         <module>camel-thrift</module>
         <module>camel-tika</module>
         <module>camel-twilio</module>
