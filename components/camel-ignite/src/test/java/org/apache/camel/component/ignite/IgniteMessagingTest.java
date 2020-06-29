@@ -32,11 +32,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.ignite.messaging.IgniteMessagingComponent;
 import org.apache.ignite.lang.IgniteBiPredicate;
 import org.assertj.core.api.Assertions;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import static org.awaitility.Awaitility.await;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IgniteMessagingTest extends AbstractIgniteTest implements Serializable {
 
     private static final long serialVersionUID = 3967738538216977749L;
@@ -145,7 +147,7 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
         });
     }
 
-    @After
+    @AfterEach
     public void stopMessageListener() {
         if (uuid == null) {
             return;
@@ -153,11 +155,6 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
 
         ignite().message().stopRemoteListen(uuid);
         uuid = null;
-    }
-
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
     }
 
     private Processor storeBodyInListProcessor(final List<Object> list) {

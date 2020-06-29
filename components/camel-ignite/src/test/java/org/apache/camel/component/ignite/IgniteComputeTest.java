@@ -32,9 +32,13 @@ import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.events.EventType;
 import org.assertj.core.api.Assertions;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IgniteComputeTest extends AbstractIgniteTest {
 
     private static final List<Ignite> ADDITIONAL_INSTANCES = Lists.newArrayList();
@@ -177,16 +181,11 @@ public class IgniteComputeTest extends AbstractIgniteTest {
         Assertions.assertThat(result).isEqualTo("hello Camel1hello Camel2hello Camel3");
     }
 
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-
     private void startAdditionalGridInstance() {
         ADDITIONAL_INSTANCES.add(Ignition.start(createConfiguration()));
     }
 
-    @After
+    @AfterEach
     public void stopAdditionalIgniteInstances() {
         for (Ignite ignite : ADDITIONAL_INSTANCES) {
             ignite.close();
@@ -194,7 +193,7 @@ public class IgniteComputeTest extends AbstractIgniteTest {
         ADDITIONAL_INSTANCES.clear();
     }
 
-    @After
+    @AfterEach
     public void stopRemoteListeners() {
         for (UUID uuid : LISTENERS) {
             ignite().events().stopRemoteListen(uuid);
