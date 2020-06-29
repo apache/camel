@@ -17,6 +17,8 @@
 package org.apache.camel.component.servlet;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -92,7 +94,7 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
                 new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
         WebResponse response = query(req, false);
         assertEquals("OK", response.getResponseMessage(), "The response message is wrong");
-        assertEquals(UNICODE_TEXT, response.getText(), "The response body is wrong");
+        assertEquals(UNICODE_TEXT, response.getText(StandardCharsets.UTF_8), "The response body is wrong");
     }
 
     @Test
@@ -101,7 +103,7 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
                 new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
         WebResponse response = query(req, false);
         assertEquals("OK", response.getResponseMessage(), "The response message is wrong");
-        assertEquals(UNICODE_TEXT, response.getText(), "The response body is wrong");
+        assertEquals(UNICODE_TEXT, response.getText(StandardCharsets.UTF_8), "The response body is wrong");
     }
 
     @Test
