@@ -11,7 +11,7 @@
     "output": true
   },
   "properties": {
-    "properties": { "kind": "attribute", "displayName": "Properties", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Route properties. Multiple keys can be separated by comma." },
+    "parameters": { "kind": "attribute", "displayName": "Parameters", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The names of the parameters this route template requires. Multiple names can be separated by comma." },
     "group": { "kind": "attribute", "displayName": "Group", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The group that this route belongs to; could be the name of the RouteBuilder class or be explicitly configured in the XML. May be null." },
     "streamCache": { "kind": "attribute", "displayName": "Stream Cache", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Whether stream caching is enabled on this route." },
     "trace": { "kind": "attribute", "displayName": "Trace", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Whether tracing is enabled on this route." },

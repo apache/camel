@@ -1021,8 +1021,8 @@ public class ModelParser extends BaseParser {
     }
     protected RouteTemplateDefinition doParseRouteTemplateDefinition() throws IOException, XmlPullParserException {
         return doParse(new RouteTemplateDefinition(), (def, key, val) -> {
-            if ("properties".equals(key)) {
-                def.setProperties(val);
+            if ("parameters".equals(key)) {
+                def.setParameters(val);
                 return true;
             }
             return routeDefinitionAttributeHandler().accept(def, key, val);

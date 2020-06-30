@@ -402,4 +402,10 @@ public class SimpleCamelContext extends AbstractCamelContext {
     public Processor createErrorHandler(Route route, Processor processor) throws Exception {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public void addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception {
+        throw new UnsupportedOperationException();
+    }
+
 }

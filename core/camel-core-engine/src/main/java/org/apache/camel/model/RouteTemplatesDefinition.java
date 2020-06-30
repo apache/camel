@@ -93,7 +93,7 @@ public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<Route
     public RouteTemplateDefinition routeTemplate(String id, String properties) {
         RouteTemplateDefinition routeTemplate = createRouteTemplate();
         routeTemplate.id(id);
-        routeTemplate.properties(properties);
+        routeTemplate.parameters(properties);
         return routeTemplate(routeTemplate);
     }
 
@@ -108,7 +108,7 @@ public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<Route
         routeTemplate.id(id);
         if (properties != null) {
             for (String p : properties) {
-                routeTemplate.properties(p);
+                routeTemplate.parameters(p);
             }
         }
         return routeTemplate(routeTemplate);

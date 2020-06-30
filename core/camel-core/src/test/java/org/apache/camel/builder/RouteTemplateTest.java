@@ -32,7 +32,7 @@ public class RouteTemplateTest extends ContextTestSupport {
         assertEquals(1, context.getRouteTemplateDefinitions().size());
 
         RouteTemplateDefinition template = context.getRouteTemplateDefinition("myTemplate");
-        assertEquals("foo,bar", template.getProperties());
+        assertEquals("foo,bar", template.getParameters());
     }
 
     @Test
@@ -40,7 +40,7 @@ public class RouteTemplateTest extends ContextTestSupport {
         assertEquals(1, context.getRouteTemplateDefinitions().size());
 
         RouteTemplateDefinition routeTemplate = context.getRouteTemplateDefinition("myTemplate");
-        assertEquals("foo,bar", routeTemplate.getProperties());
+        assertEquals("foo,bar", routeTemplate.getParameters());
 
         getMockEndpoint("mock:cheese").expectedBodiesReceived("Hello Cheese");
         getMockEndpoint("mock:cake").expectedBodiesReceived("Hello Cake");

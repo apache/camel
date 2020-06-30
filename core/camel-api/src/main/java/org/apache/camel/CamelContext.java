@@ -598,6 +598,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param parameters  parameters to use for the route template when creating the new route
      * @throws Exception is thrown if error creating and adding the new route
      */
+    // TODO: Allow to add without route id so an id is auto assigned, and returned
+    // String addRouteFromTemplate(String routeTemplateId, Map<String, Object> parameters) throws Exception;
     void addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception;
 
     /**

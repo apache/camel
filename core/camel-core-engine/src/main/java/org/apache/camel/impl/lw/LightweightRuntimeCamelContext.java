@@ -1748,6 +1748,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public RouteController getInternalRouteController() {
         return new RouteController() {
             @Override

@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.CollectionStringBuffer;
 
 /**
  * Defines a route template (parameterized routes)
@@ -32,20 +33,20 @@ import org.apache.camel.spi.Metadata;
 public class RouteTemplateDefinition extends RouteDefinition {
 
     @XmlAttribute
-    private String properties;
+    private String parameters;
 
-    public String getProperties() {
-        return properties;
+    public String getParameters() {
+        return parameters;
     }
 
     /**
-     * Route properties. Multiple keys can be separated by comma.
+     * The names of the parameters this route template requires. Multiple names can be separated by comma.
      */
-    public void setProperties(String properties) {
-        if (this.properties == null) {
-            this.properties = properties;
+    public void setParameters(String parameters) {
+        if (this.parameters == null) {
+            this.parameters = parameters;
         } else {
-            this.properties += "," + properties;
+            this.parameters += "," + parameters;
         }
     }
 
@@ -53,10 +54,24 @@ public class RouteTemplateDefinition extends RouteDefinition {
     // -------------------------------------------------------------------------
 
     /**
-     * Route properties. Multiple keys can be separated by comma.
+     * The names of the parameters this route template requires. Multiple names can be separated by comma.
      */
-    public RouteTemplateDefinition properties(String properties) {
-        setProperties(properties);
+    public RouteTemplateDefinition parameters(String parameters) {
+        setParameters(parameters);
+        return this;
+    }
+
+    /**
+     * The names of the parameters this route template requires.
+     */
+    public RouteTemplateDefinition parameters(String... parameters) {
+        if (parameters != null) {
+            CollectionStringBuffer csb = new CollectionStringBuffer(",");
+            for (String p : parameters) {
+                csb.append(p);
+            }
+            setParameters(csb.toString());
+        }
         return this;
     }
 
