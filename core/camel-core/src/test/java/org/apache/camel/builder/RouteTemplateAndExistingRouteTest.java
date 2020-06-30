@@ -23,16 +23,17 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.junit.jupiter.api.Test;
 
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RouteTemplateTest extends ContextTestSupport {
+public class RouteTemplateAndExistingRouteTest extends ContextTestSupport {
 
     @Test
     public void testDefineRouteTemplate() throws Exception {
         assertEquals(1, context.getRouteTemplateDefinitions().size());
 
         RouteTemplateDefinition template = context.getRouteTemplateDefinition("myTemplate");
-        assertEquals("foo,bar", template.getProperties());
+        assertEquals("foo,greeting", template.getProperties());
     }
 
     @Test
@@ -40,27 +41,27 @@ public class RouteTemplateTest extends ContextTestSupport {
         assertEquals(1, context.getRouteTemplateDefinitions().size());
 
         RouteTemplateDefinition routeTemplate = context.getRouteTemplateDefinition("myTemplate");
-        assertEquals("foo,bar", routeTemplate.getProperties());
+        assertEquals("foo,greeting", routeTemplate.getProperties());
 
-        getMockEndpoint("mock:cheese").expectedBodiesReceived("Hello Cheese");
-        getMockEndpoint("mock:cake").expectedBodiesReceived("Hello Cake");
+        getMockEndpoint("mock:common").expectedBodiesReceived("Hello Camel", "Hello World");
 
         Map<String, Object> map = new HashMap<>();
         map.put("foo", "one");
-        map.put("bar", "cheese");
+        map.put("greeting", "Camel");
         context.addRouteFromTemplate("myTemplate", "first", map);
 
         map.put("foo", "two");
-        map.put("bar", "cake");
+        map.put("greeting", "World");
         context.addRouteFromTemplate("myTemplate", "second", map);
 
-        assertEquals(2, context.getRouteDefinitions().size());
-        assertEquals(2, context.getRoutes().size());
+        assertEquals(3, context.getRouteDefinitions().size());
+        assertEquals(3, context.getRoutes().size());
         assertEquals("Started", context.getRouteController().getRouteStatus("first").name());
         assertEquals("Started", context.getRouteController().getRouteStatus("second").name());
+        assertEquals("Started", context.getRouteController().getRouteStatus("common").name());
 
-        template.sendBody("direct:one", "Hello Cheese");
-        template.sendBody("direct:two", "Hello Cake");
+        template.sendBody("direct:one", "Camel");
+        template.sendBody("direct:two", "World");
 
         assertMockEndpointsSatisfied();
     }
@@ -70,9 +71,14 @@ public class RouteTemplateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                routeTemplate("myTemplate", "foo", "bar")
+                routeTemplate("myTemplate", "foo", "greeting")
+                    .routeDescription("Route saying {{greeting}}")
                     .from("direct:{{foo}}")
-                    .to("mock:{{bar}}");
+                    .transform(simple("Hello {{greeting}}"))
+                    .to("direct:common");
+
+                from("direct:common").routeId("common")
+                    .to("mock:common");
             }
         };
     }

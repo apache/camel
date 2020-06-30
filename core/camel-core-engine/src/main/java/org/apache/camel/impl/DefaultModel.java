@@ -185,17 +185,20 @@ public class DefaultModel implements Model {
             throw new IllegalArgumentException("Cannot find RouteTemplate with id " + routeTemplateId);
         }
 
-        // TODO: Add some new api to properties component to use as temporary
         PropertiesComponent pc = camelContext.getPropertiesComponent();
         Properties prop = new Properties();
         if (properties != null) {
             prop.putAll(properties);
-            pc.setOverrideProperties(prop);
+            pc.setLocalProperties(prop);
         }
-
-        RouteDefinition def = target.asRouteDefinition();
-        def.setId(routeId);
-        addRouteDefinition(def);
+        try {
+            RouteDefinition def = target.asRouteDefinition();
+            def.setId(routeId);
+            addRouteDefinition(def);
+        } finally {
+            // clear local properties after adding it as a route
+            pc.setLocalProperties(null);
+        }
     }
 
     @Override

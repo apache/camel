@@ -70,6 +70,10 @@ public class RouteTemplateDefinition extends RouteDefinition {
         return "RouteTemplate[" + getInput().getLabel() + "]";
     }
 
+    /**
+     * Creates a copy of this template as a {@link RouteDefinition} which can be used
+     * to add as a new route.
+     */
     public RouteDefinition asRouteDefinition() {
         RouteDefinition copy = new RouteDefinition();
 

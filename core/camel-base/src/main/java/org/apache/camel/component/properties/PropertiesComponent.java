@@ -112,6 +112,7 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     private boolean defaultFallbackEnabled = true;
     private Properties initialProperties;
     private Properties overrideProperties;
+    private ThreadLocal<Properties> localProperties = new ThreadLocal<>();
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
     private int environmentVariableMode = ENVIRONMENT_VARIABLES_MODE_OVERRIDE;
     private boolean autoDiscoverPropertiesSources = true;
@@ -437,6 +438,26 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     @Override
     public void setOverrideProperties(Properties overrideProperties) {
         this.overrideProperties = overrideProperties;
+    }
+
+    /**
+     * Sets a special list of local properties (ie thread local) that take precedence
+     * and will use first, if a property exist.
+     */
+    @Override
+    public void setLocalProperties(Properties localProperties) {
+        if (localProperties != null) {
+            this.localProperties.set(localProperties);
+        } else {
+            this.localProperties.remove();
+        }
+    }
+
+    /**
+     * Gets a list of properties that are local for the current thread only (ie thread local)
+     */
+    public Properties getLocalProperties() {
+        return localProperties.get();
     }
 
     /**
