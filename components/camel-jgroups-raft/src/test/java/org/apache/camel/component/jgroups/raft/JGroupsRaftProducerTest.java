@@ -19,7 +19,9 @@ package org.apache.camel.component.jgroups.raft;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JGroupsRaftProducerTest extends JGroupsRaftAbstractTest {
     private static final String CLUSTER_NAME = "JGroupsRaftProducerTest";
