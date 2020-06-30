@@ -165,6 +165,9 @@ public interface Model {
      */
     void removeRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception;
 
+    // TODO: javadoc
+    // TODO: route template builder
+    void addRouteFromTemplate(String routeTemplateId, String routeId, Map<String, Object> properties) throws Exception;
 
 
     /**

@@ -180,6 +180,36 @@ public final class ProcessorDefinitionHelper {
     }
 
     /**
+     /**
+     * Traverses the node, including its children (recursive), and gathers all
+     * the nodes.
+     *
+     * @param node the target node
+     * @return an iterator for all the nodes
+     */
+    public static Iterator<ProcessorDefinition<?>> gatherAllNodes(ProcessorDefinition<?> node) {
+        final List<ProcessorDefinition<?>> list = new ArrayList<>();
+        gatherAllNodes(node, list);
+        return list.iterator();
+    }
+
+    private static void gatherAllNodes(ProcessorDefinition<?> node, List<ProcessorDefinition<?>> list) {
+        if (node == null) {
+            return;
+        }
+        list.add(node);
+
+        // traverse outputs and recursive children as well
+        List<ProcessorDefinition<?>> children = node.getOutputs();
+        if (children != null && !children.isEmpty()) {
+            for (ProcessorDefinition<?> child : children) {
+                // traverse children also
+                gatherAllNodes(child, list);
+            }
+        }
+    }
+
+    /**
      * Traverses the node, including its children (recursive), and gathers all
      * the node ids.
      *

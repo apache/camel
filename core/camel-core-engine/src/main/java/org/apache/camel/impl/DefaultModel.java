@@ -23,16 +23,22 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.Navigate;
+import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.properties.AbstractLocationPropertiesSource;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
@@ -43,6 +49,7 @@ import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.spi.PropertiesComponent;
 
 public class DefaultModel implements Model {
 
@@ -163,6 +170,32 @@ public class DefaultModel implements Model {
     @Override
     public void removeRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception {
         routeTemplateDefinitions.remove(routeTemplateDefinition);
+    }
+
+    @Override
+    public void addRouteFromTemplate(String routeTemplateId, String routeId, Map<String, Object> properties) throws Exception {
+        RouteTemplateDefinition target = null;
+        for (RouteTemplateDefinition def : routeTemplateDefinitions) {
+            if (routeTemplateId.equals(def.getId())) {
+                target = def;
+                break;
+            }
+        }
+        if (target == null) {
+            throw new IllegalArgumentException("Cannot find RouteTemplate with id " + routeTemplateId);
+        }
+
+        // TODO: Add some new api to properties component to use as temporary
+        PropertiesComponent pc = camelContext.getPropertiesComponent();
+        Properties prop = new Properties();
+        if (properties != null) {
+            prop.putAll(properties);
+            pc.setOverrideProperties(prop);
+        }
+
+        RouteDefinition def = target.asRouteDefinition();
+        def.setId(routeId);
+        addRouteDefinition(def);
     }
 
     @Override

@@ -69,4 +69,31 @@ public class RouteTemplateDefinition extends RouteDefinition {
     public String getLabel() {
         return "RouteTemplate[" + getInput().getLabel() + "]";
     }
+
+    public RouteDefinition asRouteDefinition() {
+        RouteDefinition copy = new RouteDefinition();
+
+        copy.setId(getId());
+        copy.setInheritErrorHandler(isInheritErrorHandler());
+        copy.setGroup(getGroup());
+        copy.setStreamCache(getStreamCache());
+        copy.setTrace(getTrace());
+        copy.setMessageHistory(getMessageHistory());
+        copy.setLogMask(getLogMask());
+        copy.setDelayer(getDelayer());
+        copy.setStartupOrder(getStartupOrder());
+        copy.setRoutePolicies(getRoutePolicies());
+        copy.setRoutePolicyRef(getRoutePolicyRef());
+        copy.setShutdownRoute(getShutdownRoute());
+        copy.setShutdownRunningTask(getShutdownRunningTask());
+        copy.setErrorHandlerRef(getErrorHandlerRef());
+        copy.setErrorHandlerFactory(getErrorHandlerFactory());
+        copy.setInputType(getInputType());
+        copy.setOutputType(getOutputType());
+        copy.setRouteProperties(getRouteProperties());
+        copy.setInput(getInput());
+        copy.setOutputs(getOutputs());
+
+        return copy;
+    }
 }

@@ -174,6 +174,11 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
+    public void addRouteFromTemplate(String routeTemplateId, String routeId, Map<String, Object> map) throws Exception {
+        model.addRouteFromTemplate(routeTemplateId, routeId, map);
+    }
+
+    @Override
     public List<RestDefinition> getRestDefinitions() {
         return model.getRestDefinitions();
     }
