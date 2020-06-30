@@ -18,7 +18,10 @@ package org.apache.camel.component.jooq;
 
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.component.jooq.db.tables.records.BookStoreRecord;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JooqComponentTest extends BaseJooqTest {
 
@@ -39,9 +42,10 @@ public class JooqComponentTest extends BaseJooqTest {
         assertEquals(BookStoreRecord.class, ep3.getConfiguration().getEntityType());
     }
 
-    @Test(expected = PropertyBindingException.class)
+    @Test
     public void testNonDefaultConfig() throws Exception {
         JooqComponent component = (JooqComponent) context().getComponent("jooq");
-        component.createEndpoint("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=unexpectedOperation");
+        assertThrows(PropertyBindingException.class,
+            () -> component.createEndpoint("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=unexpectedOperation"));
     }
 }
