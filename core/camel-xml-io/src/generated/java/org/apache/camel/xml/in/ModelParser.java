@@ -1028,6 +1028,11 @@ public class ModelParser extends BaseParser {
             return routeDefinitionAttributeHandler().accept(def, key, val);
         }, routeDefinitionElementHandler(), noValueHandler());
     }
+    public RouteTemplatesDefinition parseRouteTemplatesDefinition()
+            throws IOException, XmlPullParserException {
+        expectTag("routeTemplates");
+        return doParseRouteTemplatesDefinition();
+    }
     protected RouteTemplatesDefinition doParseRouteTemplatesDefinition() throws IOException, XmlPullParserException {
         return doParse(new RouteTemplatesDefinition(),
             optionalIdentifiedDefinitionAttributeHandler(), (def, key) -> {

@@ -28,6 +28,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplatesDefinition;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -87,6 +89,42 @@ public class JaxbXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader 
         } else if (result instanceof RoutesDefinition) {
             answer = (RoutesDefinition)result;
             for (RouteDefinition route : answer.getRoutes()) {
+                applyNamespaces(route, namespaces);
+            }
+        } else {
+            throw new IllegalArgumentException("Unmarshalled object is an unsupported type: " + ObjectHelper.className(result) + " -> " + result);
+        }
+
+        return answer;
+    }
+
+    @Override
+    public Object loadRouteTemplatesDefinition(CamelContext context, InputStream inputStream) throws Exception {
+        XmlConverter xmlConverter = newXmlConverter(context);
+        Document dom = xmlConverter.toDOMDocument(inputStream, null);
+
+        JAXBContext jaxbContext = getJAXBContext(context);
+
+        Map<String, String> namespaces = new LinkedHashMap<>();
+        extractNamespaces(dom, namespaces);
+
+        Binder<Node> binder = jaxbContext.createBinder();
+        Object result = binder.unmarshal(dom);
+
+        if (result == null) {
+            throw new JAXBException("Cannot unmarshal to RouteTemplatesDefinition using JAXB");
+        }
+
+        // can either be routes or a single route
+        RouteTemplatesDefinition answer;
+        if (result instanceof RouteTemplateDefinition) {
+            RouteTemplateDefinition route = (RouteTemplateDefinition)result;
+            answer = new RouteTemplatesDefinition();
+            applyNamespaces(route, namespaces);
+            answer.getRouteTemplates().add(route);
+        } else if (result instanceof RouteTemplatesDefinition) {
+            answer = (RouteTemplatesDefinition)result;
+            for (RouteTemplateDefinition route : answer.getRouteTemplates()) {
                 applyNamespaces(route, namespaces);
             }
         } else {
