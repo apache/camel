@@ -20,9 +20,9 @@ import java.util.Collections;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test based on the JSLT demo playground default values.

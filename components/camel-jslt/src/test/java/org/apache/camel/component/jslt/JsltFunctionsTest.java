@@ -23,8 +23,8 @@ import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.FunctionUtils;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test using user defined functions
