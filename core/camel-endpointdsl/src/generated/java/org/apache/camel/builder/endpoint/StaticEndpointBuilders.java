@@ -1114,7 +1114,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS 2 Kinesis (camel-aws2-kinesis)
-     * Consume and produce records from AWS Kinesis Streams using AWS SDK
+     * Consume and produce records from and to AWS Kinesis Streams using AWS SDK
      * version 2.x.
      * 
      * Category: cloud,messaging
@@ -1134,7 +1134,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS 2 Kinesis (camel-aws2-kinesis)
-     * Consume and produce records from AWS Kinesis Streams using AWS SDK
+     * Consume and produce records from and to AWS Kinesis Streams using AWS SDK
      * version 2.x.
      * 
      * Category: cloud,messaging
