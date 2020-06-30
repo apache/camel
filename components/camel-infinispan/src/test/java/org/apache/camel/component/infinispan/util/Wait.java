@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.infinispan.util;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class Wait {
 
@@ -47,7 +47,7 @@ public final class Wait {
                 }
                 Thread.sleep(sleepDuration);
             }
-            assertTrue("The condition was not satisfied after " + timeout + " ms", ec.isSatisfied());
+            assertTrue(ec.isSatisfied(), "The condition was not satisfied after " + timeout + " ms");
         } catch (Exception e) {
             throw new RuntimeException("Unexpected!", e);
         }

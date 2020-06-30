@@ -22,8 +22,10 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.support.service.ServiceHelper;
 import org.infinispan.commons.api.BasicCacheContainer;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 abstract class InfinispanRoutePolicyTestBase {
     private static final String CACHE_NAME = "camel-route-policy";
@@ -63,8 +65,8 @@ abstract class InfinispanRoutePolicyTestBase {
 
             context.getExtension(Model.class).addRouteDefinition(RouteDefinition.fromUri("direct:r2").routePolicy(policy2).to("mock:p2"));
 
-            Assert.assertTrue(policy1.isLeader());
-            Assert.assertFalse(policy2.isLeader());
+            assertTrue(policy1.isLeader());
+            assertFalse(policy2.isLeader());
 
             policy1.shutdown();
 
@@ -72,8 +74,8 @@ abstract class InfinispanRoutePolicyTestBase {
                 Thread.sleep(250);
             }
 
-            Assert.assertFalse(policy1.isLeader());
-            Assert.assertTrue(policy2.isLeader());
+            assertFalse(policy1.isLeader());
+            assertTrue(policy2.isLeader());
 
         } finally {
             ServiceHelper.stopService(context);

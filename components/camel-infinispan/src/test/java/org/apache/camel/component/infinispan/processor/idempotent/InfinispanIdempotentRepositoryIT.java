@@ -21,25 +21,27 @@ import java.util.stream.IntStream;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class InfinispanIdempotentRepositoryIT extends CamelTestSupport {
 
     private RemoteCacheManager manager = new RemoteCacheManager();
     
-    @Before
+    @BeforeEach
     public void setupCache() {
         RemoteCache<Object, Object> cache = manager.administration().getOrCreateCache("idempotent", (String) null);
         assertNotNull(cache);
     }
     
-    @After
+    @AfterEach
     public void cleanupCache() {
         manager.close();
     }

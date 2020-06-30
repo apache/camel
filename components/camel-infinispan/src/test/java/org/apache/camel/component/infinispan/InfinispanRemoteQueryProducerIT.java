@@ -23,7 +23,7 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
@@ -37,13 +37,17 @@ import org.infinispan.protostream.sampledomain.marshallers.GenderMarshaller;
 import org.infinispan.protostream.sampledomain.marshallers.UserMarshaller;
 import org.infinispan.query.remote.client.ProtobufMetadataManagerConstants;
 import org.infinispan.query.remote.client.impl.MarshallerRegistration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.infinispan.InfinispanConstants.OPERATION;
 import static org.apache.camel.component.infinispan.InfinispanConstants.QUERY_BUILDER;
 import static org.apache.camel.component.infinispan.util.UserUtils.USERS;
 import static org.apache.camel.component.infinispan.util.UserUtils.createKey;
 import static org.apache.camel.component.infinispan.util.UserUtils.hasUser;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
 

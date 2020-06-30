@@ -20,7 +20,7 @@ import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.configuration.global.GlobalConfiguration;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.jgroups.util.Util.assertFalse;
 import static org.jgroups.util.Util.assertTrue;
