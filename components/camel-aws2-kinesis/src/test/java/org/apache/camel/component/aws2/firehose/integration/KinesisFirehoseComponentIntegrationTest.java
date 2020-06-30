@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.aws2.firehose.integration;
 
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -25,16 +29,11 @@ import org.apache.camel.component.aws2.firehose.KinesisFirehose2Constants;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.firehose.FirehoseClient;
 import software.amazon.awssdk.services.firehose.model.Record;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 
 @Disabled("Must be manually tested.")
 public class KinesisFirehoseComponentIntegrationTest extends CamelTestSupport {
@@ -56,12 +55,12 @@ public class KinesisFirehoseComponentIntegrationTest extends CamelTestSupport {
     public void testFirehoseBatchRouting() throws Exception {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
-            	List<Record> recs = new ArrayList<Record>();
-            	Record rec = Record.builder().data(SdkBytes.fromString(("Test1"), Charset.defaultCharset())).build();
-            	Record rec1 = Record.builder().data(SdkBytes.fromString(("Test2"), Charset.defaultCharset())).build();
+                List<Record> recs = new ArrayList<Record>();
+                Record rec = Record.builder().data(SdkBytes.fromString("Test1", Charset.defaultCharset())).build();
+                Record rec1 = Record.builder().data(SdkBytes.fromString("Test2", Charset.defaultCharset())).build();
                 recs.add(rec);
                 recs.add(rec1);
-            	exchange.getIn().setBody(recs);
+                exchange.getIn().setBody(recs);
             }
         });
         assertNotNull(exchange.getIn().getBody());
