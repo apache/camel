@@ -19,11 +19,13 @@ package org.apache.camel.component.infinispan;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("start a local server with: ./bin/standalone.sh")
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+@Disabled("start a local server with: ./bin/standalone.sh")
 public class InfinispanRemoteProducerTest extends CamelTestSupport {
 
     @Test

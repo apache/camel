@@ -24,25 +24,25 @@ import org.infinispan.configuration.global.GlobalConfiguration;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
 import org.jgroups.util.UUID;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InfinispanConfigurationIT {
 
     private RemoteCacheManager manager = new RemoteCacheManager();
 
-    @Before
+    @BeforeEach
     public void setupCache() {
         RemoteCache<Object, Object> cache = manager.administration().getOrCreateCache("misc_cache", (String) null);
         assertNotNull(cache);
     }
     
-    @After
+    @AfterEach
     public void cleanupCache() {
         manager.close();
     }
