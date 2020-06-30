@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Route;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.junit.jupiter.api.Test;
 
@@ -58,6 +59,8 @@ public class RouteTemplateTest extends ContextTestSupport {
         assertEquals(2, context.getRoutes().size());
         assertEquals("Started", context.getRouteController().getRouteStatus("first").name());
         assertEquals("Started", context.getRouteController().getRouteStatus("second").name());
+        assertEquals("true", context.getRoute("first").getProperties().get(Route.TEMPLATE_PROPERTY));
+        assertEquals("true", context.getRoute("second").getProperties().get(Route.TEMPLATE_PROPERTY));
 
         template.sendBody("direct:one", "Hello Cheese");
         template.sendBody("direct:two", "Hello Cake");
@@ -83,6 +86,7 @@ public class RouteTemplateTest extends ContextTestSupport {
         assertEquals(1, context.getRouteDefinitions().size());
         assertEquals(1, context.getRoutes().size());
         assertEquals("Started", context.getRouteController().getRouteStatus(routeId).name());
+        assertEquals("true", context.getRoute(routeId).getProperties().get(Route.TEMPLATE_PROPERTY));
 
         template.sendBody("direct:one", "Hello Cheese");
 
@@ -117,6 +121,7 @@ public class RouteTemplateTest extends ContextTestSupport {
         assertEquals(2, context.getRouteDefinitions().size());
         assertEquals(2, context.getRoutes().size());
         assertEquals("Started", context.getRouteController().getRouteStatus(routeId).name());
+        assertEquals("true", context.getRoute(routeId).getProperties().get(Route.TEMPLATE_PROPERTY));
 
         template.sendBody("direct:one", "Hello Cheese");
 

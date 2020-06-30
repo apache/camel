@@ -74,6 +74,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     // configured)
     private boolean contextScopedErrorHandler = true;
     private Boolean rest;
+    private Boolean template;
     private RestDefinition restDefinition;
     private RestBindingDefinition restBindingDefinition;
     private InputTypeDefinition inputType;
@@ -95,8 +96,20 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * This route is created from the REST DSL.
      */
     public void fromRest(@AsEndpointUri String uri) {
-        from(uri);
+        if (uri != null) {
+            from(uri);
+        }
         rest = true;
+    }
+
+    /**
+     * This route is created from a route template.
+     */
+    public void fromTemplate(@AsEndpointUri String uri) {
+        if (uri != null) {
+            from(uri);
+        }
+        template = true;
     }
 
     /**
@@ -966,6 +979,11 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     @XmlAttribute
     public Boolean isRest() {
         return rest;
+    }
+
+    @XmlAttribute
+    public Boolean isTemplate() {
+        return template;
     }
 
     public RestDefinition getRestDefinition() {
