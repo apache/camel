@@ -27,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.firehose.FirehoseClient;
+import software.amazon.awssdk.services.firehose.model.CreateDeliveryStreamRequest;
+import software.amazon.awssdk.services.firehose.model.CreateDeliveryStreamResponse;
 import software.amazon.awssdk.services.firehose.model.PutRecordBatchRequest;
 import software.amazon.awssdk.services.firehose.model.PutRecordBatchResponse;
 import software.amazon.awssdk.services.firehose.model.PutRecordRequest;
@@ -56,10 +58,25 @@ public class KinesisFirehose2Producer extends DefaultProducer {
                 case sendBatchRecord:
                     sendBatchRecord(getClient(), exchange);
                     break;
+                case createDeliveryStream:
+                    createDeliveryStream(getClient(), exchange);
+                    break;
                 default:
                     throw new IllegalArgumentException("Unsupported operation");
             }
         }
+    }
+
+    private void createDeliveryStream(FirehoseClient client, Exchange exchange) {
+        if (exchange.getIn().getBody() instanceof CreateDeliveryStreamRequest) {
+            CreateDeliveryStreamRequest req = exchange.getIn().getBody(CreateDeliveryStreamRequest.class);
+            CreateDeliveryStreamResponse result = client.createDeliveryStream(req);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        } else {
+            throw new IllegalArgumentException("The createDeliveryStream operation expects a CreateDeliveryStream instance as body");
+        }
+        
     }
 
     private void sendBatchRecord(FirehoseClient client, Exchange exchange) {
