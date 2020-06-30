@@ -113,18 +113,18 @@ public class KinesisFirehose2Configuration implements Cloneable {
     }
 
     public KinesisFirehose2Operations getOperation() {
-		return operation;
-	}
+        return operation;
+    }
 
-	public void setOperation(KinesisFirehose2Operations operation) {
-		this.operation = operation;
-	}
-	
+    public void setOperation(KinesisFirehose2Operations operation) {
+        this.operation = operation;
+    }
+
     // *************************************************
     //
     // *************************************************
 
-	public KinesisFirehose2Configuration copy() {
+    public KinesisFirehose2Configuration copy() {
         try {
             return (KinesisFirehose2Configuration)super.clone();
         } catch (CloneNotSupportedException e) {

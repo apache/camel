@@ -61,25 +61,25 @@ public class KinesisFirehose2Producer extends DefaultProducer {
             }
         }
     }
-    
+
     private void sendBatchRecord(FirehoseClient client, Exchange exchange) {
         if (exchange.getIn().getBody() instanceof Iterable) {
             Iterable c = exchange.getIn().getBody(Iterable.class);
             PutRecordBatchRequest.Builder batchRequest = PutRecordBatchRequest.builder();
             batchRequest.deliveryStreamName(getEndpoint().getConfiguration().getStreamName());
-            batchRequest.records((Collection<Record>) c);
+            batchRequest.records((Collection<Record>)c);
             PutRecordBatchResponse result = client.putRecordBatch(batchRequest.build());
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
         } else {
-        	PutRecordBatchRequest req = exchange.getIn().getBody(PutRecordBatchRequest.class);
-        	PutRecordBatchResponse result = client.putRecordBatch(req);
+            PutRecordBatchRequest req = exchange.getIn().getBody(PutRecordBatchRequest.class);
+            PutRecordBatchResponse result = client.putRecordBatch(req);
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
-        }	
-	}
+        }
+    }
 
-	public void processSingleRecord(final Exchange exchange) {
+    public void processSingleRecord(final Exchange exchange) {
         PutRecordRequest request = createRequest(exchange);
         LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
         PutRecordResponse putRecordResult = getEndpoint().getClient().putRecord(request);
@@ -102,17 +102,17 @@ public class KinesisFirehose2Producer extends DefaultProducer {
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
     }
-    
+
     protected FirehoseClient getClient() {
         return getEndpoint().getClient();
     }
-    
+
     protected KinesisFirehose2Configuration getConfiguration() {
         return getEndpoint().getConfiguration();
     }
-    
+
     private KinesisFirehose2Operations determineOperation(Exchange exchange) {
-    	KinesisFirehose2Operations operation = exchange.getIn().getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_OPERATION, KinesisFirehose2Operations.class);
+        KinesisFirehose2Operations operation = exchange.getIn().getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_OPERATION, KinesisFirehose2Operations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
