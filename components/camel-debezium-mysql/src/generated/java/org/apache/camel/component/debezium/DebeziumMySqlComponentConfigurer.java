@@ -32,6 +32,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": getOrCreateConfiguration(target).setBigintUnsignedHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "binaryhandlingmode":
+        case "binaryHandlingMode": getOrCreateConfiguration(target).setBinaryHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "binlogbuffersize":
         case "binlogBufferSize": getOrCreateConfiguration(target).setBinlogBufferSize(property(camelContext, int.class, value)); return true;
         case "bridgeerrorhandler":
@@ -147,6 +149,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "offsetStorageTopic": getOrCreateConfiguration(target).setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "pollintervalms":
         case "pollIntervalMs": getOrCreateConfiguration(target).setPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "skippedoperations":
+        case "skippedOperations": getOrCreateConfiguration(target).setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotdelayms":
         case "snapshotDelayMs": getOrCreateConfiguration(target).setSnapshotDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "snapshotfetchsize":
@@ -181,6 +185,7 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         answer.put("additionalProperties", java.util.Map.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("bigintUnsignedHandlingMode", java.lang.String.class);
+        answer.put("binaryHandlingMode", java.lang.String.class);
         answer.put("binlogBufferSize", int.class);
         answer.put("bridgeErrorHandler", boolean.class);
         answer.put("columnBlacklist", java.lang.String.class);
@@ -239,6 +244,7 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         answer.put("offsetStorageReplicationFactor", int.class);
         answer.put("offsetStorageTopic", java.lang.String.class);
         answer.put("pollIntervalMs", long.class);
+        answer.put("skippedOperations", java.lang.String.class);
         answer.put("snapshotDelayMs", long.class);
         answer.put("snapshotFetchSize", int.class);
         answer.put("snapshotLockingMode", java.lang.String.class);
@@ -264,6 +270,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": return getOrCreateConfiguration(target).getBigintUnsignedHandlingMode();
+        case "binaryhandlingmode":
+        case "binaryHandlingMode": return getOrCreateConfiguration(target).getBinaryHandlingMode();
         case "binlogbuffersize":
         case "binlogBufferSize": return getOrCreateConfiguration(target).getBinlogBufferSize();
         case "bridgeerrorhandler":
@@ -379,6 +387,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "offsetStorageTopic": return getOrCreateConfiguration(target).getOffsetStorageTopic();
         case "pollintervalms":
         case "pollIntervalMs": return getOrCreateConfiguration(target).getPollIntervalMs();
+        case "skippedoperations":
+        case "skippedOperations": return getOrCreateConfiguration(target).getSkippedOperations();
         case "snapshotdelayms":
         case "snapshotDelayMs": return getOrCreateConfiguration(target).getSnapshotDelayMs();
         case "snapshotfetchsize":

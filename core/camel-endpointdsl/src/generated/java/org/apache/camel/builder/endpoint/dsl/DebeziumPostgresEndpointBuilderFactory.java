@@ -319,8 +319,23 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * Description is not available here, please check Debezium website for
-         * corresponding key 'column.blacklist' description.
+         * Specify how binary (blob, binary, etc.) columns should be represented
+         * in change events, including:'bytes' represents binary data as byte
+         * array (default)'base64' represents binary data as base64-encoded
+         * string'hex' represents binary data as hex-encoded (base16) string.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: bytes
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder binaryHandlingMode(
+                String binaryHandlingMode) {
+            doSetProperty("binaryHandlingMode", binaryHandlingMode);
+            return this;
+        }
+        /**
+         * Regular expressions matching columns to exclude from change events.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -329,6 +344,31 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         default DebeziumPostgresEndpointBuilder columnBlacklist(
                 String columnBlacklist) {
             doSetProperty("columnBlacklist", columnBlacklist);
+            return this;
+        }
+        /**
+         * Regular expressions matching columns to include in change events.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder columnWhitelist(
+                String columnWhitelist) {
+            doSetProperty("columnWhitelist", columnWhitelist);
+            return this;
+        }
+        /**
+         * Optional list of custom converters that would be used instead of
+         * default ones. The converters are defined using '.type' config option
+         * and configured using options '.'.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder converters(String converters) {
+            doSetProperty("converters", converters);
             return this;
         }
         /**
@@ -864,6 +904,32 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * Applies only when streaming changes using pgoutput.Determine how
+         * creation of a publication should work, the default is
+         * all_tables.DISABLED - The connector will not attempt to create a
+         * publication at all. The expectation is that the user has created the
+         * publication up-front. If the publication isn't found to exist upon
+         * startup, the connector will throw an exception and stop.ALL_TABLES -
+         * If no publication exists, the connector will create a new publication
+         * for all tables. Note this requires that the configured user has
+         * access. If the publication already exists, it will be used. i.e
+         * CREATE PUBLICATION FOR ALL TABLES;FILTERED - If no publication
+         * exists, the connector will create a new publication for all those
+         * tables matchingthe current filter configuration (see table/database
+         * whitelist/blacklist properties). If the publication already exists,
+         * it will be used. i.e CREATE PUBLICATION FOR TABLE.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: all_tables
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder publicationAutocreateMode(
+                String publicationAutocreateMode) {
+            doSetProperty("publicationAutocreateMode", publicationAutocreateMode);
+            return this;
+        }
+        /**
          * The name of the Postgres 10 publication used for streaming changes
          * from a plugin.Defaults to 'dbz_publication'.
          * 
@@ -875,6 +941,32 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         default DebeziumPostgresEndpointBuilder publicationName(
                 String publicationName) {
             doSetProperty("publicationName", publicationName);
+            return this;
+        }
+        /**
+         * Whether field names will be sanitized to Avro naming conventions.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder sanitizeFieldNames(
+                boolean sanitizeFieldNames) {
+            doSetProperty("sanitizeFieldNames", sanitizeFieldNames);
+            return this;
+        }
+        /**
+         * Whether field names will be sanitized to Avro naming conventions.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder sanitizeFieldNames(
+                String sanitizeFieldNames) {
+            doSetProperty("sanitizeFieldNames", sanitizeFieldNames);
             return this;
         }
         /**
@@ -923,6 +1015,20 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         default DebeziumPostgresEndpointBuilder schemaWhitelist(
                 String schemaWhitelist) {
             doSetProperty("schemaWhitelist", schemaWhitelist);
+            return this;
+        }
+        /**
+         * The comma-separated list of operations to skip during streaming,
+         * defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By
+         * default, no operations will be skipped.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder skippedOperations(
+                String skippedOperations) {
+            doSetProperty("skippedOperations", skippedOperations);
             return this;
         }
         /**
@@ -1236,6 +1342,32 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         default DebeziumPostgresEndpointBuilder tableBlacklist(
                 String tableBlacklist) {
             doSetProperty("tableBlacklist", tableBlacklist);
+            return this;
+        }
+        /**
+         * Flag specifying whether built-in tables should be ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder tableIgnoreBuiltin(
+                boolean tableIgnoreBuiltin) {
+            doSetProperty("tableIgnoreBuiltin", tableIgnoreBuiltin);
+            return this;
+        }
+        /**
+         * Flag specifying whether built-in tables should be ignored.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder tableIgnoreBuiltin(
+                String tableIgnoreBuiltin) {
+            doSetProperty("tableIgnoreBuiltin", tableIgnoreBuiltin);
             return this;
         }
         /**

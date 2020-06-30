@@ -28,9 +28,11 @@ import io.debezium.connector.mysql.MySqlConnector;
 import io.debezium.connector.mysql.MySqlConnectorConfig;
 import io.debezium.relational.RelationalDatabaseConnectorConfig;
 import io.debezium.relational.history.FileDatabaseHistory;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.connect.source.SourceConnector;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -46,6 +48,13 @@ public class ConnectorConfigGeneratorTest {
         overrideFields.put(MySqlConnectorConfig.SERVER_ID.name(), 1111);
 
         testIfCorrectlyGeneratedFile(new MySqlConnector(), MySqlConnectorConfig.class, requiredFields, overrideFields);
+    }
+
+    @Test
+    void testIfIgnoreUnWantedFieldsWithIllegal() {
+        final Map<String, ConnectorConfigField> fields = ConnectorConfigFieldsFactory.createConnectorFieldsAsMap(new MySqlConnector().config(), MySqlConnectorConfig.class, Collections.EMPTY_SET, Collections.EMPTY_MAP);
+
+        fields.forEach((name, connectorConfigField) -> assertFalse(StringUtils.containsAny(name, "%", "+", "[", "]", "*", "(", ")", "ˆ", "@", "%", "~"), "Illegal char found in the field name"));
     }
 
     @Test

@@ -34,7 +34,10 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "columnblacklist":
         case "columnBlacklist": getOrCreateConfiguration(target).setColumnBlacklist(property(camelContext, java.lang.String.class, value)); return true;
+        case "columnwhitelist":
+        case "columnWhitelist": getOrCreateConfiguration(target).setColumnWhitelist(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration.class, value)); return true;
+        case "converters": getOrCreateConfiguration(target).setConverters(property(camelContext, java.lang.String.class, value)); return true;
         case "databasedbname":
         case "databaseDbname": getOrCreateConfiguration(target).setDatabaseDbname(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehistory":
@@ -69,6 +72,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "heartbeatIntervalMs": getOrCreateConfiguration(target).setHeartbeatIntervalMs(property(camelContext, int.class, value)); return true;
         case "heartbeattopicsprefix":
         case "heartbeatTopicsPrefix": getOrCreateConfiguration(target).setHeartbeatTopicsPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "includeschemachanges":
+        case "includeSchemaChanges": getOrCreateConfiguration(target).setIncludeSchemaChanges(property(camelContext, boolean.class, value)); return true;
         case "internalkeyconverter":
         case "internalKeyConverter": getOrCreateConfiguration(target).setInternalKeyConverter(property(camelContext, java.lang.String.class, value)); return true;
         case "internalvalueconverter":
@@ -99,10 +104,16 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "pollIntervalMs": getOrCreateConfiguration(target).setPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "providetransactionmetadata":
         case "provideTransactionMetadata": getOrCreateConfiguration(target).setProvideTransactionMetadata(property(camelContext, boolean.class, value)); return true;
+        case "sanitizefieldnames":
+        case "sanitizeFieldNames": getOrCreateConfiguration(target).setSanitizeFieldNames(property(camelContext, boolean.class, value)); return true;
+        case "skippedoperations":
+        case "skippedOperations": getOrCreateConfiguration(target).setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotdelayms":
         case "snapshotDelayMs": getOrCreateConfiguration(target).setSnapshotDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "snapshotfetchsize":
         case "snapshotFetchSize": getOrCreateConfiguration(target).setSnapshotFetchSize(property(camelContext, int.class, value)); return true;
+        case "snapshotisolationmode":
+        case "snapshotIsolationMode": getOrCreateConfiguration(target).setSnapshotIsolationMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotlocktimeoutms":
         case "snapshotLockTimeoutMs": getOrCreateConfiguration(target).setSnapshotLockTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "snapshotmode":
@@ -111,6 +122,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "snapshotSelectStatementOverrides": getOrCreateConfiguration(target).setSnapshotSelectStatementOverrides(property(camelContext, java.lang.String.class, value)); return true;
         case "sourcestructversion":
         case "sourceStructVersion": getOrCreateConfiguration(target).setSourceStructVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "sourcetimestampmode":
+        case "sourceTimestampMode": getOrCreateConfiguration(target).setSourceTimestampMode(property(camelContext, java.lang.String.class, value)); return true;
         case "tableblacklist":
         case "tableBlacklist": getOrCreateConfiguration(target).setTableBlacklist(property(camelContext, java.lang.String.class, value)); return true;
         case "tableignorebuiltin":
@@ -132,7 +145,9 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("bridgeErrorHandler", boolean.class);
         answer.put("columnBlacklist", java.lang.String.class);
+        answer.put("columnWhitelist", java.lang.String.class);
         answer.put("configuration", org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration.class);
+        answer.put("converters", java.lang.String.class);
         answer.put("databaseDbname", java.lang.String.class);
         answer.put("databaseHistory", java.lang.String.class);
         answer.put("databaseHistoryFileFilename", java.lang.String.class);
@@ -150,6 +165,7 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         answer.put("eventProcessingFailureHandlingMode", java.lang.String.class);
         answer.put("heartbeatIntervalMs", int.class);
         answer.put("heartbeatTopicsPrefix", java.lang.String.class);
+        answer.put("includeSchemaChanges", boolean.class);
         answer.put("internalKeyConverter", java.lang.String.class);
         answer.put("internalValueConverter", java.lang.String.class);
         answer.put("maxBatchSize", int.class);
@@ -165,12 +181,16 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         answer.put("offsetStorageTopic", java.lang.String.class);
         answer.put("pollIntervalMs", long.class);
         answer.put("provideTransactionMetadata", boolean.class);
+        answer.put("sanitizeFieldNames", boolean.class);
+        answer.put("skippedOperations", java.lang.String.class);
         answer.put("snapshotDelayMs", long.class);
         answer.put("snapshotFetchSize", int.class);
+        answer.put("snapshotIsolationMode", java.lang.String.class);
         answer.put("snapshotLockTimeoutMs", long.class);
         answer.put("snapshotMode", java.lang.String.class);
         answer.put("snapshotSelectStatementOverrides", java.lang.String.class);
         answer.put("sourceStructVersion", java.lang.String.class);
+        answer.put("sourceTimestampMode", java.lang.String.class);
         answer.put("tableBlacklist", java.lang.String.class);
         answer.put("tableIgnoreBuiltin", boolean.class);
         answer.put("tableWhitelist", java.lang.String.class);
@@ -191,7 +211,10 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "columnblacklist":
         case "columnBlacklist": return getOrCreateConfiguration(target).getColumnBlacklist();
+        case "columnwhitelist":
+        case "columnWhitelist": return getOrCreateConfiguration(target).getColumnWhitelist();
         case "configuration": return target.getConfiguration();
+        case "converters": return getOrCreateConfiguration(target).getConverters();
         case "databasedbname":
         case "databaseDbname": return getOrCreateConfiguration(target).getDatabaseDbname();
         case "databasehistory":
@@ -226,6 +249,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "heartbeatIntervalMs": return getOrCreateConfiguration(target).getHeartbeatIntervalMs();
         case "heartbeattopicsprefix":
         case "heartbeatTopicsPrefix": return getOrCreateConfiguration(target).getHeartbeatTopicsPrefix();
+        case "includeschemachanges":
+        case "includeSchemaChanges": return getOrCreateConfiguration(target).isIncludeSchemaChanges();
         case "internalkeyconverter":
         case "internalKeyConverter": return getOrCreateConfiguration(target).getInternalKeyConverter();
         case "internalvalueconverter":
@@ -256,10 +281,16 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "pollIntervalMs": return getOrCreateConfiguration(target).getPollIntervalMs();
         case "providetransactionmetadata":
         case "provideTransactionMetadata": return getOrCreateConfiguration(target).isProvideTransactionMetadata();
+        case "sanitizefieldnames":
+        case "sanitizeFieldNames": return getOrCreateConfiguration(target).isSanitizeFieldNames();
+        case "skippedoperations":
+        case "skippedOperations": return getOrCreateConfiguration(target).getSkippedOperations();
         case "snapshotdelayms":
         case "snapshotDelayMs": return getOrCreateConfiguration(target).getSnapshotDelayMs();
         case "snapshotfetchsize":
         case "snapshotFetchSize": return getOrCreateConfiguration(target).getSnapshotFetchSize();
+        case "snapshotisolationmode":
+        case "snapshotIsolationMode": return getOrCreateConfiguration(target).getSnapshotIsolationMode();
         case "snapshotlocktimeoutms":
         case "snapshotLockTimeoutMs": return getOrCreateConfiguration(target).getSnapshotLockTimeoutMs();
         case "snapshotmode":
@@ -268,6 +299,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "snapshotSelectStatementOverrides": return getOrCreateConfiguration(target).getSnapshotSelectStatementOverrides();
         case "sourcestructversion":
         case "sourceStructVersion": return getOrCreateConfiguration(target).getSourceStructVersion();
+        case "sourcetimestampmode":
+        case "sourceTimestampMode": return getOrCreateConfiguration(target).getSourceTimestampMode();
         case "tableblacklist":
         case "tableBlacklist": return getOrCreateConfiguration(target).getTableBlacklist();
         case "tableignorebuiltin":

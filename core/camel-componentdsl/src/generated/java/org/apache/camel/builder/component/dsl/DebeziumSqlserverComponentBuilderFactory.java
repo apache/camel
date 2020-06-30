@@ -254,8 +254,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
         /**
-         * Description is not available here, please check Debezium website for
-         * corresponding key 'column.blacklist' description.
+         * Regular expressions matching columns to exclude from change events.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -264,6 +263,32 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         default DebeziumSqlserverComponentBuilder columnBlacklist(
                 java.lang.String columnBlacklist) {
             doSetProperty("columnBlacklist", columnBlacklist);
+            return this;
+        }
+        /**
+         * Regular expressions matching columns to include in change events.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder columnWhitelist(
+                java.lang.String columnWhitelist) {
+            doSetProperty("columnWhitelist", columnWhitelist);
+            return this;
+        }
+        /**
+         * Optional list of custom converters that would be used instead of
+         * default ones. The converters are defined using '.type' config option
+         * and configured using options '.'.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder converters(
+                java.lang.String converters) {
+            doSetProperty("converters", converters);
             return this;
         }
         /**
@@ -512,6 +537,24 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether the connector should publish changes in the database schema
+         * to a Kafka topic with the same name as the database server ID. Each
+         * schema change will be recorded using a key that contains the database
+         * name and whose value include logical description of the new schema
+         * and optionally the DDL statement(s).The default is 'true'. This is
+         * independent of how the connector internally records database history.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder includeSchemaChanges(
+                boolean includeSchemaChanges) {
+            doSetProperty("includeSchemaChanges", includeSchemaChanges);
+            return this;
+        }
+        /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
          * The option is a: <code>int</code> type.
@@ -585,6 +628,33 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether field names will be sanitized to Avro naming conventions.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder sanitizeFieldNames(
+                boolean sanitizeFieldNames) {
+            doSetProperty("sanitizeFieldNames", sanitizeFieldNames);
+            return this;
+        }
+        /**
+         * The comma-separated list of operations to skip during streaming,
+         * defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By
+         * default, no operations will be skipped.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder skippedOperations(
+                java.lang.String skippedOperations) {
+            doSetProperty("skippedOperations", skippedOperations);
+            return this;
+        }
+        /**
          * The number of milliseconds to delay before a snapshot will begin.
          * 
          * The option is a: <code>long</code> type.
@@ -608,6 +678,34 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         default DebeziumSqlserverComponentBuilder snapshotFetchSize(
                 int snapshotFetchSize) {
             doSetProperty("snapshotFetchSize", snapshotFetchSize);
+            return this;
+        }
+        /**
+         * Controls which transaction isolation level is used and how long the
+         * connector locks the monitored tables. The default is
+         * 'repeatable_read', which means that repeatable read isolation level
+         * is used. In addition, exclusive locks are taken only during schema
+         * snapshot. Using a value of 'exclusive' ensures that the connector
+         * holds the exclusive lock (and thus prevents any reads and updates)
+         * for all monitored tables during the entire snapshot duration. When
+         * 'snapshot' is specified, connector runs the initial snapshot in
+         * SNAPSHOT isolation level, which guarantees snapshot consistency. In
+         * addition, neither table nor row-level locks are held. When
+         * 'read_committed' is specified, connector runs the initial snapshot in
+         * READ COMMITTED isolation level. No long-running locks are taken, so
+         * that initial snapshot does not prevent other transactions from
+         * updating table rows. Snapshot consistency is not guaranteed.In
+         * 'read_uncommitted' mode neither table nor row-level locks are
+         * acquired, but connector does not guarantee snapshot consistency.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: repeatable_read
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder snapshotIsolationMode(
+                java.lang.String snapshotIsolationMode) {
+            doSetProperty("snapshotIsolationMode", snapshotIsolationMode);
             return this;
         }
         /**
@@ -678,6 +776,23 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         default DebeziumSqlserverComponentBuilder sourceStructVersion(
                 java.lang.String sourceStructVersion) {
             doSetProperty("sourceStructVersion", sourceStructVersion);
+            return this;
+        }
+        /**
+         * Configures the criteria of the attached timestamp within the source
+         * record (ts_ms).Options include:'commit', (default) the source
+         * timestamp is set to the instant where the record was committed in the
+         * database'processing', the source timestamp is set to the instant
+         * where the record was processed by Debezium.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: commit
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder sourceTimestampMode(
+                java.lang.String sourceTimestampMode) {
+            doSetProperty("sourceTimestampMode", sourceTimestampMode);
             return this;
         }
         /**
@@ -794,6 +909,8 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "offsetStorageTopic": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOffsetStorageTopic((java.lang.String) value); return true;
             case "basicPropertyBinding": ((DebeziumSqlserverComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "columnBlacklist": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setColumnBlacklist((java.lang.String) value); return true;
+            case "columnWhitelist": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setColumnWhitelist((java.lang.String) value); return true;
+            case "converters": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setConverters((java.lang.String) value); return true;
             case "databaseDbname": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseDbname((java.lang.String) value); return true;
             case "databaseHistory": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHistory((java.lang.String) value); return true;
             case "databaseHistoryFileFilename": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHistoryFileFilename((java.lang.String) value); return true;
@@ -811,17 +928,22 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setHeartbeatIntervalMs((int) value); return true;
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
+            case "includeSchemaChanges": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setIncludeSchemaChanges((boolean) value); return true;
             case "maxBatchSize": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setMaxBatchSize((int) value); return true;
             case "maxQueueSize": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setMaxQueueSize((int) value); return true;
             case "messageKeyColumns": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setMessageKeyColumns((java.lang.String) value); return true;
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setPollIntervalMs((long) value); return true;
             case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setProvideTransactionMetadata((boolean) value); return true;
+            case "sanitizeFieldNames": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSanitizeFieldNames((boolean) value); return true;
+            case "skippedOperations": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSkippedOperations((java.lang.String) value); return true;
             case "snapshotDelayMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotDelayMs((long) value); return true;
             case "snapshotFetchSize": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotFetchSize((int) value); return true;
+            case "snapshotIsolationMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotIsolationMode((java.lang.String) value); return true;
             case "snapshotLockTimeoutMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotLockTimeoutMs((long) value); return true;
             case "snapshotMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotMode((java.lang.String) value); return true;
             case "snapshotSelectStatementOverrides": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotSelectStatementOverrides((java.lang.String) value); return true;
             case "sourceStructVersion": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSourceStructVersion((java.lang.String) value); return true;
+            case "sourceTimestampMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSourceTimestampMode((java.lang.String) value); return true;
             case "tableBlacklist": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTableBlacklist((java.lang.String) value); return true;
             case "tableIgnoreBuiltin": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTableIgnoreBuiltin((boolean) value); return true;
             case "tableWhitelist": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTableWhitelist((java.lang.String) value); return true;
