@@ -173,8 +173,8 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
-    public void addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception {
-        model.addRouteFromTemplate(routeTemplateId, routeId, parameters);
+    public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception {
+        return model.addRouteFromTemplate(routeId, routeTemplateId, parameters);
     }
 
     @Override

@@ -24,6 +24,7 @@ import org.apache.camel.model.RouteTemplateDefinition;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RouteTemplateTest extends ContextTestSupport {
 
@@ -61,6 +62,30 @@ public class RouteTemplateTest extends ContextTestSupport {
 
         template.sendBody("direct:one", "Hello Cheese");
         template.sendBody("direct:two", "Hello Cake");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testCreateRouteFromRouteTemplateAutoAssignedRouteId() throws Exception {
+        assertEquals(1, context.getRouteTemplateDefinitions().size());
+
+        RouteTemplateDefinition routeTemplate = context.getRouteTemplateDefinition("myTemplate");
+        assertEquals("foo,bar", routeTemplate.getParameters());
+
+        getMockEndpoint("mock:cheese").expectedBodiesReceived("Hello Cheese");
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("foo", "one");
+        parameters.put("bar", "cheese");
+        String routeId = context.addRouteFromTemplate(null, "myTemplate", parameters);
+
+        assertNotNull(routeId);
+        assertEquals(1, context.getRouteDefinitions().size());
+        assertEquals(1, context.getRoutes().size());
+        assertEquals("Started", context.getRouteController().getRouteStatus(routeId).name());
+
+        template.sendBody("direct:one", "Hello Cheese");
 
         assertMockEndpointsSatisfied();
     }

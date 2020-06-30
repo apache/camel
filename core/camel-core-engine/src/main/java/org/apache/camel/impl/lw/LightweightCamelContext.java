@@ -1528,8 +1528,8 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
-    public void addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception {
-        getModelCamelContext().addRouteFromTemplate(routeId, routeTemplateId, parameters);
+    public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception {
+        return getModelCamelContext().addRouteFromTemplate(routeId, routeTemplateId, parameters);
     }
 
     @Override

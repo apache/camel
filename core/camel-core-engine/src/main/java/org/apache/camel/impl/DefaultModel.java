@@ -168,7 +168,7 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public void addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception {
+    public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception {
         RouteTemplateDefinition target = null;
         for (RouteTemplateDefinition def : routeTemplateDefinitions) {
             if (routeTemplateId.equals(def.getId())) {
@@ -188,12 +188,17 @@ public class DefaultModel implements Model {
         }
         try {
             RouteDefinition def = target.asRouteDefinition();
+            if (routeId == null) {
+                routeId = camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory().createId(def);
+            }
             def.setId(routeId);
             addRouteDefinition(def);
         } finally {
             // clear local properties after adding it as a route
             pc.setLocalProperties(null);
         }
+
+        return routeId;
     }
 
     @Override

@@ -404,7 +404,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
     }
 
     @Override
-    public void addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception {
+    public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception {
         throw new UnsupportedOperationException();
     }
 
