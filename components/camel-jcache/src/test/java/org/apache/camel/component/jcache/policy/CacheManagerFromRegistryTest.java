@@ -24,8 +24,11 @@ import javax.cache.Caching;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 //This test requires a registered CacheManager, but the others do not.
 public class CacheManagerFromRegistryTest extends JCachePolicyTestBase {
@@ -66,7 +69,7 @@ public class CacheManagerFromRegistryTest extends JCachePolicyTestBase {
     }
 
     @Override
-    @After
+    @AfterEach
     public void after() {
         super.after();
         CacheManager cacheManager = Caching.getCachingProvider().getCacheManager(URI.create("hzsecond"), null);
