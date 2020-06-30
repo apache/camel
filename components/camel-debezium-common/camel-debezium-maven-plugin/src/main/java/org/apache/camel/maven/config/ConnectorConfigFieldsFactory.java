@@ -52,8 +52,9 @@ public final class ConnectorConfigFieldsFactory {
         // create our map for fields
         configDef.configKeys().forEach((name, configKey) -> {
             // check if name is clean
-            if (!StringUtils.containsAny(name, ILLEGAL_CHARS))
+            if (!StringUtils.containsAny(name, ILLEGAL_CHARS)) {
                 results.put(name, new ConnectorConfigField(configKey, deprecatedFields.contains(name), requiredFields.contains(name), overridenDefaultValues.getOrDefault(name, null)));
+            }
         });
 
         return results;
