@@ -1157,7 +1157,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS 2 Kinesis Firehose (camel-aws2-kinesis)
-     * Consume data from AWS Kinesis Firehose streams using AWS SDK version 2.x.
+     * Produce data to AWS Kinesis Firehose streams using AWS SDK version 2.x.
      * 
      * Category: cloud,messaging
      * Since: 3.2
@@ -1176,7 +1176,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS 2 Kinesis Firehose (camel-aws2-kinesis)
-     * Consume data from AWS Kinesis Firehose streams using AWS SDK version 2.x.
+     * Produce data to AWS Kinesis Firehose streams using AWS SDK version 2.x.
      * 
      * Category: cloud,messaging
      * Since: 3.2
