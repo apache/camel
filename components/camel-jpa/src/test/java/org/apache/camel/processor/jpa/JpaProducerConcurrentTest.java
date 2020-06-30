@@ -27,10 +27,19 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.examples.SendEmail;
 import org.apache.camel.spring.SpringRouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JpaProducerConcurrentTest extends AbstractJpaTest {
+
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(JpaProducerConcurrentTest.class);
 
     @Test
     public void testNoConcurrentProducers() throws Exception {
@@ -68,7 +77,7 @@ public class JpaProducerConcurrentTest extends AbstractJpaTest {
         for (Future<SendEmail> future : responses.values()) {
             SendEmail sendEmail = future.get();
             assertNotNull(sendEmail);
-            log.info("Persisted the SendEmail entity with the id {} and the address {}", sendEmail.getId(), sendEmail.getAddress());
+            LOGGER.info("Persisted the SendEmail entity with the id {} and the address {}", sendEmail.getId(), sendEmail.getAddress());
         }
 
         // assert in the database

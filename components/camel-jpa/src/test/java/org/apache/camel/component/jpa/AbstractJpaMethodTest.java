@@ -28,12 +28,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.examples.Address;
 import org.apache.camel.examples.Customer;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Test;
+import org.apache.camel.examples.MultiSteps;
+import org.apache.camel.examples.Order;
+import org.apache.camel.examples.SendEmail;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AbstractJpaMethodTest extends CamelTestSupport {
     
@@ -46,7 +53,7 @@ public abstract class AbstractJpaMethodTest extends CamelTestSupport {
     abstract boolean usePersist();
     
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (entityManager != null) {
             entityManager.close();
