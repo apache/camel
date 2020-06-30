@@ -37,11 +37,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jira.JiraComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
 import static org.apache.camel.component.jira.JiraConstants.CHILD_ISSUE_KEY;
@@ -53,12 +53,16 @@ import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS
 import static org.apache.camel.component.jira.Utils.createIssue;
 import static org.apache.camel.component.jira.Utils.createIssueWithLinks;
 import static org.apache.camel.component.jira.Utils.newIssueLink;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AddIssueLinkProducerTest extends CamelTestSupport {
 
     @Mock
@@ -95,8 +99,8 @@ public class AddIssueLinkProducerTest extends CamelTestSupport {
     }
 
     public void setMocks() {
-        when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any())).thenReturn(jiraClient);
-        when(jiraClient.getIssueClient()).thenReturn(issueRestClient);
+        lenient().when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any())).thenReturn(jiraClient);
+        lenient().when(jiraClient.getIssueClient()).thenReturn(issueRestClient);
 
         parentIssue = createIssue(1);
         childIssue = createIssue(2);
