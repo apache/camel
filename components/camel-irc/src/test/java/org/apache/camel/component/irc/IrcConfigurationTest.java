@@ -18,8 +18,11 @@ package org.apache.camel.component.irc;
 
 import java.util.List;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class IrcConfigurationTest extends CamelTestSupport {
 

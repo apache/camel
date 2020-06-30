@@ -19,8 +19,8 @@ package org.apache.camel.component.irc;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCConstants;
 
@@ -36,7 +36,7 @@ public class IrcEndpointTest {
     private IRCConnection connection;
     private IrcEndpoint endpoint;
 
-    @Before
+    @BeforeEach
     public void doSetup() {
         component = mock(IrcComponent.class);
         configuration = mock(IrcConfiguration.class);
