@@ -22,9 +22,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.irc.IrcConstants;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IrcOnReplyTest extends IrcIntegrationTestSupport {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(IrcOnReplyTest.class);
+
     protected String command = "WHO #camel-test";
     protected String resultEnd = "End of /WHO list.";
     private boolean sentMessages;
@@ -37,7 +42,7 @@ public class IrcOnReplyTest extends IrcIntegrationTestSupport {
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
-            log.info("Received exchange: " + exchange + " headers: " + exchange.getIn().getHeaders());
+            LOGGER.info("Received exchange: " + exchange + " headers: " + exchange.getIn().getHeaders());
         }
     }   
     

@@ -22,11 +22,12 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventAdapter;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -42,7 +43,7 @@ public class IrcProducerTest {
     private Exchange exchange;
     private Message message;
 
-    @Before
+    @BeforeEach
     public void doSetup() {
         component = mock(IrcComponent.class);
         connection = mock(IRCConnection.class);
@@ -105,7 +106,7 @@ public class IrcProducerTest {
         verify(connection).doPrivmsg("#chan2", "foo");
     }
 
-    @Test (expected = RuntimeCamelException.class)
+    @Test
     public void processTestException() throws Exception {
 
         when(exchange.getIn()).thenReturn(message);
@@ -114,6 +115,7 @@ public class IrcProducerTest {
 
         when(connection.isConnected()).thenReturn(false);
 
-        producer.process(exchange);
+        assertThrows(RuntimeCamelException.class,
+            () -> producer.process(exchange));
     }
 }

@@ -22,9 +22,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.irc.IrcConstants;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IrcPrivmsgTest extends IrcIntegrationTestSupport {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(IrcPrivmsgTest.class);
+
     protected String expectedBody1 = "Message One";
     protected String expectedBody2 = "Message Two";
 
@@ -41,7 +46,7 @@ public class IrcPrivmsgTest extends IrcIntegrationTestSupport {
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
-            log.info("Received exchange: " + exchange + " headers: " + exchange.getIn().getHeaders());
+            LOGGER.info("Received exchange: " + exchange + " headers: " + exchange.getIn().getHeaders());
         }
     }   
     
