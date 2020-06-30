@@ -25,8 +25,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.influxdb.dto.Point;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class InfluxDbEnsureDatabaseExistsTest extends AbstractInfluxDbTest {
@@ -54,7 +54,7 @@ public class InfluxDbEnsureDatabaseExistsTest extends AbstractInfluxDbTest {
         };
     }
 
-    @Before
+    @BeforeEach
     public void resetEndpoints() {
         errorEndpoint.reset();
         successEndpoint.reset();
