@@ -25,9 +25,9 @@ import org.apache.camel.component.jbpm.config.CamelContextBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.jbpm.services.api.service.ServiceRegistry;
-import org.junit.After;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.Environment;
 import org.kie.api.runtime.KieContainer;
@@ -36,7 +36,7 @@ import org.kie.internal.runtime.manager.RuntimeEnvironment;
 import org.kie.internal.runtime.manager.RuntimeManagerRegistry;
 import org.kie.server.services.api.KieContainerInstance;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -46,7 +46,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CamelKieServerExtensionTest {
     @Mock
     InternalRuntimeManager runtimeManager;
@@ -62,7 +62,7 @@ public class CamelKieServerExtensionTest {
     
     private String identifier = "test";
 
-    @After
+    @AfterEach
     public void cleanup() {
         RuntimeManagerRegistry.get().remove(identifier);
     }
