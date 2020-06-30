@@ -22,18 +22,21 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ironmq.IronMQConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Ignore("Must be manually tested. Provide your own projectId and token!")
+@Disabled("Must be manually tested. Provide your own projectId and token!")
 public class ConcurrentConsumerLoadTest extends CamelTestSupport {
     private static final String IRONMQCLOUD = "https://mq-aws-eu-west-1-1.iron.io";
     private static final int NO_OF_MESSAGES = 50000;
     private static final String BATCH_DELETE = "true";
     private static final int CONCURRENT_CONSUMERS = 20;
     private static final String PAYLOAD = "{some:text, number:#}";
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConcurrentConsumerLoadTest.class);
 
     // replace with your project id
     private final String projectId = "myIronMQproject";
@@ -46,7 +49,7 @@ public class ConcurrentConsumerLoadTest extends CamelTestSupport {
                                           + "&concurrentConsumers=" + CONCURRENT_CONSUMERS + "&batchDelete=" + BATCH_DELETE;
     private final String sedaEndpoint = "seda:push?concurrentConsumers=" + CONCURRENT_CONSUMERS;
 
-    @Before
+    @BeforeEach
     public void prepareQueue() throws InterruptedException {
         // make sure the queue is empty before test
         template.sendBodyAndHeader(ironMQEndpoint, null, IronMQConstants.OPERATION, IronMQConstants.CLEARQUEUE);
@@ -65,13 +68,13 @@ public class ConcurrentConsumerLoadTest extends CamelTestSupport {
         }
         MockEndpoint mockEndpoint = getMockEndpoint("mock:iron");
         while (mockEndpoint.getReceivedCounter() != noOfBlocks) {
-            log.info("Waiting for queue to fill up. Current size is " + mockEndpoint.getReceivedCounter() * 100);
+            LOGGER.info("Waiting for queue to fill up. Current size is " + mockEndpoint.getReceivedCounter() * 100);
             Thread.sleep(1000);
         }
         long delta = System.currentTimeMillis() - start;
         int seconds = (int)delta / 1000;
         int msgPrSec = NO_OF_MESSAGES / seconds;
-        log.info("IronMQPerformanceTest: Took: " + seconds + " seconds to produce " + NO_OF_MESSAGES + " messages. Which is " + msgPrSec + " messages pr. second");
+        LOGGER.info("IronMQPerformanceTest: Took: " + seconds + " seconds to produce " + NO_OF_MESSAGES + " messages. Which is " + msgPrSec + " messages pr. second");
     }
 
     @Test
@@ -84,7 +87,7 @@ public class ConcurrentConsumerLoadTest extends CamelTestSupport {
         long delta = System.currentTimeMillis() - start;
         int seconds = (int)delta / 1000;
         int msgPrSec = NO_OF_MESSAGES / seconds;
-        log.info("IronmqPerformanceTest: Took: " + seconds + " seconds to consume " + NO_OF_MESSAGES + " messages. Which is " + msgPrSec + " messages pr. second");
+        LOGGER.info("IronmqPerformanceTest: Took: " + seconds + " seconds to consume " + NO_OF_MESSAGES + " messages. Which is " + msgPrSec + " messages pr. second");
     }
 
     @Override
