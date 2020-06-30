@@ -29,9 +29,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
 import org.junit.Assume;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /*
 
@@ -72,7 +74,7 @@ public class SimpleIPFSTest {
             try {
                 ProducerTemplate producer = camelctx.createProducerTemplate();
                 String resA = producer.requestBody("direct:startA", null, String.class);
-                Assert.assertTrue("Expecting 0.4 in: " + resA, resA.startsWith("0.4"));
+                assertTrue(resA.startsWith("0.4"), "Expecting 0.4 in: " + resA);
             } catch (Exception e) {
                 boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
                 Assume.assumeFalse("IPFS is running", notRunning);
@@ -98,7 +100,7 @@ public class SimpleIPFSTest {
                 Path path = Paths.get("src/test/resources/html/etc/userfile.txt");
                 ProducerTemplate producer = camelctx.createProducerTemplate();
                 String res = producer.requestBody("direct:start", path, String.class);
-                Assert.assertEquals(SINGLE_HASH, res);
+                assertEquals(SINGLE_HASH, res);
             } catch (Exception e) {
                 boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
                 Assume.assumeFalse("IPFS is running", notRunning);
@@ -125,8 +127,8 @@ public class SimpleIPFSTest {
                 Path path = Paths.get("src/test/resources/html");
                 ProducerTemplate producer = camelctx.createProducerTemplate();
                 List<String> res = producer.requestBody("direct:start", path, List.class);
-                Assert.assertEquals(10, res.size());
-                Assert.assertEquals(RECURSIVE_HASH, res.get(9));
+                assertEquals(10, res.size());
+                assertEquals(RECURSIVE_HASH, res.get(9));
             } catch (Exception e) {
                 boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
                 Assume.assumeFalse("IPFS is running", notRunning);
@@ -176,7 +178,7 @@ public class SimpleIPFSTest {
             try {
                 ProducerTemplate producer = camelctx.createProducerTemplate();
                 Path res = producer.requestBody("direct:start", SINGLE_HASH, Path.class);
-                Assert.assertEquals(Paths.get("target", SINGLE_HASH), res);
+                assertEquals(Paths.get("target", SINGLE_HASH), res);
                 verifyFileContent(new FileInputStream(res.toFile()));
             } catch (Exception e) {
                 boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
@@ -202,9 +204,9 @@ public class SimpleIPFSTest {
             try {
                 ProducerTemplate producer = camelctx.createProducerTemplate();
                 Path res = producer.requestBody("direct:start", RECURSIVE_HASH, Path.class);
-                Assert.assertEquals(Paths.get("target", RECURSIVE_HASH), res);
-                Assert.assertTrue(res.toFile().isDirectory());
-                Assert.assertTrue(res.resolve("index.html").toFile().exists());
+                assertEquals(Paths.get("target", RECURSIVE_HASH), res);
+                assertTrue(res.toFile().isDirectory());
+                assertTrue(res.resolve("index.html").toFile().exists());
             } catch (Exception e) {
                 boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
                 Assume.assumeFalse("IPFS is running", notRunning);
@@ -215,7 +217,7 @@ public class SimpleIPFSTest {
     private void verifyFileContent(InputStream ins) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         StreamUtils.copyStream(ins, baos);
-        Assert.assertEquals("The quick brown fox jumps over the lazy dog.", new String(baos.toByteArray()));
+        assertEquals("The quick brown fox jumps over the lazy dog.", new String(baos.toByteArray()));
     }
 
 }
