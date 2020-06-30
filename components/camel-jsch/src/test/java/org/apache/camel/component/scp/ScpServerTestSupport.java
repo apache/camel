@@ -29,7 +29,7 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.auth.password.PasswordAuthenticator;
@@ -37,11 +37,14 @@ import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.apache.sshd.server.scp.ScpCommandFactory;
 import org.apache.sshd.server.session.ServerSession;
 import org.apache.sshd.server.subsystem.sftp.SftpSubsystemFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.createDirectory;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public abstract class ScpServerTestSupport extends CamelTestSupport {
     protected static final Logger LOG = LoggerFactory.getLogger(ScpServerTestSupport.class);
@@ -71,13 +74,13 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
         return sshd;
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void initPort() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory(getScpPath());
         createDirectory(getScpPath());
@@ -88,7 +91,7 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
 
