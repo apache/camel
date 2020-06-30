@@ -112,7 +112,7 @@ public class KafkaConsumer extends DefaultConsumer {
         super.doStart();
 
         // is the offset repository already started?
-        StateRepository<String,String> repo = endpoint.getConfiguration().getOffsetRepository();
+        StateRepository<String, String> repo = endpoint.getConfiguration().getOffsetRepository();
         if (repo instanceof ServiceSupport) {
             boolean started = ((ServiceSupport)repo).isStarted();
             // if not already started then we would do that and also stop it
@@ -162,7 +162,7 @@ public class KafkaConsumer extends DefaultConsumer {
         executor = null;
 
         if (stopOffsetRepo) {
-            StateRepository<String,String> repo = endpoint.getConfiguration().getOffsetRepository();
+            StateRepository<String, String> repo = endpoint.getConfiguration().getOffsetRepository();
             LOG.debug("Stopping OffsetRepository: {}", repo);
             ServiceHelper.stopAndShutdownService(repo);
         }
@@ -310,7 +310,7 @@ public class KafkaConsumer extends DefaultConsumer {
                     ConsumerRecords<Object, Object> allRecords = consumer.poll(pollTimeoutMs);
                     
                     Iterator<TopicPartition> partitionIterator = allRecords.partitions().iterator();
-                    while(partitionIterator.hasNext()) {
+                    while (partitionIterator.hasNext()) {
                         TopicPartition partition = partitionIterator.next();
                         long partitionLastOffset = -1;
 
@@ -344,7 +344,7 @@ public class KafkaConsumer extends DefaultConsumer {
                                 // if commit management is on user side give additional info for the end of poll loop
                                 if (!isAutoCommitEnabled() || endpoint.getConfiguration().isAllowManualCommit()) {
                                     exchange.getIn().setHeader(KafkaConstants.LAST_POLL_RECORD,
-                 		                   !recordIterator.hasNext() && !partitionIterator.hasNext());
+                                                               !recordIterator.hasNext() && !partitionIterator.hasNext());
                                 }
 
                                 try {
