@@ -35,6 +35,7 @@ public class KinesisFirehose2ComponentConfigurer extends PropertyConfigurerSuppo
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations.class, value)); return true;
         case "proxyhost":
         case "proxyHost": getOrCreateConfiguration(target).setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
@@ -56,6 +57,7 @@ public class KinesisFirehose2ComponentConfigurer extends PropertyConfigurerSuppo
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("configuration", org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration.class);
         answer.put("lazyStartProducer", boolean.class);
+        answer.put("operation", org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations.class);
         answer.put("proxyHost", java.lang.String.class);
         answer.put("proxyPort", java.lang.Integer.class);
         answer.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
@@ -77,6 +79,7 @@ public class KinesisFirehose2ComponentConfigurer extends PropertyConfigurerSuppo
         case "configuration": return target.getConfiguration();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "operation": return getOrCreateConfiguration(target).getOperation();
         case "proxyhost":
         case "proxyHost": return getOrCreateConfiguration(target).getProxyHost();
         case "proxyport":

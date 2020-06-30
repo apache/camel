@@ -45,6 +45,8 @@ public class KinesisFirehose2Configuration implements Cloneable {
     private String proxyHost;
     @UriParam(description = "To define a proxy port when instantiating the Kinesis Firehose client")
     private Integer proxyPort;
+    @UriParam(label = "producer", description = "The operation to do in case the user don't want to send only a record")
+    private KinesisFirehose2Operations operation;
 
     public void setAmazonKinesisFirehoseClient(FirehoseClient client) {
         this.amazonKinesisFirehoseClient = client;
@@ -110,11 +112,19 @@ public class KinesisFirehose2Configuration implements Cloneable {
         this.proxyPort = proxyPort;
     }
 
+    public KinesisFirehose2Operations getOperation() {
+		return operation;
+	}
+
+	public void setOperation(KinesisFirehose2Operations operation) {
+		this.operation = operation;
+	}
+	
     // *************************************************
     //
     // *************************************************
 
-    public KinesisFirehose2Configuration copy() {
+	public KinesisFirehose2Configuration copy() {
         try {
             return (KinesisFirehose2Configuration)super.clone();
         } catch (CloneNotSupportedException e) {

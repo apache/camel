@@ -98,6 +98,20 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
             return this;
         }
         /**
+         * The operation to do in case the user don't want to send only a
+         * record.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2KinesisFirehoseComponentBuilder operation(
+                org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the Kinesis Firehose
          * client.
          * 
@@ -218,6 +232,7 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
             case "amazonKinesisFirehoseClient": getOrCreateConfiguration((KinesisFirehose2Component) component).setAmazonKinesisFirehoseClient((software.amazon.awssdk.services.firehose.FirehoseClient) value); return true;
             case "configuration": ((KinesisFirehose2Component) component).setConfiguration((org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration) value); return true;
             case "lazyStartProducer": ((KinesisFirehose2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((KinesisFirehose2Component) component).setOperation((org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations) value); return true;
             case "proxyHost": getOrCreateConfiguration((KinesisFirehose2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((KinesisFirehose2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((KinesisFirehose2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
