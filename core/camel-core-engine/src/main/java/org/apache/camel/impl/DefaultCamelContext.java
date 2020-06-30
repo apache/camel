@@ -29,7 +29,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.ValueHolder;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
-import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.engine.RouteService;
 import org.apache.camel.impl.engine.SimpleCamelContext;
 import org.apache.camel.impl.transformer.TransformerKey;
@@ -174,8 +173,8 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
-    public void addRouteFromTemplate(String routeTemplateId, String routeId, Map<String, Object> map) throws Exception {
-        model.addRouteFromTemplate(routeTemplateId, routeId, map);
+    public void addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception {
+        model.addRouteFromTemplate(routeTemplateId, routeId, parameters);
     }
 
     @Override

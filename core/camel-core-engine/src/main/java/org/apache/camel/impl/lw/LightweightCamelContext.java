@@ -122,7 +122,6 @@ import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
-import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
@@ -1529,8 +1528,8 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
-    public void addRouteFromTemplate(String routeTemplateId, String routeId, Map<String, Object> properties) throws Exception {
-        getModelCamelContext().addRouteFromTemplate(routeTemplateId, routeId, properties);
+    public void addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception {
+        getModelCamelContext().addRouteFromTemplate(routeId, routeTemplateId, parameters);
     }
 
     @Override

@@ -29,16 +29,11 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.Navigate;
-import org.apache.camel.RoutesBuilder;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.AbstractLocationPropertiesSource;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
-import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
@@ -173,7 +168,7 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public void addRouteFromTemplate(String routeTemplateId, String routeId, Map<String, Object> properties) throws Exception {
+    public void addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception {
         RouteTemplateDefinition target = null;
         for (RouteTemplateDefinition def : routeTemplateDefinitions) {
             if (routeTemplateId.equals(def.getId())) {
@@ -187,8 +182,8 @@ public class DefaultModel implements Model {
 
         PropertiesComponent pc = camelContext.getPropertiesComponent();
         Properties prop = new Properties();
-        if (properties != null) {
-            prop.putAll(properties);
+        if (parameters != null) {
+            prop.putAll(parameters);
             pc.setLocalProperties(prop);
         }
         try {

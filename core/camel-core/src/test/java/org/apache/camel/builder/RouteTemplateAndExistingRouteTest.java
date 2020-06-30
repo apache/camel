@@ -45,14 +45,14 @@ public class RouteTemplateAndExistingRouteTest extends ContextTestSupport {
 
         getMockEndpoint("mock:common").expectedBodiesReceived("Hello Camel", "Hello World");
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("foo", "one");
-        map.put("greeting", "Camel");
-        context.addRouteFromTemplate("myTemplate", "first", map);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("foo", "one");
+        parameters.put("greeting", "Camel");
+        context.addRouteFromTemplate("first", "myTemplate", parameters);
 
-        map.put("foo", "two");
-        map.put("greeting", "World");
-        context.addRouteFromTemplate("myTemplate", "second", map);
+        parameters.put("foo", "two");
+        parameters.put("greeting", "World");
+        context.addRouteFromTemplate("second", "myTemplate", parameters);
 
         assertEquals(3, context.getRouteDefinitions().size());
         assertEquals(3, context.getRoutes().size());

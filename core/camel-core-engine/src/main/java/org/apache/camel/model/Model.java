@@ -98,7 +98,7 @@ public interface Model {
      */
     void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception;
 
-    // TODO: update javadoc
+    // TODO: update javadoc on route template APIs
 
     /**
      * Returns a list of the current route definitions
@@ -165,10 +165,15 @@ public interface Model {
      */
     void removeRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception;
 
-    // TODO: javadoc
-    // TODO: route template builder
-    void addRouteFromTemplate(String routeTemplateId, String routeId, Map<String, Object> properties) throws Exception;
-
+    /**
+     * Adds a new route from a given route template
+     *
+     * @param routeId  the id of the new route to add (mandatory)
+     * @param routeTemplateId   the id of the route template (mandatory)
+     * @param parameters  parameters to use for the route template when creating the new route
+     * @throws Exception is thrown if error creating and adding the new route
+     */
+    void addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception;
 
     /**
      * Returns a list of the current REST definitions

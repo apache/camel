@@ -591,6 +591,16 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     boolean removeRoute(String routeId) throws Exception;
 
     /**
+     * Adds a new route from a given route template
+     *
+     * @param routeId  the id of the new route to add (mandatory)
+     * @param routeTemplateId   the id of the route template (mandatory)
+     * @param parameters  parameters to use for the route template when creating the new route
+     * @throws Exception is thrown if error creating and adding the new route
+     */
+    void addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception;
+
+    /**
      * Adds the given route policy factory
      *
      * @param routePolicyFactory the factory
