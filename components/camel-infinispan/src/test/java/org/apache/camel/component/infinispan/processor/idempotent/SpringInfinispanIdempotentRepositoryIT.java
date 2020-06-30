@@ -19,14 +19,16 @@ package org.apache.camel.component.infinispan.processor.idempotent;
 import java.util.UUID;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.marshall.MarshallerUtil;
 import org.infinispan.query.remote.client.impl.MarshallerRegistration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SpringInfinispanIdempotentRepositoryIT extends CamelSpringTestSupport {
 

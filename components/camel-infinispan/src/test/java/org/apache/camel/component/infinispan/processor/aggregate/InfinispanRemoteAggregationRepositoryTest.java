@@ -23,11 +23,11 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("start a local server with: ./bin/standalone.sh")
+@Disabled("start a local server with: ./bin/standalone.sh")
 public class InfinispanRemoteAggregationRepositoryTest extends CamelTestSupport {
 
     private static final String MOCK_GOTCHA = "mock:gotcha";
