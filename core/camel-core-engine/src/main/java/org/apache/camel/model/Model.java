@@ -98,34 +98,29 @@ public interface Model {
      */
     void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception;
 
-    // TODO: update javadoc on route template APIs
-
     /**
-     * Returns a list of the current route definitions
+     * Returns a list of the current route template definitions
      *
-     * @return list of the current route definitions
+     * @return list of the current route template definitions
      */
     List<RouteTemplateDefinition> getRouteTemplateDefinitions();
 
     /**
-     * Gets the route definition with the given id
+     * Gets the route template definition with the given id
      *
-     * @param id id of the route
-     * @return the route definition or <tt>null</tt> if not found
+     * @param id id of the route template
+     * @return the route template definition or <tt>null</tt> if not found
      */
     RouteTemplateDefinition getRouteTemplateDefinition(String id);
 
     /**
-     * Adds a collection of route definitions to the context
+     * Adds a collection of route template definitions to the context
      * <p/>
      * <b>Important: </b> Each route in the same {@link CamelContext} must have
-     * an <b>unique</b> route id. If you use the API from {@link CamelContext}
-     * or {@link Model} to add routes, then any new routes which has a route id
-     * that matches an old route, then the old route is replaced by the new
-     * route.
+     * an <b>unique</b> route template id.
      *
-     * @param routeTemplateDefinitions the route(s) definition to add
-     * @throws Exception if the route definitions could not be added for
+     * @param routeTemplateDefinitions the route template(s) definition to add
+     * @throws Exception if the route template definitions could not be added for
      *             whatever reason
      */
     void addRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception;
@@ -133,40 +128,35 @@ public interface Model {
     /**
      * Add a route definition to the context
      * <p/>
-     * <b>Important: </b> Each route in the same {@link CamelContext} must have
-     * an <b>unique</b> route id. If you use the API from {@link CamelContext}
-     * or {@link Model} to add routes, then any new routes which has a route id
-     * that matches an old route, then the old route is replaced by the new
-     * route.
+     * <b>Important: </b> Each route template in the same {@link CamelContext} must have
+     * an <b>unique</b> route id.
      *
-     * @param routeTemplateDefinition the route definition to add
-     * @throws Exception if the route definition could not be added for whatever
+     * @param routeTemplateDefinition the route template definition to add
+     * @throws Exception if the route template definition could not be added for whatever
      *             reason
      */
     void addRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception;
 
     /**
-     * Removes a collection of route definitions from the context - stopping any
-     * previously running routes if any of them are actively running
+     * Removes a collection of route template definitions from the context
      *
-     * @param routeTemplateDefinitions route(s) definitions to remove
-     * @throws Exception if the route definitions could not be removed for
+     * @param routeTemplateDefinitions route template(s) definitions to remove
+     * @throws Exception if the route template definitions could not be removed for
      *             whatever reason
      */
     void removeRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception;
 
     /**
-     * Removes a route definition from the context - stopping any previously
-     * running routes if any of them are actively running
+     * Removes a route template definition from the context
      *
-     * @param routeTemplateDefinition route definition to remove
-     * @throws Exception if the route definition could not be removed for
+     * @param routeTemplateDefinition route template definition to remove
+     * @throws Exception if the route template definition could not be removed for
      *             whatever reason
      */
     void removeRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception;
 
     /**
-     * Adds a new route from a given route template
+     * Adds a new route from an existing route template
      *
      * @param routeId  the id of the new route to add (mandatory)
      * @param routeTemplateId   the id of the route template (mandatory)
