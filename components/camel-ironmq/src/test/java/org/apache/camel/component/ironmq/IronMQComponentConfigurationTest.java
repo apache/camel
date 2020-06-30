@@ -16,8 +16,13 @@
  */
 package org.apache.camel.component.ironmq;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IronMQComponentConfigurationTest extends CamelTestSupport {
 
@@ -85,17 +90,19 @@ public class IronMQComponentConfigurationTest extends CamelTestSupport {
         assertEquals(20, consumer.getMaxMessagesPerPoll());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutTokenConfiguration() throws Exception {
         IronMQComponent component = new IronMQComponent(context);
         component.init();
-        component.createEndpoint("ironmq://testqueue?projectId=yyy");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("ironmq://testqueue?projectId=yyy"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutProjectIdConfiguration() throws Exception {
         IronMQComponent component = new IronMQComponent(context);
         component.init();
-        component.createEndpoint("ironmq://MyQueue?token=xxx");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("ironmq://MyQueue?token=xxx"));
     }
 }
