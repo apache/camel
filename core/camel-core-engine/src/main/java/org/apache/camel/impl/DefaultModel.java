@@ -24,8 +24,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
@@ -38,6 +40,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RouteFilters;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
@@ -45,6 +48,8 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 public class DefaultModel implements Model {
 
@@ -188,16 +193,34 @@ public class DefaultModel implements Model {
         }
         try {
             RouteDefinition def = target.asRouteDefinition();
-            if (routeId == null) {
-                routeId = camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory().createId(def);
+            if (!ObjectHelper.isEmpty(routeId)) {
+                def.setId(routeId);
+            } else {
+                ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+                // need to auto assign id
+                Set<String> customIds = routeDefinitions.stream().map(RouteDefinition::getRouteId).collect(Collectors.toSet());
+                boolean done = false;
+                int attempts = 0;
+                while (!done && attempts < 1000) {
+                    attempts++;
+                    routeId = def.idOrCreate(ecc.getNodeIdFactory());
+                    if (customIds.contains(routeId)) {
+                        // reset id and try again
+                        def.setId(null);
+                    } else {
+                        done = true;
+                    }
+                }
+                if (!done) {
+                    throw new IllegalArgumentException("Cannot auto assign id to route: " + def);
+                }
+                def.setId(routeId);
             }
-            def.setId(routeId);
             addRouteDefinition(def);
         } finally {
             // clear local properties after adding it as a route
             pc.setLocalProperties(null);
         }
-
         return routeId;
     }
 

@@ -92,7 +92,7 @@ public class RouteTemplateDefinition extends RouteDefinition {
     public RouteDefinition asRouteDefinition() {
         RouteDefinition copy = new RouteDefinition();
 
-        copy.setId(getId());
+        // do not copy id as it is used for route template id
         copy.setInheritErrorHandler(isInheritErrorHandler());
         copy.setGroup(getGroup());
         copy.setStreamCache(getStreamCache());
