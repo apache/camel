@@ -27,9 +27,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.expression.Expression;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -37,16 +36,18 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class JpaRouteSharedEntityManagerTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
     private CountDownLatch latch = new CountDownLatch(1);
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Don't run on Hibernate
-        Assume.assumeTrue(ObjectHelper.loadClass("org.hibernate.Hibernate") == null);
+        assumeTrue(ObjectHelper.loadClass("org.hibernate.Hibernate") == null);
         super.setUp();
     }
 

@@ -19,6 +19,9 @@ package org.apache.camel.component.jpa;
 import org.apache.camel.Exchange;
 import org.apache.camel.examples.MultiSteps;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class JpaWithNativeQueryTest extends JpaWithNamedQueryTest {
     
     /**
@@ -29,8 +32,8 @@ public class JpaWithNativeQueryTest extends JpaWithNamedQueryTest {
     protected void assertReceivedResult(Exchange exchange) {
         assertNotNull(exchange);
         Object[] result = exchange.getIn().getBody(Object[].class);
-        assertNotNull("Received an object array", result);
-        assertEquals("address property", "foo@bar.com", result[1]);
+        assertNotNull(result, "Received an object array");
+        assertEquals("foo@bar.com", result[1], "address property");
     }
     
     /**

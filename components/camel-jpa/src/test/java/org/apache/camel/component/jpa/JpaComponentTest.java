@@ -21,9 +21,14 @@ import javax.persistence.LockModeType;
 import javax.persistence.Persistence;
 
 import org.apache.camel.examples.SendEmail;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.orm.jpa.JpaTransactionManager;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class JpaComponentTest extends CamelTestSupport {
 
