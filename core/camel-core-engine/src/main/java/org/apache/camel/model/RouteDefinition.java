@@ -102,7 +102,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     /**
      * Check if the route has been prepared
      *
-     * @return wether the route has been prepared or not
+     * @return whether the route has been prepared or not
      * @see RouteDefinitionHelper#prepareRoute(ModelCamelContext,
      *      RouteDefinition)
      */

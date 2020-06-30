@@ -38,6 +38,7 @@ import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteFilters;
+import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
@@ -48,6 +49,7 @@ public class DefaultModel implements Model {
     private final CamelContext camelContext;
 
     private final List<RouteDefinition> routeDefinitions = new ArrayList<>();
+    private final List<RouteTemplateDefinition> routeTemplateDefinitions = new ArrayList<>();
     private final List<RestDefinition> restDefinitions = new ArrayList<>();
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<>();
     private List<TransformerDefinition> transformers = new ArrayList<>();
@@ -123,6 +125,44 @@ public class DefaultModel implements Model {
             }
         }
         return null;
+    }
+
+    @Override
+    public List<RouteTemplateDefinition> getRouteTemplateDefinitions() {
+        return routeTemplateDefinitions;
+    }
+
+    @Override
+    public RouteTemplateDefinition getRouteTemplateDefinition(String id) {
+        for (RouteTemplateDefinition route : routeTemplateDefinitions) {
+            if (route.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory()).equals(id)) {
+                return route;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void addRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception {
+        if (routeTemplateDefinitions == null || routeTemplateDefinitions.isEmpty()) {
+            return;
+        }
+        this.routeTemplateDefinitions.addAll(routeTemplateDefinitions);
+    }
+
+    @Override
+    public void addRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception {
+        addRouteTemplateDefinitions(Collections.singletonList(routeTemplateDefinition));
+    }
+
+    @Override
+    public void removeRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception {
+        routeTemplateDefinitions.removeAll(routeTemplateDefinitions);
+    }
+
+    @Override
+    public void removeRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception {
+        routeTemplateDefinitions.remove(routeTemplateDefinition);
     }
 
     @Override

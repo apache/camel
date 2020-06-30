@@ -62,6 +62,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -1495,6 +1496,36 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception {
         getModelCamelContext().removeRouteDefinition(routeDefinition);
+    }
+
+    @Override
+    public List<RouteTemplateDefinition> getRouteTemplateDefinitions() {
+        return getModelCamelContext().getRouteTemplateDefinitions();
+    }
+
+    @Override
+    public RouteTemplateDefinition getRouteTemplateDefinition(String id) {
+        return getModelCamelContext().getRouteTemplateDefinition(id);
+    }
+
+    @Override
+    public void addRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception {
+        getModelCamelContext().addRouteTemplateDefinitions(routeTemplateDefinitions);
+    }
+
+    @Override
+    public void addRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception {
+        getModelCamelContext().addRouteTemplateDefinition(routeTemplateDefinition);
+    }
+
+    @Override
+    public void removeRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception {
+        getModelCamelContext().removeRouteTemplateDefinitions(routeTemplateDefinitions);
+    }
+
+    @Override
+    public void removeRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception {
+        getModelCamelContext().removeRouteTemplateDefinition(routeTemplateDefinition);
     }
 
     @Override

@@ -35,6 +35,8 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -61,6 +63,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     private List<TransformerBuilder> transformerBuilders = new ArrayList<>();
     private List<ValidatorBuilder> validatorBuilders = new ArrayList<>();
     private RoutesDefinition routeCollection = new RoutesDefinition();
+    private RouteTemplatesDefinition routeTemplateCollection = new RouteTemplatesDefinition();
     private final List<RouteBuilderLifecycleStrategy> lifecycleInterceptors = new ArrayList<>();
 
     public RouteBuilder() {
@@ -155,6 +158,18 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         }
 
         return restConfiguration;
+    }
+
+    /**
+     * Creates a new route template
+     *
+     * @return the builder
+     */
+    public RouteTemplateDefinition routeTemplate(String id, String... properties) {
+        getRouteTemplateCollection().setCamelContext(getContext());
+        RouteTemplateDefinition answer = getRouteTemplateCollection().routeTemplate(id, properties);
+        configureRouteTemplate(answer);
+        return answer;
     }
 
     /**
@@ -408,6 +423,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         populateRests();
         populateTransformers();
         populateValidators();
+        populateRouteTemplates();
         populateRoutes();
 
         if (this instanceof OnCamelContextEvent) {
@@ -487,6 +503,15 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                 interceptor.afterConfigure(this);
             }
         }
+    }
+
+    protected void populateRouteTemplates() throws Exception {
+        CamelContext camelContext = getContext();
+        if (camelContext == null) {
+            throw new IllegalArgumentException("CamelContext has not been injected!");
+        }
+        getRouteTemplateCollection().setCamelContext(camelContext);
+        camelContext.getExtension(Model.class).addRouteTemplateDefinitions(getRouteTemplateCollection().getRouteTemplates());
     }
 
     protected void populateRoutes() throws Exception {
@@ -582,11 +607,23 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         return this.routeCollection;
     }
 
+    public RouteTemplatesDefinition getRouteTemplateCollection() {
+        return routeTemplateCollection;
+    }
+
+    public void setRouteTemplateCollection(RouteTemplatesDefinition routeTemplateCollection) {
+        this.routeTemplateCollection = routeTemplateCollection;
+    }
+
     protected void configureRest(RestDefinition rest) {
         // noop
     }
 
     protected void configureRoute(RouteDefinition route) {
+        // noop
+    }
+
+    protected void configureRouteTemplate(RouteTemplateDefinition routeTemplate) {
         // noop
     }
 

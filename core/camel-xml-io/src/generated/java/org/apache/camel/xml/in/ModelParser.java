@@ -937,8 +937,8 @@ public class ModelParser extends BaseParser {
             return false;
         }, noElementHandler(), noValueHandler());
     }
-    protected RouteDefinition doParseRouteDefinition() throws IOException, XmlPullParserException {
-        return doParse(new RouteDefinition(), (def, key, val) -> {
+    protected <T extends RouteDefinition> AttributeHandler<T> routeDefinitionAttributeHandler() {
+        return (def, key, val) -> {
             switch (key) {
                 case "autoStartup": def.setAutoStartup(val); break;
                 case "delayer": def.setDelayer(val); break;
@@ -955,7 +955,10 @@ public class ModelParser extends BaseParser {
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
-        }, (def, key) -> {
+        };
+    }
+    protected <T extends RouteDefinition> ElementHandler<T> routeDefinitionElementHandler() {
+        return (def, key) -> {
             switch (key) {
                 case "from": def.setInput(doParseFromDefinition()); break;
                 case "inputType": def.setInputType(doParseInputTypeDefinition()); break;
@@ -964,7 +967,10 @@ public class ModelParser extends BaseParser {
                 default: return outputDefinitionElementHandler().accept(def, key);
             }
             return true;
-        }, noValueHandler());
+        };
+    }
+    protected RouteDefinition doParseRouteDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RouteDefinition(), routeDefinitionAttributeHandler(), routeDefinitionElementHandler(), noValueHandler());
     }
     protected RestDefinition doParseRestDefinition() throws IOException, XmlPullParserException {
         return doParse(new RestDefinition(), (def, key, val) -> {
@@ -1013,6 +1019,25 @@ public class ModelParser extends BaseParser {
             return true;
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
+    protected RouteTemplateDefinition doParseRouteTemplateDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RouteTemplateDefinition(), (def, key, val) -> {
+            if ("properties".equals(key)) {
+                def.setProperties(val);
+                return true;
+            }
+            return routeDefinitionAttributeHandler().accept(def, key, val);
+        }, routeDefinitionElementHandler(), noValueHandler());
+    }
+    protected RouteTemplatesDefinition doParseRouteTemplatesDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RouteTemplatesDefinition(),
+            optionalIdentifiedDefinitionAttributeHandler(), (def, key) -> {
+            if ("routeTemplate".equals(key)) {
+                doAdd(doParseRouteTemplateDefinition(), def.getRouteTemplates(), def::setRouteTemplates);
+                return true;
+            }
+            return optionalIdentifiedDefinitionElementHandler().accept(def, key);
+        }, noValueHandler());
+    }
     public RoutesDefinition parseRoutesDefinition()
             throws IOException, XmlPullParserException {
         expectTag("routes");
@@ -1021,11 +1046,12 @@ public class ModelParser extends BaseParser {
     protected RoutesDefinition doParseRoutesDefinition() throws IOException, XmlPullParserException {
         return doParse(new RoutesDefinition(),
             optionalIdentifiedDefinitionAttributeHandler(), (def, key) -> {
-            if ("route".equals(key)) {
-                doAdd(doParseRouteDefinition(), def.getRoutes(), def::setRoutes);
-                return true;
+            switch (key) {
+                case "route": doAdd(doParseRouteDefinition(), def.getRoutes(), def::setRoutes); break;
+                case "routeTemplate": doAdd(doParseRouteTemplateDefinition(), def.getRoutes(), def::setRoutes); break;
+                default: return optionalIdentifiedDefinitionElementHandler().accept(def, key);
             }
-            return optionalIdentifiedDefinitionElementHandler().accept(def, key);
+            return true;
         }, noValueHandler());
     }
     protected RoutingSlipDefinition doParseRoutingSlipDefinition() throws IOException, XmlPullParserException {
@@ -2876,6 +2902,7 @@ public class ModelParser extends BaseParser {
             case "resequence": return doParseResequenceDefinition();
             case "rollback": return doParseRollbackDefinition();
             case "route": return doParseRouteDefinition();
+            case "routeTemplate": return doParseRouteTemplateDefinition();
             case "routingSlip": return doParseRoutingSlipDefinition();
             case "saga": return doParseSagaDefinition();
             case "sample": return doParseSamplingDefinition();

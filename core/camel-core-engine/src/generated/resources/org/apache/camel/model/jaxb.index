@@ -64,6 +64,8 @@ RollbackDefinition
 RouteBuilderDefinition
 RouteContextRefDefinition
 RouteDefinition
+RouteTemplateDefinition
+RouteTemplatesDefinition
 RoutesDefinition
 RoutingSlipDefinition
 SagaCompletionMode
