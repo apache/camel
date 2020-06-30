@@ -18,10 +18,12 @@ package org.apache.camel.component.iota;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.iota.jota.error.InternalException;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IOTAProducerTest extends CamelTestSupport {
 
@@ -30,7 +32,9 @@ public class IOTAProducerTest extends CamelTestSupport {
 
     private static final String IOTA_NODE_URL = "https://nodes.thetangle.org:443";
 
-    @Ignore
+    private static final Logger LOG = LoggerFactory.getLogger(IOTAProducerTest.class);
+
+    @Disabled
     @Test
     public void sendTransferTest() throws Exception {
         final String message = "ILOVEAPACHECAMEL";
@@ -46,7 +50,7 @@ public class IOTAProducerTest extends CamelTestSupport {
                 if (!flaky) {
                     throw e;
                 } else {
-                    log.warn("Flaky test as IOTA is not online and returning a response in time");
+                    LOG.warn("Flaky test as IOTA is not online and returning a response in time");
                     return;
                 }
             }
@@ -68,7 +72,7 @@ public class IOTAProducerTest extends CamelTestSupport {
                 if (!flaky) {
                     throw e;
                 } else {
-                    log.warn("Flaky test as IOTA is not online and returning a response in time");
+                    LOG.warn("Flaky test as IOTA is not online and returning a response in time");
                     return;
                 }
             }
@@ -90,7 +94,7 @@ public class IOTAProducerTest extends CamelTestSupport {
                 if (!flaky) {
                     throw e;
                 } else {
-                    log.warn("Flaky test as IOTA is not online and returning a response in time");
+                    LOG.warn("Flaky test as IOTA is not online and returning a response in time");
                     return;
                 }
             }
