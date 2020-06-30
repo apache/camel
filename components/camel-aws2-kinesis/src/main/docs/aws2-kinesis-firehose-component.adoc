@@ -142,6 +142,38 @@ however, a
 different http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/AWSCredentialsProvider.html[AWSCredentialsProvider]
 can be specified when calling createClient(...).
 
+=== Kinesis Firehose Producer operations
+
+Camel-AWS s3 component provides the following operation on the producer side:
+
+- SendBatchRecord
+
+=== Send Batch Records Example
+
+You can send an iterable of Kinesis Record (as the following example shows) or you can send directly a PutRecordBatchRequest POJO instance in the body.
+
+[source,java]
+--------------------------------------------------------------------------------------------------------------------
+    @Test
+    public void testFirehoseBatchRouting() throws Exception {
+        Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                List<Record> recs = new ArrayList<Record>();
+                Record rec = Record.builder().data(SdkBytes.fromString("Test1", Charset.defaultCharset())).build();
+                Record rec1 = Record.builder().data(SdkBytes.fromString("Test2", Charset.defaultCharset())).build();
+                recs.add(rec);
+                recs.add(rec1);
+                exchange.getIn().setBody(recs);
+            }
+        });
+        assertNotNull(exchange.getIn().getBody());
+    }
+
+from("direct:start").to("aws2-kinesis-firehose://cc?amazonKinesisFirehoseClient=#FirehoseClient&operation=sendBatchRecord");
+--------------------------------------------------------------------------------------------------------------------
+
+In the deliveryStream you'll find "Test1Test2".
+
 === Message headers set by the Kinesis producer on successful storage of a Record
 
 [width="100%",cols="10%,10%,80%",options="header",]
