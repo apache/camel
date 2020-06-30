@@ -438,6 +438,19 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Optional list of custom converters that would be used instead of
+         * default ones. The converters are defined using '.type' config option
+         * and configured using options '.'.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder converters(String converters) {
+            doSetProperty("converters", converters);
+            return this;
+        }
+        /**
          * The databases for which changes are to be excluded.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -472,6 +485,24 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         default DebeziumMongodbEndpointBuilder databaseWhitelist(
                 String databaseWhitelist) {
             doSetProperty("databaseWhitelist", databaseWhitelist);
+            return this;
+        }
+        /**
+         * Specify how failures during processing of events (i.e. when
+         * encountering a corrupted event) should be handled, including:'fail'
+         * (the default) an exception indicating the problematic event and its
+         * position is raised, causing the connector to be stopped; 'warn' the
+         * problematic event and its position will be logged and the event will
+         * be skipped;'ignore' the problematic event will be skipped.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: fail
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder eventProcessingFailureHandlingMode(
+                String eventProcessingFailureHandlingMode) {
+            doSetProperty("eventProcessingFailureHandlingMode", eventProcessingFailureHandlingMode);
             return this;
         }
         /**
@@ -624,6 +655,19 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Database containing user credentials.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: admin
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder mongodbAuthsource(
+                String mongodbAuthsource) {
+            doSetProperty("mongodbAuthsource", mongodbAuthsource);
+            return this;
+        }
+        /**
          * The hostname and port pairs (in the form 'host' or 'host:port') of
          * the MongoDB server(s) in the replica set.
          * 
@@ -693,6 +737,34 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         default DebeziumMongodbEndpointBuilder mongodbPassword(
                 String mongodbPassword) {
             doSetProperty("mongodbPassword", mongodbPassword);
+            return this;
+        }
+        /**
+         * Frequency in seconds to look for new, removed, or changed replica
+         * sets. Defaults to 30 seconds.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 30
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder mongodbPollIntervalSec(
+                int mongodbPollIntervalSec) {
+            doSetProperty("mongodbPollIntervalSec", mongodbPollIntervalSec);
+            return this;
+        }
+        /**
+         * Frequency in seconds to look for new, removed, or changed replica
+         * sets. Defaults to 30 seconds.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 30
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder mongodbPollIntervalSec(
+                String mongodbPollIntervalSec) {
+            doSetProperty("mongodbPollIntervalSec", mongodbPollIntervalSec);
             return this;
         }
         /**
@@ -786,6 +858,58 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         default DebeziumMongodbEndpointBuilder pollIntervalMs(
                 String pollIntervalMs) {
             doSetProperty("pollIntervalMs", pollIntervalMs);
+            return this;
+        }
+        /**
+         * Enables transaction metadata extraction together with event counting.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder provideTransactionMetadata(
+                boolean provideTransactionMetadata) {
+            doSetProperty("provideTransactionMetadata", provideTransactionMetadata);
+            return this;
+        }
+        /**
+         * Enables transaction metadata extraction together with event counting.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder provideTransactionMetadata(
+                String provideTransactionMetadata) {
+            doSetProperty("provideTransactionMetadata", provideTransactionMetadata);
+            return this;
+        }
+        /**
+         * Whether field names will be sanitized to Avro naming conventions.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder sanitizeFieldNames(
+                boolean sanitizeFieldNames) {
+            doSetProperty("sanitizeFieldNames", sanitizeFieldNames);
+            return this;
+        }
+        /**
+         * Whether field names will be sanitized to Avro naming conventions.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder sanitizeFieldNames(
+                String sanitizeFieldNames) {
+            doSetProperty("sanitizeFieldNames", sanitizeFieldNames);
             return this;
         }
         /**

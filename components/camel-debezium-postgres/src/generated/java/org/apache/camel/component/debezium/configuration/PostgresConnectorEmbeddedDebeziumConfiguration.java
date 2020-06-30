@@ -19,9 +19,9 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME)
     private String columnBlacklist;
     @UriParam(label = LABEL_NAME)
-    private String schemaBlacklist;
-    @UriParam(label = LABEL_NAME)
     private String tableBlacklist;
+    @UriParam(label = LABEL_NAME)
+    private String schemaBlacklist;
     @UriParam(label = LABEL_NAME, defaultValue = "6")
     private int slotMaxRetries = 6;
     @UriParam(label = LABEL_NAME, defaultValue = "columns_diff")
@@ -36,10 +36,12 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private long pollIntervalMs = 500;
     @UriParam(label = LABEL_NAME)
     private String databaseInitialStatements;
-    @UriParam(label = LABEL_NAME, defaultValue = "__debezium-heartbeat")
-    private String heartbeatTopicsPrefix = "__debezium-heartbeat";
     @UriParam(label = LABEL_NAME, defaultValue = "numeric")
     private String intervalHandlingMode = "numeric";
+    @UriParam(label = LABEL_NAME)
+    private String converters;
+    @UriParam(label = LABEL_NAME, defaultValue = "__debezium-heartbeat")
+    private String heartbeatTopicsPrefix = "__debezium-heartbeat";
     @UriParam(label = LABEL_NAME)
     private String databaseSslfactory;
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
@@ -49,17 +51,21 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long snapshotLockTimeoutMs = 10000;
     @UriParam(label = LABEL_NAME)
-    private String databaseDbname;
-    @UriParam(label = LABEL_NAME)
     private String databaseUser;
     @UriParam(label = LABEL_NAME)
+    private String databaseDbname;
+    @UriParam(label = LABEL_NAME)
     private String databaseSslkey;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean sanitizeFieldNames = false;
     @UriParam(label = LABEL_NAME)
     private String snapshotSelectStatementOverrides;
-    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
-    private int heartbeatIntervalMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "v2")
     private String sourceStructVersion = "v2";
+    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
+    private int heartbeatIntervalMs = 0;
+    @UriParam(label = LABEL_NAME)
+    private String columnWhitelist;
     @UriParam(label = LABEL_NAME, defaultValue = "decoderbufs")
     private String pluginName = "decoderbufs";
     @UriParam(label = LABEL_NAME)
@@ -75,6 +81,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String databaseSslrootcert;
     @UriParam(label = LABEL_NAME, defaultValue = "2048")
     private int maxBatchSize = 2048;
+    @UriParam(label = LABEL_NAME)
+    private String skippedOperations;
     @UriParam(label = LABEL_NAME, defaultValue = "initial")
     private String snapshotMode = "initial";
     @UriParam(label = LABEL_NAME, defaultValue = "8192")
@@ -97,8 +105,14 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private long slotRetryDelayMs = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "precise")
     private String decimalHandlingMode = "precise";
+    @UriParam(label = LABEL_NAME, defaultValue = "bytes")
+    private String binaryHandlingMode = "bytes";
+    @UriParam(label = LABEL_NAME, defaultValue = "true")
+    private boolean tableIgnoreBuiltin = true;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean databaseTcpkeepalive = true;
+    @UriParam(label = LABEL_NAME, defaultValue = "all_tables")
+    private String publicationAutocreateMode = "all_tables";
     @UriParam(label = LABEL_NAME)
     private String databaseHistoryFileFilename;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
@@ -153,8 +167,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Description is not available here, please check Debezium website for
-     * corresponding key 'column.blacklist' description.
+     * Regular expressions matching columns to exclude from change events
      */
     public void setColumnBlacklist(String columnBlacklist) {
         this.columnBlacklist = columnBlacklist;
@@ -162,17 +175,6 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public String getColumnBlacklist() {
         return columnBlacklist;
-    }
-
-    /**
-     * The schemas for which events must not be captured
-     */
-    public void setSchemaBlacklist(String schemaBlacklist) {
-        this.schemaBlacklist = schemaBlacklist;
-    }
-
-    public String getSchemaBlacklist() {
-        return schemaBlacklist;
     }
 
     /**
@@ -185,6 +187,17 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public String getTableBlacklist() {
         return tableBlacklist;
+    }
+
+    /**
+     * The schemas for which events must not be captured
+     */
+    public void setSchemaBlacklist(String schemaBlacklist) {
+        this.schemaBlacklist = schemaBlacklist;
+    }
+
+    public String getSchemaBlacklist() {
+        return schemaBlacklist;
     }
 
     /**
@@ -290,18 +303,6 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The prefix that is used to name heartbeat topics.Defaults to
-     * __debezium-heartbeat.
-     */
-    public void setHeartbeatTopicsPrefix(String heartbeatTopicsPrefix) {
-        this.heartbeatTopicsPrefix = heartbeatTopicsPrefix;
-    }
-
-    public String getHeartbeatTopicsPrefix() {
-        return heartbeatTopicsPrefix;
-    }
-
-    /**
      * Specify how INTERVAL columns should be represented in change events,
      * including:'string' represents values as an exact ISO formatted
      * string'numeric' (default) represents values using the inexact conversion
@@ -313,6 +314,31 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public String getIntervalHandlingMode() {
         return intervalHandlingMode;
+    }
+
+    /**
+     * Optional list of custom converters that would be used instead of default
+     * ones. The converters are defined using '<converter.prefix>.type' config
+     * option and configured using options '<converter.prefix>.<option>'
+     */
+    public void setConverters(String converters) {
+        this.converters = converters;
+    }
+
+    public String getConverters() {
+        return converters;
+    }
+
+    /**
+     * The prefix that is used to name heartbeat topics.Defaults to
+     * __debezium-heartbeat.
+     */
+    public void setHeartbeatTopicsPrefix(String heartbeatTopicsPrefix) {
+        this.heartbeatTopicsPrefix = heartbeatTopicsPrefix;
+    }
+
+    public String getHeartbeatTopicsPrefix() {
+        return heartbeatTopicsPrefix;
     }
 
     /**
@@ -366,17 +392,6 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The name of the database the connector should be monitoring
-     */
-    public void setDatabaseDbname(String databaseDbname) {
-        this.databaseDbname = databaseDbname;
-    }
-
-    public String getDatabaseDbname() {
-        return databaseDbname;
-    }
-
-    /**
      * Name of the Postgres database user to be used when connecting to the
      * database.
      */
@@ -389,6 +404,17 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The name of the database the connector should be monitoring
+     */
+    public void setDatabaseDbname(String databaseDbname) {
+        this.databaseDbname = databaseDbname;
+    }
+
+    public String getDatabaseDbname() {
+        return databaseDbname;
+    }
+
+    /**
      * File containing the SSL private key for the client. See the Postgres SSL
      * docs for further information
      */
@@ -398,6 +424,17 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public String getDatabaseSslkey() {
         return databaseSslkey;
+    }
+
+    /**
+     * Whether field names will be sanitized to Avro naming conventions
+     */
+    public void setSanitizeFieldNames(boolean sanitizeFieldNames) {
+        this.sanitizeFieldNames = sanitizeFieldNames;
+    }
+
+    public boolean isSanitizeFieldNames() {
+        return sanitizeFieldNames;
     }
 
     /**
@@ -424,6 +461,18 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * A version of the format of the publicly visible source part in the
+     * message
+     */
+    public void setSourceStructVersion(String sourceStructVersion) {
+        this.sourceStructVersion = sourceStructVersion;
+    }
+
+    public String getSourceStructVersion() {
+        return sourceStructVersion;
+    }
+
+    /**
      * Length of an interval in milli-seconds in in which the connector
      * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
      * disable heartbeat messages. Disabled by default.
@@ -437,15 +486,14 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * A version of the format of the publicly visible source part in the
-     * message
+     * Regular expressions matching columns to include in change events
      */
-    public void setSourceStructVersion(String sourceStructVersion) {
-        this.sourceStructVersion = sourceStructVersion;
+    public void setColumnWhitelist(String columnWhitelist) {
+        this.columnWhitelist = columnWhitelist;
     }
 
-    public String getSourceStructVersion() {
-        return sourceStructVersion;
+    public String getColumnWhitelist() {
+        return columnWhitelist;
     }
 
     /**
@@ -531,6 +579,19 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public int getMaxBatchSize() {
         return maxBatchSize;
+    }
+
+    /**
+     * The comma-separated list of operations to skip during streaming, defined
+     * as: 'i' for inserts; 'u' for updates; 'd' for deletes. By default, no
+     * operations will be skipped.
+     */
+    public void setSkippedOperations(String skippedOperations) {
+        this.skippedOperations = skippedOperations;
+    }
+
+    public String getSkippedOperations() {
+        return skippedOperations;
     }
 
     /**
@@ -687,6 +748,31 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Specify how binary (blob, binary, etc.) columns should be represented in
+     * change events, including:'bytes' represents binary data as byte array
+     * (default)'base64' represents binary data as base64-encoded string'hex'
+     * represents binary data as hex-encoded (base16) string
+     */
+    public void setBinaryHandlingMode(String binaryHandlingMode) {
+        this.binaryHandlingMode = binaryHandlingMode;
+    }
+
+    public String getBinaryHandlingMode() {
+        return binaryHandlingMode;
+    }
+
+    /**
+     * Flag specifying whether built-in tables should be ignored.
+     */
+    public void setTableIgnoreBuiltin(boolean tableIgnoreBuiltin) {
+        this.tableIgnoreBuiltin = tableIgnoreBuiltin;
+    }
+
+    public boolean isTableIgnoreBuiltin() {
+        return tableIgnoreBuiltin;
+    }
+
+    /**
      * Enable or disable TCP keep-alive probe to avoid dropping TCP connection
      */
     public void setDatabaseTcpkeepalive(boolean databaseTcpkeepalive) {
@@ -695,6 +781,30 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public boolean isDatabaseTcpkeepalive() {
         return databaseTcpkeepalive;
+    }
+
+    /**
+     * Applies only when streaming changes using pgoutput.Determine how creation
+     * of a publication should work, the default is all_tables.DISABLED - The
+     * connector will not attempt to create a publication at all. The
+     * expectation is that the user has created the publication up-front. If the
+     * publication isn't found to exist upon startup, the connector will throw
+     * an exception and stop.ALL_TABLES - If no publication exists, the
+     * connector will create a new publication for all tables. Note this
+     * requires that the configured user has access. If the publication already
+     * exists, it will be used. i.e CREATE PUBLICATION <publication_name> FOR
+     * ALL TABLES;FILTERED - If no publication exists, the connector will create
+     * a new publication for all those tables matchingthe current filter
+     * configuration (see table/database whitelist/blacklist properties). If the
+     * publication already exists, it will be used. i.e CREATE PUBLICATION
+     * <publication_name> FOR TABLE <tbl1, tbl2, etc>
+     */
+    public void setPublicationAutocreateMode(String publicationAutocreateMode) {
+        this.publicationAutocreateMode = publicationAutocreateMode;
+    }
+
+    public String getPublicationAutocreateMode() {
+        return publicationAutocreateMode;
     }
 
     /**
@@ -842,8 +952,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "message.key.columns", messageKeyColumns);
         addPropertyIfNotNull(configBuilder, "publication.name", publicationName);
         addPropertyIfNotNull(configBuilder, "column.blacklist", columnBlacklist);
-        addPropertyIfNotNull(configBuilder, "schema.blacklist", schemaBlacklist);
         addPropertyIfNotNull(configBuilder, "table.blacklist", tableBlacklist);
+        addPropertyIfNotNull(configBuilder, "schema.blacklist", schemaBlacklist);
         addPropertyIfNotNull(configBuilder, "slot.max.retries", slotMaxRetries);
         addPropertyIfNotNull(configBuilder, "schema.refresh.mode", schemaRefreshMode);
         addPropertyIfNotNull(configBuilder, "database.sslmode", databaseSslmode);
@@ -851,18 +961,21 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.sslcert", databaseSslcert);
         addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
         addPropertyIfNotNull(configBuilder, "database.initial.statements", databaseInitialStatements);
-        addPropertyIfNotNull(configBuilder, "heartbeat.topics.prefix", heartbeatTopicsPrefix);
         addPropertyIfNotNull(configBuilder, "interval.handling.mode", intervalHandlingMode);
+        addPropertyIfNotNull(configBuilder, "converters", converters);
+        addPropertyIfNotNull(configBuilder, "heartbeat.topics.prefix", heartbeatTopicsPrefix);
         addPropertyIfNotNull(configBuilder, "database.sslfactory", databaseSslfactory);
         addPropertyIfNotNull(configBuilder, "status.update.interval.ms", statusUpdateIntervalMs);
         addPropertyIfNotNull(configBuilder, "snapshot.fetch.size", snapshotFetchSize);
         addPropertyIfNotNull(configBuilder, "snapshot.lock.timeout.ms", snapshotLockTimeoutMs);
-        addPropertyIfNotNull(configBuilder, "database.dbname", databaseDbname);
         addPropertyIfNotNull(configBuilder, "database.user", databaseUser);
+        addPropertyIfNotNull(configBuilder, "database.dbname", databaseDbname);
         addPropertyIfNotNull(configBuilder, "database.sslkey", databaseSslkey);
+        addPropertyIfNotNull(configBuilder, "sanitize.field.names", sanitizeFieldNames);
         addPropertyIfNotNull(configBuilder, "snapshot.select.statement.overrides", snapshotSelectStatementOverrides);
-        addPropertyIfNotNull(configBuilder, "heartbeat.interval.ms", heartbeatIntervalMs);
         addPropertyIfNotNull(configBuilder, "source.struct.version", sourceStructVersion);
+        addPropertyIfNotNull(configBuilder, "heartbeat.interval.ms", heartbeatIntervalMs);
+        addPropertyIfNotNull(configBuilder, "column.whitelist", columnWhitelist);
         addPropertyIfNotNull(configBuilder, "plugin.name", pluginName);
         addPropertyIfNotNull(configBuilder, "database.sslpassword", databaseSslpassword);
         addPropertyIfNotNull(configBuilder, "toasted.value.placeholder", toastedValuePlaceholder);
@@ -870,6 +983,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.password", databasePassword);
         addPropertyIfNotNull(configBuilder, "database.sslrootcert", databaseSslrootcert);
         addPropertyIfNotNull(configBuilder, "max.batch.size", maxBatchSize);
+        addPropertyIfNotNull(configBuilder, "skipped.operations", skippedOperations);
         addPropertyIfNotNull(configBuilder, "snapshot.mode", snapshotMode);
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
         addPropertyIfNotNull(configBuilder, "snapshot.custom.class", snapshotCustomClass);
@@ -881,7 +995,10 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "tombstones.on.delete", tombstonesOnDelete);
         addPropertyIfNotNull(configBuilder, "slot.retry.delay.ms", slotRetryDelayMs);
         addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
+        addPropertyIfNotNull(configBuilder, "binary.handling.mode", binaryHandlingMode);
+        addPropertyIfNotNull(configBuilder, "table.ignore.builtin", tableIgnoreBuiltin);
         addPropertyIfNotNull(configBuilder, "database.tcpKeepAlive", databaseTcpkeepalive);
+        addPropertyIfNotNull(configBuilder, "publication.autocreate.mode", publicationAutocreateMode);
         addPropertyIfNotNull(configBuilder, "database.history.file.filename", databaseHistoryFileFilename);
         addPropertyIfNotNull(configBuilder, "slot.drop.on.stop", slotDropOnStop);
         addPropertyIfNotNull(configBuilder, "xmin.fetch.interval.ms", xminFetchIntervalMs);

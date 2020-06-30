@@ -23,18 +23,26 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private long snapshotDelayMs = 0;
     @UriParam(label = LABEL_NAME)
     private String collectionBlacklist;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean provideTransactionMetadata = false;
     @UriParam(label = LABEL_NAME)
     private String collectionWhitelist;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean mongodbSslEnabled = false;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean tombstonesOnDelete = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "30")
+    private int mongodbPollIntervalSec = 30;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean mongodbMembersAutoDiscover = true;
     @UriParam(label = LABEL_NAME)
     private String fieldRenames;
     @UriParam(label = LABEL_NAME, defaultValue = "500ms", javaType = "java.time.Duration")
     private long pollIntervalMs = 500;
+    @UriParam(label = LABEL_NAME, defaultValue = "admin")
+    private String mongodbAuthsource = "admin";
+    @UriParam(label = LABEL_NAME)
+    private String converters;
     @UriParam(label = LABEL_NAME, defaultValue = "__debezium-heartbeat")
     private String heartbeatTopicsPrefix = "__debezium-heartbeat";
     @UriParam(label = LABEL_NAME)
@@ -47,16 +55,20 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private int snapshotFetchSize;
     @UriParam(label = LABEL_NAME)
     private String databaseHistoryFileFilename;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean sanitizeFieldNames = false;
     @UriParam(label = LABEL_NAME, defaultValue = "16")
     private int connectMaxAttempts = 16;
     @UriParam(label = LABEL_NAME)
     private String mongodbUser;
-    @UriParam(label = LABEL_NAME)
-    private String fieldBlacklist;
+    @UriParam(label = LABEL_NAME, defaultValue = "fail")
+    private String eventProcessingFailureHandlingMode = "fail";
     @UriParam(label = LABEL_NAME, defaultValue = "v2")
     private String sourceStructVersion = "v2";
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private int heartbeatIntervalMs = 0;
+    @UriParam(label = LABEL_NAME)
+    private String fieldBlacklist;
     @UriParam(label = LABEL_NAME)
     @Metadata(required = true)
     private String mongodbName;
@@ -66,10 +78,10 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private boolean mongodbSslInvalidHostnameAllowed = false;
     @UriParam(label = LABEL_NAME)
     private String databaseBlacklist;
-    @UriParam(label = LABEL_NAME)
-    private String skippedOperations;
     @UriParam(label = LABEL_NAME, defaultValue = "2048")
     private int maxBatchSize = 2048;
+    @UriParam(label = LABEL_NAME)
+    private String skippedOperations;
     @UriParam(label = LABEL_NAME, defaultValue = "initial")
     private String snapshotMode = "initial";
 
@@ -133,6 +145,17 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Enables transaction metadata extraction together with event counting
+     */
+    public void setProvideTransactionMetadata(boolean provideTransactionMetadata) {
+        this.provideTransactionMetadata = provideTransactionMetadata;
+    }
+
+    public boolean isProvideTransactionMetadata() {
+        return provideTransactionMetadata;
+    }
+
+    /**
      * The collections for which changes are to be captured
      */
     public void setCollectionWhitelist(String collectionWhitelist) {
@@ -167,6 +190,18 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public boolean isTombstonesOnDelete() {
         return tombstonesOnDelete;
+    }
+
+    /**
+     * Frequency in seconds to look for new, removed, or changed replica sets.
+     * Defaults to 30 seconds.
+     */
+    public void setMongodbPollIntervalSec(int mongodbPollIntervalSec) {
+        this.mongodbPollIntervalSec = mongodbPollIntervalSec;
+    }
+
+    public int getMongodbPollIntervalSec() {
+        return mongodbPollIntervalSec;
     }
 
     /**
@@ -205,6 +240,30 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public long getPollIntervalMs() {
         return pollIntervalMs;
+    }
+
+    /**
+     * Database containing user credentials.
+     */
+    public void setMongodbAuthsource(String mongodbAuthsource) {
+        this.mongodbAuthsource = mongodbAuthsource;
+    }
+
+    public String getMongodbAuthsource() {
+        return mongodbAuthsource;
+    }
+
+    /**
+     * Optional list of custom converters that would be used instead of default
+     * ones. The converters are defined using '<converter.prefix>.type' config
+     * option and configured using options '<converter.prefix>.<option>'
+     */
+    public void setConverters(String converters) {
+        this.converters = converters;
+    }
+
+    public String getConverters() {
+        return converters;
     }
 
     /**
@@ -281,6 +340,17 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Whether field names will be sanitized to Avro naming conventions
+     */
+    public void setSanitizeFieldNames(boolean sanitizeFieldNames) {
+        this.sanitizeFieldNames = sanitizeFieldNames;
+    }
+
+    public boolean isSanitizeFieldNames() {
+        return sanitizeFieldNames;
+    }
+
+    /**
      * Maximum number of failed connection attempts to a replica set primary
      * before an exception occurs and task is aborted. Defaults to 16, which
      * with the defaults for 'connect.backoff.initial.delay.ms' and
@@ -307,15 +377,20 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Description is not available here, please check Debezium website for
-     * corresponding key 'field.blacklist' description.
+     * Specify how failures during processing of events (i.e. when encountering
+     * a corrupted event) should be handled, including:'fail' (the default) an
+     * exception indicating the problematic event and its position is raised,
+     * causing the connector to be stopped; 'warn' the problematic event and its
+     * position will be logged and the event will be skipped;'ignore' the
+     * problematic event will be skipped.
      */
-    public void setFieldBlacklist(String fieldBlacklist) {
-        this.fieldBlacklist = fieldBlacklist;
+    public void setEventProcessingFailureHandlingMode(
+            String eventProcessingFailureHandlingMode) {
+        this.eventProcessingFailureHandlingMode = eventProcessingFailureHandlingMode;
     }
 
-    public String getFieldBlacklist() {
-        return fieldBlacklist;
+    public String getEventProcessingFailureHandlingMode() {
+        return eventProcessingFailureHandlingMode;
     }
 
     /**
@@ -341,6 +416,18 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public int getHeartbeatIntervalMs() {
         return heartbeatIntervalMs;
+    }
+
+    /**
+     * Description is not available here, please check Debezium website for
+     * corresponding key 'field.blacklist' description.
+     */
+    public void setFieldBlacklist(String fieldBlacklist) {
+        this.fieldBlacklist = fieldBlacklist;
+    }
+
+    public String getFieldBlacklist() {
+        return fieldBlacklist;
     }
 
     /**
@@ -395,6 +482,17 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Maximum size of each batch of source records. Defaults to 2048.
+     */
+    public void setMaxBatchSize(int maxBatchSize) {
+        this.maxBatchSize = maxBatchSize;
+    }
+
+    public int getMaxBatchSize() {
+        return maxBatchSize;
+    }
+
+    /**
      * The comma-separated list of operations to skip during streaming, defined
      * as: 'i' for inserts; 'u' for updates; 'd' for deletes. By default, no
      * operations will be skipped.
@@ -405,17 +503,6 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public String getSkippedOperations() {
         return skippedOperations;
-    }
-
-    /**
-     * Maximum size of each batch of source records. Defaults to 2048.
-     */
-    public void setMaxBatchSize(int maxBatchSize) {
-        this.maxBatchSize = maxBatchSize;
-    }
-
-    public int getMaxBatchSize() {
-        return maxBatchSize;
     }
 
     /**
@@ -441,29 +528,35 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "initial.sync.max.threads", initialSyncMaxThreads);
         addPropertyIfNotNull(configBuilder, "snapshot.delay.ms", snapshotDelayMs);
         addPropertyIfNotNull(configBuilder, "collection.blacklist", collectionBlacklist);
+        addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
         addPropertyIfNotNull(configBuilder, "collection.whitelist", collectionWhitelist);
         addPropertyIfNotNull(configBuilder, "mongodb.ssl.enabled", mongodbSslEnabled);
         addPropertyIfNotNull(configBuilder, "tombstones.on.delete", tombstonesOnDelete);
+        addPropertyIfNotNull(configBuilder, "mongodb.poll.interval.sec", mongodbPollIntervalSec);
         addPropertyIfNotNull(configBuilder, "mongodb.members.auto.discover", mongodbMembersAutoDiscover);
         addPropertyIfNotNull(configBuilder, "field.renames", fieldRenames);
         addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
+        addPropertyIfNotNull(configBuilder, "mongodb.authsource", mongodbAuthsource);
+        addPropertyIfNotNull(configBuilder, "converters", converters);
         addPropertyIfNotNull(configBuilder, "heartbeat.topics.prefix", heartbeatTopicsPrefix);
         addPropertyIfNotNull(configBuilder, "database.whitelist", databaseWhitelist);
         addPropertyIfNotNull(configBuilder, "mongodb.hosts", mongodbHosts);
         addPropertyIfNotNull(configBuilder, "connect.backoff.initial.delay.ms", connectBackoffInitialDelayMs);
         addPropertyIfNotNull(configBuilder, "snapshot.fetch.size", snapshotFetchSize);
         addPropertyIfNotNull(configBuilder, "database.history.file.filename", databaseHistoryFileFilename);
+        addPropertyIfNotNull(configBuilder, "sanitize.field.names", sanitizeFieldNames);
         addPropertyIfNotNull(configBuilder, "connect.max.attempts", connectMaxAttempts);
         addPropertyIfNotNull(configBuilder, "mongodb.user", mongodbUser);
-        addPropertyIfNotNull(configBuilder, "field.blacklist", fieldBlacklist);
+        addPropertyIfNotNull(configBuilder, "event.processing.failure.handling.mode", eventProcessingFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "source.struct.version", sourceStructVersion);
         addPropertyIfNotNull(configBuilder, "heartbeat.interval.ms", heartbeatIntervalMs);
+        addPropertyIfNotNull(configBuilder, "field.blacklist", fieldBlacklist);
         addPropertyIfNotNull(configBuilder, "mongodb.name", mongodbName);
         addPropertyIfNotNull(configBuilder, "connect.backoff.max.delay.ms", connectBackoffMaxDelayMs);
         addPropertyIfNotNull(configBuilder, "mongodb.ssl.invalid.hostname.allowed", mongodbSslInvalidHostnameAllowed);
         addPropertyIfNotNull(configBuilder, "database.blacklist", databaseBlacklist);
-        addPropertyIfNotNull(configBuilder, "skipped.operations", skippedOperations);
         addPropertyIfNotNull(configBuilder, "max.batch.size", maxBatchSize);
+        addPropertyIfNotNull(configBuilder, "skipped.operations", skippedOperations);
         addPropertyIfNotNull(configBuilder, "snapshot.mode", snapshotMode);
         
         return configBuilder.build();

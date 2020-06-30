@@ -28,6 +28,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private String tableBlacklist;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean provideTransactionMetadata = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "true")
+    private boolean includeSchemaChanges = true;
     @UriParam(label = LABEL_NAME)
     private String tableWhitelist;
     @UriParam(label = LABEL_NAME)
@@ -36,10 +38,12 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private boolean tombstonesOnDelete = false;
     @UriParam(label = LABEL_NAME, defaultValue = "precise")
     private String decimalHandlingMode = "precise";
-    @UriParam(label = LABEL_NAME, defaultValue = "100ms", javaType = "java.time.Duration")
-    private int databaseHistoryKafkaRecoveryPollIntervalMs = 100;
     @UriParam(label = LABEL_NAME, defaultValue = "500ms", javaType = "java.time.Duration")
     private long pollIntervalMs = 500;
+    @UriParam(label = LABEL_NAME, defaultValue = "100ms", javaType = "java.time.Duration")
+    private int databaseHistoryKafkaRecoveryPollIntervalMs = 100;
+    @UriParam(label = LABEL_NAME)
+    private String converters;
     @UriParam(label = LABEL_NAME, defaultValue = "__debezium-heartbeat")
     private String heartbeatTopicsPrefix = "__debezium-heartbeat";
     @UriParam(label = LABEL_NAME, defaultValue = "true")
@@ -48,12 +52,16 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private int snapshotFetchSize;
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long snapshotLockTimeoutMs = 10000;
+    @UriParam(label = LABEL_NAME, defaultValue = "commit")
+    private String sourceTimestampMode = "commit";
     @UriParam(label = LABEL_NAME)
     private String databaseHistoryFileFilename;
     @UriParam(label = LABEL_NAME)
     private String databaseDbname;
     @UriParam(label = LABEL_NAME)
     private String databaseUser;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean sanitizeFieldNames = false;
     @UriParam(label = LABEL_NAME)
     private String snapshotSelectStatementOverrides;
     @UriParam(label = LABEL_NAME)
@@ -63,12 +71,16 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME)
     @Metadata(required = true)
     private String databaseServerName;
-    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
-    private int heartbeatIntervalMs = 0;
-    @UriParam(label = LABEL_NAME, defaultValue = "v2")
-    private String sourceStructVersion = "v2";
     @UriParam(label = LABEL_NAME, defaultValue = "fail")
     private String eventProcessingFailureHandlingMode = "fail";
+    @UriParam(label = LABEL_NAME, defaultValue = "repeatable_read")
+    private String snapshotIsolationMode = "repeatable_read";
+    @UriParam(label = LABEL_NAME, defaultValue = "v2")
+    private String sourceStructVersion = "v2";
+    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
+    private int heartbeatIntervalMs = 0;
+    @UriParam(label = LABEL_NAME)
+    private String columnWhitelist;
     @UriParam(label = LABEL_NAME, defaultValue = "1433")
     private int databasePort = 1433;
     @UriParam(label = LABEL_NAME)
@@ -78,6 +90,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private String databasePassword;
     @UriParam(label = LABEL_NAME, defaultValue = "2048")
     private int maxBatchSize = 2048;
+    @UriParam(label = LABEL_NAME)
+    private String skippedOperations;
     @UriParam(label = LABEL_NAME, defaultValue = "initial")
     private String snapshotMode = "initial";
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.relational.history.FileDatabaseHistory")
@@ -127,8 +141,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Description is not available here, please check Debezium website for
-     * corresponding key 'column.blacklist' description.
+     * Regular expressions matching columns to exclude from change events
      */
     public void setColumnBlacklist(String columnBlacklist) {
         this.columnBlacklist = columnBlacklist;
@@ -187,6 +200,22 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Whether the connector should publish changes in the database schema to a
+     * Kafka topic with the same name as the database server ID. Each schema
+     * change will be recorded using a key that contains the database name and
+     * whose value include logical description of the new schema and optionally
+     * the DDL statement(s).The default is 'true'. This is independent of how
+     * the connector internally records database history.
+     */
+    public void setIncludeSchemaChanges(boolean includeSchemaChanges) {
+        this.includeSchemaChanges = includeSchemaChanges;
+    }
+
+    public boolean isIncludeSchemaChanges() {
+        return includeSchemaChanges;
+    }
+
+    /**
      * The tables for which changes are to be captured
      */
     public void setTableWhitelist(String tableWhitelist) {
@@ -242,6 +271,18 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Frequency in milliseconds to wait for new change events to appear after
+     * receiving no events. Defaults to 500ms.
+     */
+    public void setPollIntervalMs(long pollIntervalMs) {
+        this.pollIntervalMs = pollIntervalMs;
+    }
+
+    public long getPollIntervalMs() {
+        return pollIntervalMs;
+    }
+
+    /**
      * The number of milliseconds to wait while polling for persisted data
      * during recovery.
      */
@@ -255,15 +296,16 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Frequency in milliseconds to wait for new change events to appear after
-     * receiving no events. Defaults to 500ms.
+     * Optional list of custom converters that would be used instead of default
+     * ones. The converters are defined using '<converter.prefix>.type' config
+     * option and configured using options '<converter.prefix>.<option>'
      */
-    public void setPollIntervalMs(long pollIntervalMs) {
-        this.pollIntervalMs = pollIntervalMs;
+    public void setConverters(String converters) {
+        this.converters = converters;
     }
 
-    public long getPollIntervalMs() {
-        return pollIntervalMs;
+    public String getConverters() {
+        return converters;
     }
 
     /**
@@ -315,6 +357,21 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Configures the criteria of the attached timestamp within the source
+     * record (ts_ms).Options include:'commit', (default) the source timestamp
+     * is set to the instant where the record was committed in the
+     * database'processing', the source timestamp is set to the instant where
+     * the record was processed by Debezium.
+     */
+    public void setSourceTimestampMode(String sourceTimestampMode) {
+        this.sourceTimestampMode = sourceTimestampMode;
+    }
+
+    public String getSourceTimestampMode() {
+        return sourceTimestampMode;
+    }
+
+    /**
      * The path to the file that will be used to record the database history
      */
     public void setDatabaseHistoryFileFilename(
@@ -348,6 +405,17 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public String getDatabaseUser() {
         return databaseUser;
+    }
+
+    /**
+     * Whether field names will be sanitized to Avro naming conventions
+     */
+    public void setSanitizeFieldNames(boolean sanitizeFieldNames) {
+        this.sanitizeFieldNames = sanitizeFieldNames;
+    }
+
+    public boolean isSanitizeFieldNames() {
+        return sanitizeFieldNames;
     }
 
     /**
@@ -421,16 +489,45 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Length of an interval in milli-seconds in in which the connector
-     * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
-     * disable heartbeat messages. Disabled by default.
+     * Specify how failures during processing of events (i.e. when encountering
+     * a corrupted event) should be handled, including:'fail' (the default) an
+     * exception indicating the problematic event and its position is raised,
+     * causing the connector to be stopped; 'warn' the problematic event and its
+     * position will be logged and the event will be skipped;'ignore' the
+     * problematic event will be skipped.
      */
-    public void setHeartbeatIntervalMs(int heartbeatIntervalMs) {
-        this.heartbeatIntervalMs = heartbeatIntervalMs;
+    public void setEventProcessingFailureHandlingMode(
+            String eventProcessingFailureHandlingMode) {
+        this.eventProcessingFailureHandlingMode = eventProcessingFailureHandlingMode;
     }
 
-    public int getHeartbeatIntervalMs() {
-        return heartbeatIntervalMs;
+    public String getEventProcessingFailureHandlingMode() {
+        return eventProcessingFailureHandlingMode;
+    }
+
+    /**
+     * Controls which transaction isolation level is used and how long the
+     * connector locks the monitored tables. The default is 'repeatable_read',
+     * which means that repeatable read isolation level is used. In addition,
+     * exclusive locks are taken only during schema snapshot. Using a value of
+     * 'exclusive' ensures that the connector holds the exclusive lock (and thus
+     * prevents any reads and updates) for all monitored tables during the
+     * entire snapshot duration. When 'snapshot' is specified, connector runs
+     * the initial snapshot in SNAPSHOT isolation level, which guarantees
+     * snapshot consistency. In addition, neither table nor row-level locks are
+     * held. When 'read_committed' is specified, connector runs the initial
+     * snapshot in READ COMMITTED isolation level. No long-running locks are
+     * taken, so that initial snapshot does not prevent other transactions from
+     * updating table rows. Snapshot consistency is not guaranteed.In
+     * 'read_uncommitted' mode neither table nor row-level locks are acquired,
+     * but connector does not guarantee snapshot consistency.
+     */
+    public void setSnapshotIsolationMode(String snapshotIsolationMode) {
+        this.snapshotIsolationMode = snapshotIsolationMode;
+    }
+
+    public String getSnapshotIsolationMode() {
+        return snapshotIsolationMode;
     }
 
     /**
@@ -446,20 +543,27 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Specify how failures during processing of events (i.e. when encountering
-     * a corrupted event) should be handled, including:'fail' (the default) an
-     * exception indicating the problematic event and its position is raised,
-     * causing the connector to be stopped; 'warn' the problematic event and its
-     * position will be logged and the event will be skipped;'ignore' the
-     * problematic event will be skipped.
+     * Length of an interval in milli-seconds in in which the connector
+     * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
+     * disable heartbeat messages. Disabled by default.
      */
-    public void setEventProcessingFailureHandlingMode(
-            String eventProcessingFailureHandlingMode) {
-        this.eventProcessingFailureHandlingMode = eventProcessingFailureHandlingMode;
+    public void setHeartbeatIntervalMs(int heartbeatIntervalMs) {
+        this.heartbeatIntervalMs = heartbeatIntervalMs;
     }
 
-    public String getEventProcessingFailureHandlingMode() {
-        return eventProcessingFailureHandlingMode;
+    public int getHeartbeatIntervalMs() {
+        return heartbeatIntervalMs;
+    }
+
+    /**
+     * Regular expressions matching columns to include in change events
+     */
+    public void setColumnWhitelist(String columnWhitelist) {
+        this.columnWhitelist = columnWhitelist;
+    }
+
+    public String getColumnWhitelist() {
+        return columnWhitelist;
     }
 
     /**
@@ -508,6 +612,19 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The comma-separated list of operations to skip during streaming, defined
+     * as: 'i' for inserts; 'u' for updates; 'd' for deletes. By default, no
+     * operations will be skipped.
+     */
+    public void setSkippedOperations(String skippedOperations) {
+        this.skippedOperations = skippedOperations;
+    }
+
+    public String getSkippedOperations() {
+        return skippedOperations;
+    }
+
+    /**
      * The criteria for running a snapshot upon startup of the connector.
      * Options include: 'initial' (the default) to specify the connector should
      * run a snapshot only when no offsets are available for the logical server
@@ -547,30 +664,37 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.history.kafka.recovery.attempts", databaseHistoryKafkaRecoveryAttempts);
         addPropertyIfNotNull(configBuilder, "table.blacklist", tableBlacklist);
         addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
+        addPropertyIfNotNull(configBuilder, "include.schema.changes", includeSchemaChanges);
         addPropertyIfNotNull(configBuilder, "table.whitelist", tableWhitelist);
         addPropertyIfNotNull(configBuilder, "database.server.timezone", databaseServerTimezone);
         addPropertyIfNotNull(configBuilder, "tombstones.on.delete", tombstonesOnDelete);
         addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
-        addPropertyIfNotNull(configBuilder, "database.history.kafka.recovery.poll.interval.ms", databaseHistoryKafkaRecoveryPollIntervalMs);
         addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
+        addPropertyIfNotNull(configBuilder, "database.history.kafka.recovery.poll.interval.ms", databaseHistoryKafkaRecoveryPollIntervalMs);
+        addPropertyIfNotNull(configBuilder, "converters", converters);
         addPropertyIfNotNull(configBuilder, "heartbeat.topics.prefix", heartbeatTopicsPrefix);
         addPropertyIfNotNull(configBuilder, "table.ignore.builtin", tableIgnoreBuiltin);
         addPropertyIfNotNull(configBuilder, "snapshot.fetch.size", snapshotFetchSize);
         addPropertyIfNotNull(configBuilder, "snapshot.lock.timeout.ms", snapshotLockTimeoutMs);
+        addPropertyIfNotNull(configBuilder, "source.timestamp.mode", sourceTimestampMode);
         addPropertyIfNotNull(configBuilder, "database.history.file.filename", databaseHistoryFileFilename);
         addPropertyIfNotNull(configBuilder, "database.dbname", databaseDbname);
         addPropertyIfNotNull(configBuilder, "database.user", databaseUser);
+        addPropertyIfNotNull(configBuilder, "sanitize.field.names", sanitizeFieldNames);
         addPropertyIfNotNull(configBuilder, "snapshot.select.statement.overrides", snapshotSelectStatementOverrides);
         addPropertyIfNotNull(configBuilder, "database.history.kafka.bootstrap.servers", databaseHistoryKafkaBootstrapServers);
         addPropertyIfNotNull(configBuilder, "time.precision.mode", timePrecisionMode);
         addPropertyIfNotNull(configBuilder, "database.server.name", databaseServerName);
-        addPropertyIfNotNull(configBuilder, "heartbeat.interval.ms", heartbeatIntervalMs);
-        addPropertyIfNotNull(configBuilder, "source.struct.version", sourceStructVersion);
         addPropertyIfNotNull(configBuilder, "event.processing.failure.handling.mode", eventProcessingFailureHandlingMode);
+        addPropertyIfNotNull(configBuilder, "snapshot.isolation.mode", snapshotIsolationMode);
+        addPropertyIfNotNull(configBuilder, "source.struct.version", sourceStructVersion);
+        addPropertyIfNotNull(configBuilder, "heartbeat.interval.ms", heartbeatIntervalMs);
+        addPropertyIfNotNull(configBuilder, "column.whitelist", columnWhitelist);
         addPropertyIfNotNull(configBuilder, "database.port", databasePort);
         addPropertyIfNotNull(configBuilder, "database.hostname", databaseHostname);
         addPropertyIfNotNull(configBuilder, "database.password", databasePassword);
         addPropertyIfNotNull(configBuilder, "max.batch.size", maxBatchSize);
+        addPropertyIfNotNull(configBuilder, "skipped.operations", skippedOperations);
         addPropertyIfNotNull(configBuilder, "snapshot.mode", snapshotMode);
         addPropertyIfNotNull(configBuilder, "database.history", databaseHistory);
         

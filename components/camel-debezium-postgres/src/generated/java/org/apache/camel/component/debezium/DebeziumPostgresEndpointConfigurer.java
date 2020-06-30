@@ -23,10 +23,15 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "additionalProperties": target.getConfiguration().setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "binaryhandlingmode":
+        case "binaryHandlingMode": target.getConfiguration().setBinaryHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "columnblacklist":
         case "columnBlacklist": target.getConfiguration().setColumnBlacklist(property(camelContext, java.lang.String.class, value)); return true;
+        case "columnwhitelist":
+        case "columnWhitelist": target.getConfiguration().setColumnWhitelist(property(camelContext, java.lang.String.class, value)); return true;
+        case "converters": target.getConfiguration().setConverters(property(camelContext, java.lang.String.class, value)); return true;
         case "databasedbname":
         case "databaseDbname": target.getConfiguration().setDatabaseDbname(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehistoryfilefilename":
@@ -109,14 +114,20 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "pollIntervalMs": target.getConfiguration().setPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "providetransactionmetadata":
         case "provideTransactionMetadata": target.getConfiguration().setProvideTransactionMetadata(property(camelContext, boolean.class, value)); return true;
+        case "publicationautocreatemode":
+        case "publicationAutocreateMode": target.getConfiguration().setPublicationAutocreateMode(property(camelContext, java.lang.String.class, value)); return true;
         case "publicationname":
         case "publicationName": target.getConfiguration().setPublicationName(property(camelContext, java.lang.String.class, value)); return true;
+        case "sanitizefieldnames":
+        case "sanitizeFieldNames": target.getConfiguration().setSanitizeFieldNames(property(camelContext, boolean.class, value)); return true;
         case "schemablacklist":
         case "schemaBlacklist": target.getConfiguration().setSchemaBlacklist(property(camelContext, java.lang.String.class, value)); return true;
         case "schemarefreshmode":
         case "schemaRefreshMode": target.getConfiguration().setSchemaRefreshMode(property(camelContext, java.lang.String.class, value)); return true;
         case "schemawhitelist":
         case "schemaWhitelist": target.getConfiguration().setSchemaWhitelist(property(camelContext, java.lang.String.class, value)); return true;
+        case "skippedoperations":
+        case "skippedOperations": target.getConfiguration().setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "slotdroponstop":
         case "slotDropOnStop": target.getConfiguration().setSlotDropOnStop(property(camelContext, boolean.class, value)); return true;
         case "slotmaxretries":
@@ -146,6 +157,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tableblacklist":
         case "tableBlacklist": target.getConfiguration().setTableBlacklist(property(camelContext, java.lang.String.class, value)); return true;
+        case "tableignorebuiltin":
+        case "tableIgnoreBuiltin": target.getConfiguration().setTableIgnoreBuiltin(property(camelContext, boolean.class, value)); return true;
         case "tablewhitelist":
         case "tableWhitelist": target.getConfiguration().setTableWhitelist(property(camelContext, java.lang.String.class, value)); return true;
         case "timeprecisionmode":
@@ -165,8 +178,11 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("additionalProperties", java.util.Map.class);
         answer.put("basicPropertyBinding", boolean.class);
+        answer.put("binaryHandlingMode", java.lang.String.class);
         answer.put("bridgeErrorHandler", boolean.class);
         answer.put("columnBlacklist", java.lang.String.class);
+        answer.put("columnWhitelist", java.lang.String.class);
+        answer.put("converters", java.lang.String.class);
         answer.put("databaseDbname", java.lang.String.class);
         answer.put("databaseHistoryFileFilename", java.lang.String.class);
         answer.put("databaseHostname", java.lang.String.class);
@@ -208,10 +224,13 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         answer.put("pluginName", java.lang.String.class);
         answer.put("pollIntervalMs", long.class);
         answer.put("provideTransactionMetadata", boolean.class);
+        answer.put("publicationAutocreateMode", java.lang.String.class);
         answer.put("publicationName", java.lang.String.class);
+        answer.put("sanitizeFieldNames", boolean.class);
         answer.put("schemaBlacklist", java.lang.String.class);
         answer.put("schemaRefreshMode", java.lang.String.class);
         answer.put("schemaWhitelist", java.lang.String.class);
+        answer.put("skippedOperations", java.lang.String.class);
         answer.put("slotDropOnStop", boolean.class);
         answer.put("slotMaxRetries", int.class);
         answer.put("slotName", java.lang.String.class);
@@ -227,6 +246,7 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         answer.put("statusUpdateIntervalMs", int.class);
         answer.put("synchronous", boolean.class);
         answer.put("tableBlacklist", java.lang.String.class);
+        answer.put("tableIgnoreBuiltin", boolean.class);
         answer.put("tableWhitelist", java.lang.String.class);
         answer.put("timePrecisionMode", java.lang.String.class);
         answer.put("toastedValuePlaceholder", java.lang.String.class);
@@ -243,10 +263,15 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "additionalProperties": return target.getConfiguration().getAdditionalProperties();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "binaryhandlingmode":
+        case "binaryHandlingMode": return target.getConfiguration().getBinaryHandlingMode();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "columnblacklist":
         case "columnBlacklist": return target.getConfiguration().getColumnBlacklist();
+        case "columnwhitelist":
+        case "columnWhitelist": return target.getConfiguration().getColumnWhitelist();
+        case "converters": return target.getConfiguration().getConverters();
         case "databasedbname":
         case "databaseDbname": return target.getConfiguration().getDatabaseDbname();
         case "databasehistoryfilefilename":
@@ -329,14 +354,20 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "pollIntervalMs": return target.getConfiguration().getPollIntervalMs();
         case "providetransactionmetadata":
         case "provideTransactionMetadata": return target.getConfiguration().isProvideTransactionMetadata();
+        case "publicationautocreatemode":
+        case "publicationAutocreateMode": return target.getConfiguration().getPublicationAutocreateMode();
         case "publicationname":
         case "publicationName": return target.getConfiguration().getPublicationName();
+        case "sanitizefieldnames":
+        case "sanitizeFieldNames": return target.getConfiguration().isSanitizeFieldNames();
         case "schemablacklist":
         case "schemaBlacklist": return target.getConfiguration().getSchemaBlacklist();
         case "schemarefreshmode":
         case "schemaRefreshMode": return target.getConfiguration().getSchemaRefreshMode();
         case "schemawhitelist":
         case "schemaWhitelist": return target.getConfiguration().getSchemaWhitelist();
+        case "skippedoperations":
+        case "skippedOperations": return target.getConfiguration().getSkippedOperations();
         case "slotdroponstop":
         case "slotDropOnStop": return target.getConfiguration().isSlotDropOnStop();
         case "slotmaxretries":
@@ -366,6 +397,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "synchronous": return target.isSynchronous();
         case "tableblacklist":
         case "tableBlacklist": return target.getConfiguration().getTableBlacklist();
+        case "tableignorebuiltin":
+        case "tableIgnoreBuiltin": return target.getConfiguration().isTableIgnoreBuiltin();
         case "tablewhitelist":
         case "tableWhitelist": return target.getConfiguration().getTableWhitelist();
         case "timeprecisionmode":

@@ -273,6 +273,22 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
+         * Specify how binary (blob, binary, etc.) columns should be represented
+         * in change events, including:'bytes' represents binary data as byte
+         * array (default)'base64' represents binary data as base64-encoded
+         * string'hex' represents binary data as hex-encoded (base16) string.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: bytes
+         * Group: mysql
+         */
+        default DebeziumMysqlComponentBuilder binaryHandlingMode(
+                java.lang.String binaryHandlingMode) {
+            doSetProperty("binaryHandlingMode", binaryHandlingMode);
+            return this;
+        }
+        /**
          * The size of a look-ahead buffer used by the binlog reader to decide
          * whether the transaction in progress is going to be committed or
          * rolled back. Use 0 to disable look-ahead buffering. Defaults to 0
@@ -289,8 +305,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
-         * Description is not available here, please check Debezium website for
-         * corresponding key 'column.blacklist' description.
+         * Regular expressions matching columns to exclude from change events.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -875,9 +890,9 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * Whether the connector should publish changes in the database schema
          * to a Kafka topic with the same name as the database server ID. Each
          * schema change will be recorded using a key that contains the database
-         * name and whose value includes the DDL statement(s).The default is
-         * 'true'. This is independent of how the connector internally records
-         * database history.
+         * name and whose value include logical description of the new schema
+         * and optionally the DDL statement(s).The default is 'true'. This is
+         * independent of how the connector internally records database history.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -968,6 +983,20 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
+         * The comma-separated list of operations to skip during streaming,
+         * defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By
+         * default, no operations will be skipped.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mysql
+         */
+        default DebeziumMysqlComponentBuilder skippedOperations(
+                java.lang.String skippedOperations) {
+            doSetProperty("skippedOperations", skippedOperations);
+            return this;
+        }
+        /**
          * The number of milliseconds to delay before a snapshot will begin.
          * 
          * The option is a: <code>long</code> type.
@@ -1024,15 +1053,16 @@ public interface DebeziumMysqlComponentBuilderFactory {
         /**
          * The criteria for running a snapshot upon startup of the connector.
          * Options include: 'when_needed' to specify that the connector run a
-         * snapshot upon startup whenever it deems it necessary; 'initial' (the
-         * default) to specify the connector can run a snapshot only when no
-         * offsets are available for the logical server name; 'initial_only'
-         * same as 'initial' except the connector should stop after completing
-         * the snapshot and before it would normally read the binlog; and'never'
-         * to specify the connector should never run a snapshot and that upon
-         * first startup the connector should read from the beginning of the
-         * binlog. The 'never' mode should be used with care, and only when the
-         * binlog is known to contain all history.
+         * snapshot upon startup whenever it deems it necessary; 'schema_only'
+         * to only take a snapshot of the schema (table structures) but no
+         * actual data; 'initial' (the default) to specify the connector can run
+         * a snapshot only when no offsets are available for the logical server
+         * name; 'initial_only' same as 'initial' except the connector should
+         * stop after completing the snapshot and before it would normally read
+         * the binlog; and'never' to specify the connector should never run a
+         * snapshot and that upon first startup the connector should read from
+         * the beginning of the binlog. The 'never' mode should be used with
+         * care, and only when the binlog is known to contain all history.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1218,6 +1248,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "offsetStorageTopic": getOrCreateConfiguration((DebeziumMySqlComponent) component).setOffsetStorageTopic((java.lang.String) value); return true;
             case "basicPropertyBinding": ((DebeziumMySqlComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "bigintUnsignedHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setBigintUnsignedHandlingMode((java.lang.String) value); return true;
+            case "binaryHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setBinaryHandlingMode((java.lang.String) value); return true;
             case "binlogBufferSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setBinlogBufferSize((int) value); return true;
             case "columnBlacklist": getOrCreateConfiguration((DebeziumMySqlComponent) component).setColumnBlacklist((java.lang.String) value); return true;
             case "connectKeepAlive": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConnectKeepAlive((boolean) value); return true;
@@ -1264,6 +1295,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "maxQueueSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setMaxQueueSize((int) value); return true;
             case "messageKeyColumns": getOrCreateConfiguration((DebeziumMySqlComponent) component).setMessageKeyColumns((java.lang.String) value); return true;
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setPollIntervalMs((long) value); return true;
+            case "skippedOperations": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSkippedOperations((java.lang.String) value); return true;
             case "snapshotDelayMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotDelayMs((long) value); return true;
             case "snapshotFetchSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotFetchSize((int) value); return true;
             case "snapshotLockingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotLockingMode((java.lang.String) value); return true;

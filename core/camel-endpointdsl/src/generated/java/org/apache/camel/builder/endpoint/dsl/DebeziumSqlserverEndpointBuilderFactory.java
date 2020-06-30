@@ -319,8 +319,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
-         * Description is not available here, please check Debezium website for
-         * corresponding key 'column.blacklist' description.
+         * Regular expressions matching columns to exclude from change events.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -329,6 +328,31 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         default DebeziumSqlserverEndpointBuilder columnBlacklist(
                 String columnBlacklist) {
             doSetProperty("columnBlacklist", columnBlacklist);
+            return this;
+        }
+        /**
+         * Regular expressions matching columns to include in change events.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverEndpointBuilder columnWhitelist(
+                String columnWhitelist) {
+            doSetProperty("columnWhitelist", columnWhitelist);
+            return this;
+        }
+        /**
+         * Optional list of custom converters that would be used instead of
+         * default ones. The converters are defined using '.type' config option
+         * and configured using options '.'.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverEndpointBuilder converters(String converters) {
+            doSetProperty("converters", converters);
             return this;
         }
         /**
@@ -637,6 +661,42 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether the connector should publish changes in the database schema
+         * to a Kafka topic with the same name as the database server ID. Each
+         * schema change will be recorded using a key that contains the database
+         * name and whose value include logical description of the new schema
+         * and optionally the DDL statement(s).The default is 'true'. This is
+         * independent of how the connector internally records database history.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverEndpointBuilder includeSchemaChanges(
+                boolean includeSchemaChanges) {
+            doSetProperty("includeSchemaChanges", includeSchemaChanges);
+            return this;
+        }
+        /**
+         * Whether the connector should publish changes in the database schema
+         * to a Kafka topic with the same name as the database server ID. Each
+         * schema change will be recorded using a key that contains the database
+         * name and whose value include logical description of the new schema
+         * and optionally the DDL statement(s).The default is 'true'. This is
+         * independent of how the connector internally records database history.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverEndpointBuilder includeSchemaChanges(
+                String includeSchemaChanges) {
+            doSetProperty("includeSchemaChanges", includeSchemaChanges);
+            return this;
+        }
+        /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
          * The option is a: <code>int</code> type.
@@ -765,6 +825,46 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether field names will be sanitized to Avro naming conventions.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverEndpointBuilder sanitizeFieldNames(
+                boolean sanitizeFieldNames) {
+            doSetProperty("sanitizeFieldNames", sanitizeFieldNames);
+            return this;
+        }
+        /**
+         * Whether field names will be sanitized to Avro naming conventions.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverEndpointBuilder sanitizeFieldNames(
+                String sanitizeFieldNames) {
+            doSetProperty("sanitizeFieldNames", sanitizeFieldNames);
+            return this;
+        }
+        /**
+         * The comma-separated list of operations to skip during streaming,
+         * defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By
+         * default, no operations will be skipped.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverEndpointBuilder skippedOperations(
+                String skippedOperations) {
+            doSetProperty("skippedOperations", skippedOperations);
+            return this;
+        }
+        /**
          * The number of milliseconds to delay before a snapshot will begin.
          * 
          * The option is a: <code>long</code> type.
@@ -814,6 +914,34 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         default DebeziumSqlserverEndpointBuilder snapshotFetchSize(
                 String snapshotFetchSize) {
             doSetProperty("snapshotFetchSize", snapshotFetchSize);
+            return this;
+        }
+        /**
+         * Controls which transaction isolation level is used and how long the
+         * connector locks the monitored tables. The default is
+         * 'repeatable_read', which means that repeatable read isolation level
+         * is used. In addition, exclusive locks are taken only during schema
+         * snapshot. Using a value of 'exclusive' ensures that the connector
+         * holds the exclusive lock (and thus prevents any reads and updates)
+         * for all monitored tables during the entire snapshot duration. When
+         * 'snapshot' is specified, connector runs the initial snapshot in
+         * SNAPSHOT isolation level, which guarantees snapshot consistency. In
+         * addition, neither table nor row-level locks are held. When
+         * 'read_committed' is specified, connector runs the initial snapshot in
+         * READ COMMITTED isolation level. No long-running locks are taken, so
+         * that initial snapshot does not prevent other transactions from
+         * updating table rows. Snapshot consistency is not guaranteed.In
+         * 'read_uncommitted' mode neither table nor row-level locks are
+         * acquired, but connector does not guarantee snapshot consistency.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: repeatable_read
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverEndpointBuilder snapshotIsolationMode(
+                String snapshotIsolationMode) {
+            doSetProperty("snapshotIsolationMode", snapshotIsolationMode);
             return this;
         }
         /**
@@ -899,6 +1027,23 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         default DebeziumSqlserverEndpointBuilder sourceStructVersion(
                 String sourceStructVersion) {
             doSetProperty("sourceStructVersion", sourceStructVersion);
+            return this;
+        }
+        /**
+         * Configures the criteria of the attached timestamp within the source
+         * record (ts_ms).Options include:'commit', (default) the source
+         * timestamp is set to the instant where the record was committed in the
+         * database'processing', the source timestamp is set to the instant
+         * where the record was processed by Debezium.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: commit
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverEndpointBuilder sourceTimestampMode(
+                String sourceTimestampMode) {
+            doSetProperty("sourceTimestampMode", sourceTimestampMode);
             return this;
         }
         /**
