@@ -315,7 +315,8 @@ public interface KinesisFirehose2EndpointBuilderFactory {
      * <code>org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations</code> enum.
      */
     enum KinesisFirehose2Operations {
-        sendBatchRecord;
+        sendBatchRecord,
+        createDeliveryStream;
     }
 
     /**
