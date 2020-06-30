@@ -18,5 +18,5 @@ package org.apache.camel.component.aws2.firehose;
 
 public enum KinesisFirehose2Operations {
 
-    sendBatchRecord
+    sendBatchRecord, createDeliveryStream
 }
