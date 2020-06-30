@@ -25,7 +25,10 @@ import org.apache.camel.component.jpa.JpaEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
 import org.apache.camel.spring.SpringRouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class JpaProducerRemoveTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";

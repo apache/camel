@@ -25,12 +25,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jpa.JpaConstants;
 import org.apache.camel.examples.Customer;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class JpaProducerWithQueryParametersHeaderTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class JpaProducerWithQueryParametersHeaderTest {
     
     protected DefaultCamelContext camelContext;
     protected ProducerTemplate template;
@@ -57,7 +58,7 @@ public class JpaProducerWithQueryParametersHeaderTest extends Assert {
         assertEquals(2, integer);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         camelContext = new DefaultCamelContext();
 
@@ -79,7 +80,7 @@ public class JpaProducerWithQueryParametersHeaderTest extends Assert {
         template = camelContext.createProducerTemplate();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         camelContext.stop();
     }

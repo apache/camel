@@ -20,9 +20,12 @@ import java.util.List;
 
 import org.apache.camel.examples.Address;
 import org.apache.camel.examples.Customer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JpaUseMergeTest extends AbstractJpaMethodTest {
     

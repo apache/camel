@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class JpaBatchConsumerTest extends AbstractJpaTest {
 

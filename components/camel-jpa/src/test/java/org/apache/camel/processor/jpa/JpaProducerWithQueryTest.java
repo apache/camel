@@ -26,12 +26,13 @@ import org.apache.camel.examples.Customer;
 import org.apache.camel.examples.MultiSteps;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class JpaProducerWithQueryTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class JpaProducerWithQueryTest {
     
     protected DefaultCamelContext camelContext;
     protected ProducerTemplate template;
@@ -113,7 +114,7 @@ public class JpaProducerWithQueryTest extends Assert {
         assertEquals(2, ((Integer)answer).intValue());
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         camelContext = new DefaultCamelContext();
         SimpleRegistry registry = new SimpleRegistry();
@@ -150,7 +151,7 @@ public class JpaProducerWithQueryTest extends Assert {
         template = camelContext.createProducerTemplate();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         camelContext.stop();
     }

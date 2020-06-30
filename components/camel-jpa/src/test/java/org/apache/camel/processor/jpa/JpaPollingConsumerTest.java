@@ -22,7 +22,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.Customer;
 import org.apache.camel.spring.SpringRouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JpaPollingConsumerTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + Customer.class.getName() + " x";
