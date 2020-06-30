@@ -112,6 +112,33 @@ public interface KinesisFirehose2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The operation to do in case the user don't want to send only a
+         * record.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations</code> type.
+         * 
+         * Group: producer
+         */
+        default KinesisFirehose2EndpointBuilder operation(
+                KinesisFirehose2Operations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * The operation to do in case the user don't want to send only a
+         * record.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations</code> type.
+         * 
+         * Group: producer
+         */
+        default KinesisFirehose2EndpointBuilder operation(String operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the Kinesis Firehose
          * client.
          * 
@@ -281,6 +308,14 @@ public interface KinesisFirehose2EndpointBuilderFactory {
             doSetProperty("synchronous", synchronous);
             return this;
         }
+    }
+
+    /**
+     * Proxy enum for
+     * <code>org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations</code> enum.
+     */
+    enum KinesisFirehose2Operations {
+        sendBatchRecord;
     }
 
     /**

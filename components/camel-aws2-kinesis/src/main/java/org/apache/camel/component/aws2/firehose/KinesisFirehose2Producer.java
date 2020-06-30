@@ -17,13 +17,18 @@
 package org.apache.camel.component.aws2.firehose;
 
 import java.nio.ByteBuffer;
+import java.util.Collection;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.services.firehose.FirehoseClient;
+import software.amazon.awssdk.services.firehose.model.PutRecordBatchRequest;
+import software.amazon.awssdk.services.firehose.model.PutRecordBatchResponse;
 import software.amazon.awssdk.services.firehose.model.PutRecordRequest;
 import software.amazon.awssdk.services.firehose.model.PutRecordResponse;
 import software.amazon.awssdk.services.firehose.model.Record;
@@ -43,6 +48,38 @@ public class KinesisFirehose2Producer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
+        KinesisFirehose2Operations operation = determineOperation(exchange);
+        if (ObjectHelper.isEmpty(operation)) {
+            processSingleRecord(exchange);
+        } else {
+            switch (operation) {
+                case sendBatchRecord:
+                    sendBatchRecord(getClient(), exchange);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported operation");
+            }
+        }
+    }
+    
+    private void sendBatchRecord(FirehoseClient client, Exchange exchange) {
+        if (exchange.getIn().getBody() instanceof Iterable) {
+            Iterable c = exchange.getIn().getBody(Iterable.class);
+            PutRecordBatchRequest.Builder batchRequest = PutRecordBatchRequest.builder();
+            batchRequest.deliveryStreamName(getEndpoint().getConfiguration().getStreamName());
+            batchRequest.records((Collection<Record>) c);
+            PutRecordBatchResponse result = client.putRecordBatch(batchRequest.build());
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        } else {
+        	PutRecordBatchRequest req = exchange.getIn().getBody(PutRecordBatchRequest.class);
+        	PutRecordBatchResponse result = client.putRecordBatch(req);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        }	
+	}
+
+	public void processSingleRecord(final Exchange exchange) {
         PutRecordRequest request = createRequest(exchange);
         LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
         PutRecordResponse putRecordResult = getEndpoint().getClient().putRecord(request);
@@ -64,5 +101,21 @@ public class KinesisFirehose2Producer extends DefaultProducer {
 
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
+    }
+    
+    protected FirehoseClient getClient() {
+        return getEndpoint().getClient();
+    }
+    
+    protected KinesisFirehose2Configuration getConfiguration() {
+        return getEndpoint().getConfiguration();
+    }
+    
+    private KinesisFirehose2Operations determineOperation(Exchange exchange) {
+    	KinesisFirehose2Operations operation = exchange.getIn().getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_OPERATION, KinesisFirehose2Operations.class);
+        if (operation == null) {
+            operation = getConfiguration().getOperation();
+        }
+        return operation;
     }
 }

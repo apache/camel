@@ -16,8 +16,7 @@
  */
 package org.apache.camel.component.aws2.firehose;
 
-public interface KinesisFirehose2Constants {
+public enum KinesisFirehose2Operations {
 
-    String RECORD_ID = "CamelAwsKinesisFirehoseRecordId";
-    String KINESIS_FIREHOSE_OPERATION = "CamelAwsKinesisFirehoseOperation";
+    sendBatchRecord
 }
