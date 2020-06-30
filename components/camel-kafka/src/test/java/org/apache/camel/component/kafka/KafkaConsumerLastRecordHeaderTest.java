@@ -73,6 +73,10 @@ public class KafkaConsumerLastRecordHeaderTest extends BaseEmbeddedKafkaTest {
             Boolean header = exchanges.get(i).getIn().getHeader(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, Boolean.class);
             assertNotNull("Header not set for #" + i, header);
             assertEquals("Header invalid for #" + i, header, i == exchanges.size() - 1);
+            // as long as the partitions count is 1 on topic:
+            header = exchanges.get(i).getIn().getHeader(KafkaConstants.LAST_POLL_RECORD, Boolean.class);
+            assertNotNull("Last record header not set for #" + i, header);
+            assertEquals("Last record header invalid for #" + i, header, i == exchanges.size() - 1);
         }
     }
 
