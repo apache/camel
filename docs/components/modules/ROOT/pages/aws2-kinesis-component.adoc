@@ -4,7 +4,7 @@
 :page-source: components/camel-aws2-kinesis/src/main/docs/aws2-kinesis-component.adoc
 :docTitle: AWS 2 Kinesis
 :artifactId: camel-aws2-kinesis
-:description: Consume and produce records from AWS Kinesis Streams using AWS SDK version 2.x.
+:description: Consume and produce records from and to AWS Kinesis Streams using AWS SDK version 2.x.
 :since: 3.2
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
