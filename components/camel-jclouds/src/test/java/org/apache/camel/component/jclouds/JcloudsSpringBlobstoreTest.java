@@ -23,14 +23,16 @@ import java.util.Map;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JcloudsSpringBlobstoreTest extends CamelSpringTestSupport {
 
@@ -40,7 +42,7 @@ public class JcloudsSpringBlobstoreTest extends CamelSpringTestSupport {
     @EndpointInject("mock:result-bar")
     protected MockEndpoint resultBar;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws Exception {
         BlobStore blobStore = ContextBuilder.newBuilder("transient").credentials("id", "credential").buildView(BlobStoreContext.class).getBlobStore();
         blobStore.createContainerInLocation(null, "foo");

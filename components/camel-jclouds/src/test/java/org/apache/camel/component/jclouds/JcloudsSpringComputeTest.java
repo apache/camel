@@ -24,15 +24,18 @@ import java.util.Set;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.junit.After;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
 
@@ -43,7 +46,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
     protected MockEndpoint resultlist;
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         template.sendBodyAndHeaders("direct:start", null, destroyHeaders(null, null));
     }
@@ -99,7 +102,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         if (exchanges != null && !exchanges.isEmpty()) {
             for (Exchange exchange : exchanges) {
                 Set<?> nodeMetadatas = exchange.getIn().getBody(Set.class);
-                assertEquals("Nodes should be 0", 0, nodeMetadatas.size());
+                assertEquals(0, nodeMetadatas.size(), "Nodes should be 0");
             }
         }
     }
@@ -115,7 +118,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         if (exchanges != null && !exchanges.isEmpty()) {
             for (Exchange exchange : exchanges) {
                 Set<?> nodeMetadatas = exchange.getIn().getBody(Set.class);
-                assertEquals("Nodes should be 1", 1, nodeMetadatas.size());
+                assertEquals(1, nodeMetadatas.size(), "Nodes should be 1");
             }
         }
     }
@@ -149,7 +152,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         if (exchanges != null && !exchanges.isEmpty()) {
             for (Exchange exchange : exchanges) {
                 Set<?> nodeMetadatas = exchange.getIn().getBody(Set.class);
-                assertEquals("There should be no node running", 1, nodeMetadatas.size());
+                assertEquals(1, nodeMetadatas.size(), "There should be no node running");
 
                 for (Object obj : nodeMetadatas) {
                     NodeMetadata nodeMetadata = (NodeMetadata) obj;
@@ -169,7 +172,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         if (exchanges != null && !exchanges.isEmpty()) {
             for (Exchange exchange : exchanges) {
                 Set<?> nodeMetadatas = exchange.getIn().getBody(Set.class);
-                assertEquals("There should be one node running", 1, nodeMetadatas.size());
+                assertEquals(1, nodeMetadatas.size(), "There should be one node running");
 
                 for (Object obj : nodeMetadatas) {
                     NodeMetadata nodeMetadata = (NodeMetadata) obj;
@@ -189,7 +192,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         if (exchanges != null && !exchanges.isEmpty()) {
             for (Exchange exchange : exchanges) {
                 Set<?> nodeMetadatas = exchange.getIn().getBody(Set.class);
-                assertEquals("There should be one node running", 1, nodeMetadatas.size());
+                assertEquals(1, nodeMetadatas.size(), "There should be one node running");
 
                 for (Object obj : nodeMetadatas) {
                     NodeMetadata nodeMetadata = (NodeMetadata) obj;
@@ -209,7 +212,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         if (exchanges != null && !exchanges.isEmpty()) {
             for (Exchange exchange : exchanges) {
                 Set<?> nodeMetadatas = exchange.getIn().getBody(Set.class);
-                assertEquals("There should be one node running", 1, nodeMetadatas.size());
+                assertEquals(1, nodeMetadatas.size(), "There should be one node running");
 
                 for (Object obj : nodeMetadatas) {
                     NodeMetadata nodeMetadata = (NodeMetadata) obj;
@@ -220,14 +223,14 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
     }   
 
     @SuppressWarnings("unchecked")
-    @Ignore("For now not possible to combine stub provider with ssh module, required for runScript")
+    @Disabled("For now not possible to combine stub provider with ssh module, required for runScript")
     @Test
     public void testRunScript() throws InterruptedException {
         Map<String, Object> runScriptHeaders = new HashMap<>();
         runScriptHeaders.put(JcloudsConstants.OPERATION, JcloudsConstants.RUN_SCRIPT);
 
         Set<? extends NodeMetadata> nodeMetadatas = (Set<? extends NodeMetadata>) template.requestBodyAndHeaders("direct:in-out", null, createHeaders("1", "default"));
-        assertEquals("There should be a node running", 1, nodeMetadatas.size());
+        assertEquals(1, nodeMetadatas.size(), "There should be a node running");
         for (NodeMetadata nodeMetadata : nodeMetadatas) {
             runScriptHeaders.put(JcloudsConstants.NODE_ID, nodeMetadata.getId());
             template.requestBodyAndHeaders("direct:in-out", null, runScriptHeaders);
