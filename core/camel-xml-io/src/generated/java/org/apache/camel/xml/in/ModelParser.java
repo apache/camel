@@ -963,7 +963,9 @@ public class ModelParser extends BaseParser {
                 case "from": def.setInput(doParseFromDefinition()); break;
                 case "inputType": def.setInputType(doParseInputTypeDefinition()); break;
                 case "outputType": def.setOutputType(doParseOutputTypeDefinition()); break;
+                case "rest": def.setRest(Boolean.valueOf(doParseText())); break;
                 case "routeProperty": doAdd(doParsePropertyDefinition(), def.getRouteProperties(), def::setRouteProperties); break;
+                case "template": def.setTemplate(Boolean.valueOf(doParseText())); break;
                 default: return outputDefinitionElementHandler().accept(def, key);
             }
             return true;

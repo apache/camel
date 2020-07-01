@@ -110,7 +110,7 @@ public class RouteTemplateDefinition extends RouteDefinition {
         copy.setInputType(getInputType());
         copy.setOutputType(getOutputType());
         copy.setRouteProperties(getRouteProperties());
-        copy.fromTemplate(null);
+        copy.setTemplate(true);
         copy.setInput(getInput());
         copy.setOutputs(getOutputs());
 

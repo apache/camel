@@ -103,16 +103,6 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     }
 
     /**
-     * This route is created from a route template.
-     */
-    public void fromTemplate(@AsEndpointUri String uri) {
-        if (uri != null) {
-            from(uri);
-        }
-        template = true;
-    }
-
-    /**
      * Check if the route has been prepared
      *
      * @return whether the route has been prepared or not
@@ -976,9 +966,20 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
         this.errorHandlerFactory = errorHandlerFactory;
     }
 
+    public void setRest(Boolean rest) {
+        this.rest = rest;
+    }
+
     @XmlAttribute
     public Boolean isRest() {
         return rest;
+    }
+
+    /**
+     * This route is created from a route template.
+     */
+    public void setTemplate(Boolean template) {
+        this.template = template;
     }
 
     @XmlAttribute

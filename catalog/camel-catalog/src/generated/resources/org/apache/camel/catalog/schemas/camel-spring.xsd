@@ -1230,6 +1230,22 @@ Route controller configuration.
     </xs:annotation>
   </xs:element>
 
+  <xs:element name="routeTemplate" type="tns:routeTemplateDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+Defines a route template (parameterized routes)
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="routeTemplates" type="tns:routeTemplatesDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+A series of route templates
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
   <xs:element name="routes" type="tns:routesDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -2872,6 +2888,7 @@ Language, such as en for english.
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -3319,6 +3336,7 @@ value: Singleton
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -3415,6 +3433,7 @@ value: Singleton
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -3505,6 +3524,7 @@ value: Singleton
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -3584,6 +3604,7 @@ value: Singleton
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -4597,6 +4618,7 @@ endpoint. Default value: false
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -4673,6 +4695,7 @@ endpoint. Default value: false
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -4808,6 +4831,7 @@ Global option value.
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -4986,6 +5010,7 @@ Set if validation is required for this input type. Default value: false
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -5078,6 +5103,7 @@ configured, then all incoming messages is intercepted.
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -5186,6 +5212,7 @@ process its result.
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -5463,6 +5490,7 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -8011,6 +8039,7 @@ path to be maintained in the zip file. Default value: false
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -8214,6 +8243,7 @@ backward compatibility. Default value: false
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -8346,6 +8376,7 @@ this on completion. By default this feature is off. Default value: false
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -8707,6 +8738,7 @@ generate the log message from exchange.
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -8825,6 +8857,7 @@ Set if validation is required for this output type. Default value: false
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -8901,6 +8934,7 @@ Set if validation is required for this output type. Default value: false
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -9409,6 +9443,7 @@ Name of property to remove.
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -9657,6 +9692,7 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -9765,6 +9801,7 @@ Whether stream caching is enabled on this route.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="template" type="xs:boolean"/>
         <xs:attribute name="trace" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -9776,11 +9813,40 @@ Whether tracing is enabled on this route.
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="routeTemplateDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:routeDefinition">
+        <xs:sequence/>
+        <xs:attribute name="parameters" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The names of the parameters this route template requires. Multiple names can be
+separated by comma.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="routeTemplatesDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:optionalIdentifiedDefinition">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeTemplate"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:complexType name="routesDefinition">
     <xs:complexContent>
       <xs:extension base="tns:optionalIdentifiedDefinition">
         <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:route"/>
+          <xs:choice maxOccurs="unbounded" minOccurs="0">
+            <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
+          </xs:choice>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -9901,6 +9967,7 @@ producers.
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -10274,6 +10341,7 @@ Sets a reference to lookup for the comparator to use for sorting.
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -10485,6 +10553,7 @@ backward compatibility. Default value: false
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -10898,6 +10967,7 @@ Whether to auto startup components when toD is starting up. Default value: true
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
@@ -11008,6 +11078,7 @@ Sets a reference to use for lookup the policy in the registry.
             <xs:element ref="tns:resequence"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routeTemplate"/>
             <xs:element ref="tns:routingSlip"/>
             <xs:element ref="tns:saga"/>
             <xs:element ref="tns:sample"/>
