@@ -13,8 +13,9 @@
 
 *{component-header}*
 
-The JT400 component allows you to exchanges messages with an IBM i
-system using data queues.
+The JT400 component allows you to exchange messages with an IBM i system
+using data queues, message queues, or program call. IBM i is the
+replacement for AS/400 and iSeries servers.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:

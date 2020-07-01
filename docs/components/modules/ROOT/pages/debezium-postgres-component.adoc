@@ -46,7 +46,7 @@ debezium-postgres:name[?options]
 
 
 // component options: START
-The Debezium PostgresSQL Connector component supports 67 options, which are listed below.
+The Debezium PostgresSQL Connector component supports 74 options, which are listed below.
 
 
 
@@ -67,7 +67,10 @@ The Debezium PostgresSQL Connector component supports 67 options, which are list
 | *offsetStorageReplicationFactor* (consumer) | Replication factor used when creating the offset storage topic. Required when offset.storage is set to the KafkaOffsetBackingStore |  | int
 | *offsetStorageTopic* (consumer) | The name of the Kafka topic where offsets are to be stored. Required when offset.storage is set to the KafkaOffsetBackingStore. |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *columnBlacklist* (postgres) | Description is not available here, please check Debezium website for corresponding key 'column.blacklist' description. |  | String
+| *binaryHandlingMode* (postgres) | Specify how binary (blob, binary, etc.) columns should be represented in change events, including:'bytes' represents binary data as byte array (default)'base64' represents binary data as base64-encoded string'hex' represents binary data as hex-encoded (base16) string | bytes | String
+| *columnBlacklist* (postgres) | Regular expressions matching columns to exclude from change events |  | String
+| *columnWhitelist* (postgres) | Regular expressions matching columns to include in change events |  | String
+| *converters* (postgres) | Optional list of custom converters that would be used instead of default ones. The converters are defined using '.type' config option and configured using options '.' |  | String
 | *databaseDbname* (postgres) | The name of the database the connector should be monitoring |  | String
 | *databaseHistoryFileFilename* (postgres) | The path to the file that will be used to record the database history |  | String
 | *databaseHostname* (postgres) | Resolvable hostname or IP address of the Postgres database server. |  | String
@@ -97,10 +100,13 @@ The Debezium PostgresSQL Connector component supports 67 options, which are list
 | *pluginName* (postgres) | The name of the Postgres logical decoding plugin installed on the server. Supported values are 'decoderbufs' and 'wal2json'. Defaults to 'decoderbufs'. | decoderbufs | String
 | *pollIntervalMs* (postgres) | Frequency in milliseconds to wait for new change events to appear after receiving no events. Defaults to 500ms. | 500ms | long
 | *provideTransactionMetadata* (postgres) | Enables transaction metadata extraction together with event counting | false | boolean
+| *publicationAutocreateMode* (postgres) | Applies only when streaming changes using pgoutput.Determine how creation of a publication should work, the default is all_tables.DISABLED - The connector will not attempt to create a publication at all. The expectation is that the user has created the publication up-front. If the publication isn't found to exist upon startup, the connector will throw an exception and stop.ALL_TABLES - If no publication exists, the connector will create a new publication for all tables. Note this requires that the configured user has access. If the publication already exists, it will be used. i.e CREATE PUBLICATION FOR ALL TABLES;FILTERED - If no publication exists, the connector will create a new publication for all those tables matchingthe current filter configuration (see table/database whitelist/blacklist properties). If the publication already exists, it will be used. i.e CREATE PUBLICATION FOR TABLE | all_tables | String
 | *publicationName* (postgres) | The name of the Postgres 10 publication used for streaming changes from a plugin.Defaults to 'dbz_publication' | dbz_publication | String
+| *sanitizeFieldNames* (postgres) | Whether field names will be sanitized to Avro naming conventions | false | boolean
 | *schemaBlacklist* (postgres) | The schemas for which events must not be captured |  | String
 | *schemaRefreshMode* (postgres) | Specify the conditions that trigger a refresh of the in-memory schema for a table. 'columns_diff' (the default) is the safest mode, ensuring the in-memory schema stays in-sync with the database table's schema at all times. 'columns_diff_exclude_unchanged_toast' instructs the connector to refresh the in-memory schema cache if there is a discrepancy between it and the schema derived from the incoming message, unless unchanged TOASTable data fully accounts for the discrepancy. This setting can improve connector performance significantly if there are frequently-updated tables that have TOASTed data that are rarely part of these updates. However, it is possible for the in-memory schema to become outdated if TOASTable columns are dropped from the table. | columns_diff | String
 | *schemaWhitelist* (postgres) | The schemas for which events should be captured |  | String
+| *skippedOperations* (postgres) | The comma-separated list of operations to skip during streaming, defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By default, no operations will be skipped. |  | String
 | *slotDropOnStop* (postgres) | Whether or not to drop the logical replication slot when the connector finishes orderlyBy default the replication is kept so that on restart progress can resume from the last recorded location | false | boolean
 | *slotMaxRetries* (postgres) | How many times to retry connecting to a replication slot when an attempt fails. | 6 | int
 | *slotName* (postgres) | The name of the Postgres logical decoding slot created for streaming changes from a plugin.Defaults to 'debezium | debezium | String
@@ -115,6 +121,7 @@ The Debezium PostgresSQL Connector component supports 67 options, which are list
 | *sourceStructVersion* (postgres) | A version of the format of the publicly visible source part in the message | v2 | String
 | *statusUpdateIntervalMs* (postgres) | Frequency in milliseconds for sending replication connection status updates to the server. Defaults to 10 seconds (10000 ms). | 10s | int
 | *tableBlacklist* (postgres) | Description is not available here, please check Debezium website for corresponding key 'table.blacklist' description. |  | String
+| *tableIgnoreBuiltin* (postgres) | Flag specifying whether built-in tables should be ignored. | true | boolean
 | *tableWhitelist* (postgres) | The tables for which changes are to be captured |  | String
 | *timePrecisionMode* (postgres) | Time, date, and timestamps can be represented with different kinds of precisions, including:'adaptive' (the default) bases the precision of time, date, and timestamp values on the database column's precision; 'adaptive_time_microseconds' like 'adaptive' mode, but TIME fields always use microseconds precision;'connect' always represents time, date, and timestamp values using Kafka Connect's built-in representations for Time, Date, and Timestamp, which uses millisecond precision regardless of the database columns' precision . | adaptive | String
 | *toastedValuePlaceholder* (postgres) | Specify the constant that will be provided by Debezium to indicate that the original value is a toasted value not provided by the database.If starts with 'hex:' prefix it is expected that the rest of the string repesents hexadecimally encoded octets. | __debezium_unavailable_value | String
@@ -143,7 +150,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (69 parameters):
+=== Query Parameters (76 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -165,7 +172,10 @@ with the following path and query parameters:
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *columnBlacklist* (postgres) | Description is not available here, please check Debezium website for corresponding key 'column.blacklist' description. |  | String
+| *binaryHandlingMode* (postgres) | Specify how binary (blob, binary, etc.) columns should be represented in change events, including:'bytes' represents binary data as byte array (default)'base64' represents binary data as base64-encoded string'hex' represents binary data as hex-encoded (base16) string | bytes | String
+| *columnBlacklist* (postgres) | Regular expressions matching columns to exclude from change events |  | String
+| *columnWhitelist* (postgres) | Regular expressions matching columns to include in change events |  | String
+| *converters* (postgres) | Optional list of custom converters that would be used instead of default ones. The converters are defined using '.type' config option and configured using options '.' |  | String
 | *databaseDbname* (postgres) | The name of the database the connector should be monitoring |  | String
 | *databaseHistoryFileFilename* (postgres) | The path to the file that will be used to record the database history |  | String
 | *databaseHostname* (postgres) | Resolvable hostname or IP address of the Postgres database server. |  | String
@@ -195,10 +205,13 @@ with the following path and query parameters:
 | *pluginName* (postgres) | The name of the Postgres logical decoding plugin installed on the server. Supported values are 'decoderbufs' and 'wal2json'. Defaults to 'decoderbufs'. | decoderbufs | String
 | *pollIntervalMs* (postgres) | Frequency in milliseconds to wait for new change events to appear after receiving no events. Defaults to 500ms. | 500ms | long
 | *provideTransactionMetadata* (postgres) | Enables transaction metadata extraction together with event counting | false | boolean
+| *publicationAutocreateMode* (postgres) | Applies only when streaming changes using pgoutput.Determine how creation of a publication should work, the default is all_tables.DISABLED - The connector will not attempt to create a publication at all. The expectation is that the user has created the publication up-front. If the publication isn't found to exist upon startup, the connector will throw an exception and stop.ALL_TABLES - If no publication exists, the connector will create a new publication for all tables. Note this requires that the configured user has access. If the publication already exists, it will be used. i.e CREATE PUBLICATION FOR ALL TABLES;FILTERED - If no publication exists, the connector will create a new publication for all those tables matchingthe current filter configuration (see table/database whitelist/blacklist properties). If the publication already exists, it will be used. i.e CREATE PUBLICATION FOR TABLE | all_tables | String
 | *publicationName* (postgres) | The name of the Postgres 10 publication used for streaming changes from a plugin.Defaults to 'dbz_publication' | dbz_publication | String
+| *sanitizeFieldNames* (postgres) | Whether field names will be sanitized to Avro naming conventions | false | boolean
 | *schemaBlacklist* (postgres) | The schemas for which events must not be captured |  | String
 | *schemaRefreshMode* (postgres) | Specify the conditions that trigger a refresh of the in-memory schema for a table. 'columns_diff' (the default) is the safest mode, ensuring the in-memory schema stays in-sync with the database table's schema at all times. 'columns_diff_exclude_unchanged_toast' instructs the connector to refresh the in-memory schema cache if there is a discrepancy between it and the schema derived from the incoming message, unless unchanged TOASTable data fully accounts for the discrepancy. This setting can improve connector performance significantly if there are frequently-updated tables that have TOASTed data that are rarely part of these updates. However, it is possible for the in-memory schema to become outdated if TOASTable columns are dropped from the table. | columns_diff | String
 | *schemaWhitelist* (postgres) | The schemas for which events should be captured |  | String
+| *skippedOperations* (postgres) | The comma-separated list of operations to skip during streaming, defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By default, no operations will be skipped. |  | String
 | *slotDropOnStop* (postgres) | Whether or not to drop the logical replication slot when the connector finishes orderlyBy default the replication is kept so that on restart progress can resume from the last recorded location | false | boolean
 | *slotMaxRetries* (postgres) | How many times to retry connecting to a replication slot when an attempt fails. | 6 | int
 | *slotName* (postgres) | The name of the Postgres logical decoding slot created for streaming changes from a plugin.Defaults to 'debezium | debezium | String
@@ -213,6 +226,7 @@ with the following path and query parameters:
 | *sourceStructVersion* (postgres) | A version of the format of the publicly visible source part in the message | v2 | String
 | *statusUpdateIntervalMs* (postgres) | Frequency in milliseconds for sending replication connection status updates to the server. Defaults to 10 seconds (10000 ms). | 10s | int
 | *tableBlacklist* (postgres) | Description is not available here, please check Debezium website for corresponding key 'table.blacklist' description. |  | String
+| *tableIgnoreBuiltin* (postgres) | Flag specifying whether built-in tables should be ignored. | true | boolean
 | *tableWhitelist* (postgres) | The tables for which changes are to be captured |  | String
 | *timePrecisionMode* (postgres) | Time, date, and timestamps can be represented with different kinds of precisions, including:'adaptive' (the default) bases the precision of time, date, and timestamp values on the database column's precision; 'adaptive_time_microseconds' like 'adaptive' mode, but TIME fields always use microseconds precision;'connect' always represents time, date, and timestamp values using Kafka Connect's built-in representations for Time, Date, and Timestamp, which uses millisecond precision regardless of the database columns' precision . | adaptive | String
 | *toastedValuePlaceholder* (postgres) | Specify the constant that will be provided by Debezium to indicate that the original value is a toasted value not provided by the database.If starts with 'hex:' prefix it is expected that the rest of the string repesents hexadecimally encoded octets. | __debezium_unavailable_value | String
