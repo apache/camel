@@ -40,7 +40,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RouteFilters;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
@@ -49,7 +48,6 @@ import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 
 public class DefaultModel implements Model {
 
@@ -184,6 +182,8 @@ public class DefaultModel implements Model {
         if (target == null) {
             throw new IllegalArgumentException("Cannot find RouteTemplate with id " + routeTemplateId);
         }
+
+        // TODO: Need to add default values for parameters from the template
 
         PropertiesComponent pc = camelContext.getPropertiesComponent();
         Properties prop = new Properties();

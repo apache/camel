@@ -32,8 +32,9 @@ public class RouteTemplateTest extends ContextTestSupport {
     public void testDefineRouteTemplate() throws Exception {
         assertEquals(1, context.getRouteTemplateDefinitions().size());
 
-        RouteTemplateDefinition template = context.getRouteTemplateDefinition("myTemplate");
-        assertEquals("foo,bar", template.getParameters());
+        RouteTemplateDefinition routeTemplate = context.getRouteTemplateDefinition("myTemplate");
+        assertEquals("foo", routeTemplate.getTemplateParameters().get(0).getName());
+        assertEquals("bar", routeTemplate.getTemplateParameters().get(1).getName());
     }
 
     @Test
@@ -41,7 +42,8 @@ public class RouteTemplateTest extends ContextTestSupport {
         assertEquals(1, context.getRouteTemplateDefinitions().size());
 
         RouteTemplateDefinition routeTemplate = context.getRouteTemplateDefinition("myTemplate");
-        assertEquals("foo,bar", routeTemplate.getParameters());
+        assertEquals("foo", routeTemplate.getTemplateParameters().get(0).getName());
+        assertEquals("bar", routeTemplate.getTemplateParameters().get(1).getName());
 
         getMockEndpoint("mock:cheese").expectedBodiesReceived("Hello Cheese");
         getMockEndpoint("mock:cake").expectedBodiesReceived("Hello Cake");
@@ -73,7 +75,8 @@ public class RouteTemplateTest extends ContextTestSupport {
         assertEquals(1, context.getRouteTemplateDefinitions().size());
 
         RouteTemplateDefinition routeTemplate = context.getRouteTemplateDefinition("myTemplate");
-        assertEquals("foo,bar", routeTemplate.getParameters());
+        assertEquals("foo", routeTemplate.getTemplateParameters().get(0).getName());
+        assertEquals("bar", routeTemplate.getTemplateParameters().get(1).getName());
 
         getMockEndpoint("mock:cheese").expectedBodiesReceived("Hello Cheese");
 
@@ -107,7 +110,8 @@ public class RouteTemplateTest extends ContextTestSupport {
         assertEquals(1, context.getRouteTemplateDefinitions().size());
 
         RouteTemplateDefinition routeTemplate = context.getRouteTemplateDefinition("myTemplate");
-        assertEquals("foo,bar", routeTemplate.getParameters());
+        assertEquals("foo", routeTemplate.getTemplateParameters().get(0).getName());
+        assertEquals("bar", routeTemplate.getTemplateParameters().get(1).getName());
 
         getMockEndpoint("mock:cheese").expectedBodiesReceived("Hello Cheese");
 
@@ -133,7 +137,7 @@ public class RouteTemplateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                routeTemplate("myTemplate", "foo", "bar")
+                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                     .from("direct:{{foo}}")
                     .to("mock:{{bar}}");
             }

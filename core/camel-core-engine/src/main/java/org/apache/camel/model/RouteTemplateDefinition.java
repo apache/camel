@@ -16,62 +16,138 @@
  */
 package org.apache.camel.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
+import org.apache.camel.Endpoint;
+import org.apache.camel.builder.EndpointConsumerBuilder;
+import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CollectionStringBuffer;
 
 /**
  * Defines a route template (parameterized routes)
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "routeTemplate")
+@XmlType(propOrder = {"templateParameters", "route"})
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RouteTemplateDefinition extends RouteDefinition {
+public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
 
-    @XmlAttribute
-    private String parameters;
+    @XmlElement(name = "templateParameter")
+    private List<RouteTemplateParameterDefinition> templateParameters;
+    @XmlElement(name = "route", required = true)
+    private RouteDefinition route = new RouteDefinition();
 
-    public String getParameters() {
-        return parameters;
+    public void setTemplateParameters(List<RouteTemplateParameterDefinition> templateParameters) {
+        this.templateParameters = templateParameters;
     }
 
-    /**
-     * The names of the parameters this route template requires. Multiple names can be separated by comma.
-     */
-    public void setParameters(String parameters) {
-        if (this.parameters == null) {
-            this.parameters = parameters;
-        } else {
-            this.parameters += "," + parameters;
-        }
+    public List<RouteTemplateParameterDefinition> getTemplateParameters() {
+        return templateParameters;
+    }
+
+    public RouteDefinition getRoute() {
+        return route;
+    }
+
+    public void setRoute(RouteDefinition route) {
+        this.route = route;
     }
 
     // Fluent API
     // -------------------------------------------------------------------------
 
     /**
-     * The names of the parameters this route template requires. Multiple names can be separated by comma.
+     * Creates an input to the route
+     *
+     * @param uri the from uri
+     * @return the builder
      */
-    public RouteTemplateDefinition parameters(String parameters) {
-        setParameters(parameters);
+    public RouteDefinition from(@AsEndpointUri String uri) {
+        return route.from(uri);
+    }
+
+    /**
+     * Creates an input to the route
+     *
+     * @param endpoint the from endpoint
+     * @return the builder
+     */
+    public RouteDefinition from(Endpoint endpoint) {
+        return route.from(endpoint);
+    }
+
+    /**
+     * Creates an input to the route
+     *
+     * @param endpoint the from endpoint
+     * @return the builder
+     */
+    public RouteDefinition from(EndpointConsumerBuilder endpoint) {
+        return route.from(endpoint);
+    }
+
+    /**
+     * To define the route in the template
+     */
+    public RouteDefinition route() {
+        return route;
+    }
+
+    @Override
+    public RouteTemplateDefinition description(String text) {
+        DescriptionDefinition def = new DescriptionDefinition();
+        def.setText(text);
+        setDescription(def);
         return this;
     }
 
     /**
-     * The names of the parameters this route template requires.
+     * Adds a parameter the route template uses.
+     *
+     * @param name the name of the parameter
      */
-    public RouteTemplateDefinition parameters(String... parameters) {
-        if (parameters != null) {
-            CollectionStringBuffer csb = new CollectionStringBuffer(",");
-            for (String p : parameters) {
-                csb.append(p);
-            }
-            setParameters(csb.toString());
-        }
+    public RouteTemplateDefinition templateParameter(String name) {
+        addTemplateParameter(name, null);
+        return this;
+    }
+
+    /**
+     * Adds a parameter the route template uses.
+     *
+     * @param name the name of the parameter
+     * @param defaultValue default value of the parameter
+     */
+    public RouteTemplateDefinition templateParameter(String name, String defaultValue) {
+        addTemplateParameter(name, defaultValue);
+        return this;
+    }
+
+    /**
+     * Adds a parameter the route template uses.
+     *
+     * @param name the name of the parameter
+     * @param defaultValue default value of the parameter
+     */
+    public RouteTemplateDefinition templateParameter(String name, String defaultValue, String description) {
+        addTemplateParameter(name, defaultValue, description);
+        return this;
+    }
+
+    /**
+     * Adds the parameters the route template uses.
+     *
+     * @param parameters the parameters (only name and default values)
+     */
+    public RouteTemplateDefinition templateParameters(Map<String, String> parameters) {
+        parameters.forEach(this::addTemplateParameter);
         return this;
     }
 
@@ -82,9 +158,25 @@ public class RouteTemplateDefinition extends RouteDefinition {
 
     @Override
     public String getLabel() {
-        return "RouteTemplate[" + getInput().getLabel() + "]";
+        return "RouteTemplate[" + route.getInput().getLabel() + "]";
     }
 
+    /**
+     * Adds a parameter the route template uses.
+     */
+    private void addTemplateParameter(String name, String defaultValue) {
+        addTemplateParameter(name, defaultValue, null);
+    }
+
+    /**
+     * Adds a parameter the route template uses.
+     */
+    private void addTemplateParameter(String name, String defaultValue, String description) {
+        if (this.templateParameters == null) {
+            this.templateParameters = new ArrayList<>();
+        }
+        this.templateParameters.add(new RouteTemplateParameterDefinition(name, defaultValue, description));
+    }
     /**
      * Creates a copy of this template as a {@link RouteDefinition} which can be used
      * to add as a new route.
@@ -93,26 +185,31 @@ public class RouteTemplateDefinition extends RouteDefinition {
         RouteDefinition copy = new RouteDefinition();
 
         // do not copy id as it is used for route template id
-        copy.setInheritErrorHandler(isInheritErrorHandler());
-        copy.setGroup(getGroup());
-        copy.setStreamCache(getStreamCache());
-        copy.setTrace(getTrace());
-        copy.setMessageHistory(getMessageHistory());
-        copy.setLogMask(getLogMask());
-        copy.setDelayer(getDelayer());
-        copy.setStartupOrder(getStartupOrder());
-        copy.setRoutePolicies(getRoutePolicies());
-        copy.setRoutePolicyRef(getRoutePolicyRef());
-        copy.setShutdownRoute(getShutdownRoute());
-        copy.setShutdownRunningTask(getShutdownRunningTask());
-        copy.setErrorHandlerRef(getErrorHandlerRef());
-        copy.setErrorHandlerFactory(getErrorHandlerFactory());
-        copy.setInputType(getInputType());
-        copy.setOutputType(getOutputType());
-        copy.setRouteProperties(getRouteProperties());
+        copy.setInheritErrorHandler(route.isInheritErrorHandler());
+        copy.setGroup(route.getGroup());
+        copy.setStreamCache(route.getStreamCache());
+        copy.setTrace(route.getTrace());
+        copy.setMessageHistory(route.getMessageHistory());
+        copy.setLogMask(route.getLogMask());
+        copy.setDelayer(route.getDelayer());
+        copy.setStartupOrder(route.getStartupOrder());
+        copy.setRoutePolicies(route.getRoutePolicies());
+        copy.setRoutePolicyRef(route.getRoutePolicyRef());
+        copy.setShutdownRoute(route.getShutdownRoute());
+        copy.setShutdownRunningTask(route.getShutdownRunningTask());
+        copy.setErrorHandlerRef(route.getErrorHandlerRef());
+        copy.setErrorHandlerFactory(route.getErrorHandlerFactory());
+        copy.setInputType(route.getInputType());
+        copy.setOutputType(route.getOutputType());
+        copy.setRouteProperties(route.getRouteProperties());
         copy.setTemplate(true);
-        copy.setInput(getInput());
-        copy.setOutputs(getOutputs());
+        copy.setInput(route.getInput());
+        copy.setOutputs(route.getOutputs());
+        if (route.getDescription() != null) {
+            copy.setDescription(route.getDescription());
+        } else {
+            copy.setDescription(getDescription());
+        }
 
         return copy;
     }

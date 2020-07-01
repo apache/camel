@@ -19,9 +19,13 @@
 -->
 <!-- START SNIPPET: e1 -->
 <routeTemplates xmlns="http://camel.apache.org/schema/spring">
-    <routeTemplate id="myTemplate" parameters="foo,bar">
-        <from uri="direct:{{foo}}"/>
-        <to uri="mock:{{bar}}"/>
+    <routeTemplate id="myTemplate">
+        <templateParameter name="foo"/>
+        <templateParameter name="bar"/>
+        <route>
+            <from uri="direct:{{foo}}"/>
+            <to uri="mock:{{bar}}"/>
+        </route>
     </routeTemplate>
 </routeTemplates>
 <!-- END SNIPPET: e1 -->

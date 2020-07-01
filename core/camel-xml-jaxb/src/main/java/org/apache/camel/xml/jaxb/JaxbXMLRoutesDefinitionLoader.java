@@ -120,12 +120,12 @@ public class JaxbXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader 
         if (result instanceof RouteTemplateDefinition) {
             RouteTemplateDefinition route = (RouteTemplateDefinition)result;
             answer = new RouteTemplatesDefinition();
-            applyNamespaces(route, namespaces);
+            applyNamespaces(route.getRoute(), namespaces);
             answer.getRouteTemplates().add(route);
         } else if (result instanceof RouteTemplatesDefinition) {
             answer = (RouteTemplatesDefinition)result;
             for (RouteTemplateDefinition route : answer.getRouteTemplates()) {
-                applyNamespaces(route, namespaces);
+                applyNamespaces(route.getRoute(), namespaces);
             }
         } else {
             // ignore not supported type
@@ -275,11 +275,11 @@ public class JaxbXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader 
         if (result instanceof RouteTemplatesDefinition) {
             List<RouteTemplateDefinition> templates = ((RouteTemplatesDefinition) result).getRouteTemplates();
             for (RouteTemplateDefinition template : templates) {
-                applyNamespaces(template, namespaces);
+                applyNamespaces(template.getRoute(), namespaces);
             }
         } else if (result instanceof RouteTemplateDefinition) {
             RouteTemplateDefinition template = (RouteTemplateDefinition)result;
-            applyNamespaces(template, namespaces);
+            applyNamespaces(template.getRoute(), namespaces);
         } else if (result instanceof RoutesDefinition) {
             List<RouteDefinition> routes = ((RoutesDefinition)result).getRoutes();
             for (RouteDefinition route : routes) {

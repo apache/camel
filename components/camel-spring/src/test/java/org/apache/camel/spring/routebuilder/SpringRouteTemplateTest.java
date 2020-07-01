@@ -40,8 +40,9 @@ public class SpringRouteTemplateTest extends SpringTestSupport {
     public void testDefineRouteTemplate() throws Exception {
         assertEquals(1, context.getRouteTemplateDefinitions().size());
 
-        RouteTemplateDefinition template = context.getRouteTemplateDefinition("myTemplate");
-        assertEquals("foo,bar", template.getParameters());
+        RouteTemplateDefinition routeTemplate = context.getRouteTemplateDefinition("myTemplate");
+        assertEquals("foo", routeTemplate.getTemplateParameters().get(0).getName());
+        assertEquals("bar", routeTemplate.getTemplateParameters().get(1).getName());
     }
 
     @Test
@@ -49,7 +50,8 @@ public class SpringRouteTemplateTest extends SpringTestSupport {
         assertEquals(1, context.getRouteTemplateDefinitions().size());
 
         RouteTemplateDefinition routeTemplate = context.getRouteTemplateDefinition("myTemplate");
-        assertEquals("foo,bar", routeTemplate.getParameters());
+        assertEquals("foo", routeTemplate.getTemplateParameters().get(0).getName());
+        assertEquals("bar", routeTemplate.getTemplateParameters().get(1).getName());
 
         getMockEndpoint("mock:cheese").expectedBodiesReceived("Hello Cheese");
         getMockEndpoint("mock:cake").expectedBodiesReceived("Hello Cake");
@@ -81,7 +83,8 @@ public class SpringRouteTemplateTest extends SpringTestSupport {
         assertEquals(1, context.getRouteTemplateDefinitions().size());
 
         RouteTemplateDefinition routeTemplate = context.getRouteTemplateDefinition("myTemplate");
-        assertEquals("foo,bar", routeTemplate.getParameters());
+        assertEquals("foo", routeTemplate.getTemplateParameters().get(0).getName());
+        assertEquals("bar", routeTemplate.getTemplateParameters().get(1).getName());
 
         getMockEndpoint("mock:cheese").expectedBodiesReceived("Hello Cheese");
 
@@ -115,7 +118,8 @@ public class SpringRouteTemplateTest extends SpringTestSupport {
         assertEquals(1, context.getRouteTemplateDefinitions().size());
 
         RouteTemplateDefinition routeTemplate = context.getRouteTemplateDefinition("myTemplate");
-        assertEquals("foo,bar", routeTemplate.getParameters());
+        assertEquals("foo", routeTemplate.getTemplateParameters().get(0).getName());
+        assertEquals("bar", routeTemplate.getTemplateParameters().get(1).getName());
 
         getMockEndpoint("mock:cheese").expectedBodiesReceived("Hello Cheese");
 

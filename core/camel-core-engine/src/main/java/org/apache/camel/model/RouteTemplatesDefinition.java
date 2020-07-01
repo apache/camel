@@ -88,29 +88,10 @@ public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<Route
      * Creates a route template
      *
      * @param id the id of the route template
-     * @param properties the properties of the route template, multiple properties can be separated by comma
      */
-    public RouteTemplateDefinition routeTemplate(String id, String properties) {
+    public RouteTemplateDefinition routeTemplate(String id) {
         RouteTemplateDefinition routeTemplate = createRouteTemplate();
         routeTemplate.id(id);
-        routeTemplate.parameters(properties);
-        return routeTemplate(routeTemplate);
-    }
-
-    /**
-     * Creates a route template
-     *
-     * @param id the id of the route template
-     * @param properties the properties of the route template
-     */
-    public RouteTemplateDefinition routeTemplate(String id, String... properties) {
-        RouteTemplateDefinition routeTemplate = createRouteTemplate();
-        routeTemplate.id(id);
-        if (properties != null) {
-            for (String p : properties) {
-                routeTemplate.parameters(p);
-            }
-        }
         return routeTemplate(routeTemplate);
     }
 

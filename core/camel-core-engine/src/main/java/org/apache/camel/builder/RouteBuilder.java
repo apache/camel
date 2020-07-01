@@ -165,9 +165,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      *
      * @return the builder
      */
-    public RouteTemplateDefinition routeTemplate(String id, String... properties) {
+    public RouteTemplateDefinition routeTemplate(String id) {
         getRouteTemplateCollection().setCamelContext(getContext());
-        RouteTemplateDefinition answer = getRouteTemplateCollection().routeTemplate(id, properties);
+        RouteTemplateDefinition answer = getRouteTemplateCollection().routeTemplate(id);
         configureRouteTemplate(answer);
         return answer;
     }

@@ -26,9 +26,14 @@
             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <camelContext id="foo" xmlns="http://camel.apache.org/schema/spring">
-        <routeTemplate id="myTemplate" parameters="foo,bar">
-            <from uri="direct:{{foo}}"/>
-            <to uri="mock:{{bar}}"/>
+        <routeTemplate id="myTemplate">
+            <description>blah blah</description>
+            <templateParameter name="foo"/>
+            <templateParameter name="bar"/>
+            <route>
+                <from uri="direct:{{foo}}"/>
+                <to uri="mock:{{bar}}"/>
+            </route>
         </routeTemplate>
     </camelContext>
 

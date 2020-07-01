@@ -32,8 +32,9 @@ public class RouteTemplateAndExistingRouteTest extends ContextTestSupport {
     public void testDefineRouteTemplate() throws Exception {
         assertEquals(1, context.getRouteTemplateDefinitions().size());
 
-        RouteTemplateDefinition template = context.getRouteTemplateDefinition("myTemplate");
-        assertEquals("foo,greeting", template.getParameters());
+        RouteTemplateDefinition routeTemplate = context.getRouteTemplateDefinition("myTemplate");
+        assertEquals("foo", routeTemplate.getTemplateParameters().get(0).getName());
+        assertEquals("greeting", routeTemplate.getTemplateParameters().get(1).getName());
     }
 
     @Test
@@ -41,7 +42,8 @@ public class RouteTemplateAndExistingRouteTest extends ContextTestSupport {
         assertEquals(1, context.getRouteTemplateDefinitions().size());
 
         RouteTemplateDefinition routeTemplate = context.getRouteTemplateDefinition("myTemplate");
-        assertEquals("foo,greeting", routeTemplate.getParameters());
+        assertEquals("foo", routeTemplate.getTemplateParameters().get(0).getName());
+        assertEquals("greeting", routeTemplate.getTemplateParameters().get(1).getName());
 
         getMockEndpoint("mock:common").expectedBodiesReceived("Hello Camel", "Hello World");
 
@@ -71,8 +73,7 @@ public class RouteTemplateAndExistingRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                routeTemplate("myTemplate", "foo", "greeting")
-                    .routeDescription("Route saying {{greeting}}")
+                routeTemplate("myTemplate").templateParameter("foo").templateParameter("greeting").description("Route saying {{greeting}}")
                     .from("direct:{{foo}}")
                     .transform(simple("Hello {{greeting}}"))
                     .to("direct:common");

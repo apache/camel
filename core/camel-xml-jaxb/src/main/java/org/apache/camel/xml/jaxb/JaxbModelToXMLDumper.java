@@ -74,11 +74,11 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
         if (definition instanceof RouteTemplatesDefinition) {
             List<RouteTemplateDefinition> templates = ((RouteTemplatesDefinition)definition).getRouteTemplates();
             for (RouteTemplateDefinition route : templates) {
-                extractNamespaces(route, namespaces);
+                extractNamespaces(route.getRoute(), namespaces);
             }
         } else if (definition instanceof RouteTemplateDefinition) {
             RouteTemplateDefinition template = (RouteTemplateDefinition)definition;
-            extractNamespaces(template, namespaces);
+            extractNamespaces(template.getRoute(), namespaces);
         } else if (definition instanceof RoutesDefinition) {
             List<RouteDefinition> routes = ((RoutesDefinition)definition).getRoutes();
             for (RouteDefinition route : routes) {

@@ -45,10 +45,11 @@ public class ManagedCamelContextDumpRouteTemplatesAsXmlTest extends ManagementTe
 
         assertTrue(xml.contains("routeTemplate"));
         assertTrue(xml.contains("myTemplate"));
-        assertTrue(xml.contains("myOtherTemplate"));
-        assertTrue(xml.contains("foo,bar"));
-        assertTrue(xml.contains("aaa"));
+        assertTrue(xml.contains("<templateParameter name=\"foo\""));
+        assertTrue(xml.contains("<templateParameter name=\"bar\""));
         assertTrue(xml.contains("direct:{{foo}}"));
+        assertTrue(xml.contains("myOtherTemplate"));
+        assertTrue(xml.contains("<templateParameter name=\"aaa\""));
         assertTrue(xml.contains("<header>{{aaa}}</header>"));
     }
 
@@ -57,12 +58,12 @@ public class ManagedCamelContextDumpRouteTemplatesAsXmlTest extends ManagementTe
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                routeTemplate("myTemplate").parameters("foo,bar")
+                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                     .from("direct:{{foo}}")
                         .log("Got ${body}")
                         .to("{{bar}}");
 
-                routeTemplate("myOtherTemplate").parameters("aaa")
+                routeTemplate("myOtherTemplate").templateParameter("aaa")
                     .from("seda:bar")
                         .filter().header("{{aaa}}")
                             .to("ref:bar")

@@ -42,8 +42,9 @@ public class RouteTemplateLoadFromXmlTest extends ContextTestSupport {
 
         assertEquals(1, context.getRouteTemplateDefinitions().size());
 
-        RouteTemplateDefinition template = context.getRouteTemplateDefinition("myTemplate");
-        assertEquals("foo,bar", template.getParameters());
+        RouteTemplateDefinition routeTemplate = context.getRouteTemplateDefinition("myTemplate");
+        assertEquals("foo", routeTemplate.getTemplateParameters().get(0).getName());
+        assertEquals("bar", routeTemplate.getTemplateParameters().get(1).getName());
     }
 
     @Test

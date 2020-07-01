@@ -65,6 +65,7 @@ RouteBuilderDefinition
 RouteContextRefDefinition
 RouteDefinition
 RouteTemplateDefinition
+RouteTemplateParameterDefinition
 RouteTemplatesDefinition
 RoutesDefinition
 RoutingSlipDefinition

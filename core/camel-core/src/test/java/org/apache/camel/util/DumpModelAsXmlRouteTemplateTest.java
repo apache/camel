@@ -58,7 +58,13 @@ public class DumpModelAsXmlRouteTemplateTest extends ContextTestSupport {
         assertEquals(1, nodes.getLength());
         node = (Element)nodes.item(0);
         assertEquals("myTemplate", node.getAttribute("id"));
-        assertEquals("greeting,whereto", node.getAttribute("parameters"));
+
+        nodes = doc.getElementsByTagName("templateParameter");
+        assertEquals(2, nodes.getLength());
+        node = (Element)nodes.item(0);
+        assertEquals("greeting", node.getAttribute("name"));
+        node = (Element)nodes.item(1);
+        assertEquals("whereto", node.getAttribute("name"));
     }
 
     @Override
@@ -66,7 +72,7 @@ public class DumpModelAsXmlRouteTemplateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                routeTemplate("myTemplate", "greeting", "whereto")
+                routeTemplate("myTemplate").templateParameter("greeting").templateParameter("whereto")
                     .from("direct:start").transform(simple("{{greeting}}")).to("mock:{{whereto}}");
             }
         };
