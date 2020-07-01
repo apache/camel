@@ -41,8 +41,8 @@ public final class ZooKeeperCuratorHelper {
             if (retryPolicy == null) {
                 retryPolicy = new ExponentialBackoffRetry(
                     (int)configuration.getReconnectBaseSleepTimeUnit().toMillis(configuration.getReconnectBaseSleepTime()),
-                    (int)configuration.getReconnectMaxSleepTimeUnit().toMillis(configuration.getReconnectMaxSleepTime()),
-                    configuration.getReconnectMaxRetries());
+                    configuration.getReconnectMaxRetries(),
+                    (int)configuration.getReconnectMaxSleepTimeUnit().toMillis(configuration.getReconnectMaxSleepTime()));
             }
 
             CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
