@@ -1373,6 +1373,7 @@ public interface KafkaComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: https
          * Group: security
          */
         default KafkaComponentBuilder sslEndpointAlgorithm(

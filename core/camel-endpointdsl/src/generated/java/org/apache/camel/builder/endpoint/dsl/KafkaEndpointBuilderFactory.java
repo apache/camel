@@ -1280,6 +1280,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: https
          * Group: security
          */
         default KafkaEndpointConsumerBuilder sslEndpointAlgorithm(
@@ -2904,6 +2905,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: https
          * Group: security
          */
         default KafkaEndpointProducerBuilder sslEndpointAlgorithm(
@@ -3566,6 +3568,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: https
          * Group: security
          */
         default KafkaEndpointBuilder sslEndpointAlgorithm(
