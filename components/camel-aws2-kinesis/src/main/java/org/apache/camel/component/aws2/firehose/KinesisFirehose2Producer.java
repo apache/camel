@@ -29,6 +29,8 @@ import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.firehose.FirehoseClient;
 import software.amazon.awssdk.services.firehose.model.CreateDeliveryStreamRequest;
 import software.amazon.awssdk.services.firehose.model.CreateDeliveryStreamResponse;
+import software.amazon.awssdk.services.firehose.model.DeleteDeliveryStreamRequest;
+import software.amazon.awssdk.services.firehose.model.DeleteDeliveryStreamResponse;
 import software.amazon.awssdk.services.firehose.model.PutRecordBatchRequest;
 import software.amazon.awssdk.services.firehose.model.PutRecordBatchResponse;
 import software.amazon.awssdk.services.firehose.model.PutRecordRequest;
@@ -61,6 +63,9 @@ public class KinesisFirehose2Producer extends DefaultProducer {
                 case createDeliveryStream:
                     createDeliveryStream(getClient(), exchange);
                     break;
+                case deleteDeliveryStream:
+                    deleteDeliveryStream(getClient(), exchange);
+                    break;
                 default:
                     throw new IllegalArgumentException("Unsupported operation");
             }
@@ -75,8 +80,25 @@ public class KinesisFirehose2Producer extends DefaultProducer {
             message.setBody(result);
         } else {
             throw new IllegalArgumentException("The createDeliveryStream operation expects a CreateDeliveryStream instance as body");
-        }
-        
+        }    
+    }
+    
+    private void deleteDeliveryStream(FirehoseClient client, Exchange exchange) {
+        if (exchange.getIn().getBody() instanceof DeleteDeliveryStreamRequest) {
+            DeleteDeliveryStreamRequest req = exchange.getIn().getBody(DeleteDeliveryStreamRequest.class);
+            DeleteDeliveryStreamResponse result = client.deleteDeliveryStream(req);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        } else {
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_STREAM_NAME))) {
+                DeleteDeliveryStreamRequest req = DeleteDeliveryStreamRequest.builder().deliveryStreamName(exchange.getIn().getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_STREAM_NAME, String.class)).build();
+                DeleteDeliveryStreamResponse result = client.deleteDeliveryStream(req);
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            } else {
+                throw new IllegalArgumentException("The deleteDeliveryStream operation expects at least an delivery stream name header or a DeleteDeliveryStreamRequest instance");
+            }
+        }    
     }
 
     private void sendBatchRecord(FirehoseClient client, Exchange exchange) {
