@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 
@@ -48,6 +49,15 @@ public interface RoutesCollector {
      * @return the discovered routes or an empty list
      */
     List<RoutesDefinition> collectXmlRoutesFromDirectory(CamelContext camelContext, String directory) throws Exception;
+
+    /**
+     * Collects all XML route templates from the given directory.
+     *
+     * @param camelContext               the Camel Context
+     * @param directory                  the directory (see xmlRoutes option)
+     * @return the discovered route templates or an empty list
+     */
+    List<RouteTemplatesDefinition> collectXmlRouteTemplatesFromDirectory(CamelContext camelContext, String directory) throws Exception;
 
     /**
      * Collects all XML rests from the given directory.

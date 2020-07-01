@@ -92,7 +92,8 @@ public class JaxbXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader 
                 applyNamespaces(route, namespaces);
             }
         } else {
-            throw new IllegalArgumentException("Unmarshalled object is an unsupported type: " + ObjectHelper.className(result) + " -> " + result);
+            // ignore not supported type
+            return null;
         }
 
         return answer;
@@ -128,7 +129,8 @@ public class JaxbXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader 
                 applyNamespaces(route, namespaces);
             }
         } else {
-            throw new IllegalArgumentException("Unmarshalled object is an unsupported type: " + ObjectHelper.className(result) + " -> " + result);
+            // ignore not supported type
+            return null;
         }
 
         return answer;
@@ -153,7 +155,8 @@ public class JaxbXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader 
         } else if (result instanceof RestsDefinition) {
             answer = (RestsDefinition)result;
         } else {
-            throw new IllegalArgumentException("Unmarshalled object is an unsupported type: " + ObjectHelper.className(result) + " -> " + result);
+            // ignore not supported type
+            return null;
         }
 
         return answer;
@@ -270,7 +273,15 @@ public class JaxbXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader 
         }
 
         // Restore namespaces to anything that's NamespaceAware
-        if (result instanceof RoutesDefinition) {
+        if (result instanceof RouteTemplatesDefinition) {
+            List<RouteTemplateDefinition> templates = ((RouteTemplatesDefinition) result).getRouteTemplates();
+            for (RouteTemplateDefinition template : templates) {
+                applyNamespaces(template, namespaces);
+            }
+        } else if (result instanceof RouteTemplateDefinition) {
+            RouteTemplateDefinition template = (RouteTemplateDefinition)result;
+            applyNamespaces(template, namespaces);
+        } else if (result instanceof RoutesDefinition) {
             List<RouteDefinition> routes = ((RoutesDefinition)result).getRoutes();
             for (RouteDefinition route : routes) {
                 applyNamespaces(route, namespaces);
