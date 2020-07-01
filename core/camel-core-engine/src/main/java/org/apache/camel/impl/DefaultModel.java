@@ -42,6 +42,7 @@ import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteFilters;
 import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
@@ -183,14 +184,22 @@ public class DefaultModel implements Model {
             throw new IllegalArgumentException("Cannot find RouteTemplate with id " + routeTemplateId);
         }
 
-        // TODO: Need to add default values for parameters from the template
-
-        PropertiesComponent pc = camelContext.getPropertiesComponent();
         Properties prop = new Properties();
+        // include default values first from the template
+        if (target.getTemplateParameters() != null) {
+            for (RouteTemplateParameterDefinition temp : target.getTemplateParameters()) {
+                if (temp.getDefaultValue() != null) {
+                    prop.put(temp.getName(), temp.getDefaultValue());
+                }
+            }
+        }
+        // then override with user parameters
         if (parameters != null) {
             prop.putAll(parameters);
-            pc.setLocalProperties(prop);
         }
+        PropertiesComponent pc = camelContext.getPropertiesComponent();
+        pc.setLocalProperties(prop);
+
         try {
             RouteDefinition def = target.asRouteDefinition();
             if (!ObjectHelper.isEmpty(routeId)) {
