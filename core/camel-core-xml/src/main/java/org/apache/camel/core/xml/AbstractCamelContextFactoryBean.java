@@ -73,6 +73,8 @@ import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
+import org.apache.camel.model.RouteTemplateContainer;
+import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
@@ -138,7 +140,7 @@ import org.slf4j.LoggerFactory;
  * {@link org.apache.camel.builder.RouteBuilder}.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContext> extends IdentifiedType implements RouteContainer, RestContainer {
+public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContext> extends IdentifiedType implements RouteTemplateContainer, RouteContainer, RestContainer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelContextFactoryBean.class);
 
@@ -464,6 +466,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             for (RestDefinition rest : getContext().getRestDefinitions()) {
                 rest.asRouteDefinition(getContext()).forEach(r -> getRoutes().add(r));
             }
+
+            // add route templates
+            getContext().addRouteTemplateDefinitions(getRouteTemplates());
 
             // do special preparation for some concepts such as interceptors and policies
             // this is needed as JAXB does not build exactly the same model definition as Spring DSL would do
@@ -799,6 +804,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     }
 
     public abstract T getContext(boolean create);
+
+    @Override
+    public abstract List<RouteTemplateDefinition> getRouteTemplates();
 
     @Override
     public abstract List<RouteDefinition> getRoutes();

@@ -359,6 +359,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("implicitId", implicitId);
                 builder.addPropertyValue("restConfiguration", factoryBean.getRestConfiguration());
                 builder.addPropertyValue("rests", factoryBean.getRests());
+                builder.addPropertyValue("routeTemplates", factoryBean.getRouteTemplates());
                 builder.addPropertyValue("routes", factoryBean.getRoutes());
                 builder.addPropertyValue("intercepts", factoryBean.getIntercepts());
                 builder.addPropertyValue("interceptFroms", factoryBean.getInterceptFroms());
