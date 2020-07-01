@@ -36,6 +36,8 @@ import software.amazon.awssdk.services.firehose.model.PutRecordBatchResponse;
 import software.amazon.awssdk.services.firehose.model.PutRecordRequest;
 import software.amazon.awssdk.services.firehose.model.PutRecordResponse;
 import software.amazon.awssdk.services.firehose.model.Record;
+import software.amazon.awssdk.services.firehose.model.UpdateDestinationRequest;
+import software.amazon.awssdk.services.firehose.model.UpdateDestinationResponse;
 
 public class KinesisFirehose2Producer extends DefaultProducer {
 
@@ -65,6 +67,9 @@ public class KinesisFirehose2Producer extends DefaultProducer {
                     break;
                 case deleteDeliveryStream:
                     deleteDeliveryStream(getClient(), exchange);
+                    break;
+                case updateDestination:
+                    updateDestination(getClient(), exchange);
                     break;
                 default:
                     throw new IllegalArgumentException("Unsupported operation");
@@ -98,6 +103,17 @@ public class KinesisFirehose2Producer extends DefaultProducer {
             } else {
                 throw new IllegalArgumentException("The deleteDeliveryStream operation expects at least an delivery stream name header or a DeleteDeliveryStreamRequest instance");
             }
+        }    
+    }
+    
+    private void updateDestination(FirehoseClient client, Exchange exchange) {
+        if (exchange.getIn().getBody() instanceof CreateDeliveryStreamRequest) {
+            UpdateDestinationRequest req = exchange.getIn().getBody(UpdateDestinationRequest.class);
+            UpdateDestinationResponse result = client.updateDestination(req);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        } else {
+            throw new IllegalArgumentException("The updateDestination operation expects an UpdateDestinationRequest instance as body");
         }    
     }
 
