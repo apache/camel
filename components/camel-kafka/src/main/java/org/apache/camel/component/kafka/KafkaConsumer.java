@@ -32,7 +32,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer;
@@ -113,7 +112,7 @@ public class KafkaConsumer extends DefaultConsumer {
         super.doStart();
 
         // is the offset repository already started?
-        StateRepository repo = endpoint.getConfiguration().getOffsetRepository();
+        StateRepository<String, String> repo = endpoint.getConfiguration().getOffsetRepository();
         if (repo instanceof ServiceSupport) {
             boolean started = ((ServiceSupport)repo).isStarted();
             // if not already started then we would do that and also stop it
@@ -163,7 +162,7 @@ public class KafkaConsumer extends DefaultConsumer {
         executor = null;
 
         if (stopOffsetRepo) {
-            StateRepository repo = endpoint.getConfiguration().getOffsetRepository();
+            StateRepository<String, String> repo = endpoint.getConfiguration().getOffsetRepository();
             LOG.debug("Stopping OffsetRepository: {}", repo);
             ServiceHelper.stopAndShutdownService(repo);
         }
@@ -309,16 +308,17 @@ public class KafkaConsumer extends DefaultConsumer {
                     boolean breakOnErrorHit = false;
                     LOG.trace("Polling {} from topic: {} with timeout: {}", threadId, topicName, pollTimeoutMs);
                     ConsumerRecords<Object, Object> allRecords = consumer.poll(pollTimeoutMs);
-
-                    for (TopicPartition partition : allRecords.partitions()) {
-
+                    
+                    Iterator<TopicPartition> partitionIterator = allRecords.partitions().iterator();
+                    while (partitionIterator.hasNext()) {
+                        TopicPartition partition = partitionIterator.next();
                         long partitionLastOffset = -1;
 
                         Iterator<ConsumerRecord<Object, Object>> recordIterator = allRecords.records(partition).iterator();
                         LOG.debug("Records count {} received for partition {}", allRecords.records(partition).size(), partition);
                         if (!breakOnErrorHit && recordIterator.hasNext()) {
                             ConsumerRecord<Object, Object> record;
-
+ 
                             while (!breakOnErrorHit && recordIterator.hasNext()) {
                                 record = recordIterator.next();
                                 if (LOG.isTraceEnabled()) {
@@ -340,6 +340,11 @@ public class KafkaConsumer extends DefaultConsumer {
                                     KafkaManualCommit manual = endpoint.getComponent().getKafkaManualCommitFactory().newInstance(exchange, consumer, topicName, threadId,
                                                                                                                                  offsetRepository, partition, record.offset());
                                     exchange.getIn().setHeader(KafkaConstants.MANUAL_COMMIT, manual);
+                                }
+                                // if commit management is on user side give additional info for the end of poll loop
+                                if (!isAutoCommitEnabled() || endpoint.getConfiguration().isAllowManualCommit()) {
+                                    exchange.getIn().setHeader(KafkaConstants.LAST_POLL_RECORD,
+                                                               !recordIterator.hasNext() && !partitionIterator.hasNext());
                                 }
 
                                 try {
@@ -519,3 +524,4 @@ public class KafkaConsumer extends DefaultConsumer {
         return Long.parseLong(offset);
     }
 }
+

@@ -26,6 +26,7 @@ public final class KafkaConstants {
     public static final String OFFSET = "kafka.OFFSET";
     public static final String HEADERS = "kafka.HEADERS";
     public static final String LAST_RECORD_BEFORE_COMMIT = "kafka.LAST_RECORD_BEFORE_COMMIT";
+    public static final String LAST_POLL_RECORD = "kafka.LAST_POLL_RECORD";
     public static final String TIMESTAMP = "kafka.TIMESTAMP";
 
     @Deprecated
@@ -45,3 +46,4 @@ public final class KafkaConstants {
         // Utility class
     }
 }
+

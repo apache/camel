@@ -293,6 +293,7 @@ The following headers are available when consuming messages from Kafka.
 | KafkaConstants.KEY                       | "kafka.KEY"                       | Object  | The key of the message if configured
 | KafkaConstants.HEADERS                   | "kafka.HEADERS"                   | org.apache.kafka.common.header.Headers  | The record headers
 | KafkaConstants.LAST_RECORD_BEFORE_COMMIT | "kafka.LAST_RECORD_BEFORE_COMMIT" | Boolean | Whether or not it's the last record before commit (only available if `autoCommitEnable` endpoint parameter is `false`)
+| KafkaConstants.LAST_POLL_RECORD | "kafka.LAST_POLL_RECORD" | Boolean | Indicates the last record within the current poll request (only available if `autoCommitEnable` endpoint parameter is `false` or `allowManualCommit` is `true`)
 | KafkaConstants.MANUAL_COMMIT             | "CamelKafkaManualCommit"          | KafkaManualCommit | Can be used for forcing manual offset commit when using Kafka consumer. |
 |===
 
