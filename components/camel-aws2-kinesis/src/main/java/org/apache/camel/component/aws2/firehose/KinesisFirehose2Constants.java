@@ -20,4 +20,5 @@ public interface KinesisFirehose2Constants {
 
     String RECORD_ID = "CamelAwsKinesisFirehoseRecordId";
     String KINESIS_FIREHOSE_OPERATION = "CamelAwsKinesisFirehoseOperation";
+    String KINESIS_FIREHOSE_STREAM_NAME = "CamelAwsKinesisFirehoseDeliveryStreamName";
 }
