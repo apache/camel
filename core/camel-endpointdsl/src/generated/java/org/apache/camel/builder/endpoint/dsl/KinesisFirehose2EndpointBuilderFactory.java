@@ -317,7 +317,8 @@ public interface KinesisFirehose2EndpointBuilderFactory {
     enum KinesisFirehose2Operations {
         sendBatchRecord,
         createDeliveryStream,
-        deleteDeliveryStream;
+        deleteDeliveryStream,
+        updateDestination;
     }
 
     /**
