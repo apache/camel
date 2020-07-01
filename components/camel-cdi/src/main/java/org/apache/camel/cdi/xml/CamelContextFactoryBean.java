@@ -60,6 +60,7 @@ import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
@@ -273,6 +274,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     @XmlElement(name = "rest")
     private List<RestDefinition> rests = new ArrayList<>();
 
+    @XmlElement(name = "routeTemplate")
+    private List<RouteTemplateDefinition> routeTemplates = new ArrayList<>();
+
     @XmlElement(name = "route")
     private List<RouteDefinition> routes = new ArrayList<>();
 
@@ -458,6 +462,16 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     @Override
     public void setRoutes(List<RouteDefinition> routes) {
         this.routes = routes;
+    }
+
+    @Override
+    public List<RouteTemplateDefinition> getRouteTemplates() {
+        return routeTemplates;
+    }
+
+    @Override
+    public void setRouteTemplates(List<RouteTemplateDefinition> routeTemplates) {
+        this.routeTemplates = routeTemplates;
     }
 
     @Override
