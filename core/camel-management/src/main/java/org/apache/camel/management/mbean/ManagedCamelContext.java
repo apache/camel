@@ -30,6 +30,8 @@ import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplatesDefinition;
 import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
@@ -440,6 +442,21 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
         ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
         return ecc.getModelToXMLDumper().dumpModelAsXml(context, def, resolvePlaceholders, resolveDelegateEndpoints);
+    }
+
+    @Override
+    public String dumpRouteTemplatesAsXml() throws Exception {
+        List<RouteTemplateDefinition> templates = context.getExtension(Model.class).getRouteTemplateDefinitions();
+        if (templates.isEmpty()) {
+            return null;
+        }
+
+        // use a route templates definition to dump the templates
+        RouteTemplatesDefinition def = new RouteTemplatesDefinition();
+        def.setRouteTemplates(templates);
+
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        return ecc.getModelToXMLDumper().dumpModelAsXml(context, def);
     }
 
     @Override
