@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.minio;
 
-import io.minio.*;
+import io.minio.CopyConditions;
+import io.minio.MinioClient;
+import io.minio.ServerSideEncryption;
+import io.minio.ServerSideEncryptionCustomerKey;
+import io.minio.SetBucketPolicyArgs;
 import okhttp3.OkHttpClient;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -108,6 +112,7 @@ public class MinioConfiguration implements Cloneable {
     public String getEndpoint() {
         return endpoint;
     }
+
     /**
      * Endpoint can be an URL, domain name, IPv4 address or IPv6 address
      */
@@ -233,7 +238,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     *  (Optional) Server-side encryption.
+     * (Optional) Server-side encryption.
      */
     public void setServerSideEncryption(ServerSideEncryptionCustomerKey serverSideEncryption) {
         this.serverSideEncryption = serverSideEncryption;
@@ -244,7 +249,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     *  (Optional) Server-side encryption for source object while copy/move objects.
+     * (Optional) Server-side encryption for source object while copy/move objects.
      */
     public void setSrcServerSideEncryption(ServerSideEncryption srcServerSideEncryption) {
         this.srcServerSideEncryption = srcServerSideEncryption;
@@ -317,7 +322,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     *  (Optional) Number of bytes of object data from offset.
+     * (Optional) Number of bytes of object data from offset.
      */
     public long getLength() {
         return length;
@@ -332,7 +337,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     *  Source bucket name.
+     * Source bucket name.
      */
     public void setSrcBucketName(String srcBucketName) {
         this.srcBucketName = srcBucketName;
@@ -354,7 +359,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     *  (Optional) Set destination folder when downloads object in bucket.
+     * (Optional) Set destination folder when downloads object in bucket.
      */
     public void setFileName(String fileName) {
         this.fileName = fileName;
@@ -488,7 +493,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     *   (Optional) Conditions to be used in copy operation.
+     * (Optional) Conditions to be used in copy operation.
      */
     public void setCopyConditions(CopyConditions copyConditions) {
         this.copyConditions = copyConditions;

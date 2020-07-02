@@ -16,11 +16,7 @@
  */
 package org.apache.camel.component.minio.client;
 
-import java.net.MalformedURLException;
-
 import io.minio.MinioClient;
-import io.minio.errors.InvalidEndpointException;
-import io.minio.errors.InvalidPortException;
 
 /**
  * Create MinioClient using either AWS IAM Credentials or Minio Credentials.
@@ -30,8 +26,8 @@ public interface MinioCamelInternalClient {
     /**
      * Returns an minio client after a factory method determines which one to
      * return.
-     * 
+     *
      * @return Minio Minio
      */
-    MinioClient getMinioClient() throws InvalidPortException, InvalidEndpointException, MalformedURLException, Exception;
+    MinioClient getMinioClient() throws Exception;
 }

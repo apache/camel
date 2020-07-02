@@ -81,7 +81,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
     }
 
     @Override
-    public Producer createProducer() throws Exception {
+    public Producer createProducer() {
         return new MinioProducer(this);
     }
 
@@ -140,7 +140,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         super.doStop();
     }
 
-    public Exchange createExchange(InputStream minioObject, String key) throws Exception {
+    public Exchange createExchange(InputStream minioObject, String key) {
         return createExchange(getExchangePattern(), minioObject, key);
     }
 
@@ -212,12 +212,12 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         this.configuration = configuration;
     }
 
-    public void setMinioClient(MinioClient minioClient) {
-        this.minioClient = minioClient;
-    }
-
     public MinioClient getMinioClient() {
         return minioClient;
+    }
+
+    public void setMinioClient(MinioClient minioClient) {
+        this.minioClient = minioClient;
     }
 
     public int getMaxMessagesPerPoll() {

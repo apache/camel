@@ -43,7 +43,7 @@ public class GetMinioClient implements MinioCamelInternalClient {
      * @return Minio Client.
      */
     @Override
-    public MinioClient getMinioClient() throws Exception {
+    public MinioClient getMinioClient() {
         assert configuration.getEndpoint() != null;
         try {
             if (configuration.getCustomHttpClient() != null) {

@@ -30,7 +30,7 @@ public final class MinioClientFactory {
 
     /**
      * Return the correct minio client (based on remote vs local).
-     * 
+     *
      * @param configuration configuration
      * @return MinioClient
      */
