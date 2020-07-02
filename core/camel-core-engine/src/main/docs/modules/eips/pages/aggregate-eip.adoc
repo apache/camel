@@ -132,7 +132,7 @@ exchange is aggregated to determine if we are complete or not.
 The configured aggregationStrategy can implement the
 Predicate interface and will be used as the completionPredicate if no
 completionPredicate is configured. The configured aggregationStrategy can
-implement `PreCompletionAwareAggregationStrategy` and will be used as
+override the `preComplete` method and will be used as
 the completionPredicate in pre-complete check mode. See further below
 for more details.
 * completionFromBatchConsumer - Special option for
@@ -158,10 +158,9 @@ aggregator. If not provided Camel will thrown an Exception on startup.
 There can be use-cases where you want the incoming
 xref:latest@manual:ROOT:exchange.adoc[Exchange] to determine if the correlation group
 should pre-complete, and then the incoming
-xref:latest@manual:ROOT:exchange.adoc[Exchange] is starting a new group from scratch. To
-determine this the `AggregationStrategy` can
-implement `PreCompletionAwareAggregationStrategy` which has
-a `preComplete` method:
+xref:latest@manual:ROOT:exchange.adoc[Exchange] is starting a new group from scratch. o
+determine this the `AggregationStrategy` must override the `canPreComplete` method
+which has to return `true`.
 
 [source,java]
 ----
@@ -183,8 +182,6 @@ so the group would contain only that new incoming exchange. This is
 known as pre-completion mode. And when the aggregation is in
 pre-completion mode, then only the following completions are in use
 
-* aggregationStrategy must
-implement `PreCompletionAwareAggregationStrategy` xxx
 * completionTimeout or completionInterval can also be used as fallback
 completions
 * any other completion are not used (such as by size, from batch
