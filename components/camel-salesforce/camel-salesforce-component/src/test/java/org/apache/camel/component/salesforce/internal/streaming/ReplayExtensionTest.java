@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.salesforce.internal.streaming;
 
-import org.apache.logging.log4j.core.util.ReflectionUtil;
 import org.cometd.bayeux.Channel;
 import org.cometd.bayeux.Message;
 import org.cometd.common.HashMapMessage;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
@@ -68,7 +68,8 @@ public class ReplayExtensionTest {
     }
 
     @Test
-    public void shouldKeepPreviousValueIfReplayIdNotInMessageWhenIsSupported() throws NoSuchFieldException {
+    public void shouldKeepPreviousValueIfReplayIdNotInMessageWhenIsSupported()
+            throws NoSuchFieldException, IllegalAccessException {
         final Message.Mutable pushTopicMessage = createPushTopicMessage(false);
 
         final ReplayExtension replayExtension = new ReplayExtension();
@@ -78,16 +79,17 @@ public class ReplayExtensionTest {
 
         replayExtension.rcv(null, pushTopicMessage);
 
-        ConcurrentMap<String, Long> dataMap = (ConcurrentMap<String, Long>) ReflectionUtil.getFieldValue(
-                ReplayExtension.class.getDeclaredField("dataMap"),
-                replayExtension);
+        //        ConcurrentMap<String, Long> dataMap = (ConcurrentMap<String, Long>) ReflectionUtil.getFieldValue(
+        //                ReplayExtension.class.getDeclaredField("dataMap"),
+        //                replayExtension);
+
+        ConcurrentMap<String, Long> dataMap = getDataMap(replayExtension);
 
         assertEquals(Long.valueOf(123L), dataMap.get("/topic/AccountUpdates"));
-
     }
 
     @Test
-    public void shouldUpdateReplayIdFromMessageWhenIsSupported() throws NoSuchFieldException {
+    public void shouldUpdateReplayIdFromMessageWhenIsSupported() throws NoSuchFieldException, IllegalAccessException {
         final Message.Mutable pushTopicMessage = createPushTopicMessage(true);
 
         final ReplayExtension replayExtension = new ReplayExtension();
@@ -97,16 +99,24 @@ public class ReplayExtensionTest {
 
         replayExtension.rcv(null, pushTopicMessage);
 
-        ConcurrentMap<String, Long> dataMap = (ConcurrentMap<String, Long>) ReflectionUtil.getFieldValue(
-                ReplayExtension.class.getDeclaredField("dataMap"),
-                replayExtension);
+        ConcurrentMap<String, Long> dataMap = getDataMap(replayExtension);
 
         assertEquals(Long.valueOf(1L), dataMap.get("/topic/AccountUpdates"));
 
     }
 
+    @SuppressWarnings("unchecked")
+    private ConcurrentMap<String, Long> getDataMap(ReplayExtension replayExtension)
+            throws NoSuchFieldException, IllegalAccessException {
+        Field field = ReplayExtension.class.getDeclaredField("dataMap");
+        field.setAccessible(true);
+
+        return (ConcurrentMap<String, Long>) field.get(replayExtension);
+    }
+
     @Test
-    public void shouldNotUpdateReplayIdFromMessageWhenIsNotSupported() throws NoSuchFieldException {
+    public void shouldNotUpdateReplayIdFromMessageWhenIsNotSupported()
+            throws NoSuchFieldException, IllegalAccessException {
         final Message.Mutable pushTopicMessage = createPushTopicMessage(true);
 
         final ReplayExtension replayExtension = new ReplayExtension();
@@ -114,9 +124,7 @@ public class ReplayExtensionTest {
 
         replayExtension.rcv(null, pushTopicMessage);
 
-        ConcurrentMap<String, Long> dataMap = (ConcurrentMap<String, Long>) ReflectionUtil.getFieldValue(
-                ReplayExtension.class.getDeclaredField("dataMap"),
-                replayExtension);
+        ConcurrentMap<String, Long> dataMap = getDataMap(replayExtension);
 
         assertEquals(0, dataMap.size());
 
