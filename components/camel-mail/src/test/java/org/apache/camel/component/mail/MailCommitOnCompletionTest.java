@@ -21,8 +21,6 @@ import javax.mail.Message;
 import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -80,16 +78,13 @@ public class MailCommitOnCompletionTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("pop3://jones@localhost?password=secret&delete=true&initialDelay=100&delay=100")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            // now f*** up and create a new OUT Message (without propagating the IN message)
-                            String msg = exchange.getIn().getBody(String.class);
-                            exchange.getOut().setBody("Hi " + msg);
-                        }
+                    .process(exchange -> {
+                        String msg = exchange.getIn().getBody(String.class);
+                        exchange.getMessage().setBody("Hi " + msg);
                     })
                     .to("mock:result");
             }
