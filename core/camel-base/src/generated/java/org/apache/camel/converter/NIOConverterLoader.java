@@ -33,6 +33,8 @@ public final class NIOConverterLoader implements TypeConverterLoader {
             (type, exchange, value) -> org.apache.camel.converter.NIOConverter.toString((java.nio.ByteBuffer) value, exchange));
         addTypeConverter(registry, java.nio.ByteBuffer.class, byte[].class, false,
             (type, exchange, value) -> org.apache.camel.converter.NIOConverter.toByteBuffer((byte[]) value));
+        addTypeConverter(registry, java.nio.ByteBuffer.class, java.io.ByteArrayOutputStream.class, false,
+            (type, exchange, value) -> org.apache.camel.converter.NIOConverter.toByteBuffer((java.io.ByteArrayOutputStream) value));
         addTypeConverter(registry, java.nio.ByteBuffer.class, java.io.File.class, false,
             (type, exchange, value) -> org.apache.camel.converter.NIOConverter.toByteBuffer((java.io.File) value));
         addTypeConverter(registry, java.nio.ByteBuffer.class, java.lang.Double.class, false,
