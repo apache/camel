@@ -29,7 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Customer Filter used for wrapping requests and responses to created custom wrappers.
+ * Customer Filter used for wrapping requests and responses to clone respectively
+ * with ResteasyHttpServletRequestWrapper and ResteasyHttpServletResponseWrapper
  */
 @WebFilter("/*")
 public class ResteasyFilter implements Filter {
