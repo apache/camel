@@ -67,6 +67,15 @@ public class ReplayExtensionTest {
         return handshakeMessage;
     }
 
+    @SuppressWarnings("unchecked")
+    static ConcurrentMap<String, Long> getDataMap(ReplayExtension replayExtension)
+            throws NoSuchFieldException, IllegalAccessException {
+        Field field = ReplayExtension.class.getDeclaredField("dataMap");
+        field.setAccessible(true);
+
+        return (ConcurrentMap<String, Long>) field.get(replayExtension);
+    }
+
     @Test
     public void shouldKeepPreviousValueIfReplayIdNotInMessageWhenIsSupported()
             throws NoSuchFieldException, IllegalAccessException {
@@ -101,15 +110,6 @@ public class ReplayExtensionTest {
 
     }
 
-    @SuppressWarnings("unchecked")
-    private ConcurrentMap<String, Long> getDataMap(ReplayExtension replayExtension)
-            throws NoSuchFieldException, IllegalAccessException {
-        Field field = ReplayExtension.class.getDeclaredField("dataMap");
-        field.setAccessible(true);
-
-        return (ConcurrentMap<String, Long>) field.get(replayExtension);
-    }
-
     @Test
     public void shouldNotUpdateReplayIdFromMessageWhenIsNotSupported()
             throws NoSuchFieldException, IllegalAccessException {
@@ -123,6 +123,5 @@ public class ReplayExtensionTest {
         ConcurrentMap<String, Long> dataMap = getDataMap(replayExtension);
 
         assertEquals(0, dataMap.size());
-
     }
 }
