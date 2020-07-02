@@ -64,6 +64,7 @@ RollbackDefinition
 RouteBuilderDefinition
 RouteContextRefDefinition
 RouteDefinition
+RouteTemplateContextRefDefinition
 RouteTemplateDefinition
 RouteTemplateParameterDefinition
 RouteTemplatesDefinition

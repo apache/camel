@@ -1015,6 +1015,15 @@ public class ModelParser extends BaseParser {
             return true;
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
+    protected RouteTemplateContextRefDefinition doParseRouteTemplateContextRefDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RouteTemplateContextRefDefinition(), (def, key, val) -> {
+            if ("ref".equals(key)) {
+                def.setRef(val);
+                return true;
+            }
+            return false;
+        }, noElementHandler(), noValueHandler());
+    }
     protected RouteTemplateDefinition doParseRouteTemplateDefinition() throws IOException, XmlPullParserException {
         return doParse(new RouteTemplateDefinition(),
             optionalIdentifiedDefinitionAttributeHandler(), (def, key) -> {

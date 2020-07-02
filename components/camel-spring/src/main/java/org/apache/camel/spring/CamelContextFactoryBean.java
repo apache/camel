@@ -60,6 +60,7 @@ import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteTemplateContextRefDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
@@ -203,6 +204,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private FaultToleranceConfigurationDefinition defaultFaultToleranceConfiguration;
     @XmlElement(name = "faultToleranceConfiguration", type = Resilience4jConfigurationDefinition.class)
     private List<FaultToleranceConfigurationDefinition> faultToleranceConfigurations;
+    @XmlElement(name = "routeTemplateContextRef")
+    private List<RouteTemplateContextRefDefinition> routeTemplateRefs = new ArrayList<>();
     @XmlElement(name = "routeBuilder")
     private List<RouteBuilderDefinition> builderRefs = new ArrayList<>();
     @XmlElement(name = "routeContextRef")
@@ -1089,6 +1092,18 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @Override
     public CamelJMXAgentDefinition getCamelJMXAgent() {
         return camelJMXAgent;
+    }
+
+    @Override
+    public List<RouteTemplateContextRefDefinition> getRouteTemplateRefs() {
+        return routeTemplateRefs;
+    }
+
+    /**
+     * Refers to XML route templates to include as route templates in this CamelContext.
+     */
+    public void setRouteTemplateRefs(List<RouteTemplateContextRefDefinition> routeTemplateRefs) {
+        this.routeTemplateRefs = routeTemplateRefs;
     }
 
     @Override

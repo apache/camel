@@ -10,4 +10,5 @@ ProducerTemplateFactoryBean
 RedeliveryPolicyFactoryBean
 RestContextDefinition
 RouteContextDefinition
+RouteTemplateContextDefinition
 ThreadPoolFactoryBean

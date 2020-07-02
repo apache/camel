@@ -60,6 +60,7 @@ import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteTemplateContextRefDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
@@ -225,6 +226,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     @XmlElement(name = "proxy")
     private List<CamelProxyFactoryDefinition> proxies;
+
+    @XmlElement(name = "routeTemplateContextRef")
+    private List<RouteTemplateContextRefDefinition> routeTemplateRefs = new ArrayList<>();
 
     @XmlElement(name = "routeBuilder")
     private List<RouteBuilderDefinition> builderRefs = new ArrayList<>();
@@ -857,6 +861,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setCamelJMXAgent(CamelJMXAgentDefinition agent) {
         camelJMXAgent = agent;
+    }
+
+    @Override
+    public List<RouteTemplateContextRefDefinition> getRouteTemplateRefs() {
+        return routeTemplateRefs;
+    }
+
+    public void setRouteTemplateRefs(List<RouteTemplateContextRefDefinition> routeTemplateRefs) {
+        this.routeTemplateRefs = routeTemplateRefs;
     }
 
     @Override

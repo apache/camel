@@ -41,6 +41,7 @@ import org.apache.camel.cdi.xml.ErrorHandlerType;
 import org.apache.camel.cdi.xml.ImportDefinition;
 import org.apache.camel.cdi.xml.RestContextDefinition;
 import org.apache.camel.cdi.xml.RouteContextDefinition;
+import org.apache.camel.cdi.xml.RouteTemplateContextDefinition;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
 import org.apache.camel.core.xml.CamelServiceExporterDefinition;
@@ -48,6 +49,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.slf4j.Logger;
@@ -128,6 +130,9 @@ final class XmlCdiBeanFactory {
                 for (RouteContextDefinition factory : app.getRouteContexts()) {
                     beans.add(routeContextBean(factory, url));
                 }
+                for (RouteTemplateContextDefinition factory : app.getRouteTemplateContexts()) {
+                    beans.add(routeTemplateContextBean(factory, url));
+                }
                 for (AbstractCamelFactoryBean<?> factory : app.getBeans()) {
                     if (hasId(factory)) {
                         beans.add(camelContextBean(null, factory, url));
@@ -147,6 +152,9 @@ final class XmlCdiBeanFactory {
             } else if (node instanceof RouteContextDefinition) {
                 RouteContextDefinition factory = (RouteContextDefinition) node;
                 return singleton(routeContextBean(factory, url));
+            } else if (node instanceof RouteTemplateContextDefinition) {
+                RouteTemplateContextDefinition factory = (RouteTemplateContextDefinition) node;
+                return singleton(routeTemplateContextBean(factory, url));
             }
         }
         return emptySet();
@@ -336,6 +344,24 @@ final class XmlCdiBeanFactory {
                 + "id [" + definition.getId() + "] "
                 + "from resource [" + url + "] "
                 + "with qualifiers " + bean.getQualifiers());
+    }
+
+    private SyntheticBean<?> routeTemplateContextBean(RouteTemplateContextDefinition definition, URL url) {
+        requireNonNull(definition.getId(),
+                () -> format("Missing [%s] attribute for imported bean [%s] from resource [%s]",
+                        "id", "routeContext", url));
+
+        return new SyntheticBean<>(manager,
+                new SyntheticAnnotated(List.class,
+                        Stream.of(List.class, new ListParameterizedType(RouteTemplateDefinition.class))
+                                .collect(toSet()),
+                        ANY, NamedLiteral.of(definition.getId())),
+                List.class,
+                new SyntheticInjectionTarget<>(definition::getRouteTemplates), bean ->
+                "imported route template context with "
+                        + "id [" + definition.getId() + "] "
+                        + "from resource [" + url + "] "
+                        + "with qualifiers " + bean.getQualifiers());
     }
 
     private SyntheticBean<?> routeContextBean(RouteContextDefinition definition, URL url) {
