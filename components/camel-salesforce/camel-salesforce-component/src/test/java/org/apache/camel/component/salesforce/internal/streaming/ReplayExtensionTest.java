@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.salesforce.internal.streaming;
 
-import org.cometd.bayeux.Channel;
-import org.cometd.bayeux.Message;
-import org.cometd.common.HashMapMessage;
-import org.junit.Test;
-
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
+
+import org.cometd.bayeux.Channel;
+import org.cometd.bayeux.Message;
+import org.cometd.common.HashMapMessage;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
