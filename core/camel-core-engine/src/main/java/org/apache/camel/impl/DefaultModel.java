@@ -48,6 +48,7 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 
 public class DefaultModel implements Model {
@@ -184,15 +185,25 @@ public class DefaultModel implements Model {
             throw new IllegalArgumentException("Cannot find RouteTemplate with id " + routeTemplateId);
         }
 
+        CollectionStringBuffer cbs = new CollectionStringBuffer();
         Properties prop = new Properties();
-        // include default values first from the template
+        // include default values first from the template (and validate that we have inputs for all required parameters)
         if (target.getTemplateParameters() != null) {
             for (RouteTemplateParameterDefinition temp : target.getTemplateParameters()) {
                 if (temp.getDefaultValue() != null) {
                     prop.put(temp.getName(), temp.getDefaultValue());
+                } else {
+                    // this is a required parameter do we have that as input
+                    if (!parameters.containsKey(temp.getName())) {
+                        cbs.append(temp.getName());
+                    }
                 }
             }
         }
+        if (!cbs.isEmpty()) {
+            throw new IllegalArgumentException("Route template " + routeTemplateId + " the following mandatory parameters must be provided: " + cbs.toString());
+        }
+
         // then override with user parameters
         if (parameters != null) {
             prop.putAll(parameters);

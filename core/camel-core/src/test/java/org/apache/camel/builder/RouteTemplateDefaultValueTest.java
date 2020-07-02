@@ -74,6 +74,24 @@ public class RouteTemplateDefaultValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testCreateRouteFromRouteTemplateMissingParameter() throws Exception {
+        assertEquals(1, context.getRouteTemplateDefinitions().size());
+
+        RouteTemplateDefinition routeTemplate = context.getRouteTemplateDefinition("myTemplate");
+        assertEquals("foo", routeTemplate.getTemplateParameters().get(0).getName());
+        assertEquals("bar", routeTemplate.getTemplateParameters().get(1).getName());
+
+        Map<String, Object> parameters = new HashMap<>();
+        try {
+            context.addRouteFromTemplate(null, "myTemplate", parameters);
+            fail("Should throw exception");
+        } catch (IllegalArgumentException e) {
+            // bar has a default value so its only foo
+            assertEquals("Route template myTemplate the following mandatory parameters must be provided: foo", e.getMessage());
+        }
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

@@ -132,6 +132,24 @@ public class RouteTemplateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testCreateRouteFromRouteTemplateMissingParameter() throws Exception {
+        assertEquals(1, context.getRouteTemplateDefinitions().size());
+
+        RouteTemplateDefinition routeTemplate = context.getRouteTemplateDefinition("myTemplate");
+        assertEquals("foo", routeTemplate.getTemplateParameters().get(0).getName());
+        assertEquals("bar", routeTemplate.getTemplateParameters().get(1).getName());
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("foo", "one");
+        try {
+            context.addRouteFromTemplate(null, "myTemplate", parameters);
+            fail("Should throw exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Route template myTemplate the following mandatory parameters must be provided: bar", e.getMessage());
+        }
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
