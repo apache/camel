@@ -328,6 +328,7 @@
 ** xref:validator-component.adoc[Validator]
 ** xref:velocity-component.adoc[Velocity]
 ** xref:vertx-component.adoc[Vert.x]
+** xref:vertx-websocket-component.adoc[Vert.x WebSocket]
 ** xref:vm-component.adoc[VM]
 ** xref:weather-component.adoc[Weather]
 ** xref:web3j-component.adoc[Web3j Ethereum Blockchain]
