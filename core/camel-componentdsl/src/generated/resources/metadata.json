@@ -6955,6 +6955,27 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "VertxWebsocketComponentBuilderFactory": {
+    "kind": "component",
+    "name": "vertx-websocket",
+    "title": "Vert.x WebSocket",
+    "description": "Camel WebSocket support with Vert.x",
+    "deprecated": false,
+    "firstVersion": "3.5.0",
+    "label": "websocket",
+    "javaType": "org.apache.camel.component.vertx.websocket.VertxWebsocketComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-vertx-websocket",
+    "version": "3.5.0-SNAPSHOT",
+    "scheme": "vertx-websocket",
+    "extendsScheme": "",
+    "syntax": "vertx-websocket:host:port\/resourceUri",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false
+  },
   "VmComponentBuilderFactory": {
     "kind": "component",
     "name": "vm",
