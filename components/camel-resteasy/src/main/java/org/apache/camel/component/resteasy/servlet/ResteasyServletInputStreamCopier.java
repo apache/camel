@@ -23,18 +23,23 @@ import java.io.InputStream;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 
+import org.apache.camel.converter.stream.CachedByteArrayOutputStream;
+import org.apache.camel.converter.stream.InputStreamCache;
+import org.apache.commons.io.IOUtils;
+
 /**
  * Class for copying input stream from HttpRequest
  */
 public class ResteasyServletInputStreamCopier extends ServletInputStream {
     
-    private InputStream input;
-    private ByteArrayOutputStream copy;
+    private InputStreamCache input;
+    private CachedByteArrayOutputStream copy;
 
-    public ResteasyServletInputStreamCopier(InputStream inputStream) {
+    public ResteasyServletInputStreamCopier(InputStream inputStream) throws IOException {
         /* create a new input stream from the cached request body */
-        this.input = inputStream;
-        this.copy = new ByteArrayOutputStream();
+        byte[] inputBytes = IOUtils.toByteArray(inputStream);
+        this.input = new InputStreamCache(inputBytes);
+        this.copy = new CachedByteArrayOutputStream(Long.valueOf(inputBytes.length).intValue());
     }
 
     @Override

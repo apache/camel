@@ -133,17 +133,17 @@ public interface ResteasyComponentBuilderFactory {
             return this;
         }
         /**
-         * To use a custom ResteasyHttpBinding.
+         * To use a custom HttpBinding to control the mapping between Camel
+         * message and HttpClient.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.resteasy.ResteasyHttpBinding</code>
-         * type.
+         * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * 
          * Group: advanced
          */
-        default ResteasyComponentBuilder resteasyHttpBinding(
-                org.apache.camel.component.resteasy.ResteasyHttpBinding resteasyHttpBinding) {
-            doSetProperty("resteasyHttpBinding", resteasyHttpBinding);
+        default ResteasyComponentBuilder httpBinding(
+                org.apache.camel.http.common.HttpBinding httpBinding) {
+            doSetProperty("httpBinding", httpBinding);
             return this;
         }
         /**
@@ -225,7 +225,7 @@ public interface ResteasyComponentBuilderFactory {
             case "lazyStartProducer": ((ResteasyComponent) component).setLazyStartProducer((boolean) value); return true;
             case "allowJavaSerializedObject": ((ResteasyComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
             case "basicPropertyBinding": ((ResteasyComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "resteasyHttpBinding": ((ResteasyComponent) component).setResteasyHttpBinding((org.apache.camel.component.resteasy.ResteasyHttpBinding) value); return true;
+            case "httpBinding": ((ResteasyComponent) component).setHttpBinding((org.apache.camel.http.common.HttpBinding) value); return true;
             case "headerFilterStrategy": ((ResteasyComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "sslContextParameters": ((ResteasyComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((ResteasyComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;

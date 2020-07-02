@@ -45,7 +45,6 @@ public class ResteasyHttpServletRequestWrapper extends HttpServletRequestWrapper
             inputStream = getRequest().getInputStream();
             copier = new ResteasyServletInputStreamCopier(inputStream);
         }
-
         return copier;
     }
 
@@ -55,14 +54,11 @@ public class ResteasyHttpServletRequestWrapper extends HttpServletRequestWrapper
             throw new IllegalStateException("getInputStream() has already been called on this response.");
         }
         if (reader == null) {
-            copier = new ResteasyServletInputStreamCopier(getRequest().getInputStream());
             reader = new BufferedReader(new InputStreamReader(copier, getRequest().getCharacterEncoding()));
         }
-
         return reader;
-
-
     }
+
     public byte[] getCopy() {
         if (copier != null) {
             return copier.getCopy();

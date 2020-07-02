@@ -45,8 +45,6 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
         case "proxyMethod": target.setProxyMethod(property(camelContext, java.lang.String.class, value)); return true;
         case "responsebuffersize":
         case "responseBufferSize": target.setResponseBufferSize(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "resteasyhttpbindingref":
-        case "restEasyHttpBindingRef": target.setRestEasyHttpBindingRef(property(camelContext, org.apache.camel.component.resteasy.ResteasyHttpBinding.class, value)); return true;
         case "resteasymethod":
         case "resteasyMethod": target.setResteasyMethod(property(camelContext, java.lang.String.class, value)); return true;
         case "servletname":
@@ -79,7 +77,6 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
         answer.put("proxyClientClass", java.lang.String.class);
         answer.put("proxyMethod", java.lang.String.class);
         answer.put("responseBufferSize", java.lang.Integer.class);
-        answer.put("restEasyHttpBindingRef", org.apache.camel.component.resteasy.ResteasyHttpBinding.class);
         answer.put("resteasyMethod", java.lang.String.class);
         answer.put("servletName", java.lang.String.class);
         answer.put("setHttpResponseDuringProcessing", java.lang.Boolean.class);
@@ -119,8 +116,6 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
         case "proxyMethod": return target.getProxyMethod();
         case "responsebuffersize":
         case "responseBufferSize": return target.getResponseBufferSize();
-        case "resteasyhttpbindingref":
-        case "restEasyHttpBindingRef": return target.getRestEasyHttpBindingRef();
         case "resteasymethod":
         case "resteasyMethod": return target.getResteasyMethod();
         case "servletname":

@@ -23,17 +23,21 @@ import java.io.OutputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
 
+import org.apache.camel.converter.stream.CachedByteArrayOutputStream;
+
 /**
  * Class for copying output stream from HttpResponse
  */
 public class ResteasyServletOutputStreamCopier extends ServletOutputStream {
 
+    private static final int RESTEASY_DEFAULT_CACHED_OUTPUT_STREAM_INITIAL_SIZE = 1024; // use this value rather than ByteArrayOutputStream's default 32
+
     private OutputStream outputStream;
-    private ByteArrayOutputStream copy;
+    private CachedByteArrayOutputStream copy;
 
     public ResteasyServletOutputStreamCopier(OutputStream outputStream) {
         this.outputStream = outputStream;
-        this.copy = new ByteArrayOutputStream();
+        this.copy = new CachedByteArrayOutputStream(RESTEASY_DEFAULT_CACHED_OUTPUT_STREAM_INITIAL_SIZE);
     }
 
     @Override
