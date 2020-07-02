@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.minio;
 
-import io.minio.CopyConditions;
-import io.minio.MinioClient;
-import io.minio.ServerSideEncryption;
+import io.minio.*;
 import okhttp3.OkHttpClient;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -43,6 +41,9 @@ public class MinioConfiguration implements Cloneable {
     @UriParam
     private String region;
 
+    @UriParam(defaultValue = "false")
+    private boolean objectLock;
+
     @UriParam
     private OkHttpClient customHttpClient;
 
@@ -52,7 +53,7 @@ public class MinioConfiguration implements Cloneable {
     private boolean autoCreateBucket = true;
 
     @UriParam
-    private ServerSideEncryption serverSideEncryption;
+    private ServerSideEncryptionCustomerKey serverSideEncryption;
     @UriParam
     private ServerSideEncryption srcServerSideEncryption;
 
@@ -95,7 +96,7 @@ public class MinioConfiguration implements Cloneable {
     @UriParam(label = "producer", defaultValue = "" + 25 * 1024 * 1024)
     private long partSize = 25 * 1024 * 1024;
     @UriParam
-    private String policy;
+    private SetBucketPolicyArgs policy;
     @UriParam(label = "producer")
     private String storageClass;
     @UriParam(label = "producer", enums = "copyObject,listObjects,deleteObject,deleteBucket,listBuckets,getObject,getObjectRange")
@@ -104,15 +105,15 @@ public class MinioConfiguration implements Cloneable {
     private boolean pathStyleAccess;
 
 
-//    public String getEndpoint() {
-//        return endpoint;
-//    }
-//    /**
-//     * Endpoint can be an URL, domain name, IPv4 address or IPv6 address
-//     */
-//    public void setEndpoint(String endpoint) {
-//        this.endpoint = endpoint;
-//    }
+    public String getEndpoint() {
+        return endpoint;
+    }
+    /**
+     * Endpoint can be an URL, domain name, IPv4 address or IPv6 address
+     */
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
 
     public Integer getProxyPort() {
         return proxyPort;
@@ -185,6 +186,14 @@ public class MinioConfiguration implements Cloneable {
         this.region = region;
     }
 
+    public boolean isObjectLock() {
+        return objectLock;
+    }
+
+    public void setObjectLock(boolean objectLock) {
+        this.objectLock = objectLock;
+    }
+
     public OkHttpClient getCustomHttpClient() {
         return customHttpClient;
     }
@@ -219,14 +228,14 @@ public class MinioConfiguration implements Cloneable {
         this.autoCreateBucket = autoCreateBucket;
     }
 
-    public ServerSideEncryption getServerSideEncryption() {
+    public ServerSideEncryptionCustomerKey getServerSideEncryption() {
         return serverSideEncryption;
     }
 
     /**
      *  (Optional) Server-side encryption.
      */
-    public void setServerSideEncryption(ServerSideEncryption serverSideEncryption) {
+    public void setServerSideEncryption(ServerSideEncryptionCustomerKey serverSideEncryption) {
         this.serverSideEncryption = serverSideEncryption;
     }
 
@@ -452,14 +461,14 @@ public class MinioConfiguration implements Cloneable {
         this.partSize = partSize;
     }
 
-    public String getPolicy() {
+    public SetBucketPolicyArgs getPolicy() {
         return policy;
     }
 
     /**
      * The policy for this queue to set in the method.
      */
-    public void setPolicy(String policy) {
+    public void setPolicy(SetBucketPolicyArgs policy) {
         this.policy = policy;
     }
 

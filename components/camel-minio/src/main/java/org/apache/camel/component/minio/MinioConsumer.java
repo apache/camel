@@ -22,6 +22,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
+import io.minio.DownloadObjectArgs;
 import io.minio.MinioClient;
 import io.minio.Result;
 import io.minio.errors.InvalidBucketNameException;
@@ -121,7 +122,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         return processBatch(CastUtils.cast(exchanges));
     }
 
-    protected Queue<Exchange> createExchanges(InputStream objectStream, String key) {
+    protected Queue<Exchange> createExchanges(InputStream objectStream, String key) throws Exception {
         Queue<Exchange> answer = new LinkedList<>();
         Exchange exchange = getEndpoint().createExchange(objectStream, key);
         answer.add(exchange);
@@ -240,10 +241,12 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         } else {
             if (getConfiguration().getServerSideEncryption() != null) {
                 if (getConfiguration().getFileName() != null) {
-                    minioClient.getObject(bucketName,
-                            objectName,
-                            getConfiguration().getServerSideEncryption(),
-                            getConfiguration().getFileName());
+                    minioClient.downloadObject(DownloadObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .ssec(getConfiguration().getServerSideEncryption())
+                            .filename(getConfiguration().getFileName())
+                            .build());
                 } else {
                     minioObject = minioClient.getObject(bucketName,
                             objectName,
@@ -294,11 +297,11 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 }
             });
 
-            LOG.trace("Processing exchange {}...", exchange);
+            LOG.trace("Processing exchange ...");
             getAsyncProcessor().process(exchange, new AsyncCallback() {
                 @Override
                 public void done(boolean doneSync) {
-                    LOG.trace("Processing exchange {} done.", exchange);
+                    LOG.trace("Processing exchange done.");
                 }
             });
         }

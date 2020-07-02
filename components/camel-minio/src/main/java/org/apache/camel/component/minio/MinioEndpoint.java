@@ -19,12 +19,23 @@ package org.apache.camel.component.minio;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
+import io.minio.GetObjectTagsArgs;
+import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
-import io.minio.Result;
 import io.minio.errors.InvalidBucketNameException;
-import io.minio.messages.Item;
-import org.apache.camel.*;
+import io.minio.messages.Tags;
+import jdk.internal.org.jline.utils.Log;
+import org.apache.camel.Category;
+import org.apache.camel.Component;
+import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedExchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.component.minio.client.MinioClientFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -32,7 +43,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,16 +100,15 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
             return;
         }
 
+        assert getConfiguration().getBucketName() != null;
         String bucketName = getConfiguration().getBucketName();
         LOG.trace("Querying whether bucket {} already exists...", bucketName);
-
-        String prefix = getConfiguration().getPrefix();
 
         if (bucketExists(minioClient, bucketName)) {
             LOG.trace("Bucket {} already exists", bucketName);
         } else {
             if (!getConfiguration().isAutoCreateBucket()) {
-                throw new InvalidBucketNameException("Bucket {} does not exists", bucketName);
+                throw new InvalidBucketNameException("Bucket {} does not exists, set autoCreateBucket option for bucket auto creation", bucketName);
             } else {
                 LOG.trace("Bucket {} doesn't exist yet", bucketName);
                 // creates the new bucket because it doesn't exist yet
@@ -113,9 +122,9 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         }
 
         if (configuration.getPolicy() != null) {
-            LOG.trace("Updating bucket {} with policy {}", bucketName, configuration.getPolicy());
+            LOG.trace("Updating bucket {} with policy...", bucketName);
 
-            minioClient.putBucketPolicy(PutBucketPolicyRequest.builder().bucket(bucketName).policy(configuration.getPolicy()).build());
+            minioClient.setBucketPolicy(configuration.getPolicy());
 
             LOG.trace("Bucket policy updated");
         }
@@ -125,70 +134,74 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getMinioClient())) {
             if (minioClient != null) {
-                minioClient.close();
+                minioClient = null;
             }
         }
         super.doStop();
     }
 
-    public Exchange createExchange(InputStream minioObject, String key) {
+    public Exchange createExchange(InputStream minioObject, String key) throws Exception {
         return createExchange(getExchangePattern(), minioObject, key);
     }
 
-    public Exchange createExchange(ExchangePattern pattern, ResponseInputStream<GetObjectResponse> s3Object, String key) {
-        LOG.trace("Getting object with key {} from bucket {}...", key, getConfiguration().getBucketName());
-
-        LOG.trace("Got object {}", s3Object);
+    public Exchange createExchange(ExchangePattern pattern,
+                                   InputStream minioObject, String key) {
+        String bucketName = getConfiguration().getBucketName();
+        LOG.trace("Getting object with key {} from bucket {}...", key, bucketName);
 
         Exchange exchange = super.createExchange(pattern);
         Message message = exchange.getIn();
 
+        assert message != null;
+        LOG.trace("Got object!");
+
         if (configuration.isIncludeBody()) {
             try {
-                message.setBody(readInputStream(s3Object));
+                message.setBody(readInputStream(minioObject));
+                getObjectTags(key, bucketName, message);
+                if (configuration.isAutocloseBody()) {
+                    exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+                        @Override
+                        public void onDone(Exchange exchange) {
+                            closeObject(minioObject);
+                        }
+                    });
+                }
+
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         } else {
             message.setBody(null);
-        }
-
-        message.setHeader(MinioConstants.KEY, key);
-        message.setHeader(MinioConstants.BUCKET_NAME, getConfiguration().getBucketName());
-        message.setHeader(MinioConstants.E_TAG, s3Object.response().eTag());
-        message.setHeader(MinioConstants.LAST_MODIFIED, s3Object.response().lastModified());
-        message.setHeader(MinioConstants.VERSION_ID, s3Object.response().versionId());
-        message.setHeader(MinioConstants.CONTENT_TYPE, s3Object.response().contentType());
-        message.setHeader(MinioConstants.CONTENT_LENGTH, s3Object.response().contentLength());
-        message.setHeader(MinioConstants.CONTENT_ENCODING, s3Object.response().contentEncoding());
-        message.setHeader(MinioConstants.CONTENT_DISPOSITION, s3Object.response().contentDisposition());
-        message.setHeader(MinioConstants.CACHE_CONTROL, s3Object.response().cacheControl());
-        message.setHeader(MinioConstants.SERVER_SIDE_ENCRYPTION, s3Object.response().serverSideEncryption());
-        message.setHeader(MinioConstants.EXPIRATION_TIME, s3Object.response().expiration());
-        message.setHeader(MinioConstants.REPLICATION_STATUS, s3Object.response().replicationStatus());
-        message.setHeader(MinioConstants.STORAGE_CLASS, s3Object.response().storageClass());
-
-        /**
-         * If includeBody != true, it is safe to close the object here. If
-         * includeBody == true, the caller is responsible for closing the stream
-         * and object once the body has been fully consumed. As of 2.17, the
-         * consumer does not close the stream or object on commit.
-         */
-        if (!configuration.isIncludeBody()) {
-            IOHelper.close(s3Object);
-        } else {
-            if (configuration.isAutocloseBody()) {
-                exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
-                    @Override
-                    public void onDone(Exchange exchange) {
-                        IOHelper.close(s3Object);
-                    }
-                });
-            }
+            getObjectTags(key, bucketName, message);
+            closeObject(minioObject);
         }
 
         return exchange;
+    }
+
+    private void closeObject(InputStream minioObject) {
+        try {
+            minioObject.close();
+
+        } catch (IOException e) {
+            LOG.warn("Error closing MinioObject due: {}, Could not release network resources properly", e.getMessage());
+        }
+    }
+
+    private void getObjectTags(String key, String bucketName, Message message) {
+        try {
+            Tags tags = minioClient.getObjectTags(
+                    GetObjectTagsArgs.builder().bucket(bucketName).object(key).build());
+
+            // set all tags as message headers
+            for (Map.Entry<String, String> entry : tags.get().entrySet()) {
+                message.setHeader(entry.getKey(), entry.getValue());
+            }
+        } catch (Exception e) {
+            Log.warn("Error getting message headers, due {}", e.getMessage());
+        }
     }
 
     public MinioConfiguration getConfiguration() {
@@ -233,12 +246,12 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         this.maxConnections = maxConnections;
     }
 
-    private String readInputStream(ResponseInputStream<GetObjectResponse> s3Object) throws IOException {
+    private String readInputStream(InputStream minioObject) throws IOException {
         StringBuilder textBuilder = new StringBuilder();
-        try (Reader reader = new BufferedReader(new InputStreamReader(s3Object, Charset.forName(StandardCharsets.UTF_8.name())))) {
-            int c = 0;
+        try (Reader reader = new BufferedReader(new InputStreamReader(minioObject, Charset.forName(StandardCharsets.UTF_8.name())))) {
+            int c;
             while ((c = reader.read()) != -1) {
-                textBuilder.append((char)c);
+                textBuilder.append((char) c);
             }
         }
         return textBuilder.toString();
@@ -254,7 +267,24 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         }
     }
 
-    private void makeBucket(String bucketName, String region, boolean isObjectLock) {
-        if (getConfiguration().)
+    private void makeBucket(String bucketName, String region, boolean isObjectLock) throws Exception {
+        try {
+            if (region != null) {
+                minioClient.makeBucket(MakeBucketArgs.builder()
+                        .bucket(bucketName)
+                        .region(region)
+                        .objectLock(isObjectLock)
+                        .build());
+            } else {
+                minioClient.makeBucket(MakeBucketArgs.builder()
+                        .bucket(bucketName)
+                        .objectLock(isObjectLock)
+                        .build());
+            }
+
+        } catch (Throwable e) {
+            LOG.warn("Error making bucket, due: {}", e.getMessage());
+            throw e;
+        }
     }
 }
