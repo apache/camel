@@ -3731,6 +3731,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.VertxComponentBuilderFactory.vertx();
     }
     /**
+     * Vert.x WebSocket (camel-vertx-websocket)
+     * Camel WebSocket support with Vert.x
+     * 
+     * Category: websocket
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-vertx-websocket
+     */
+    static org.apache.camel.builder.component.dsl.VertxWebsocketComponentBuilderFactory.VertxWebsocketComponentBuilder vertxWebsocket() {
+        return org.apache.camel.builder.component.dsl.VertxWebsocketComponentBuilderFactory.vertxWebsocket();
+    }
+    /**
      * VM (camel-vm)
      * Call another endpoint in the same CamelContext asynchronously.
      * 
