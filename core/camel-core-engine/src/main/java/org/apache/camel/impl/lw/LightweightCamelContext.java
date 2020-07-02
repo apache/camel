@@ -44,6 +44,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
+import org.apache.camel.RouteTemplateParameterBuilder;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.ShutdownRoute;
@@ -1530,6 +1531,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception {
         return getModelCamelContext().addRouteFromTemplate(routeId, routeTemplateId, parameters);
+    }
+
+    @Override
+    public RouteTemplateParameterBuilder addRouteFromTemplate(String routeTemplateId) {
+        return getModelCamelContext().addRouteFromTemplate(routeTemplateId);
     }
 
     @Override

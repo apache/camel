@@ -71,6 +71,42 @@ public class RouteTemplateTest extends ContextTestSupport {
     }
 
     @Test
+    public void testCreateRouteFromRouteTemplateFluent() throws Exception {
+        assertEquals(1, context.getRouteTemplateDefinitions().size());
+
+        RouteTemplateDefinition routeTemplate = context.getRouteTemplateDefinition("myTemplate");
+        assertEquals("foo", routeTemplate.getTemplateParameters().get(0).getName());
+        assertEquals("bar", routeTemplate.getTemplateParameters().get(1).getName());
+
+        getMockEndpoint("mock:cheese").expectedBodiesReceived("Hello Cheese");
+        getMockEndpoint("mock:cake").expectedBodiesReceived("Hello Cake");
+
+        context.addRouteFromTemplate("myTemplate")
+                .routeId("first")
+                .parameter("foo", "one")
+                .parameter("bar", "cheese")
+                .build();
+
+        context.addRouteFromTemplate("myTemplate")
+                .routeId("second")
+                .parameter("foo", "two")
+                .parameter("bar", "cake")
+                .build();
+
+        assertEquals(2, context.getRouteDefinitions().size());
+        assertEquals(2, context.getRoutes().size());
+        assertEquals("Started", context.getRouteController().getRouteStatus("first").name());
+        assertEquals("Started", context.getRouteController().getRouteStatus("second").name());
+        assertEquals("true", context.getRoute("first").getProperties().get(Route.TEMPLATE_PROPERTY));
+        assertEquals("true", context.getRoute("second").getProperties().get(Route.TEMPLATE_PROPERTY));
+
+        template.sendBody("direct:one", "Hello Cheese");
+        template.sendBody("direct:two", "Hello Cake");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testCreateRouteFromRouteTemplateAutoAssignedRouteId() throws Exception {
         assertEquals(1, context.getRouteTemplateDefinitions().size());
 
