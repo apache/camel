@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
@@ -80,6 +81,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     private InputTypeDefinition inputType;
     private OutputTypeDefinition outputType;
     private List<PropertyDefinition> routeProperties;
+    private Map<String, Object> templateParameters;
 
     public RouteDefinition() {
     }
@@ -686,6 +688,15 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
         routeProperties.add(prop);
 
         return this;
+    }
+
+    public Map<String, Object> getTemplateParameters() {
+        return templateParameters;
+    }
+
+    @XmlTransient
+    public void setTemplateParameters(Map<String, Object> templateParameters) {
+        this.templateParameters = templateParameters;
     }
 
     // Properties

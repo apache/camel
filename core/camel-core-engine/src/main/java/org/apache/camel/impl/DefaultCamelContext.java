@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
@@ -58,6 +59,7 @@ import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.Validator;
@@ -385,14 +387,22 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         if (!alreadyStartingRoutes) {
             setStartingRoutes(true);
         }
+
+        PropertiesComponent pc = getCamelContextReference().getPropertiesComponent();
         try {
-            // TODO: Add support for local scoped parameters from the definition
             RouteDefinitionHelper.forceAssignIds(getCamelContextReference(), routeDefinitions);
             for (RouteDefinition routeDefinition : routeDefinitions) {
                 // assign ids to the routes and validate that the id's is all unique
                 String duplicate = RouteDefinitionHelper.validateUniqueIds(routeDefinition, routeDefinitions);
                 if (duplicate != null) {
                     throw new FailedToStartRouteException(routeDefinition.getId(), "duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");
+                }
+
+                // if the route definition was created via a route template then we need to prepare its parameters when the route is being created and started
+                if (routeDefinition.isTemplate() != null && routeDefinition.isTemplate() && routeDefinition.getTemplateParameters() != null) {
+                    Properties prop = new Properties();
+                    prop.putAll(routeDefinition.getTemplateParameters());
+                    pc.setLocalProperties(prop);
                 }
 
                 // must ensure route is prepared, before we can start it
@@ -404,11 +414,15 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                 Route route = new RouteReifier(getCamelContextReference(), routeDefinition).createRoute();
                 RouteService routeService = new RouteService(route);
                 startRouteService(routeService, true);
+
+                // clear local after the route is created via the reifier
+                pc.setLocalProperties(null);
             }
         } finally {
             if (!alreadyStartingRoutes) {
                 setStartingRoutes(false);
             }
+            pc.setLocalProperties(null);
         }
     }
 

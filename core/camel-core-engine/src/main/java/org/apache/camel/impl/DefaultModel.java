@@ -23,12 +23,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
@@ -48,13 +44,7 @@ import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
-import org.apache.camel.spi.CamelEvent;
-import org.apache.camel.spi.EventNotifier;
-import org.apache.camel.spi.PropertiesComponent;
-import org.apache.camel.support.EventNotifierSupport;
-import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CollectionStringBuffer;
-import org.apache.camel.util.ObjectHelper;
 
 public class DefaultModel implements Model {
 
@@ -191,7 +181,7 @@ public class DefaultModel implements Model {
         }
 
         CollectionStringBuffer cbs = new CollectionStringBuffer();
-        final Properties prop = new Properties();
+        final Map<String, Object> prop = new HashMap();
         // include default values first from the template (and validate that we have inputs for all required parameters)
         if (target.getTemplateParameters() != null) {
             for (RouteTemplateParameterDefinition temp : target.getTemplateParameters()) {
@@ -213,75 +203,13 @@ public class DefaultModel implements Model {
             prop.putAll(parameters);
         }
 
-        final RouteTemplateDefinition routeTemplate = target;
-        Callable<String> task = new Callable() {
-            @Override
-            public String call() throws Exception {
-                // set parameters on properties component so they can be used in placeholders when building the route
-                PropertiesComponent pc = camelContext.getPropertiesComponent();
-                pc.setLocalProperties(prop);
-                try {
-                    RouteDefinition def = routeTemplate.asRouteDefinition();
-                    if (!ObjectHelper.isEmpty(routeId)) {
-                        def.setId(routeId);
-                    } else {
-                        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
-                        // need to auto assign id
-                        Set<String> customIds = routeDefinitions.stream().map(RouteDefinition::getRouteId).collect(Collectors.toSet());
-                        boolean done = false;
-                        int attempts = 0;
-                        while (!done && attempts < 1000) {
-                            attempts++;
-                            String nextId = def.idOrCreate(ecc.getNodeIdFactory());
-                            if (customIds.contains(nextId)) {
-                                // reset id and try again
-                                def.setId(null);
-                            } else {
-                                def.setId(nextId);
-                                done = true;
-                            }
-                        }
-                        if (!done) {
-                            throw new IllegalArgumentException("Cannot auto assign id to route: " + def);
-                        }
-                    }
-                    addRouteDefinition(def);
-                    return def.getId();
-                } finally {
-                    // clear local properties after adding it as a route
-                    pc.setLocalProperties(null);
-                }
-            }
-        };
-
-        boolean shouldStartRoutes = camelContext.isStarted() && !camelContext.isStarting();
-        if (shouldStartRoutes) {
-            // already started so we can call the task directly
-            return task.call();
-        } else {
-            // defer until later when camel context is initializing
-            EventNotifier notifier = new EventNotifierSupport() {
-                @Override
-                public boolean isIgnoreCamelContextEvents() {
-                    return false;
-                }
-
-                @Override
-                public boolean isEnabled(CamelEvent event) {
-                    return event instanceof CamelEvent.CamelContextStartingEvent;
-                }
-
-                @Override
-                public void notify(CamelEvent event) throws Exception {
-                    task.call();
-                }
-            };
-            // we want to get notified early in the phase during starting phase
-            // and therefore we must pre start the notifier so camel will use it this early in the phase
-            ServiceHelper.startService(notifier);
-            camelContext.getManagementStrategy().addEventNotifier(notifier);
-            return null;
+        RouteDefinition def = target.asRouteDefinition();
+        if (routeId != null) {
+            def.setId(routeId);
         }
+        def.setTemplateParameters(prop);
+        addRouteDefinition(def);
+        return def.getId();
     }
 
     @Override
