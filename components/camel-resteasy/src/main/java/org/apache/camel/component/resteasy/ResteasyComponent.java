@@ -25,7 +25,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.http.common.DefaultHttpRegistry;
 import org.apache.camel.http.common.HttpConsumer;
@@ -42,20 +41,17 @@ import org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher;
 
 @Component("resteasy")
 @Metadata(excludeProperties = "clientConnectionManager,connectionsPerRoute,connectionTimeToLive,"
-        + "httpBinding,httpClientConfigurer,httpConfiguration,httpContext,httpRegistry,maxTotalConnections,connectionRequestTimeout,"
+        + "httpClientConfigurer,httpConfiguration,httpContext,httpRegistry,maxTotalConnections,connectionRequestTimeout,"
         + "connectTimeout,socketTimeout,cookieStore")
 public class ResteasyComponent extends HttpComponent implements RestConsumerFactory {
 
     @Metadata(label = "advanced")
     private HttpRegistry httpRegistry;
-    @Metadata(label = "advanced")
-    private ResteasyHttpBinding resteasyHttpBinding;
     @Metadata(label = "consumer")
     private String proxyConsumersClasses;
 
     public ResteasyComponent() {
         super(ResteasyEndpoint.class);
-        this.resteasyHttpBinding = new DefaultResteasyHttpBinding();
     }
 
     public ResteasyComponent(HttpServletDispatcher dispatcher) {
@@ -78,10 +74,6 @@ public class ResteasyComponent extends HttpComponent implements RestConsumerFact
 
         // Needed for taking component options from URI and using only clean uri for resource. Later adding query parameters
         setProperties(endpoint, parameters);
-
-        if (endpoint.getRestEasyHttpBindingRef() == null) {
-            endpoint.setRestEasyHttpBindingRef(resteasyHttpBinding);
-        }
 
         if (matchOnUriPrefix != null) {
             endpoint.setMatchOnUriPrefix(matchOnUriPrefix);
@@ -166,17 +158,6 @@ public class ResteasyComponent extends HttpComponent implements RestConsumerFact
      */
     public void setHttpRegistry(HttpRegistry httpRegistry) {
         this.httpRegistry = httpRegistry;
-    }
-
-    public ResteasyHttpBinding getResteasyHttpBinding() {
-        return resteasyHttpBinding;
-    }
-
-    /**
-     * To use a custom ResteasyHttpBinding
-     */
-    public void setResteasyHttpBinding(ResteasyHttpBinding resteasyHttpBinding) {
-        this.resteasyHttpBinding = resteasyHttpBinding;
     }
 
     @Override

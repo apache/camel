@@ -126,36 +126,6 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the restEasyHttpBinding if you have a customised one registered
-         * in the context.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.resteasy.ResteasyHttpBinding</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default ResteasyEndpointConsumerBuilder restEasyHttpBindingRef(
-                Object restEasyHttpBindingRef) {
-            doSetProperty("restEasyHttpBindingRef", restEasyHttpBindingRef);
-            return this;
-        }
-        /**
-         * Sets the restEasyHttpBinding if you have a customised one registered
-         * in the context.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.resteasy.ResteasyHttpBinding</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default ResteasyEndpointConsumerBuilder restEasyHttpBindingRef(
-                String restEasyHttpBindingRef) {
-            doSetProperty("restEasyHttpBindingRef", restEasyHttpBindingRef);
-            return this;
-        }
-        /**
          * Sets the resteasy method to process the request.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1096,36 +1066,6 @@ public interface ResteasyEndpointBuilderFactory {
         default ResteasyEndpointProducerBuilder disableStreamCache(
                 String disableStreamCache) {
             doSetProperty("disableStreamCache", disableStreamCache);
-            return this;
-        }
-        /**
-         * Sets the restEasyHttpBinding if you have a customised one registered
-         * in the context.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.resteasy.ResteasyHttpBinding</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default ResteasyEndpointProducerBuilder restEasyHttpBindingRef(
-                Object restEasyHttpBindingRef) {
-            doSetProperty("restEasyHttpBindingRef", restEasyHttpBindingRef);
-            return this;
-        }
-        /**
-         * Sets the restEasyHttpBinding if you have a customised one registered
-         * in the context.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.resteasy.ResteasyHttpBinding</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default ResteasyEndpointProducerBuilder restEasyHttpBindingRef(
-                String restEasyHttpBindingRef) {
-            doSetProperty("restEasyHttpBindingRef", restEasyHttpBindingRef);
             return this;
         }
         /**
@@ -2393,36 +2333,6 @@ public interface ResteasyEndpointBuilderFactory {
         default ResteasyEndpointBuilder disableStreamCache(
                 String disableStreamCache) {
             doSetProperty("disableStreamCache", disableStreamCache);
-            return this;
-        }
-        /**
-         * Sets the restEasyHttpBinding if you have a customised one registered
-         * in the context.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.resteasy.ResteasyHttpBinding</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default ResteasyEndpointBuilder restEasyHttpBindingRef(
-                Object restEasyHttpBindingRef) {
-            doSetProperty("restEasyHttpBindingRef", restEasyHttpBindingRef);
-            return this;
-        }
-        /**
-         * Sets the restEasyHttpBinding if you have a customised one registered
-         * in the context.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.resteasy.ResteasyHttpBinding</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default ResteasyEndpointBuilder restEasyHttpBindingRef(
-                String restEasyHttpBindingRef) {
-            doSetProperty("restEasyHttpBindingRef", restEasyHttpBindingRef);
             return this;
         }
         /**

@@ -23,15 +23,14 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.http.conn.HttpClientConnectionManager;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Expose REST endpoints and access external REST servers.
@@ -41,7 +40,9 @@ import org.apache.http.impl.client.HttpClientBuilder;
 @Metadata(excludeProperties = "clientConnectionManager,connectionsPerRoute,connectionTimeToLive,"
         + "httpBinding,httpClientConfigurer,httpConfiguration,httpContext,httpRegistry,maxTotalConnections,connectionRequestTimeout,"
         + "connectTimeout,socketTimeout,cookieStore")
-public class ResteasyEndpoint extends HttpEndpoint implements HeaderFilterStrategyAware {
+public class ResteasyEndpoint extends HttpEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ResteasyEndpoint.class);
 
     private String protocol;
     private String host;
@@ -50,8 +51,6 @@ public class ResteasyEndpoint extends HttpEndpoint implements HeaderFilterStrate
 
     @UriParam(defaultValue = "GET")
     private String resteasyMethod = "GET";
-    @UriParam
-    private ResteasyHttpBinding restEasyHttpBindingRef;
     @UriParam
     private String servletName;
     @UriParam(label = "proxy")
@@ -69,7 +68,7 @@ public class ResteasyEndpoint extends HttpEndpoint implements HeaderFilterStrate
     @UriParam(label = "security", secret = true)
     private String password;
     @UriParam(label = "advanced")
-    private HeaderFilterStrategy headerFilterStrategy = new ResteasyHeaderFilterStrategy();
+    private HeaderFilterStrategy headerFilterStrategy;
 
     public ResteasyEndpoint(String endPointURI, ResteasyComponent component, URI httpUri) throws URISyntaxException {
         super(endPointURI, component, httpUri, null, null, null);
@@ -89,6 +88,9 @@ public class ResteasyEndpoint extends HttpEndpoint implements HeaderFilterStrate
 
     @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
+        if (headerFilterStrategy == null) {
+            headerFilterStrategy = new ResteasyHeaderFilterStrategy();
+        }
         return headerFilterStrategy;
     }
 
@@ -241,15 +243,18 @@ public class ResteasyEndpoint extends HttpEndpoint implements HeaderFilterStrate
         this.password = password;
     }
 
-    public ResteasyHttpBinding getRestEasyHttpBindingRef() {
-        return restEasyHttpBindingRef;
-    }
-
     /**
-     * Sets the restEasyHttpBinding if you have a customised one registered in the context
-    */
-    public void setRestEasyHttpBindingRef(ResteasyHttpBinding restEasyHttpBinding) {
-        this.restEasyHttpBindingRef = restEasyHttpBinding;
-    }
+     * Building the final URI from endpoint, which will be used in the Camel-Resteasy producer for Resteasy client.
+     */
+    protected String buildUri() {
+        String uri;
+        if (port == 0) {
+            uri = protocol + "://" + host  + uriPattern;
+        } else {
+            uri = protocol + "://" + host  + ":" + port + uriPattern;
+        }
 
+        LOG.debug("Using uri: {}", uri);
+        return uri;
+    }
 }
