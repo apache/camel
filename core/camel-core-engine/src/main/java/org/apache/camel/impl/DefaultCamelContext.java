@@ -386,6 +386,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
             setStartingRoutes(true);
         }
         try {
+            // TODO: Add support for local scoped parameters from the definition
             RouteDefinitionHelper.forceAssignIds(getCamelContextReference(), routeDefinitions);
             for (RouteDefinition routeDefinition : routeDefinitions) {
                 // assign ids to the routes and validate that the id's is all unique
