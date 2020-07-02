@@ -16,6 +16,7 @@
  */
 package org.apache.camel.converter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -77,6 +78,13 @@ public class NIOConverterTest extends ContextTestSupport {
     public void testToByteBuffer() {
         ByteBuffer bb = NIOConverter.toByteBuffer("Hello".getBytes());
         assertNotNull(bb);
+    }
+
+    @Test
+    public void testToByteBufferByteArrayOutputStream() {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write(72);
+        assertEquals(72, NIOConverter.toByteBuffer(baos).get());
     }
 
     @Test

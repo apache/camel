@@ -16,6 +16,7 @@
  */
 package org.apache.camel.converter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -61,6 +62,11 @@ public final class NIOConverter {
     @Converter
     public static ByteBuffer toByteBuffer(byte[] data) {
         return ByteBuffer.wrap(data);
+    }
+
+    @Converter
+    public static ByteBuffer toByteBuffer(ByteArrayOutputStream baos) {
+        return ByteBuffer.wrap(baos.toByteArray());
     }
 
     @Converter
