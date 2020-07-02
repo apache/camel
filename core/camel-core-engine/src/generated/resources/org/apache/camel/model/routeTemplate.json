@@ -8,7 +8,7 @@
     "label": "configuration",
     "javaType": "org.apache.camel.model.RouteTemplateDefinition",
     "input": false,
-    "output": false
+    "output": true
   },
   "properties": {
     "templateParameter": { "kind": "element", "displayName": "Template Parameter", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.RouteTemplateParameterDefinition>", "deprecated": false, "secret": false, "description": "Adds a parameter the route template uses." },
