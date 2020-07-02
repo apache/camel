@@ -79,10 +79,6 @@ public class ReplayExtensionTest {
 
         replayExtension.rcv(null, pushTopicMessage);
 
-        //        ConcurrentMap<String, Long> dataMap = (ConcurrentMap<String, Long>) ReflectionUtil.getFieldValue(
-        //                ReplayExtension.class.getDeclaredField("dataMap"),
-        //                replayExtension);
-
         ConcurrentMap<String, Long> dataMap = getDataMap(replayExtension);
 
         assertEquals(Long.valueOf(123L), dataMap.get("/topic/AccountUpdates"));
