@@ -54,7 +54,7 @@ public interface RoutesCollector {
      * Collects all XML route templates from the given directory.
      *
      * @param camelContext               the Camel Context
-     * @param directory                  the directory (see xmlRoutes option)
+     * @param directory                  the directory (see xmlRouteTemplates option)
      * @return the discovered route templates or an empty list
      */
     List<RouteTemplatesDefinition> collectXmlRouteTemplatesFromDirectory(CamelContext camelContext, String directory) throws Exception;

@@ -105,10 +105,10 @@ public class RoutesConfigurer {
 
                 boolean scanTemplates = !config.getXmlRouteTemplates().equals("false");
                 if (scanTemplates) {
-                    List<RouteTemplatesDefinition> temps = routesCollector.collectXmlRouteTemplatesFromDirectory(camelContext, config.getXmlRouteTemplates());
-                    for (RouteTemplatesDefinition temp : temps) {
-                        LOG.debug("Adding routes into CamelContext from XML files: {}", config.getXmlRouteTemplates());
-                        camelContext.getExtension(Model.class).addRouteTemplateDefinitions(temp.getRouteTemplates());
+                    List<RouteTemplatesDefinition> defs = routesCollector.collectXmlRouteTemplatesFromDirectory(camelContext, config.getXmlRouteTemplates());
+                    for (RouteTemplatesDefinition def : defs) {
+                        LOG.debug("Adding route templates into CamelContext from XML files: {}", config.getXmlRouteTemplates());
+                        camelContext.getExtension(Model.class).addRouteTemplateDefinitions(def.getRouteTemplates());
                     }
                 }
 
