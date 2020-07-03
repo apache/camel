@@ -1536,6 +1536,26 @@ Defines a route template (parameterized routes)
     </xs:annotation>
   </xs:element>
     
+  <xs:element name="routeTemplateContext" type="tns:camelRouteTemplateContextFactoryBean">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        <![CDATA[
+Configuration of route templates using XML
+      ]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+    
+  <xs:element name="routeTemplateContextRef" type="tns:routeTemplateContextRefDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        <![CDATA[
+To refer to an XML file with route templates defined using the xml-dsl
+      ]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+    
   <xs:element name="routeTemplates" type="tns:routeTemplatesDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -14588,6 +14608,22 @@ Whether tracing is enabled on this route.
       
   </xs:complexType>
     
+  <xs:complexType name="routeTemplateContextRefDefinition">
+        
+    <xs:sequence/>
+        
+    <xs:attribute name="ref" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+          <![CDATA[
+Reference to the route templates in the xml dsl.
+        ]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+      
+  </xs:complexType>
+    
   <xs:complexType name="routeTemplateDefinition">
         
     <xs:complexContent>
@@ -20576,6 +20612,8 @@ password, application or accessCode.
                     
           <xs:element maxOccurs="unbounded" minOccurs="0" name="faultToleranceConfiguration" type="tns:resilience4JConfigurationDefinition"/>
                     
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeTemplateContextRef"/>
+                    
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeBuilder"/>
                     
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeContextRef"/>
@@ -21319,6 +21357,24 @@ Sets a reference to a thread pool to be used by the error handler.
         <xs:sequence>
                     
           <xs:element maxOccurs="unbounded" ref="tns:route"/>
+                  
+        </xs:sequence>
+              
+      </xs:extension>
+          
+    </xs:complexContent>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="camelRouteTemplateContextFactoryBean">
+        
+    <xs:complexContent>
+            
+      <xs:extension base="tns:identifiedType">
+                
+        <xs:sequence>
+                    
+          <xs:element maxOccurs="unbounded" ref="tns:routeTemplate"/>
                   
         </xs:sequence>
               
