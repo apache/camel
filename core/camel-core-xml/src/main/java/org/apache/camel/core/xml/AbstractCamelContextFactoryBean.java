@@ -73,6 +73,10 @@ import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
+import org.apache.camel.model.RouteTemplateContainer;
+import org.apache.camel.model.RouteTemplateContextRefDefinition;
+import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
@@ -138,7 +142,7 @@ import org.slf4j.LoggerFactory;
  * {@link org.apache.camel.builder.RouteBuilder}.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContext> extends IdentifiedType implements RouteContainer, RestContainer {
+public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContext> extends IdentifiedType implements RouteTemplateContainer, RouteContainer, RestContainer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelContextFactoryBean.class);
 
@@ -427,6 +431,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             // mark that we are setting up routes
             getContext().adapt(ExtendedCamelContext.class).setupRoutes(false);
 
+            // init route templates
+            initRouteTemplateRefs();
+
             // must init route refs before we prepare the routes below
             initRouteRefs();
 
@@ -464,6 +471,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             for (RestDefinition rest : getContext().getRestDefinitions()) {
                 rest.asRouteDefinition(getContext()).forEach(r -> getRoutes().add(r));
             }
+
+            // add route templates
+            getContext().addRouteTemplateDefinitions(getRouteTemplates());
 
             // do special preparation for some concepts such as interceptors and policies
             // this is needed as JAXB does not build exactly the same model definition as Spring DSL would do
@@ -770,6 +780,19 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
     }
 
+    protected void initRouteTemplateRefs() throws Exception {
+        // add route template refs to existing route templates
+        if (getRouteTemplateRefs() != null) {
+            for (RouteTemplateContextRefDefinition ref : getRouteTemplateRefs()) {
+                List<RouteTemplateDefinition> defs = ref.lookupRouteTemplates(getContext());
+                for (RouteTemplateDefinition def : defs) {
+                    LOG.debug("Adding route template from {} -> {}", ref, def);
+                    getRouteTemplates().add(def);
+                }
+            }
+        }
+    }
+
     protected void initRestRefs() throws Exception {
         // add rest refs to existing rests
         if (getRestRefs() != null) {
@@ -799,6 +822,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     }
 
     public abstract T getContext(boolean create);
+
+    @Override
+    public abstract List<RouteTemplateDefinition> getRouteTemplates();
 
     @Override
     public abstract List<RouteDefinition> getRoutes();
@@ -889,6 +915,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     public abstract List<RouteBuilderDefinition> getBuilderRefs();
 
     public abstract List<RouteContextRefDefinition> getRouteRefs();
+
+    public abstract List<RouteTemplateContextRefDefinition> getRouteTemplateRefs();
 
     public abstract List<RestContextRefDefinition> getRestRefs();
 

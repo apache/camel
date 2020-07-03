@@ -27,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.PackageScanResourceResolver;
@@ -95,10 +96,49 @@ public class DefaultRoutesCollector implements RoutesCollector {
     }
 
     @Override
-    public List<RoutesDefinition> collectXmlRoutesFromDirectory(CamelContext camelContext, String directory) {
-        List<RoutesDefinition> answer = new ArrayList<>();
+    public List<RouteTemplatesDefinition> collectXmlRouteTemplatesFromDirectory(CamelContext camelContext, String directory) throws Exception {
+        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+        PackageScanResourceResolver resolver = ecc.getPackageScanResourceResolver();
 
-        PackageScanResourceResolver resolver = camelContext.adapt(ExtendedCamelContext.class).getPackageScanResourceResolver();
+        List<RouteTemplatesDefinition> answer = new ArrayList<>();
+
+        StopWatch watch = new StopWatch();
+        int count = 0;
+        String[] parts = directory.split(",");
+        for (String part : parts) {
+            log.debug("Loading additional Camel XML route templates from: {}", part);
+            try {
+                Set<InputStream> set = resolver.findResources(part);
+                for (InputStream is : set) {
+                    log.debug("Found XML route templates from location: {}", part);
+                    RouteTemplatesDefinition templates = (RouteTemplatesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRouteTemplatesDefinition(ecc, is);
+                    if (templates != null) {
+                        answer.add(templates);
+                        IOHelper.close(is);
+                        count += templates.getRouteTemplates().size();
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                log.debug("No XML route templates found in {}. Skipping XML route templates detection.", part);
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+            if (count > 0) {
+                log.info("Loaded {} ({} millis) additional Camel XML route templates from: {}", count, watch.taken(), directory);
+            } else {
+                log.info("No additional Camel XML route templates discovered from: {}", directory);
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
+    public List<RoutesDefinition> collectXmlRoutesFromDirectory(CamelContext camelContext, String directory) {
+        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+        PackageScanResourceResolver resolver = ecc.getPackageScanResourceResolver();
+
+        List<RoutesDefinition> answer = new ArrayList<>();
 
         StopWatch watch = new StopWatch();
         int count = 0;
@@ -109,11 +149,12 @@ public class DefaultRoutesCollector implements RoutesCollector {
                 Set<InputStream> set = resolver.findResources(part);
                 for (InputStream is : set) {
                     log.debug("Found XML routes from location: {}", part);
-                    ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
                     RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
-                    answer.add(routes);
-                    IOHelper.close(is);
-                    count += routes.getRoutes().size();
+                    if (routes != null) {
+                        answer.add(routes);
+                        IOHelper.close(is);
+                        count += routes.getRoutes().size();
+                    }
                 }
             } catch (FileNotFoundException e) {
                 log.debug("No XML routes found in {}. Skipping XML routes detection.", part);
@@ -132,9 +173,10 @@ public class DefaultRoutesCollector implements RoutesCollector {
 
     @Override
     public List<RestsDefinition> collectXmlRestsFromDirectory(CamelContext camelContext, String directory) {
-        List<RestsDefinition> answer = new ArrayList<>();
-
+        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
         PackageScanResourceResolver resolver = camelContext.adapt(ExtendedCamelContext.class).getPackageScanResourceResolver();
+
+        List<RestsDefinition> answer = new ArrayList<>();
 
         StopWatch watch = new StopWatch();
         int count = 0;
@@ -145,11 +187,12 @@ public class DefaultRoutesCollector implements RoutesCollector {
                 Set<InputStream> set = resolver.findResources(part);
                 for (InputStream is : set) {
                     log.debug("Found XML rest from location: {}", part);
-                    ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
                     RestsDefinition rests = (RestsDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
-                    answer.add(rests);
-                    IOHelper.close(is);
-                    count += rests.getRests().size();
+                    if (rests != null) {
+                        answer.add(rests);
+                        IOHelper.close(is);
+                        count += rests.getRests().size();
+                    }
                 }
             } catch (FileNotFoundException e) {
                 log.debug("No XML rests found in {}. Skipping XML rests detection.", part);

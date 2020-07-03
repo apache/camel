@@ -181,6 +181,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "UseMdcLogging": target.setUseMdcLogging(property(camelContext, boolean.class, value)); return true;
         case "xmlrests":
         case "XmlRests": target.setXmlRests(property(camelContext, java.lang.String.class, value)); return true;
+        case "xmlroutetemplates":
+        case "XmlRouteTemplates": target.setXmlRouteTemplates(property(camelContext, java.lang.String.class, value)); return true;
         case "xmlroutes":
         case "XmlRoutes": target.setXmlRoutes(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -271,6 +273,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         answer.put("UseDataType", boolean.class);
         answer.put("UseMdcLogging", boolean.class);
         answer.put("XmlRests", java.lang.String.class);
+        answer.put("XmlRouteTemplates", java.lang.String.class);
         answer.put("XmlRoutes", java.lang.String.class);
         return answer;
     }
@@ -441,6 +444,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "UseMdcLogging": return target.isUseMdcLogging();
         case "xmlrests":
         case "XmlRests": return target.getXmlRests();
+        case "xmlroutetemplates":
+        case "XmlRouteTemplates": return target.getXmlRouteTemplates();
         case "xmlroutes":
         case "XmlRoutes": return target.getXmlRoutes();
         default: return null;

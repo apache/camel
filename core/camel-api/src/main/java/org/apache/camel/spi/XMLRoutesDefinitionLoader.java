@@ -37,6 +37,11 @@ public interface XMLRoutesDefinitionLoader {
     Object loadRoutesDefinition(CamelContext context, InputStream inputStream) throws Exception;
 
     /**
+     * Loads from XML into route templates.
+     */
+    Object loadRouteTemplatesDefinition(CamelContext context, InputStream inputStream) throws Exception;
+
+    /**
      * Loads from XML into rests.
      */
     Object loadRestsDefinition(CamelContext context, InputStream inputStream) throws Exception;

@@ -28,15 +28,12 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.DelegateEndpoint;
@@ -48,6 +45,8 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.ModelJAXBContextFactory;
@@ -72,7 +71,15 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
 
         // gather all namespaces from the routes or route which is stored on the
         // expression nodes
-        if (definition instanceof RoutesDefinition) {
+        if (definition instanceof RouteTemplatesDefinition) {
+            List<RouteTemplateDefinition> templates = ((RouteTemplatesDefinition)definition).getRouteTemplates();
+            for (RouteTemplateDefinition route : templates) {
+                extractNamespaces(route.getRoute(), namespaces);
+            }
+        } else if (definition instanceof RouteTemplateDefinition) {
+            RouteTemplateDefinition template = (RouteTemplateDefinition)definition;
+            extractNamespaces(template.getRoute(), namespaces);
+        } else if (definition instanceof RoutesDefinition) {
             List<RouteDefinition> routes = ((RoutesDefinition)definition).getRoutes();
             for (RouteDefinition route : routes) {
                 extractNamespaces(route, namespaces);
@@ -184,32 +191,6 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
     private static JAXBContext getJAXBContext(CamelContext context) throws Exception {
         ModelJAXBContextFactory factory = context.adapt(ExtendedCamelContext.class).getModelJAXBContextFactory();
         return (JAXBContext) factory.newJAXBContext();
-    }
-
-    /**
-     * Extract all XML namespaces from the root element in a DOM Document
-     *
-     * @param document the DOM document
-     * @param namespaces the map of namespaces to add new found XML namespaces
-     */
-    private static void extractNamespaces(Document document, Map<String, String> namespaces) throws JAXBException {
-        NamedNodeMap attributes = document.getDocumentElement().getAttributes();
-        for (int i = 0; i < attributes.getLength(); i++) {
-            Node item = attributes.item(i);
-            String nsPrefix = item.getNodeName();
-            if (nsPrefix != null && nsPrefix.startsWith("xmlns")) {
-                String nsValue = item.getNodeValue();
-                String[] nsParts = nsPrefix.split(":");
-                if (nsParts.length == 1) {
-                    namespaces.put(nsParts[0], nsValue);
-                } else if (nsParts.length == 2) {
-                    namespaces.put(nsParts[1], nsValue);
-                } else {
-                    // Fallback on adding the namespace prefix as we find it
-                    namespaces.put(nsPrefix, nsValue);
-                }
-            }
-        }
     }
 
     /**

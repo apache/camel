@@ -126,6 +126,17 @@ public interface PropertiesComponent extends StaticService {
     void setOverrideProperties(Properties overrideProperties);
 
     /**
+     * Sets a special list of local properties (ie thread local) that take precedence
+     * and will use first, if a property exist.
+     */
+    void setLocalProperties(Properties localProperties);
+
+    /**
+     * Gets a list of properties that are local for the current thread only (ie thread local)
+     */
+    Properties getLocalProperties();
+
+    /**
      * Encoding to use when loading properties file from the file system or classpath.
      * <p/>
      * If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1)

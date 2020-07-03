@@ -988,6 +988,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         switch (model.getName()) {
             // if we are route/rest then we accept output
             case "route":
+            case "routeTemplate":
             case "rest":
                 return true;
             // special for transacted/policy which should not have output

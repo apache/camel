@@ -99,6 +99,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
     private Class<?> outputDefinitionClass;
     private Class<?> expressionDefinitionClass;
     private Class<?> routesDefinitionClass;
+    private Class<?> routeTemplatesDefinitionClass;
     private Class<?> restsDefinitionClass;
     private Class<?> processorDefinitionClass;
     private Class<?> dataFormatDefinitionClass;
@@ -130,6 +131,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
 
         outputDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".OutputDefinition");
         routesDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".RoutesDefinition");
+        routeTemplatesDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".RouteTemplatesDefinition");
         dataFormatDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".DataFormatDefinition");
         processorDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".ProcessorDefinition");
         restsDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".rest.RestsDefinition");
@@ -458,7 +460,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                 }
                 return " noValueHandler()";
             });
-            if (clazz == routesDefinitionClass || clazz == restsDefinitionClass) {
+            if (clazz == routesDefinitionClass || clazz == routeTemplatesDefinitionClass || clazz == restsDefinitionClass) {
                 String element = clazz.getAnnotation(XmlRootElement.class).name();
                 parser.addMethod().setPublic().setReturnType(clazz).setName("parse" + name).addThrows(IOException.class).addThrows(XML_PULL_PARSER_EXCEPTION)
                     .setBody("expectTag(\"" + element + "\");\nreturn doParse" + name + "();");

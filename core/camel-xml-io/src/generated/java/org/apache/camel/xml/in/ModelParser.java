@@ -960,7 +960,9 @@ public class ModelParser extends BaseParser {
                 case "from": def.setInput(doParseFromDefinition()); break;
                 case "inputType": def.setInputType(doParseInputTypeDefinition()); break;
                 case "outputType": def.setOutputType(doParseOutputTypeDefinition()); break;
+                case "rest": def.setRest(Boolean.valueOf(doParseText())); break;
                 case "routeProperty": doAdd(doParsePropertyDefinition(), def.getRouteProperties(), def::setRouteProperties); break;
+                case "template": def.setTemplate(Boolean.valueOf(doParseText())); break;
                 default: return outputDefinitionElementHandler().accept(def, key);
             }
             return true;
@@ -1012,6 +1014,52 @@ public class ModelParser extends BaseParser {
             }
             return true;
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
+    }
+    protected RouteTemplateContextRefDefinition doParseRouteTemplateContextRefDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RouteTemplateContextRefDefinition(), (def, key, val) -> {
+            if ("ref".equals(key)) {
+                def.setRef(val);
+                return true;
+            }
+            return false;
+        }, noElementHandler(), noValueHandler());
+    }
+    protected RouteTemplateDefinition doParseRouteTemplateDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RouteTemplateDefinition(),
+            optionalIdentifiedDefinitionAttributeHandler(), (def, key) -> {
+            switch (key) {
+                case "route": def.setRoute(doParseRouteDefinition()); break;
+                case "templateParameter": doAdd(doParseRouteTemplateParameterDefinition(), def.getTemplateParameters(), def::setTemplateParameters); break;
+                default: return optionalIdentifiedDefinitionElementHandler().accept(def, key);
+            }
+            return true;
+        }, noValueHandler());
+    }
+    protected RouteTemplateParameterDefinition doParseRouteTemplateParameterDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RouteTemplateParameterDefinition(), (def, key, val) -> {
+            switch (key) {
+                case "defaultValue": def.setDefaultValue(val); break;
+                case "description": def.setDescription(val); break;
+                case "name": def.setName(val); break;
+                default: return false;
+            }
+            return true;
+        }, noElementHandler(), noValueHandler());
+    }
+    public RouteTemplatesDefinition parseRouteTemplatesDefinition()
+            throws IOException, XmlPullParserException {
+        expectTag("routeTemplates");
+        return doParseRouteTemplatesDefinition();
+    }
+    protected RouteTemplatesDefinition doParseRouteTemplatesDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RouteTemplatesDefinition(),
+            optionalIdentifiedDefinitionAttributeHandler(), (def, key) -> {
+            if ("routeTemplate".equals(key)) {
+                doAdd(doParseRouteTemplateDefinition(), def.getRouteTemplates(), def::setRouteTemplates);
+                return true;
+            }
+            return optionalIdentifiedDefinitionElementHandler().accept(def, key);
+        }, noValueHandler());
     }
     public RoutesDefinition parseRoutesDefinition()
             throws IOException, XmlPullParserException {
