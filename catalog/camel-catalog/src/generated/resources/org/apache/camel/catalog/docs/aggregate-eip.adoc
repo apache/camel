@@ -158,7 +158,7 @@ aggregator. If not provided Camel will thrown an Exception on startup.
 There can be use-cases where you want the incoming
 xref:latest@manual:ROOT:exchange.adoc[Exchange] to determine if the correlation group
 should pre-complete, and then the incoming
-xref:latest@manual:ROOT:exchange.adoc[Exchange] is starting a new group from scratch. To
+xref:latest@manual:ROOT:exchange.adoc[Exchange] is starting a new group from scratch. o
 determine this the `AggregationStrategy` must override the `canPreComplete` method
 which has to return `true`.
 
