@@ -1014,7 +1014,10 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void setApplicationContextClassLoader(ClassLoader classLoader);
 
     /**
-     * Gets the current shutdown strategy
+     * Gets the current shutdown strategy.
+     * <p/>
+     * The shutdown strategy is <b>not</b> intended for Camel end users to use for stopping routes.
+     * Instead use {@link RouteController} via {@link CamelContext}.
      *
      * @return the strategy
      */
