@@ -56,9 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.String.format;
-import static java.util.Collections.addAll;
-import static java.util.Collections.emptySet;
-import static java.util.Collections.singleton;
+import static java.util.Collections.*;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.camel.cdi.AnyLiteral.ANY;
@@ -348,8 +346,8 @@ final class XmlCdiBeanFactory {
 
     private SyntheticBean<?> routeTemplateContextBean(RouteTemplateContextDefinition definition, URL url) {
         requireNonNull(definition.getId(),
-                () -> format("Missing [%s] attribute for imported bean [%s] from resource [%s]",
-                        "id", "routeContext", url));
+            () -> format("Missing [%s] attribute for imported bean [%s] from resource [%s]",
+                    "id", "routeContext", url));
 
         return new SyntheticBean<>(manager,
                 new SyntheticAnnotated(List.class,

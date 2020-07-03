@@ -26,7 +26,6 @@ import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
-import org.apache.camel.spring.CamelRouteTemplateContextFactoryBean;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -49,6 +48,7 @@ import org.apache.camel.spring.CamelProducerTemplateFactoryBean;
 import org.apache.camel.spring.CamelRedeliveryPolicyFactoryBean;
 import org.apache.camel.spring.CamelRestContextFactoryBean;
 import org.apache.camel.spring.CamelRouteContextFactoryBean;
+import org.apache.camel.spring.CamelRouteTemplateContextFactoryBean;
 import org.apache.camel.spring.CamelThreadPoolFactoryBean;
 import org.apache.camel.spring.SpringModelJAXBContextFactory;
 import org.apache.camel.spring.remoting.CamelProxyFactoryBean;

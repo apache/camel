@@ -16,10 +16,11 @@
  */
 package org.apache.camel.cdi.test;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.nio.file.Paths;
 import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.cdi.CdiCamelExtension;
