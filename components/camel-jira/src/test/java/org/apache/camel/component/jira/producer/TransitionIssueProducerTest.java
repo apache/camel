@@ -88,7 +88,7 @@ public class TransitionIssueProducerTest extends CamelTestSupport {
         when(issueRestClient.transition(any(Issue.class), any(TransitionInput.class))).then(inv -> {
             URI doneStatusUri = URI.create(TEST_JIRA_URL + "/rest/api/2/status/1");
             URI doneResolutionUri = URI.create(TEST_JIRA_URL + "/rest/api/2/resolution/1");
-            Status status = new Status(doneStatusUri, 1L, "Done", "Done",null, null);
+            Status status = new Status(doneStatusUri, 1L, "Done", "Done", null, null);
             Resolution resolution = new Resolution(doneResolutionUri, 1L, "Resolution", "Resolution");
             issue = transitionIssueDone(issue, status, resolution);
             return null;
