@@ -29,7 +29,7 @@ import org.apache.camel.support.DefaultComponent;
 import static java.util.Objects.requireNonNull;
 
 /**
- * IEC 60870 supervisory control and data acquisition (SCADA) server using NeoSCADA™ implementation.
+ * IEC 60870 supervisory control and data acquisition (SCADA) server using NeoSCADA implementation.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "iec60870-server", syntax = "iec60870-server:uriPath",
     title = "IEC 60870 Server", category = {Category.IOT})
