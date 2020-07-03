@@ -614,7 +614,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-vertx-websocket
          * 
-         * Syntax: <code>vertx-websocket:host:port/resourceUri</code>
+         * Syntax: <code>vertx-websocket:host:port/path</code>
          * 
          * Path parameter: host
          * The host that the consumer should bind to or the host of the remote
@@ -631,7 +631,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * websocket destination that the producer should connect to
          * Default value: /
          * 
-         * @param path host:port/resourceUri
+         * @param path host:port/path
          */
         default VertxWebsocketEndpointBuilder vertxWebsocket(String path) {
             return VertxWebsocketEndpointBuilderFactory.endpointBuilder("vertx-websocket", path);
@@ -644,7 +644,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-vertx-websocket
          * 
-         * Syntax: <code>vertx-websocket:host:port/resourceUri</code>
+         * Syntax: <code>vertx-websocket:host:port/path</code>
          * 
          * Path parameter: host
          * The host that the consumer should bind to or the host of the remote
@@ -663,7 +663,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path host:port/resourceUri
+         * @param path host:port/path
          */
         default VertxWebsocketEndpointBuilder vertxWebsocket(
                 String componentName,

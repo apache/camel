@@ -14,7 +14,7 @@
     "version": "3.5.0-SNAPSHOT",
     "scheme": "vertx-websocket",
     "extendsScheme": "",
-    "syntax": "vertx-websocket:host:port\/resourceUri",
+    "syntax": "vertx-websocket:host:port\/path",
     "async": false,
     "consumerOnly": false,
     "producerOnly": false,

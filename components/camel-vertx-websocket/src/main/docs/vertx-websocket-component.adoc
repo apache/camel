@@ -61,7 +61,7 @@ The Vert.x WebSocket component supports 6 options, which are listed below.
 The Vert.x WebSocket endpoint is configured using URI syntax:
 
 ----
-vertx-websocket:host:port/resourceUri
+vertx-websocket:host:port/path
 ----
 
 with the following path and query parameters:
