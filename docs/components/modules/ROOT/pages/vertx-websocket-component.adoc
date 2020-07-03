@@ -13,7 +13,7 @@
 
 *{component-header}*
 
-The Vert.x WebSocket component provides WebSocket capabilities as a WebSocket server, or as a client to connect to existing an WebSocket.
+The http://vertx.io/[Vert.x] WebSocket component provides WebSocket capabilities as a WebSocket server, or as a client to connect to existing an WebSocket.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
