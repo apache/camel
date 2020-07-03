@@ -471,27 +471,6 @@
                         <version>2.10</version>
                         <executions>
                             <execution>
-                                <id>copy</id>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>copy</goal>
-                                </goals>
-                                <configuration>
-                                    <artifactItems>
-                                        <artifactItem>
-                                            <groupId>javax.annotation</groupId>
-                                            <artifactId>javax.annotation-api</artifactId>
-                                            <version>1.2</version>
-                                            <type>jar</type>
-                                            <overWrite>false</overWrite>
-                                            <outputDirectory>${project.basedir}/target/java9</outputDirectory>
-                                        </artifactItem>
-                                    </artifactItems>
-                                    <overWriteReleases>false</overWriteReleases>
-                                    <overWriteSnapshots>true</overWriteSnapshots>
-                                </configuration>
-                            </execution>
-                            <execution>
                                 <id>copy-jaxb</id>
                                 <phase>validate</phase>
                                 <goals>
