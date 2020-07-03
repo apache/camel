@@ -28,10 +28,10 @@ public class VertxWebsocketMultiConsumerTest extends VertxWebSocketTestSupport {
     @Test
     public void testMultipleConsumersForSameHostAndPort() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
-        mockEndpoint.expectedBodiesReceivedInAnyOrder("Hello A", "Hello B", "Hello C");
+        mockEndpoint.expectedBodiesReceivedInAnyOrder("Hello a", "Hello b", "Hello c");
 
-        Stream.of("A", "B", "C").forEach(body -> {
-            template.sendBody("vertx-websocket:localhost:" + port + "/test/a", body);
+        Stream.of("a", "b", "c").forEach(body -> {
+            template.sendBody("vertx-websocket:localhost:" + port + "/test/" + body, body);
         });
 
         mockEndpoint.assertIsSatisfied();
