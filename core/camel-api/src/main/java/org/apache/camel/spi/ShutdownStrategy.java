@@ -24,10 +24,13 @@ import org.apache.camel.Service;
 import org.apache.camel.StaticService;
 
 /**
- * Pluggable shutdown strategy executed during shutdown of routes.
+ * Pluggable shutdown strategy executed during shutdown of Camel and the active routes.
  * <p/>
  * Shutting down routes in a reliable and graceful manner is not a trivial task. Therefore Camel provides a pluggable
  * strategy allowing 3rd party to use their own strategy if needed.
+ * <p/>
+ * The shutdown strategy is <b>not</b> intended for Camel end users to use for stopping routes.
+ * Instead use {@link RouteController} via {@link CamelContext}.
  * <p/>
  * The key problem is to stop the input consumers for the routes such that no new messages is coming into Camel.
  * But at the same time still keep the routes running so the existing in flight exchanges can still be run to
@@ -36,6 +39,7 @@ import org.apache.camel.StaticService;
  * <p/>
  * Camel provides a default strategy which supports all that that can be used as inspiration for your own strategy.
  * @see org.apache.camel.spi.ShutdownAware
+ * @see RouteController
  */
 public interface ShutdownStrategy extends StaticService {
 
