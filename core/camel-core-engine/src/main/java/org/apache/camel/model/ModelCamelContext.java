@@ -36,15 +36,33 @@ public interface ModelCamelContext extends CamelContext, Model {
      */
     void startRouteDefinitions() throws Exception;
 
+    /**
+     * Start the given set of routes.
+     */
     void startRouteDefinitions(List<RouteDefinition> routeDefinitions) throws Exception;
 
+    /**
+     * Creates an expression from the model.
+     */
     Expression createExpression(ExpressionDefinition definition);
 
+    /**
+     * Creates a predicate from the model.
+     */
     Predicate createPredicate(ExpressionDefinition definition);
 
+    /**
+     * Advices the route model with the advice with builder and returns the adviced route model
+     */
     RouteDefinition adviceWith(RouteDefinition definition, AdviceWithRouteBuilder builder) throws Exception;
 
+    /**
+     * Registers the route input validator
+     */
     void registerValidator(ValidatorDefinition validator);
 
+    /**
+     * Registers the route transformer
+     */
     void registerTransformer(TransformerDefinition transformer);
 }

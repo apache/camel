@@ -23,6 +23,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.Model;
+import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.support.OrderedComparator;
@@ -98,6 +100,15 @@ public class RoutesConfigurer {
                     for (RoutesDefinition def : defs) {
                         LOG.debug("Adding routes into CamelContext from XML files: {}", config.getXmlRoutes());
                         camelContext.getExtension(Model.class).addRouteDefinitions(def.getRoutes());
+                    }
+                }
+
+                boolean scanTemplates = !config.getXmlRouteTemplates().equals("false");
+                if (scanTemplates) {
+                    List<RouteTemplatesDefinition> defs = routesCollector.collectXmlRouteTemplatesFromDirectory(camelContext, config.getXmlRouteTemplates());
+                    for (RouteTemplatesDefinition def : defs) {
+                        LOG.debug("Adding route templates into CamelContext from XML files: {}", config.getXmlRouteTemplates());
+                        camelContext.getExtension(Model.class).addRouteTemplateDefinitions(def.getRouteTemplates());
                     }
                 }
 

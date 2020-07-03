@@ -50,6 +50,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
+import org.apache.camel.RouteTemplateParameterBuilder;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
@@ -1744,6 +1745,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public void setPropertiesComponent(PropertiesComponent propertiesComponent) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public RouteTemplateParameterBuilder addRouteFromTemplate(String routeTemplateId) {
         throw new UnsupportedOperationException();
     }
 

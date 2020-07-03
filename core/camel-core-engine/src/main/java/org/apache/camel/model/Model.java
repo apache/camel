@@ -99,6 +99,74 @@ public interface Model {
     void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception;
 
     /**
+     * Returns a list of the current route template definitions
+     *
+     * @return list of the current route template definitions
+     */
+    List<RouteTemplateDefinition> getRouteTemplateDefinitions();
+
+    /**
+     * Gets the route template definition with the given id
+     *
+     * @param id id of the route template
+     * @return the route template definition or <tt>null</tt> if not found
+     */
+    RouteTemplateDefinition getRouteTemplateDefinition(String id);
+
+    /**
+     * Adds a collection of route template definitions to the context
+     * <p/>
+     * <b>Important: </b> Each route in the same {@link CamelContext} must have
+     * an <b>unique</b> route template id.
+     *
+     * @param routeTemplateDefinitions the route template(s) definition to add
+     * @throws Exception if the route template definitions could not be added for
+     *             whatever reason
+     */
+    void addRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception;
+
+    /**
+     * Add a route definition to the context
+     * <p/>
+     * <b>Important: </b> Each route template in the same {@link CamelContext} must have
+     * an <b>unique</b> route id.
+     *
+     * @param routeTemplateDefinition the route template definition to add
+     * @throws Exception if the route template definition could not be added for whatever
+     *             reason
+     */
+    void addRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception;
+
+    /**
+     * Removes a collection of route template definitions from the context
+     *
+     * @param routeTemplateDefinitions route template(s) definitions to remove
+     * @throws Exception if the route template definitions could not be removed for
+     *             whatever reason
+     */
+    void removeRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception;
+
+    /**
+     * Removes a route template definition from the context
+     *
+     * @param routeTemplateDefinition route template definition to remove
+     * @throws Exception if the route template definition could not be removed for
+     *             whatever reason
+     */
+    void removeRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception;
+
+    /**
+     * Adds a new route from a given route template
+     *
+     * @param routeId  the id of the new route to add (optional)
+     * @param routeTemplateId   the id of the route template (mandatory)
+     * @param parameters  parameters to use for the route template when creating the new route
+     * @return the id of the route added (for example when an id was auto assigned)
+     * @throws Exception is thrown if error creating and adding the new route
+     */
+    String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception;
+
+    /**
      * Returns a list of the current REST definitions
      *
      * @return list of the current REST definitions

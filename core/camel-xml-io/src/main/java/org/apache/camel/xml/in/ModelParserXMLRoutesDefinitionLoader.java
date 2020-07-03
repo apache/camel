@@ -39,6 +39,12 @@ public class ModelParserXMLRoutesDefinitionLoader implements XMLRoutesDefinition
     }
 
     @Override
+    public Object loadRouteTemplatesDefinition(CamelContext context, InputStream inputStream) throws Exception {
+        ModelParser parser = new ModelParser(inputStream, NAMESPACE);
+        return parser.parseRouteTemplatesDefinition();
+    }
+
+    @Override
     public Object loadRestsDefinition(CamelContext context, InputStream inputStream) throws Exception {
         ModelParser parser = new ModelParser(inputStream, NAMESPACE);
         return parser.parseRestsDefinition();

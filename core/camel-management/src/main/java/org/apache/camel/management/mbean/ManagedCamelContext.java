@@ -48,6 +48,8 @@ import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.mbean.ManagedStepMBean;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
@@ -440,6 +442,21 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
         ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
         return ecc.getModelToXMLDumper().dumpModelAsXml(context, def, resolvePlaceholders, resolveDelegateEndpoints);
+    }
+
+    @Override
+    public String dumpRouteTemplatesAsXml() throws Exception {
+        List<RouteTemplateDefinition> templates = context.getExtension(Model.class).getRouteTemplateDefinitions();
+        if (templates.isEmpty()) {
+            return null;
+        }
+
+        // use a route templates definition to dump the templates
+        RouteTemplatesDefinition def = new RouteTemplatesDefinition();
+        def.setRouteTemplates(templates);
+
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        return ecc.getModelToXMLDumper().dumpModelAsXml(context, def);
     }
 
     @Override

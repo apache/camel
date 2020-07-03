@@ -45,8 +45,17 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
     private String doLookup(String name) throws NoTypeConversionAvailableException {
         String answer = null;
 
+        // local takes precedence
+        if (component.getLocalProperties() != null) {
+            // use get as the value can potentially be stored as a non string value
+            Object value = component.getLocalProperties().get(name);
+            if (value != null) {
+                answer = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, value);
+            }
+        }
+
         // override takes precedence
-        if (component.getOverrideProperties() != null) {
+        if (answer == null && component.getOverrideProperties() != null) {
             // use get as the value can potentially be stored as a non string value
             Object value = component.getOverrideProperties().get(name);
             if (value != null) {

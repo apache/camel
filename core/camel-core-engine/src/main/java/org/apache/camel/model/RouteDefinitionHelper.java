@@ -128,6 +128,8 @@ public final class RouteDefinitionHelper {
      * @throws Exception is thrown if error force assign ids to the routes
      */
     public static void forceAssignIds(CamelContext context, List<RouteDefinition> routes) throws Exception {
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+
         // handle custom assigned id's first, and then afterwards assign auto
         // generated ids
         Set<String> customIds = new HashSet<>();
@@ -159,6 +161,13 @@ public final class RouteDefinitionHelper {
             }
         }
 
+        // also include already existing on camel context
+        for (final RouteDefinition def : context.adapt(ModelCamelContext.class).getRouteDefinitions()) {
+            if (def.getId() != null) {
+                customIds.add(def.getId());
+            }
+        }
+
         // auto assign route ids
         for (final RouteDefinition route : routes) {
             if (route.getId() == null) {
@@ -169,7 +178,7 @@ public final class RouteDefinitionHelper {
                 int attempts = 0;
                 while (!done && attempts < 1000) {
                     attempts++;
-                    id = route.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
+                    id = route.idOrCreate(ecc.getNodeIdFactory());
                     if (customIds.contains(id)) {
                         // reset id and try again
                         route.setId(null);
@@ -188,7 +197,7 @@ public final class RouteDefinitionHelper {
             if (rest != null && route.isRest()) {
                 VerbDefinition verb = findVerbDefinition(rest, route.getInput().getEndpointUri());
                 if (verb != null) {
-                    String id = verb.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
+                    String id = verb.idOrCreate(ecc.getNodeIdFactory());
                     if (!verb.getUsedForGeneratingNodeId()) {
                         id = route.getId();
                     }

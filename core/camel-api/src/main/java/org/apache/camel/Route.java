@@ -43,6 +43,7 @@ public interface Route extends RuntimeConfiguration {
     String PARENT_PROPERTY = "parent";
     String GROUP_PROPERTY = "group";
     String REST_PROPERTY = "rest";
+    String TEMPLATE_PROPERTY = "template";
     String DESCRIPTION_PROPERTY = "description";
 
     /**

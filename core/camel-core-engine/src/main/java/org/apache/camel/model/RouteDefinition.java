@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
@@ -74,11 +75,13 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     // configured)
     private boolean contextScopedErrorHandler = true;
     private Boolean rest;
+    private Boolean template;
     private RestDefinition restDefinition;
     private RestBindingDefinition restBindingDefinition;
     private InputTypeDefinition inputType;
     private OutputTypeDefinition outputType;
     private List<PropertyDefinition> routeProperties;
+    private Map<String, Object> templateParameters;
 
     public RouteDefinition() {
     }
@@ -95,14 +98,16 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * This route is created from the REST DSL.
      */
     public void fromRest(@AsEndpointUri String uri) {
-        from(uri);
+        if (uri != null) {
+            from(uri);
+        }
         rest = true;
     }
 
     /**
      * Check if the route has been prepared
      *
-     * @return wether the route has been prepared or not
+     * @return whether the route has been prepared or not
      * @see RouteDefinitionHelper#prepareRoute(ModelCamelContext,
      *      RouteDefinition)
      */
@@ -685,6 +690,15 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
         return this;
     }
 
+    public Map<String, Object> getTemplateParameters() {
+        return templateParameters;
+    }
+
+    @XmlTransient
+    public void setTemplateParameters(Map<String, Object> templateParameters) {
+        this.templateParameters = templateParameters;
+    }
+
     // Properties
     // -----------------------------------------------------------------------
 
@@ -963,9 +977,25 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
         this.errorHandlerFactory = errorHandlerFactory;
     }
 
+    public void setRest(Boolean rest) {
+        this.rest = rest;
+    }
+
     @XmlAttribute
     public Boolean isRest() {
         return rest;
+    }
+
+    /**
+     * This route is created from a route template.
+     */
+    public void setTemplate(Boolean template) {
+        this.template = template;
+    }
+
+    @XmlAttribute
+    public Boolean isTemplate() {
+        return template;
     }
 
     public RestDefinition getRestDefinition() {

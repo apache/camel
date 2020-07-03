@@ -38,16 +38,20 @@ import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteFilters;
+import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.util.CollectionStringBuffer;
 
 public class DefaultModel implements Model {
 
     private final CamelContext camelContext;
 
     private final List<RouteDefinition> routeDefinitions = new ArrayList<>();
+    private final List<RouteTemplateDefinition> routeTemplateDefinitions = new ArrayList<>();
     private final List<RestDefinition> restDefinitions = new ArrayList<>();
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<>();
     private List<TransformerDefinition> transformers = new ArrayList<>();
@@ -123,6 +127,89 @@ public class DefaultModel implements Model {
             }
         }
         return null;
+    }
+
+    @Override
+    public List<RouteTemplateDefinition> getRouteTemplateDefinitions() {
+        return routeTemplateDefinitions;
+    }
+
+    @Override
+    public RouteTemplateDefinition getRouteTemplateDefinition(String id) {
+        for (RouteTemplateDefinition route : routeTemplateDefinitions) {
+            if (route.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory()).equals(id)) {
+                return route;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void addRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception {
+        if (routeTemplateDefinitions == null || routeTemplateDefinitions.isEmpty()) {
+            return;
+        }
+        this.routeTemplateDefinitions.addAll(routeTemplateDefinitions);
+    }
+
+    @Override
+    public void addRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception {
+        addRouteTemplateDefinitions(Collections.singletonList(routeTemplateDefinition));
+    }
+
+    @Override
+    public void removeRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception {
+        routeTemplateDefinitions.removeAll(routeTemplateDefinitions);
+    }
+
+    @Override
+    public void removeRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception {
+        routeTemplateDefinitions.remove(routeTemplateDefinition);
+    }
+
+    @Override
+    public String addRouteFromTemplate(final String routeId, final String routeTemplateId, final Map<String, Object> parameters) throws Exception {
+        RouteTemplateDefinition target = null;
+        for (RouteTemplateDefinition def : routeTemplateDefinitions) {
+            if (routeTemplateId.equals(def.getId())) {
+                target = def;
+                break;
+            }
+        }
+        if (target == null) {
+            throw new IllegalArgumentException("Cannot find RouteTemplate with id " + routeTemplateId);
+        }
+
+        CollectionStringBuffer cbs = new CollectionStringBuffer();
+        final Map<String, Object> prop = new HashMap();
+        // include default values first from the template (and validate that we have inputs for all required parameters)
+        if (target.getTemplateParameters() != null) {
+            for (RouteTemplateParameterDefinition temp : target.getTemplateParameters()) {
+                if (temp.getDefaultValue() != null) {
+                    prop.put(temp.getName(), temp.getDefaultValue());
+                } else {
+                    // this is a required parameter do we have that as input
+                    if (!parameters.containsKey(temp.getName())) {
+                        cbs.append(temp.getName());
+                    }
+                }
+            }
+        }
+        if (!cbs.isEmpty()) {
+            throw new IllegalArgumentException("Route template " + routeTemplateId + " the following mandatory parameters must be provided: " + cbs.toString());
+        }
+        // then override with user parameters
+        if (parameters != null) {
+            prop.putAll(parameters);
+        }
+
+        RouteDefinition def = target.asRouteDefinition();
+        if (routeId != null) {
+            def.setId(routeId);
+        }
+        def.setTemplateParameters(prop);
+        addRouteDefinition(def);
+        return def.getId();
     }
 
     @Override

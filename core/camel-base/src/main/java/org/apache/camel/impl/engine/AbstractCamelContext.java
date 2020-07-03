@@ -117,9 +117,6 @@ import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
-import org.apache.camel.spi.OnCamelContextInitialized;
-import org.apache.camel.spi.OnCamelContextStart;
-import org.apache.camel.spi.OnCamelContextStop;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ProcessorFactory;
@@ -150,7 +147,6 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.LRUCacheFactory;
-import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.ProcessorEndpoint;
@@ -166,6 +162,7 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+
 
 import static org.apache.camel.spi.UnitOfWork.MDC_CAMEL_CONTEXT_ID;
 
