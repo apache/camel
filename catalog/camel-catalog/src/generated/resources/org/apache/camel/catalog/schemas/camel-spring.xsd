@@ -9835,13 +9835,6 @@ Reference to the route templates in the xml dsl.
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:templateParameter"/>
           <xs:element ref="tns:route"/>
         </xs:sequence>
-        <xs:attribute name="id" type="xs:string" use="required">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets the id of this node.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
