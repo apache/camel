@@ -6,7 +6,7 @@
 :artifactId: camel-djl
 :description: Infer Deep Learning models from message exchanges data using Deep Java Library (DJL).
 :since: 3.3
-:supportLevel: Preview
+:supportLevel: Stable
 :component-header: Only producer is supported
 
 *Since Camel {since}*
@@ -30,6 +30,16 @@ following dependency to their `pom.xml`:
     <!-- use the same version as your Camel core version -->
 </dependency>
 ----
+
+== URI format
+
+[source,text]
+----
+djl:application
+----
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
 
 // component options: START
 The Deep Java Library component supports 2 options, which are listed below.
