@@ -14,40 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Copyright (c) 2016, Salesforce Developers
+/*
+ * Copyright (c) 2016, salesforce.com, inc.
  * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holder nor the names of its
- *    contributors may be used to endorse or promote products derived from
- *    this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- **/
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.TXT file in the repo root  or https://opensource.org/licenses/BSD-3-Clause
+ */
 package org.apache.camel.component.salesforce.internal.streaming;
 
+
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 
 import org.cometd.bayeux.Channel;
 import org.cometd.bayeux.Message;
@@ -55,14 +36,16 @@ import org.cometd.bayeux.client.ClientSession;
 import org.cometd.bayeux.client.ClientSession.Extension.Adapter;
 
 /**
- * CometDReplayExtension, typical usages are the following:
- * {@code client.addExtension(new CometDReplayExtension<>(replayMap));}
+ * The Bayeux extension for replay
  *
- * @author yzhao
- * @since 198 (Winter '16)
+ * @author hal.hildebrand
+ * @since API v37.0
  */
-public class CometDReplayExtension extends Adapter {
+public class ReplayExtension extends Adapter {
     private static final String EXTENSION_NAME = "replay";
+    private static final String EVENT_KEY = "event";
+    private static final String REPLAY_ID_KEY = "replayId";
+
     private final ConcurrentMap<String, Long> dataMap = new ConcurrentHashMap<>();
     private final AtomicBoolean supported = new AtomicBoolean();
 
@@ -72,20 +55,11 @@ public class CometDReplayExtension extends Adapter {
 
     @Override
     public boolean rcv(ClientSession session, Message.Mutable message) {
-        final Object value = message.get(EXTENSION_NAME);
-
-        final Long replayId;
-        if (value instanceof Long) {
-            replayId = (Long)value;
-        } else if (value instanceof Number) {
-            replayId = ((Number)value).longValue();
-        } else {
-            replayId = null;
-        }
-
+        Long replayId = getReplayId(message);
         if (this.supported.get() && replayId != null) {
             try {
-                dataMap.put(message.getChannel(), replayId);
+                String channel = topicWithoutQueryString(message.getChannel());
+                dataMap.put(channel, replayId);
             } catch (ClassCastException e) {
                 return false;
             }
@@ -101,7 +75,6 @@ public class CometDReplayExtension extends Adapter {
             this.supported.set(ext != null && Boolean.TRUE.equals(ext.get(EXTENSION_NAME)));
             break;
         default:
-            break;
         }
         return true;
     }
@@ -118,8 +91,27 @@ public class CometDReplayExtension extends Adapter {
             }
             break;
         default:
-            break;
         }
         return true;
+    }
+
+    private static Long getReplayId(Message.Mutable message) {
+        Map<String, Object> data = message.getDataAsMap();
+        @SuppressWarnings("unchecked")
+        Optional<Long> optional = resolve(() -> (Long)((Map<String, Object>)data.get(EVENT_KEY)).get(REPLAY_ID_KEY));
+        return optional.orElse(null);
+    }
+
+    private static <T> Optional<T> resolve(Supplier<T> resolver) {
+        try {
+            T result = resolver.get();
+            return Optional.ofNullable(result);
+        } catch (NullPointerException e) {
+            return Optional.empty();
+        }
+    }
+
+    private static String topicWithoutQueryString(String fullTopic) {
+        return fullTopic.split("\\?")[0];
     }
 }

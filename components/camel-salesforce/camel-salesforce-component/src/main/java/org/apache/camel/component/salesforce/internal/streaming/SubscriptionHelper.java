@@ -58,7 +58,7 @@ import static org.cometd.bayeux.Message.SUBSCRIPTION_FIELD;
 
 public class SubscriptionHelper extends ServiceSupport {
 
-    static final CometDReplayExtension REPLAY_EXTENSION = new CometDReplayExtension();
+    static final ReplayExtension REPLAY_EXTENSION = new ReplayExtension();
 
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionHelper.class);
 
