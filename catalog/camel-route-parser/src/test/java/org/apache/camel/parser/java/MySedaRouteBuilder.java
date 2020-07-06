@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class MySedaRouteBuilder extends RouteBuilder  {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         from("timer:hello?period={{timer.period}}").routeId("hello").routeGroup("hello-group")
             .transform().method("myBean", "saySomething")
             .filter(simple("${body} contains 'foo'"))

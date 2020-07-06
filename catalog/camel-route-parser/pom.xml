@@ -88,7 +88,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>
+            <artifactId>camel-test-junit5</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
@@ -96,12 +96,19 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-cdi</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <!-- Make MyCdi*RouteBuilder compile while cutting the useless dependency to JUnit 4 -->
+                <exclusion>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-test</artifactId>
+                </exclusion>
+            </exclusions>
             <scope>test</scope>
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
             <scope>test</scope>
         </dependency>
 

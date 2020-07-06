@@ -22,19 +22,19 @@ import java.util.List;
 
 import org.apache.camel.parser.XmlRouteParser;
 import org.apache.camel.parser.model.CamelNodeDetails;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XmlParseTreeTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmlParseTreeTest.class);
 
     @Test
-    public void testXmlTree() throws Exception {
+    void testXmlTree() throws Exception {
         InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/mycamel.xml");
         String fqn = "src/test/resources/org/apache/camel/camel/parser/xml/mycamel.xml";
         String baseDir = "src/test/resources";

@@ -24,7 +24,7 @@ public class MyNewLineConstRouteBuilder extends RouteBuilder {
     private static final int MOD = 770;
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         from("timer:foo")
             .toD("file:output?fileExist=" + EXISTS
                     + "&chmod=" + (MOD + 6 + 1)

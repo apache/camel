@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class MySimpleToDRoute extends RouteBuilder {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
 
         String uri = "log:c";
 

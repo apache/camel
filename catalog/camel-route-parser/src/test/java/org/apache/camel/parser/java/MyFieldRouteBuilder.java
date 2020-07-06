@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class MyFieldRouteBuilder extends RouteBuilder {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         String exists = "Override";
 
         from("timer:foo")
