@@ -109,10 +109,9 @@ messages back to a single/current client, or to all clients.
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
-
+| Name | Description
 |`VertxWebsocketConstants.SEND_TO_ALL` |Sends the message to all clients which are currently connected. You can
 use the `sendToAll` option on the endpoint instead of using this header.
-
 |`VertxWebsocketConstants.CONNECTION_KEY` |Sends the message to the client with the given connection key. You can
 use a comma separated list of keys to send a message to multiple clients
 |=======================================================================
@@ -131,3 +130,5 @@ from("vertx-websocket:localhost:8080/echo")
 
 By default the `ws://` protocol is used, but secure connections with `wss://` are supported by configuring the consumer or producer
 via the `sslContextParameters` URI parameter and the xref:manual::camel-configuration-utilities.adoc[Camel JSSE Configuration Utility]
+
+include::camel-spring-boot::page$vertx-websocket-starter.adoc[]
