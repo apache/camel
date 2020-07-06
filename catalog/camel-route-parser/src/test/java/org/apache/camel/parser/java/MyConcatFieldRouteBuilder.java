@@ -24,7 +24,7 @@ public class MyConcatFieldRouteBuilder extends RouteBuilder {
     private String ftp = "ftp:localhost:" + ftpPort + "/myapp?password=admin&username=admin";
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         from(ftp)
             .to("log:b");
     }

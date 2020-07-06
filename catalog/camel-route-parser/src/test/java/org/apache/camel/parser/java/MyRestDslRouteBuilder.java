@@ -23,7 +23,7 @@ import org.apache.camel.model.rest.RestHostNameResolver;
 public class MyRestDslRouteBuilder extends RouteBuilder {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         restConfiguration()
             .contextPath("myapi").port(1234)
             .component("jetty")

@@ -26,17 +26,18 @@ import org.apache.camel.parser.helper.CamelJavaParserHelper;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RoasterSimpleRouteBuilderConfigureTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(RoasterSimpleRouteBuilderConfigureTest.class);
 
     @Test
-    public void parse() throws Exception {
+    void parse() throws Exception {
         JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MySimpleRouteBuilder.java"));
         MethodSource<JavaClassSource> method = clazz.getMethod("configure");
 
@@ -45,12 +46,12 @@ public class RoasterSimpleRouteBuilderConfigureTest {
             LOG.info("Simple: " + simple.getElement());
             LOG.info("  Line: " + findLineNumber(simple.getPosition()));
         }
-        Assert.assertEquals("${body} > 100", list.get(0).getElement());
-        Assert.assertEquals(true, list.get(0).getPredicate());
-        Assert.assertEquals(27, findLineNumber(list.get(0).getPosition()));
-        Assert.assertEquals("${body} > 200", list.get(1).getElement());
-        Assert.assertEquals(true, list.get(1).getPredicate());
-        Assert.assertEquals(30, findLineNumber(list.get(1).getPosition()));
+        assertEquals("${body} > 100", list.get(0).getElement());
+        assertEquals(true, list.get(0).getPredicate());
+        assertEquals(27, findLineNumber(list.get(0).getPosition()));
+        assertEquals("${body} > 200", list.get(1).getElement());
+        assertEquals(true, list.get(1).getPredicate());
+        assertEquals(30, findLineNumber(list.get(1).getPosition()));
     }
 
     public static int findLineNumber(int pos) throws Exception {

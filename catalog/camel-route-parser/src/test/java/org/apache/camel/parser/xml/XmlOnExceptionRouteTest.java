@@ -23,17 +23,18 @@ import java.util.List;
 
 import org.apache.camel.parser.XmlRouteParser;
 import org.apache.camel.parser.model.CamelEndpointDetails;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XmlOnExceptionRouteTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmlOnExceptionRouteTest.class);
 
     @Test
-    public void testXml() throws Exception {
+    void testXml() throws Exception {
         List<CamelEndpointDetails> endpoints = new ArrayList<>();
 
         InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/mycamel-onexception.xml");
@@ -45,11 +46,11 @@ public class XmlOnExceptionRouteTest {
             LOG.info(detail.getEndpointUri());
         }
 
-        Assert.assertEquals("log:all", endpoints.get(0).getEndpointUri());
-        Assert.assertEquals("mock:dead", endpoints.get(1).getEndpointUri());
-        Assert.assertEquals("log:done", endpoints.get(2).getEndpointUri());
-        Assert.assertEquals("stream:in?promptMessage=Enter something:", endpoints.get(3).getEndpointUri());
-        Assert.assertEquals("stream:out", endpoints.get(4).getEndpointUri());
+        assertEquals("log:all", endpoints.get(0).getEndpointUri());
+        assertEquals("mock:dead", endpoints.get(1).getEndpointUri());
+        assertEquals("log:done", endpoints.get(2).getEndpointUri());
+        assertEquals("stream:in?promptMessage=Enter something:", endpoints.get(3).getEndpointUri());
+        assertEquals("stream:out", endpoints.get(4).getEndpointUri());
     }
 
 }

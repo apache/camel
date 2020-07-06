@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class MySimpleRouteBuilder extends RouteBuilder {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         from("timer:foo")
             .filter(simple("${body} > 100"))
                 .toD("log:a")

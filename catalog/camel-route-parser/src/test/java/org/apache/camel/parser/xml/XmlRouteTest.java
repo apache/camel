@@ -23,22 +23,23 @@ import java.util.List;
 
 import org.apache.camel.parser.XmlRouteParser;
 import org.apache.camel.parser.model.CamelEndpointDetails;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XmlRouteTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmlRouteTest.class);
 
     @Test
-    public void testXml() throws Exception {
+    void testXml() throws Exception {
         test("mycamel", 29);
     }
 
     @Test
-    public void testXmlWithNamespacePrefix() throws Exception {
+    void testXmlWithNamespacePrefix() throws Exception {
         test("mycamel-withNamespacePrefix", 51);
     }
 
@@ -53,10 +54,10 @@ public class XmlRouteTest {
         for (CamelEndpointDetails detail : endpoints) {
             LOG.info(detail.getEndpointUri());
         }
-        Assert.assertEquals("stream:in?promptMessage=Enter something:", endpoints.get(0).getEndpointUri());
-        Assert.assertEquals("stream:out", endpoints.get(1).getEndpointUri());
-        Assert.assertEquals("39", endpoints.get(1).getLineNumber());
-        Assert.assertEquals(pos, endpoints.get(1).getLinePosition());
+        assertEquals("stream:in?promptMessage=Enter something:", endpoints.get(0).getEndpointUri());
+        assertEquals("stream:out", endpoints.get(1).getEndpointUri());
+        assertEquals("39", endpoints.get(1).getLineNumber());
+        assertEquals(pos, endpoints.get(1).getLinePosition());
     }
 
 }

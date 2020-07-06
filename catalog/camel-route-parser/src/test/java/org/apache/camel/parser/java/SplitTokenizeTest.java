@@ -18,13 +18,13 @@ package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class SplitTokenizeTest extends CamelTestSupport {
 
     @Test
-    public void testSplitTokenizerA() throws Exception {
+    void testSplitTokenizerA() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceived("Claus", "James", "Willem");
 
@@ -34,7 +34,7 @@ public class SplitTokenizeTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSplitTokenizerB() throws Exception {
+    void testSplitTokenizerB() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceived("Claus", "James", "Willem");
 
@@ -44,7 +44,7 @@ public class SplitTokenizeTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSplitTokenizerC() throws Exception {
+    void testSplitTokenizerC() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceived("Claus", "James", "Willem");
 
@@ -54,7 +54,7 @@ public class SplitTokenizeTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSplitTokenizerD() throws Exception {
+    void testSplitTokenizerD() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceived("[Claus]", "[James]", "[Willem]");
 
@@ -64,7 +64,7 @@ public class SplitTokenizeTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSplitTokenizerE() throws Exception {
+    void testSplitTokenizerE() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceived("<person>Claus</person>", "<person>James</person>", "<person>Willem</person>");
 
@@ -75,7 +75,7 @@ public class SplitTokenizeTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSplitTokenizerEWithSlash() throws Exception {
+    void testSplitTokenizerEWithSlash() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         String xml = "<persons><person attr='/' /></persons>";
         mock.expectedBodiesReceived("<person attr='/' />");
@@ -85,7 +85,7 @@ public class SplitTokenizeTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSplitTokenizerF() throws Exception {
+    void testSplitTokenizerF() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceived("<person name=\"Claus\"/>", "<person>James</person>", "<person>Willem</person>");
 
@@ -96,10 +96,10 @@ public class SplitTokenizeTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("direct:a")
                         .split().tokenize(",")
