@@ -33,14 +33,18 @@ import org.apache.camel.component.grpc.auth.jwt.JwtCallCredentials;
 import org.apache.camel.component.grpc.auth.jwt.JwtHelper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class GrpcConsumerSecurityTest extends CamelTestSupport {
+
     private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumerSecurityTest.class);
 
     private static final int GRPC_TLS_TEST_PORT = AvailablePortFinder.getNextAvailable();
@@ -61,7 +65,7 @@ public class GrpcConsumerSecurityTest extends CamelTestSupport {
     private PingPongGrpc.PingPongStub jwtCorrectAsyncStub;
     private PingPongGrpc.PingPongStub jwtIncorrectAsyncStub;
 
-    @Before
+    @BeforeEach
     public void startGrpcChannels() throws SSLException {
         String correctJwtToken = JwtHelper.createJwtToken(JwtAlgorithm.HMAC256, GRPC_JWT_CORRECT_SECRET, null, null);
         String incorrectJwtToken = JwtHelper.createJwtToken(JwtAlgorithm.HMAC256, GRPC_JWT_INCORRECT_SECRET, null, null);
@@ -83,7 +87,7 @@ public class GrpcConsumerSecurityTest extends CamelTestSupport {
         
     }
 
-    @After
+    @AfterEach
     public void stopGrpcChannels() throws Exception {
         tlsChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
         jwtCorrectChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
