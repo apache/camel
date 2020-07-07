@@ -488,7 +488,7 @@
     <reactor-version>3.2.16.RELEASE</reactor-version>
     <rescu-version>2.0.2</rescu-version>
     <resilience4j-version>1.4.0</resilience4j-version>
-    <rest-assured-version>4.3.0</rest-assured-version>
+    <rest-assured-version>4.3.1</rest-assured-version>
     <resteasy-version>4.5.3.Final</resteasy-version>
     <revapi-java-version>0.20.0</revapi-java-version>
     <revapi-maven-plugin-version>0.11.2</revapi-maven-plugin-version>
