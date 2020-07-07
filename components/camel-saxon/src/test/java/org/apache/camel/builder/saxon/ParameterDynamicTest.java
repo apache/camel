@@ -26,13 +26,13 @@ import net.sf.saxon.value.ObjectValue;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.xquery.XQueryBuilder.xquery;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ParameterDynamicTest {
 
@@ -46,7 +46,7 @@ public class ParameterDynamicTest {
     private XQueryExpression query;
     private DynamicQueryContext context;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         conf.setCompileWithTracing(true);
         query = conf.newStaticQueryContext().compileQuery(TEST_QUERY);

@@ -25,18 +25,26 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.createDirectory;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
 public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(XPathSplitChoicePerformanceTest.class);
 
     private int size = 20 * 1000;
     private final AtomicInteger tiny = new AtomicInteger();
@@ -46,31 +54,31 @@ public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
     private final StopWatch watch = new StopWatch();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        createDataFile(log, size);
+        createDataFile(LOG, size);
         super.setUp();
     }
 
     @Test
-    @Ignore("Manual test")
+    @Disabled("Manual test")
     public void testXPathPerformanceRoute() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(size).create();
 
         boolean matches = notify.matches(60, TimeUnit.SECONDS);
-        log.info("Processed file with " + size + " elements in: " + TimeUtils.printDuration(watch.taken()));
+        LOG.info("Processed file with " + size + " elements in: " + TimeUtils.printDuration(watch.taken()));
 
-        log.info("Processed " + tiny.get() + " tiny messages");
-        log.info("Processed " + small.get() + " small messages");
-        log.info("Processed " + med.get() + " medium messages");
-        log.info("Processed " + large.get() + " large messages");
+        LOG.info("Processed " + tiny.get() + " tiny messages");
+        LOG.info("Processed " + small.get() + " small messages");
+        LOG.info("Processed " + med.get() + " medium messages");
+        LOG.info("Processed " + large.get() + " large messages");
 
         assertEquals((size / 10) * 4, tiny.get());
         assertEquals((size / 10) * 2, small.get());
         assertEquals((size / 10) * 3, med.get());
         assertEquals((size / 10) * 1, large.get());
 
-        assertTrue("Should complete route", matches);
+        assertTrue(matches, "Should complete route");
     }
 
     @Override
@@ -91,7 +99,7 @@ public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
                                 .process(new Processor() {
                                     public void process(Exchange exchange) throws Exception {
                                         String xml = exchange.getIn().getBody(String.class);
-                                        assertTrue(xml, xml.contains("<amount>3</amount>"));
+                                        assertTrue(xml.contains("<amount>3</amount>"), xml);
 
                                         int num = tiny.incrementAndGet();
                                         if (num % 100 == 0) {
@@ -104,7 +112,7 @@ public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
                                 .process(new Processor() {
                                     public void process(Exchange exchange) throws Exception {
                                         String xml = exchange.getIn().getBody(String.class);
-                                        assertTrue(xml, xml.contains("<amount>44</amount>"));
+                                        assertTrue(xml.contains("<amount>44</amount>"), xml);
 
                                         int num = small.incrementAndGet();
                                         if (num % 100 == 0) {
@@ -117,7 +125,7 @@ public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
                                 .process(new Processor() {
                                     public void process(Exchange exchange) throws Exception {
                                         String xml = exchange.getIn().getBody(String.class);
-                                        assertTrue(xml, xml.contains("<amount>88</amount>"));
+                                        assertTrue(xml.contains("<amount>88</amount>"), xml);
 
                                         int num = med.incrementAndGet();
                                         if (num % 100 == 0) {
@@ -130,7 +138,7 @@ public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
                                 .process(new Processor() {
                                     public void process(Exchange exchange) throws Exception {
                                         String xml = exchange.getIn().getBody(String.class);
-                                        assertTrue(xml, xml.contains("<amount>123</amount>"));
+                                        assertTrue(xml.contains("<amount>123</amount>"), xml);
 
                                         int num = large.incrementAndGet();
                                         if (num % 100 == 0) {
