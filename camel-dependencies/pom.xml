@@ -197,7 +197,7 @@
     <felix-scr-version>2.0.14</felix-scr-version>
     <findbugs-maven-plugin-version>2.5.2</findbugs-maven-plugin-version>
     <flatpack-version>4.0.4</flatpack-version>
-    <flink-version>1.10.1</flink-version>
+    <flink-version>1.11.0</flink-version>
     <fop-version>2.3</fop-version>
     <freemarker-version>2.3.30</freemarker-version>
     <ftpserver-version>1.1.1</ftpserver-version>
