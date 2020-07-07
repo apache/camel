@@ -26,8 +26,10 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SaxonXsltDTDTest extends CamelTestSupport {
     
@@ -58,7 +60,7 @@ public class SaxonXsltDTDTest extends CamelTestSupport {
         List<Exchange> list = endpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
         String xml = exchange.getIn().getBody(String.class);
-        assertTrue("Get a wrong transformed message", xml.indexOf("<transformed subject=\"\">") > 0);
+        assertTrue(xml.indexOf("<transformed subject=\"\">") > 0, "Get a wrong transformed message");
 
         endpoint.reset();
         endpoint.expectedMessageCount(1);
@@ -72,13 +74,13 @@ public class SaxonXsltDTDTest extends CamelTestSupport {
             list = endpoint.getReceivedExchanges();
             exchange = list.get(0);
             xml = exchange.getIn().getBody(String.class);
-            assertTrue("Get a wrong transformed message", xml.indexOf("<transformed subject=\"\">") > 0);
+            assertTrue(xml.indexOf("<transformed subject=\"\">") > 0, "Get a wrong transformed message");
         } catch (Exception ex) {
             ex.printStackTrace();
             // expect an exception here
-            assertTrue("Get a wrong exception", ex instanceof CamelExecutionException);
+            assertTrue(ex instanceof CamelExecutionException, "Get a wrong exception");
             // the file could not be found
-            assertTrue("Get a wrong exception cause", ex.getCause() instanceof TransformerException);
+            assertTrue(ex.getCause() instanceof TransformerException, "Get a wrong exception cause");
         }
     }
     

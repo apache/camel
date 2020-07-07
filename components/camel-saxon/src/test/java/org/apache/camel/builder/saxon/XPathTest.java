@@ -20,9 +20,11 @@ import javax.xml.xpath.XPathFactory;
 
 import net.sf.saxon.xpath.XPathFactoryImpl;
 import org.apache.camel.language.xpath.XPathBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XPathTest extends CamelTestSupport {
 
@@ -70,7 +72,7 @@ public class XPathTest extends CamelTestSupport {
         // END SNIPPET: e1
     }
 
-    @Ignore("See http://www.saxonica.com/documentation/index.html#!xpath-api/jaxp-xpath/factory")
+    @Disabled("See http://www.saxonica.com/documentation/index.html#!xpath-api/jaxp-xpath/factory")
     @Test
     public void testXPathFunctionTokenizeUsingObjectModel() throws Exception {
         // START SNIPPET: e2

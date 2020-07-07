@@ -21,13 +21,14 @@ import org.w3c.dom.Document;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.xquery.XQueryBuilder.xquery;
 import static org.apache.camel.util.ObjectHelper.className;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class XQueryTest extends Assert {
+public class XQueryTest {
     @Test
     public void testXQuery() throws Exception {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext());
@@ -35,12 +36,12 @@ public class XQueryTest extends Assert {
 
         Object result = xquery(".//product[@type = 'beer']/*").evaluate(exchange, Object.class);
 
-        assertTrue("Should be a document but was: " + className(result), result instanceof Document);
+        assertTrue(result instanceof Document, "Should be a document but was: " + className(result));
 
         Document doc = (Document) result;
-        assertEquals("Root document element name", "stella", doc.getDocumentElement().getLocalName());
+        assertEquals("stella", doc.getDocumentElement().getLocalName(), "Root document element name");
         
         result = xquery(".//product[@type = 'beer']/*").evaluate(exchange, String.class);
-        assertEquals("Get a wrong result", "<stella/>", result);
+        assertEquals("<stella/>", result, "Get a wrong result");
     }
 }

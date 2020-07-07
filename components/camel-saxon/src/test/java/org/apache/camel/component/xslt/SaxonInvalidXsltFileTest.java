@@ -21,10 +21,12 @@ import javax.xml.transform.TransformerException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit4.TestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class SaxonInvalidXsltFileTest extends TestSupport {
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class SaxonInvalidXsltFileTest {
 
     @Test
     public void testInvalidStylesheet() throws Exception {
