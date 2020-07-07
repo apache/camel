@@ -167,12 +167,15 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
 
     @Test
     public void testMultiArgsPopulateCorrectEndpointProperties() throws Exception {
-        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?arg.exchange.e1=v1&arg.exchange.e2=v2&arg.queue.q1=v3&arg.binding.b1=v4",
+        RabbitMQEndpoint endpoint = context.getEndpoint(
+                "rabbitmq:localhost/exchange?arg.exchange.e1=v1&arg.exchange.e2=v2&arg.queue.q1=v3&arg.binding.b1=v4&arg.dlq.queue.dq1=v5&arg.dlq.binding.db1=v6",
                                                         RabbitMQEndpoint.class);
-        assertEquals("Wrong number of args", 4, endpoint.getArgs().size());
-        assertEquals("Wrong number of args", 1, endpoint.getBindingArgs().size());
-        assertEquals("Wrong number of args", 2, endpoint.getExchangeArgs().size());
-        assertEquals("Wrong number of args", 1, endpoint.getQueueArgs().size());
+        assertEquals("Wrong number of args", 6, endpoint.getArgs().size());
+        assertEquals("Wrong number of args (binding)", 1, endpoint.getBindingArgs().size());
+        assertEquals("Wrong number of args (exchange)", 2, endpoint.getExchangeArgs().size());
+        assertEquals("Wrong number of args (queue)", 1, endpoint.getQueueArgs().size());
+        assertEquals("Wrong number of args (dlq.queue)", 1, endpoint.getDlqArgs().size());
+        assertEquals("Wrong number of args (dlq.binding)", 1, endpoint.getDlqBindingArgs().size());
     }
 
     @Test
