@@ -18,6 +18,7 @@ package org.apache.camel.component.micrometer.routepolicy;
 
 import java.util.List;
 
+import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.builder.RouteBuilder;
@@ -37,10 +38,10 @@ public class MicrometerRoutePolicySubRouteTest extends AbstractMicrometerRoutePo
 
         assertMockEndpointsSatisfied();
 
-        // there should be 2 names
+        // there should be 6 names
         List<Meter> meters = meterRegistry.getMeters();
-        assertEquals(2, meters.size());
-        meters.forEach(meter -> assertTrue(meter instanceof Timer));
+        assertEquals(6, meters.size());
+        meters.forEach(meter -> assertTrue(meter instanceof Timer || meter instanceof Counter));
     }
 
     @Override

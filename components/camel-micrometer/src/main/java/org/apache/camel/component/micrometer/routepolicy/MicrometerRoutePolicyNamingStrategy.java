@@ -24,6 +24,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
+import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.FAILED_TAG;
 import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
@@ -40,6 +42,14 @@ public interface MicrometerRoutePolicyNamingStrategy {
 
     String getName(Route route);
 
+    default String getExchangesSucceededName(Route route) {
+        return DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME;
+    }
+
+    default String getExchangesFailedName(Route route) {
+        return DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME;
+    }
+
     default Tags getTags(Route route, Exchange exchange) {
         return Tags.of(
                 CAMEL_CONTEXT_TAG, route.getCamelContext().getName(),
@@ -49,4 +59,11 @@ public interface MicrometerRoutePolicyNamingStrategy {
         );
     }
 
+    default Tags getExchangeStatusTags(Route route) {
+        return Tags.of(
+                CAMEL_CONTEXT_TAG, route.getCamelContext().getName(),
+                SERVICE_NAME, MicrometerRoutePolicyService.class.getSimpleName(),
+                ROUTE_ID_TAG, route.getId()
+        );
+    }
 }
