@@ -4,7 +4,7 @@
 :page-source: components/camel-aws2-s3/src/main/docs/aws2-s3-component.adoc
 :docTitle: AWS 2 S3 Storage Service
 :artifactId: camel-aws2-s3
-:description: Store and retrie objects from AWS S3 Storage Service using AWS SDK version 2.x.
+:description: Store and retrieve objects from AWS S3 Storage Service using AWS SDK version 2.x.
 :since: 3.2
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

@@ -1362,7 +1362,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS 2 S3 Storage Service (camel-aws2-s3)
-     * Store and retrie objects from AWS S3 Storage Service using AWS SDK
+     * Store and retrieve objects from AWS S3 Storage Service using AWS SDK
      * version 2.x.
      * 
      * Category: cloud,file
@@ -1376,13 +1376,13 @@ public class StaticEndpointBuilders {
      * 
      * @param path //bucketNameOrArn
      */
-    public static org.apache.camel.builder.endpoint.dsl.AWS2S3EndpointBuilderFactory.AWS2S3EndpointBuilder aws2S3(
+    static org.apache.camel.builder.endpoint.dsl.AWS2S3EndpointBuilderFactory.AWS2S3EndpointBuilder aws2S3(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.AWS2S3EndpointBuilderFactory.endpointBuilder("aws2-s3", path);
     }
     /**
      * AWS 2 S3 Storage Service (camel-aws2-s3)
-     * Store and retrie objects from AWS S3 Storage Service using AWS SDK
+     * Store and retrieve objects from AWS S3 Storage Service using AWS SDK
      * version 2.x.
      * 
      * Category: cloud,file
@@ -1398,7 +1398,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path //bucketNameOrArn
      */
-    public static org.apache.camel.builder.endpoint.dsl.AWS2S3EndpointBuilderFactory.AWS2S3EndpointBuilder aws2S3(
+    static org.apache.camel.builder.endpoint.dsl.AWS2S3EndpointBuilderFactory.AWS2S3EndpointBuilder aws2S3(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.AWS2S3EndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -2106,7 +2106,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS S3 Storage Service (camel-aws-s3)
-     * Store and retrie objects from AWS S3 Storage Service.
+     * Store and retrieve objects from AWS S3 Storage Service.
      * 
      * Category: cloud,file
      * Since: 2.8
@@ -2125,7 +2125,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS S3 Storage Service (camel-aws-s3)
-     * Store and retrie objects from AWS S3 Storage Service.
+     * Store and retrieve objects from AWS S3 Storage Service.
      * 
      * Category: cloud,file
      * Since: 2.8

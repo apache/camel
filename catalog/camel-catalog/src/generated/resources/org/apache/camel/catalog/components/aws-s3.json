@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws-s3",
     "title": "AWS S3 Storage Service",
-    "description": "Store and retrie objects from AWS S3 Storage Service.",
+    "description": "Store and retrieve objects from AWS S3 Storage Service.",
     "deprecated": false,
     "firstVersion": "2.8.0",
     "label": "cloud,file",

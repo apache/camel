@@ -44,7 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Store and retrie objects from AWS S3 Storage Service.
+ * Store and retrieve objects from AWS S3 Storage Service.
  */
 @UriEndpoint(firstVersion = "2.8.0", scheme = "aws-s3", title = "AWS S3 Storage Service", syntax = "aws-s3://bucketNameOrArn", category = {Category.CLOUD, Category.FILE})
 public class S3Endpoint extends ScheduledPollEndpoint {

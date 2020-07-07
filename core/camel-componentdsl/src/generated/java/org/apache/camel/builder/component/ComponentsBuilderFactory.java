@@ -371,7 +371,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS S3 Storage Service (camel-aws-s3)
-     * Store and retrie objects from AWS S3 Storage Service.
+     * Store and retrieve objects from AWS S3 Storage Service.
      * 
      * Category: cloud,file
      * Since: 2.8
@@ -605,7 +605,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 S3 Storage Service (camel-aws2-s3)
-     * Store and retrie objects from AWS S3 Storage Service using AWS SDK
+     * Store and retrieve objects from AWS S3 Storage Service using AWS SDK
      * version 2.x.
      * 
      * Category: cloud,file
