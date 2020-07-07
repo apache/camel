@@ -348,7 +348,7 @@
     <jmh-version>1.23</jmh-version>
     <jnats-version>2.6.8</jnats-version>
     <jodatime2-bundle-version>2.10.6</jodatime2-bundle-version>
-    <johnzon-version>1.2.6</johnzon-version>
+    <johnzon-version>1.2.8</johnzon-version>
     <jolokia-version>1.6.2</jolokia-version>
     <jolt-version>0.1.1</jolt-version>
     <jool-version>0.9.12</jool-version>
