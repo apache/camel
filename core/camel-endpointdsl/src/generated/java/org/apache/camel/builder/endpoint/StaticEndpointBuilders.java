@@ -8401,7 +8401,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path resourceUri
      */
-    static org.apache.camel.builder.endpoint.dsl.JsltEndpointBuilderFactory.JsltEndpointBuilder jslt(
+    public static org.apache.camel.builder.endpoint.dsl.JsltEndpointBuilderFactory.JsltEndpointBuilder jslt(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.JsltEndpointBuilderFactory.endpointBuilder("jslt", path);
     }
@@ -8426,7 +8426,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path resourceUri
      */
-    static org.apache.camel.builder.endpoint.dsl.JsltEndpointBuilderFactory.JsltEndpointBuilder jslt(
+    public static org.apache.camel.builder.endpoint.dsl.JsltEndpointBuilderFactory.JsltEndpointBuilder jslt(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.JsltEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -12078,7 +12078,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path feedUri
      */
-    public static org.apache.camel.builder.endpoint.dsl.RssEndpointBuilderFactory.RssEndpointBuilder rss(
+    static org.apache.camel.builder.endpoint.dsl.RssEndpointBuilderFactory.RssEndpointBuilder rss(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.RssEndpointBuilderFactory.endpointBuilder("rss", path);
     }
@@ -12099,7 +12099,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path feedUri
      */
-    public static org.apache.camel.builder.endpoint.dsl.RssEndpointBuilderFactory.RssEndpointBuilder rss(
+    static org.apache.camel.builder.endpoint.dsl.RssEndpointBuilderFactory.RssEndpointBuilder rss(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.RssEndpointBuilderFactory.endpointBuilder(componentName, path);
