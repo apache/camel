@@ -258,7 +258,7 @@ key, as discussed in the following section.
 
 *Since Camel 3.4*
 
-When using `{{key}}` in configuring endpoint URIs then Camel will replace the `{{key}}` while parsing the endpoint URI.
+When using `{\{key}}` in configuring endpoint URIs then Camel will replace the `{\{key}}` while parsing the endpoint URI.
 This has its pros but also a few cons, such as when using sensitive information such as passwords. As we have seen
 in the previous section you can use RAW() syntax. Instead of using RAW() you can use `#property:key` notation,
 as shown in the example below:
