@@ -26,14 +26,18 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class GrpcConsumerAggregationTest extends CamelTestSupport {
+
     private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumerAggregationTest.class);
 
     private static final int GRPC_SYNC_REQUEST_TEST_PORT = AvailablePortFinder.getNextAvailable();
@@ -48,7 +52,7 @@ public class GrpcConsumerAggregationTest extends CamelTestSupport {
     private PingPongGrpc.PingPongStub nonBlockingStub;
     private PingPongGrpc.PingPongStub asyncNonBlockingStub;
 
-    @Before
+    @BeforeEach
     public void startGrpcChannels() {
         syncRequestChannel = ManagedChannelBuilder.forAddress("localhost", GRPC_SYNC_REQUEST_TEST_PORT).usePlaintext().build();
         asyncRequestChannel = ManagedChannelBuilder.forAddress("localhost", GRPC_ASYNC_REQUEST_TEST_PORT).usePlaintext().build();
@@ -57,7 +61,7 @@ public class GrpcConsumerAggregationTest extends CamelTestSupport {
         asyncNonBlockingStub = PingPongGrpc.newStub(asyncRequestChannel);
     }
 
-    @After
+    @AfterEach
     public void stopGrpcChannels() {
         syncRequestChannel.shutdown().shutdownNow();
         asyncRequestChannel.shutdown().shutdownNow();

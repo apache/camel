@@ -30,10 +30,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class GrpcConsumerConcurrentTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumerConcurrentTest.class);
@@ -81,7 +84,7 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
 
                 PongResponse pongResponse = responseObserver.getPongResponse();
 
-                assertNotNull("instanceId = " + instanceId, pongResponse);
+                assertNotNull(pongResponse, "instanceId = " + instanceId);
                 assertEquals(instanceId, pongResponse.getPongId());
                 assertEquals(GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE, pongResponse.getPongName());
 
@@ -119,7 +122,7 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
 
                 PongResponse pongResponse = responseObserver.getPongResponse();
 
-                assertNotNull("instanceId = " + instanceId, pongResponse);
+                assertNotNull(pongResponse, "instanceId = " + instanceId);
                 assertEquals(instanceId, pongResponse.getPongId());
                 assertEquals(GRPC_USER_AGENT_PREFIX + instanceId, pongResponse.getPongName());
 
