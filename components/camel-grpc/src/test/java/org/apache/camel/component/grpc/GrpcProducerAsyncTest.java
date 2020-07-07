@@ -28,14 +28,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class GrpcProducerAsyncTest extends CamelTestSupport {
+
     private static final Logger LOG = LoggerFactory.getLogger(GrpcProducerAsyncTest.class);
 
     private static final int GRPC_TEST_PORT = AvailablePortFinder.getNextAvailable();
@@ -48,13 +53,13 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
     private static Server grpcServer;
     private Object asyncPongResponse;
 
-    @BeforeClass
+    @BeforeAll
     public static void startGrpcServer() throws Exception {
         grpcServer = ServerBuilder.forPort(GRPC_TEST_PORT).addService(new PingPongImpl()).build().start();
         LOG.info("gRPC server started on port {}", GRPC_TEST_PORT);
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopGrpcServer() throws IOException {
         if (grpcServer != null) {
             grpcServer.shutdown();

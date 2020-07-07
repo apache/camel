@@ -26,14 +26,18 @@ import io.grpc.stub.StreamObserver;
 import org.apache.camel.CamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class GrpcConsumerExceptionTest extends CamelTestSupport {
+
     private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumerExceptionTest.class);
 
     private static final int GRPC_SYNC_REQUEST_TEST_PORT = AvailablePortFinder.getNextAvailable();
@@ -44,23 +48,23 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
     private PingPongGrpc.PingPongBlockingStub blockingStub;
     private PingPongGrpc.PingPongStub nonBlockingStub;
 
-    @Before
+    @BeforeEach
     public void startGrpcChannels() {
         syncRequestChannel = ManagedChannelBuilder.forAddress("localhost", GRPC_SYNC_REQUEST_TEST_PORT).usePlaintext().build();
         blockingStub = PingPongGrpc.newBlockingStub(syncRequestChannel);
         nonBlockingStub = PingPongGrpc.newStub(syncRequestChannel);
     }
 
-    @After
+    @AfterEach
     public void stopGrpcChannels() {
         syncRequestChannel.shutdown().shutdownNow();
     }
 
-    @Test(expected = StatusRuntimeException.class)
+    @Test
     public void testExceptionExpected() throws Exception {
         LOG.info("gRPC expected exception test start");
         PingRequest pingRequest = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
-        PongResponse pongResponse = blockingStub.pingSyncSync(pingRequest);
+        assertThrows(StatusRuntimeException.class, () -> blockingStub.pingSyncSync(pingRequest));
     }
 
     @Test
