@@ -18,8 +18,10 @@ package org.apache.camel.component.xquery;
 
 import org.apache.camel.Handler;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BeanWithXQueryInjectionUsingHeaderValueTest extends CamelTestSupport {
     protected MyBean myBean = new MyBean();
@@ -29,9 +31,9 @@ public class BeanWithXQueryInjectionUsingHeaderValueTest extends CamelTestSuppor
         template.sendBodyAndHeader("bean:myBean", "<response>OK</response>",
                                    "invoiceDetails", "<invoice><person><name>Alan</name><date>26/08/2012</date></person></invoice>");
        
-        assertEquals("bean response:  " + myBean, "OK", myBean.response);
-        assertEquals("bean userName: " + myBean, "Alan", myBean.userName);
-        assertEquals("bean date:  " + myBean, "26/08/2012", myBean.date);
+        assertEquals("OK", myBean.response, "bean response:  " + myBean);
+        assertEquals("Alan", myBean.userName, "bean userName: " + myBean);
+        assertEquals("26/08/2012", myBean.date, "bean date:  " + myBean);
     }
 
     @Override

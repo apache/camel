@@ -22,8 +22,10 @@ import net.sf.saxon.lib.NamespaceConstant;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.xpath.XPath;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XPathAnnotationResultTypeTest extends CamelTestSupport {
     protected MyBean myBean = new MyBean();
