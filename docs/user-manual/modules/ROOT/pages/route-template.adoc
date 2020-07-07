@@ -59,7 +59,7 @@ the template accepts. As you can see there are 3 parameters: name, greeting, and
 parameters are mandatory, where as myPeriod is optional as it has a default value of 3s.
 
 The template parameters are then used in the route as regular property placeholders with the `{{ }}` syntax.
-Notice how we use `{{name}} and `{{greeting}}` in the timer endpoint and the simple language.
+Notice how we use `{\{name}}` and `{\{greeting}}` in the timer endpoint and the simple language.
 
 The route can of course also use regular property placeholders as well.
 Now imagine there was a property placeholder with the name greeting:
