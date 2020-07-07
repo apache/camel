@@ -23,9 +23,6 @@ public interface MinioConstants {
 
     String BUCKET_NAME = "CamelMinioBucketName";
     String BUCKET_DESTINATION_NAME = "CamelMinioBucketDestinationName";
-    String CACHE_CONTROL = "CamelMinioContentControl";
-    String CONTENT_DISPOSITION = "CamelMinioContentDisposition";
-    String CONTENT_ENCODING = "CamelMinioContentEncoding";
     String CONTENT_LENGTH = "CamelMinioContentLength";
     String CONTENT_MD5 = "CamelMinioContentMD5";
     String CONTENT_TYPE = "CamelMinioContentType";

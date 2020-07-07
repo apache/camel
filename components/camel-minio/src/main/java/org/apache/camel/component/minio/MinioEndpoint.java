@@ -21,9 +21,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import io.minio.GetObjectTagsArgs;
-import io.minio.MakeBucketArgs;
-import io.minio.MinioClient;
+import io.minio.*;
 import io.minio.errors.InvalidBucketNameException;
 import io.minio.messages.Tags;
 import jdk.internal.org.jline.utils.Log;
@@ -192,13 +190,22 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
 
     private void getObjectTags(String key, String bucketName, Message message) {
         try {
-            Tags tags = minioClient.getObjectTags(
-                    GetObjectTagsArgs.builder().bucket(bucketName).object(key).build());
+            ObjectStat stat = minioClient.statObject(
+                    StatObjectArgs.builder().bucket(bucketName).object(key).build());
 
-            // set all tags as message headers
-            for (Map.Entry<String, String> entry : tags.get().entrySet()) {
-                message.setHeader(entry.getKey(), entry.getValue());
-            }
+            // set all stat as message headers
+            message.setHeader(MinioConstants.KEY, key);
+            message.setHeader(MinioConstants.BUCKET_NAME, bucketName);
+            message.setHeader(MinioConstants.E_TAG, stat.etag());
+            message.setHeader(MinioConstants.LAST_MODIFIED, stat.httpHeaders().get("last-modified"));
+            message.setHeader(MinioConstants.VERSION_ID, stat.httpHeaders().get("x-amz-version-id"));
+            message.setHeader(MinioConstants.CONTENT_TYPE, stat.contentType());
+            message.setHeader(MinioConstants.CONTENT_LENGTH, stat.length());
+            message.setHeader(MinioConstants.SERVER_SIDE_ENCRYPTION, stat.httpHeaders().get("x-amz-server-side-encryption"));
+            message.setHeader(MinioConstants.EXPIRATION_TIME, stat.httpHeaders().get("x-amz-expiration"));
+            message.setHeader(MinioConstants.REPLICATION_STATUS, stat.httpHeaders().get("x-amz-replication-status"));
+            message.setHeader(MinioConstants.STORAGE_CLASS, stat.httpHeaders().get("x-amz-storage-class"));
+
         } catch (Exception e) {
             Log.warn("Error getting message headers, due {}", e.getMessage());
         }

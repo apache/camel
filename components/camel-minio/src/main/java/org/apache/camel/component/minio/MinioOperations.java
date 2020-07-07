@@ -18,6 +18,11 @@ package org.apache.camel.component.minio;
 
 public enum MinioOperations {
     copyObject,
+    listObjects,
+    deleteObject,
     deleteBucket,
-    listBuckets
+    listBuckets,
+    getObject,
+    getObjectRange
+
 }

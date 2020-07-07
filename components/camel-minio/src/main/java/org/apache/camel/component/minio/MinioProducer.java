@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.minio;
 
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import io.minio.MinioClient;
 import org.apache.camel.*;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.FileUtil;
@@ -24,13 +29,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 
 /**
  * A Producer which sends messages to the Minio Simple Storage
@@ -59,27 +57,28 @@ public class MinioProducer extends DefaultProducer {
                 processSingleOp(exchange);
             }
         } else {
+            MinioClient minioClient = getEndpoint().getMinioClient();
             switch (operation) {
                 case copyObject:
-                    copyObject(getEndpoint().getMinioClient(), exchange);
+                    copyObject(minioClient, exchange);
                     break;
                 case deleteObject:
-                    deleteObject(getEndpoint().getMinioClient(), exchange);
+                    deleteObject(minioClient, exchange);
                     break;
                 case listBuckets:
-                    listBuckets(getEndpoint().getMinioClient(), exchange);
+                    listBuckets(minioClient, exchange);
                     break;
                 case deleteBucket:
-                    deleteBucket(getEndpoint().getMinioClient(), exchange);
+                    deleteBucket(minioClient, exchange);
                     break;
                 case listObjects:
-                    listObjects(getEndpoint().getMinioClient(), exchange);
+                    listObjects(minioClient, exchange);
                     break;
                 case getObject:
-                    getObject(getEndpoint().getMinioClient(), exchange);
+                    getObject(minioClient, exchange);
                     break;
                 case getObjectRange:
-                    getObjectRange(getEndpoint().getMinioClient(), exchange);
+                    getObjectRange(minioClient, exchange);
                     break;
                 default:
                     throw new IllegalArgumentException("Unsupported operation");
@@ -88,7 +87,7 @@ public class MinioProducer extends DefaultProducer {
     }
 
     public void processMultiPart(final Exchange exchange) throws Exception {
-        File filePayload = null;
+        File filePayload;
         Object obj = exchange.getIn().getMandatoryBody();
         // Need to check if the message body is WrappedFile
         if (obj instanceof WrappedFile) {
@@ -97,12 +96,12 @@ public class MinioProducer extends DefaultProducer {
         if (obj instanceof File) {
             filePayload = (File) obj;
         } else {
-            throw new IllegalArgumentException("aws2-s3: MultiPart upload requires a File input.");
+            throw new IllegalArgumentException("minio: MultiPart upload requires a File input.");
         }
 
-        Map<String, String> objectMetadata = determineMetadata(exchange);
+        Map<String, Object> objectMetadata = determineMetadata(exchange);
         if (objectMetadata.containsKey("Content-Length")) {
-            if (objectMetadata.get("Content-Length").equalsIgnoreCase("0")) {
+            if (objectMetadata.get("Content-Length").equals("0")) {
                 objectMetadata.put("Content-Length", String.valueOf(filePayload.length()));
             }
         } else {
@@ -457,40 +456,10 @@ public class MinioProducer extends DefaultProducer {
         return operation;
     }
 
-    private Map<String, String> determineMetadata(final Exchange exchange) {
-        Map<String, String> objectMetadata = new HashMap<String, String>();
+    private Map<String, Object> determineMetadata(final Exchange exchange) {
 
-        Long contentLength = exchange.getIn().getHeader(MinioConstants.CONTENT_LENGTH, Long.class);
-        if (contentLength != null) {
-            objectMetadata.put("Content-Length", String.valueOf(contentLength));
-        }
+        return exchange.getIn().getHeaders();
 
-        String contentType = exchange.getIn().getHeader(MinioConstants.CONTENT_TYPE, String.class);
-        if (contentType != null) {
-            objectMetadata.put("Content-Type", contentType);
-        }
-
-        String cacheControl = exchange.getIn().getHeader(MinioConstants.CACHE_CONTROL, String.class);
-        if (cacheControl != null) {
-            objectMetadata.put("Cache-Control", cacheControl);
-        }
-
-        String contentDisposition = exchange.getIn().getHeader(MinioConstants.CONTENT_DISPOSITION, String.class);
-        if (contentDisposition != null) {
-            objectMetadata.put("Content-Disposition", contentDisposition);
-        }
-
-        String contentEncoding = exchange.getIn().getHeader(MinioConstants.CONTENT_ENCODING, String.class);
-        if (contentEncoding != null) {
-            objectMetadata.put("Content-Encoding", contentEncoding);
-        }
-
-        String contentMD5 = exchange.getIn().getHeader(MinioConstants.CONTENT_MD5, String.class);
-        if (contentMD5 != null) {
-            objectMetadata.put("Content-Md5", contentMD5);
-        }
-
-        return objectMetadata;
     }
 
     /**
