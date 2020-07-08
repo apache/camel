@@ -91,6 +91,8 @@ public class AWS2S3Configuration implements Cloneable {
     private String keyName;
     @UriParam(defaultValue = "false")
     private boolean overrideEndpoint;
+    @UriParam(defaultValue = "false")
+    private boolean trustAllCertificates;
     @UriParam
     private String uriEndpointOverride;
     @UriParam(defaultValue = "false")
@@ -522,11 +524,18 @@ public class AWS2S3Configuration implements Cloneable {
         this.pojoRequest = pojoRequest;
     }
 
-    // *************************************************
-    //
-    // *************************************************
+    public boolean isTrustAllCertificates() {
+		return trustAllCertificates;
+	}
 
-    public AWS2S3Configuration copy() {
+    /**
+     * If we want to trust all certificates in case of overriding the endpoint
+     */
+	public void setTrustAllCertificates(boolean trustAllCertificates) {
+		this.trustAllCertificates = trustAllCertificates;
+	}
+
+	public AWS2S3Configuration copy() {
         try {
             return (AWS2S3Configuration)super.clone();
         } catch (CloneNotSupportedException e) {
