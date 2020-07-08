@@ -46,6 +46,8 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "secretkey":
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "timestamp": getOrCreateConfiguration(target).setTimestamp(property(camelContext, java.time.Instant.class, value)); return true;
+        case "trustallcertificates":
+        case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "unit": getOrCreateConfiguration(target).setUnit(property(camelContext, java.lang.String.class, value)); return true;
         case "value": getOrCreateConfiguration(target).setValue(property(camelContext, java.lang.Double.class, value)); return true;
         default: return false;
@@ -67,6 +69,7 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
         answer.put("region", java.lang.String.class);
         answer.put("secretKey", java.lang.String.class);
         answer.put("timestamp", java.time.Instant.class);
+        answer.put("trustAllCertificates", boolean.class);
         answer.put("unit", java.lang.String.class);
         answer.put("value", java.lang.Double.class);
         return answer;
@@ -96,6 +99,8 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "secretkey":
         case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         case "timestamp": return getOrCreateConfiguration(target).getTimestamp();
+        case "trustallcertificates":
+        case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
         case "unit": return getOrCreateConfiguration(target).getUnit();
         case "value": return getOrCreateConfiguration(target).getValue();
         default: return null;
