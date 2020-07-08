@@ -317,6 +317,7 @@
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>3.1.0</jedis-client-version>
         <jersey-version>2.28</jersey-version>
+        <jetcd-version>0.5.3</jetcd-version>
         <jetty9-version>9.4.31.v20200723</jetty9-version>
         <jetty-version>${jetty9-version}</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
@@ -611,7 +612,6 @@
         <camel.osgi.provide.capability />
 
         <camel.osgi.manifest>${project.build.outputDirectory}/META-INF/MANIFEST.MF</camel.osgi.manifest>
-
         <sourcecheckExcludes></sourcecheckExcludes>
         <sourcecheckExcludesComma></sourcecheckExcludesComma>
     </properties>
@@ -1337,6 +1337,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-etcd</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-etcd3</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2657,7 +2662,6 @@
                 <version>${project.version}</version>
                 <type>test-jar</type>
             </dependency>
-
             <!-- cassandra -->
             <dependency>
                 <groupId>org.apache.cassandra</groupId>
@@ -2674,7 +2678,6 @@
                 <artifactId>java-driver-query-builder</artifactId>
                 <version>${cassandra-driver-version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
@@ -4458,7 +4461,6 @@
                 </plugins>
             </build>
         </profile>
-
         <profile>
             <id>revapi</id>
             <build>
