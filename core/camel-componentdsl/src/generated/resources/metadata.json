@@ -127,6 +127,27 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "ArangodbComponentBuilderFactory": {
+    "kind": "component",
+    "name": "arangodb",
+    "title": "ArangoDb",
+    "description": "Perform operations on ArangoDb documents, collections and graphs.",
+    "deprecated": false,
+    "firstVersion": "3.5.0-SNAPSHOT",
+    "label": "database,nosql",
+    "javaType": "org.apache.camel.component.arangodb.ArangoDbComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-arangodb",
+    "version": "3.5.0-SNAPSHOT",
+    "scheme": "arangodb",
+    "extendsScheme": "",
+    "syntax": "arangodb:name",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "As2ComponentBuilderFactory": {
     "kind": "component",
     "name": "as2",

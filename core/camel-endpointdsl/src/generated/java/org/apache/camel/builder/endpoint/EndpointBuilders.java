@@ -32,6 +32,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AhcEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ApnsEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.ArangoDbEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AsteriskEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Athena2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AtmosEndpointBuilderFactory,

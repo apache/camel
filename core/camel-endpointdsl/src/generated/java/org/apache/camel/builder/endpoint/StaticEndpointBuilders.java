@@ -253,6 +253,47 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.ApnsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * ArangoDb (camel-arangodb)
+     * Perform operations on ArangoDb documents, collections and graphs.
+     * 
+     * Category: database,nosql
+     * Since: 3.5.0-SNAPSHOT
+     * Maven coordinates: org.apache.camel:camel-arangodb
+     * 
+     * Syntax: <code>arangodb:name</code>
+     * 
+     * Path parameter: database (required)
+     * database name
+     * 
+     * @param path name
+     */
+    static org.apache.camel.builder.endpoint.dsl.ArangoDbEndpointBuilderFactory.ArangoDbEndpointBuilder arangodb(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ArangoDbEndpointBuilderFactory.endpointBuilder("arangodb", path);
+    }
+    /**
+     * ArangoDb (camel-arangodb)
+     * Perform operations on ArangoDb documents, collections and graphs.
+     * 
+     * Category: database,nosql
+     * Since: 3.5.0-SNAPSHOT
+     * Maven coordinates: org.apache.camel:camel-arangodb
+     * 
+     * Syntax: <code>arangodb:name</code>
+     * 
+     * Path parameter: database (required)
+     * database name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path name
+     */
+    static org.apache.camel.builder.endpoint.dsl.ArangoDbEndpointBuilderFactory.ArangoDbEndpointBuilder arangodb(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ArangoDbEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AS2 (camel-as2)
      * Transfer data securely and reliably using the AS2 protocol (RFC4130).
      * 

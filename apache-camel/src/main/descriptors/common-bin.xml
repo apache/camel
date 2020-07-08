@@ -57,6 +57,7 @@
         <include>org.apache.camel:camel-amqp</include>
         <include>org.apache.camel:camel-any23</include>
         <include>org.apache.camel:camel-apns</include>
+        <include>org.apache.camel:camel-arangodb</include>
         <include>org.apache.camel:camel-as2</include>
         <include>org.apache.camel:camel-as2-api</include>
         <include>org.apache.camel:camel-asn1</include>
