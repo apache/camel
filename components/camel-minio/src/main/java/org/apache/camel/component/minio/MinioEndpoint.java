@@ -19,11 +19,9 @@ package org.apache.camel.component.minio;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 import io.minio.*;
 import io.minio.errors.InvalidBucketNameException;
-import io.minio.messages.Tags;
 import jdk.internal.org.jline.utils.Log;
 import org.apache.camel.Category;
 import org.apache.camel.Component;

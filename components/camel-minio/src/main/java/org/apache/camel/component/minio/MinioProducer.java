@@ -21,6 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.minio.MinioClient;
+import io.minio.ObjectWriteResponse;
+import io.minio.PutObjectArgs;
+import io.minio.UploadObjectArgs;
 import org.apache.camel.*;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.FileUtil;
@@ -29,6 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.services.s3.model.BucketCannedACL;
 
 /**
  * A Producer which sends messages to the Minio Simple Storage
@@ -51,11 +55,7 @@ public class MinioProducer extends DefaultProducer {
     public void process(final Exchange exchange) throws Exception {
         MinioOperations operation = determineOperation(exchange);
         if (ObjectHelper.isEmpty(operation)) {
-            if (getConfiguration().isMultiPartUpload()) {
-                processMultiPart(exchange);
-            } else {
-                processSingleOp(exchange);
-            }
+            processSingleOp(exchange);
         } else {
             MinioClient minioClient = getEndpoint().getMinioClient();
             switch (operation) {
@@ -86,121 +86,20 @@ public class MinioProducer extends DefaultProducer {
         }
     }
 
-    public void processMultiPart(final Exchange exchange) throws Exception {
-        File filePayload;
-        Object obj = exchange.getIn().getMandatoryBody();
-        // Need to check if the message body is WrappedFile
-        if (obj instanceof WrappedFile) {
-            obj = ((WrappedFile<?>) obj).getFile();
-        }
-        if (obj instanceof File) {
-            filePayload = (File) obj;
-        } else {
-            throw new IllegalArgumentException("minio: MultiPart upload requires a File input.");
-        }
-
-        Map<String, Object> objectMetadata = determineMetadata(exchange);
-        if (objectMetadata.containsKey("Content-Length")) {
-            if (objectMetadata.get("Content-Length").equals("0")) {
-                objectMetadata.put("Content-Length", String.valueOf(filePayload.length()));
-            }
-        } else {
-            objectMetadata.put("Content-Length", String.valueOf(filePayload.length()));
-        }
-
-        final String keyName = determineKey(exchange);
-        CreateMultipartUploadRequest.Builder createMultipartUploadRequest = CreateMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName()).key(keyName);
-
-        String storageClass = determineStorageClass(exchange);
-        if (storageClass != null) {
-            createMultipartUploadRequest.storageClass(storageClass);
-        }
-
-        String cannedAcl = exchange.getIn().getHeader(MinioConstants.CANNED_ACL, String.class);
-        if (cannedAcl != null) {
-            ObjectCannedACL objectAcl = ObjectCannedACL.valueOf(cannedAcl);
-            createMultipartUploadRequest.acl(objectAcl);
-        }
-
-        BucketCannedACL acl = exchange.getIn().getHeader(MinioConstants.ACL, BucketCannedACL.class);
-        if (acl != null) {
-            // note: if cannedacl and acl are both specified the last one will
-            // be used. refer to
-            // PutObjectRequest#setAccessControlList for more details
-            createMultipartUploadRequest.acl(acl.toString());
-        }
-
-        if (getConfiguration().isUseAwsKMS()) {
-            createMultipartUploadRequest.ssekmsKeyId(getConfiguration().getAwsKMSKeyId());
-        }
-
-        if (getConfiguration().isUseCustomerKey()) {
-            if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyId())) {
-                createMultipartUploadRequest.sseCustomerKey(getConfiguration().getCustomerKeyId());
-            }
-            if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyMD5())) {
-                createMultipartUploadRequest.sseCustomerKeyMD5(getConfiguration().getCustomerKeyMD5());
-            }
-            if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerAlgorithm())) {
-                createMultipartUploadRequest.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
-            }
-        }
-
-        LOG.trace("Initiating multipart upload [{}] from exchange [{}]...", createMultipartUploadRequest, exchange);
-
-        CreateMultipartUploadResponse initResponse = getEndpoint().getMinioClient().createMultipartUpload(createMultipartUploadRequest.build());
-        final long contentLength = Long.valueOf(objectMetadata.get("Content-Length"));
-        List<CompletedPart> completedParts = new ArrayList<CompletedPart>();
-        long partSize = getConfiguration().getPartSize();
-        CompleteMultipartUploadResponse uploadResult = null;
-
-        long filePosition = 0;
-
-        try {
-            for (int part = 1; filePosition < contentLength; part++) {
-                partSize = Math.min(partSize, contentLength - filePosition);
-
-                UploadPartRequest uploadRequest = UploadPartRequest.builder().bucket(getConfiguration().getBucketName()).key(keyName).uploadId(initResponse.uploadId())
-                        .partNumber(part).build();
-
-                LOG.trace("Uploading part [{}] for {}", part, keyName);
-                String etag = getEndpoint().getMinioClient().uploadPart(uploadRequest, RequestBody.fromFile(filePayload)).eTag();
-                CompletedPart partUpload = CompletedPart.builder().partNumber(part).eTag(etag).build();
-                completedParts.add(partUpload);
-                filePosition += partSize;
-            }
-            CompletedMultipartUpload completeMultipartUpload = CompletedMultipartUpload.builder().parts(completedParts).build();
-            CompleteMultipartUploadRequest compRequest = CompleteMultipartUploadRequest.builder().multipartUpload(completeMultipartUpload)
-                    .bucket(getConfiguration().getBucketName()).key(keyName).uploadId(initResponse.uploadId()).build();
-
-            uploadResult = getEndpoint().getMinioClient().completeMultipartUpload(compRequest);
-
-        } catch (Exception e) {
-            getEndpoint().getMinioClient()
-                    .abortMultipartUpload(AbortMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName()).key(keyName).uploadId(initResponse.uploadId()).build());
-            throw e;
-        }
-
-        Message message = getMessageForResponse(exchange);
-        message.setHeader(MinioConstants.E_TAG, uploadResult.eTag());
-        if (uploadResult.versionId() != null) {
-            message.setHeader(MinioConstants.VERSION_ID, uploadResult.versionId());
-        }
-
-        if (getConfiguration().isDeleteAfterWrite()) {
-            FileUtil.deleteFile(filePayload);
-        }
-    }
-
     public void processSingleOp(final Exchange exchange) throws Exception {
 
+        final String bucketName = determineBucketName(exchange);
+        final String key = determineKey(exchange);
         Map<String, String> objectMetadata = determineMetadata(exchange);
+        Map<String, String> extraHeaders = determineExtraHeaders(exchange);
 
         File filePayload = null;
-        InputStream is = null;
-        ByteArrayOutputStream baos = null;
+        InputStream is;
+        ByteArrayOutputStream baos;
         Object obj = exchange.getIn().getMandatoryBody();
-        PutObjectRequest.Builder putObjectRequest = PutObjectRequest.builder();
+        PutObjectArgs.Builder putObjectRequest = null;
+        UploadObjectArgs.Builder uploadObjectRequest;
+
         // Need to check if the message body is WrappedFile
         if (obj instanceof WrappedFile) {
             obj = ((WrappedFile<?>) obj).getFile();
@@ -223,56 +122,20 @@ public class MinioProducer extends DefaultProducer {
                 }
             }
         }
+        putObjectRequest = PutObjectArgs.builder().stream(is, is.available(), -1).extraHeaders(extraHeaders).userMetadata(objectMetadata);
 
-        final String bucketName = determineBucketName(exchange);
-        final String key = determineKey(exchange);
-        putObjectRequest.bucket(bucketName).key(key).metadata(objectMetadata);
-
-        String storageClass = determineStorageClass(exchange);
-        if (storageClass != null) {
-            putObjectRequest.storageClass(storageClass);
+        if (getConfiguration().getServerSideEncryption() != null) {
+            putObjectRequest.sse(getConfiguration().getServerSideEncryption());
         }
 
-        String cannedAcl = exchange.getIn().getHeader(MinioConstants.CANNED_ACL, String.class);
-        if (cannedAcl != null) {
-            ObjectCannedACL objectAcl = ObjectCannedACL.valueOf(cannedAcl);
-            putObjectRequest.acl(objectAcl);
-        }
+        LOG.trace("Put object from exchange...");
 
-        BucketCannedACL acl = exchange.getIn().getHeader(MinioConstants.ACL, BucketCannedACL.class);
-        if (acl != null) {
-            // note: if cannedacl and acl are both specified the last one will
-            // be used. refer to
-            // PutObjectRequest#setAccessControlList for more details
-            putObjectRequest.acl(acl.toString());
-        }
+        ObjectWriteResponse putObjectResult = getEndpoint().getMinioClient().putObject(putObjectRequest.build());
 
-        if (getConfiguration().isUseAwsKMS()) {
-            if (ObjectHelper.isNotEmpty(getConfiguration().getAwsKMSKeyId())) {
-                putObjectRequest.ssekmsKeyId(getConfiguration().getAwsKMSKeyId());
-            }
-        }
-
-        if (getConfiguration().isUseCustomerKey()) {
-            if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyId())) {
-                putObjectRequest.sseCustomerKey(getConfiguration().getCustomerKeyId());
-            }
-            if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyMD5())) {
-                putObjectRequest.sseCustomerKeyMD5(getConfiguration().getCustomerKeyMD5());
-            }
-            if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerAlgorithm())) {
-                putObjectRequest.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
-            }
-        }
-
-        LOG.trace("Put object [{}] from exchange [{}]...", putObjectRequest, exchange);
-
-        PutObjectResponse putObjectResult = getEndpoint().getMinioClient().putObject(putObjectRequest.build(), RequestBody.fromBytes(SdkBytes.fromInputStream(is).asByteArray()));
-
-        LOG.trace("Received result [{}]", putObjectResult);
+        LOG.trace("Received result...");
 
         Message message = getMessageForResponse(exchange);
-        message.setHeader(MinioConstants.E_TAG, putObjectResult.eTag());
+        message.setHeader(MinioConstants.E_TAG, putObjectResult.etag());
         if (putObjectResult.versionId() != null) {
             message.setHeader(MinioConstants.VERSION_ID, putObjectResult.versionId());
         }
@@ -282,6 +145,28 @@ public class MinioProducer extends DefaultProducer {
         if (getConfiguration().isDeleteAfterWrite() && filePayload != null) {
             FileUtil.deleteFile(filePayload);
         }
+    }
+
+    private Map<String, String> determineExtraHeaders(Exchange exchange) {
+        Map<String, String> extraHeaders = new HashMap<>();
+        String storageClass = determineStorageClass(exchange);
+        if (storageClass != null) {
+            extraHeaders.put("X-Amz-Storage-Class", storageClass);
+        }
+
+        String cannedAcl = exchange.getIn().getHeader(MinioConstants.CANNED_ACL, String.class);
+        if (cannedAcl != null) {
+            extraHeaders.put("x-amz-acl", cannedAcl);
+        }
+
+        BucketCannedACL acl = exchange.getIn().getHeader(MinioConstants.ACL, BucketCannedACL.class);
+        if (acl != null) {
+            // note: if cannedacl and acl are both specified the last one will
+            // be used. refer to
+            // PutObjectRequest#setAccessControlList for more details
+            extraHeaders.put("x-amz-acl", acl.toString());
+        }
+        return extraHeaders;
     }
 
     private void copyObject(MinioClient minioClient, Exchange exchange) throws InvalidPayloadException {
@@ -456,10 +341,40 @@ public class MinioProducer extends DefaultProducer {
         return operation;
     }
 
-    private Map<String, Object> determineMetadata(final Exchange exchange) {
+    private Map<String, String> determineMetadata(final Exchange exchange) {
+        Map<String, String> objectMetadata = new HashMap<>();
 
-        return exchange.getIn().getHeaders();
+        Long contentLength = exchange.getIn().getHeader(MinioConstants.CONTENT_LENGTH, Long.class);
+        if (contentLength != null) {
+            objectMetadata.put("Content-Length", String.valueOf(contentLength));
+        }
 
+        String contentType = exchange.getIn().getHeader(MinioConstants.CONTENT_TYPE, String.class);
+        if (contentType != null) {
+            objectMetadata.put("Content-Type", contentType);
+        }
+
+        String cacheControl = exchange.getIn().getHeader(MinioConstants.CACHE_CONTROL, String.class);
+        if (cacheControl != null) {
+            objectMetadata.put("Cache-Control", cacheControl);
+        }
+
+        String contentDisposition = exchange.getIn().getHeader(MinioConstants.CONTENT_DISPOSITION, String.class);
+        if (contentDisposition != null) {
+            objectMetadata.put("Content-Disposition", contentDisposition);
+        }
+
+        String contentEncoding = exchange.getIn().getHeader(MinioConstants.CONTENT_ENCODING, String.class);
+        if (contentEncoding != null) {
+            objectMetadata.put("Content-Encoding", contentEncoding);
+        }
+
+        String contentMD5 = exchange.getIn().getHeader(MinioConstants.CONTENT_MD5, String.class);
+        if (contentMD5 != null) {
+            objectMetadata.put("Content-Md5", contentMD5);
+        }
+
+        return objectMetadata;
     }
 
     /**
@@ -475,11 +390,11 @@ public class MinioProducer extends DefaultProducer {
 
         if (ObjectHelper.isEmpty(bucketName)) {
             bucketName = getConfiguration().getBucketName();
-            LOG.trace("AWS S3 Bucket name header is missing, using default one [{}]", bucketName);
+            LOG.trace("Minio Bucket name header is missing, using default one [{}]", bucketName);
         }
 
         if (bucketName == null) {
-            throw new IllegalArgumentException("AWS S3 Bucket name header is missing or not configured.");
+            throw new IllegalArgumentException("Minio Bucket name header is missing or not configured.");
         }
 
         return bucketName;
@@ -491,7 +406,7 @@ public class MinioProducer extends DefaultProducer {
             key = getConfiguration().getKeyName();
         }
         if (key == null) {
-            throw new IllegalArgumentException("AWS S3 Key header missing.");
+            throw new IllegalArgumentException("Minio Key header is missing.");
         }
         return key;
     }

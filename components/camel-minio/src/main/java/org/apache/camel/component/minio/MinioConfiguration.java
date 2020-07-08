@@ -94,9 +94,9 @@ public class MinioConfiguration implements Cloneable {
     private boolean autocloseBody = true;
 
     @UriParam(label = "producer")
-    private boolean deleteAfterWrite;
+    private String keyName;
     @UriParam(label = "producer")
-    private boolean multiPartUpload;
+    private boolean deleteAfterWrite;
     @UriParam(label = "producer", defaultValue = "" + 25 * 1024 * 1024)
     private long partSize = 25 * 1024 * 1024;
     @UriParam
@@ -431,6 +431,19 @@ public class MinioConfiguration implements Cloneable {
         this.autocloseBody = autocloseBody;
     }
 
+
+    public String getKeyName() {
+        return keyName;
+    }
+
+    /**
+     * Setting the key name for an element in the bucket through endpoint
+     * parameter
+     */
+    public void setKeyName(String keyName) {
+        this.keyName = keyName;
+    }
+
     public boolean isDeleteAfterWrite() {
         return deleteAfterWrite;
     }
@@ -440,18 +453,6 @@ public class MinioConfiguration implements Cloneable {
      */
     public void setDeleteAfterWrite(boolean deleteAfterWrite) {
         this.deleteAfterWrite = deleteAfterWrite;
-    }
-
-    public boolean isMultiPartUpload() {
-        return multiPartUpload;
-    }
-
-    /**
-     * If it is true, camel will upload the file with multi part format, the
-     * part size is decided by the option of `partSize`
-     */
-    public void setMultiPartUpload(boolean multiPartUpload) {
-        this.multiPartUpload = multiPartUpload;
     }
 
     public long getPartSize() {

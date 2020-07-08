@@ -23,6 +23,9 @@ public interface MinioConstants {
 
     String BUCKET_NAME = "CamelMinioBucketName";
     String BUCKET_DESTINATION_NAME = "CamelMinioBucketDestinationName";
+    String CACHE_CONTROL = "CamelMinioContentControl";
+    String CONTENT_DISPOSITION = "CamelMinioContentDisposition";
+    String CONTENT_ENCODING = "CamelMinioContentEncoding";
     String CONTENT_LENGTH = "CamelMinioContentLength";
     String CONTENT_MD5 = "CamelMinioContentMD5";
     String CONTENT_TYPE = "CamelMinioContentType";
@@ -34,7 +37,7 @@ public interface MinioConstants {
     String VERSION_ID = "CamelMinioVersionId";
     String CANNED_ACL = "CamelMinioCannedAcl";
     String ACL = "CamelMinioAcl";
-    String MINIO_OPERATION = "CamelMinioOperation";
+    String S3_OPERATION = "CamelMinioOperation";
     String SERVER_SIDE_ENCRYPTION = "CamelMinioServerSideEncryption";
     String EXPIRATION_TIME = "CamelMinioExpirationTime";
     String REPLICATION_STATUS = "CamelMinioReplicationStatus";
