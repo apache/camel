@@ -46,6 +46,8 @@ public class Ddb2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "secretkey":
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "trustallcertificates":
+        case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "writecapacity":
         case "writeCapacity": target.getConfiguration().setWriteCapacity(property(camelContext, java.lang.Long.class, value)); return true;
         default: return false;
@@ -70,6 +72,7 @@ public class Ddb2EndpointConfigurer extends PropertyConfigurerSupport implements
         answer.put("region", java.lang.String.class);
         answer.put("secretKey", java.lang.String.class);
         answer.put("synchronous", boolean.class);
+        answer.put("trustAllCertificates", boolean.class);
         answer.put("writeCapacity", java.lang.Long.class);
         return answer;
     }
@@ -105,6 +108,8 @@ public class Ddb2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "secretkey":
         case "secretKey": return target.getConfiguration().getSecretKey();
         case "synchronous": return target.isSynchronous();
+        case "trustallcertificates":
+        case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
         case "writecapacity":
         case "writeCapacity": return target.getConfiguration().getWriteCapacity();
         default: return null;

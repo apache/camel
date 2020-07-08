@@ -210,6 +210,20 @@ public interface Aws2DdbComponentBuilderFactory {
             return this;
         }
         /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Aws2DdbComponentBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
          * The provisioned throughput to reserved for writing resources to your
          * table.
          * 
@@ -294,6 +308,7 @@ public interface Aws2DdbComponentBuilderFactory {
             case "proxyProtocol": getOrCreateConfiguration((Ddb2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "readCapacity": getOrCreateConfiguration((Ddb2Component) component).setReadCapacity((java.lang.Long) value); return true;
             case "region": getOrCreateConfiguration((Ddb2Component) component).setRegion((java.lang.String) value); return true;
+            case "trustAllCertificates": getOrCreateConfiguration((Ddb2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "writeCapacity": getOrCreateConfiguration((Ddb2Component) component).setWriteCapacity((java.lang.Long) value); return true;
             case "basicPropertyBinding": ((Ddb2Component) component).setBasicPropertyBinding((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((Ddb2Component) component).setAccessKey((java.lang.String) value); return true;

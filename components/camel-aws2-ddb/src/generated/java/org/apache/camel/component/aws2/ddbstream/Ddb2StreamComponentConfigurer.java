@@ -50,6 +50,8 @@ public class Ddb2StreamComponentConfigurer extends PropertyConfigurerSupport imp
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sequencenumberprovider":
         case "sequenceNumberProvider": getOrCreateConfiguration(target).setSequenceNumberProvider(property(camelContext, org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider.class, value)); return true;
+        case "trustallcertificates":
+        case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -70,6 +72,7 @@ public class Ddb2StreamComponentConfigurer extends PropertyConfigurerSupport imp
         answer.put("region", java.lang.String.class);
         answer.put("secretKey", java.lang.String.class);
         answer.put("sequenceNumberProvider", org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider.class);
+        answer.put("trustAllCertificates", boolean.class);
         return answer;
     }
 
@@ -101,6 +104,8 @@ public class Ddb2StreamComponentConfigurer extends PropertyConfigurerSupport imp
         case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         case "sequencenumberprovider":
         case "sequenceNumberProvider": return getOrCreateConfiguration(target).getSequenceNumberProvider();
+        case "trustallcertificates":
+        case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
         default: return null;
         }
     }

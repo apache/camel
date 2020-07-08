@@ -188,6 +188,20 @@ public interface Aws2DdbstreamComponentBuilderFactory {
             return this;
         }
         /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default Aws2DdbstreamComponentBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
          * 
@@ -259,6 +273,7 @@ public interface Aws2DdbstreamComponentBuilderFactory {
             case "proxyProtocol": getOrCreateConfiguration((Ddb2StreamComponent) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((Ddb2StreamComponent) component).setRegion((java.lang.String) value); return true;
             case "sequenceNumberProvider": getOrCreateConfiguration((Ddb2StreamComponent) component).setSequenceNumberProvider((org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider) value); return true;
+            case "trustAllCertificates": getOrCreateConfiguration((Ddb2StreamComponent) component).setTrustAllCertificates((boolean) value); return true;
             case "basicPropertyBinding": ((Ddb2StreamComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((Ddb2StreamComponent) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Ddb2StreamComponent) component).setSecretKey((java.lang.String) value); return true;
