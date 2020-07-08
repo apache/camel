@@ -25,11 +25,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.http.apache.ProxyConfiguration;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3ClientBuilder;
+import software.amazon.awssdk.utils.AttributeMap;
 
 /**
  * Manage an AWS s3 client for all users to use. This implementation is for
@@ -83,6 +86,16 @@ public class AWS2S3ClientStandardImpl implements AWS2CamelS3InternalClient {
         }
         if (configuration.isOverrideEndpoint()) {
             clientBuilder.endpointOverride(URI.create(configuration.getUriEndpointOverride()));
+        }
+        if (configuration.isTrustAllCertificates()) {
+            SdkHttpClient ahc = ApacheHttpClient.builder().buildWithDefaults(AttributeMap
+                    .builder()
+                    .put(
+                            SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
+                            Boolean.TRUE
+                    )
+                    .build());
+            clientBuilder.httpClient(ahc);
         }
         client = clientBuilder.build();
         return client;

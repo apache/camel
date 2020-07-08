@@ -116,6 +116,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "trustallcertificates":
+        case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "uriendpointoverride":
         case "uriEndpointOverride": target.getConfiguration().setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         case "useawskms":
@@ -186,6 +188,7 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         answer.put("storageClass", java.lang.String.class);
         answer.put("synchronous", boolean.class);
         answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
+        answer.put("trustAllCertificates", boolean.class);
         answer.put("uriEndpointOverride", java.lang.String.class);
         answer.put("useAwsKMS", boolean.class);
         answer.put("useCustomerKey", boolean.class);
@@ -295,6 +298,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "synchronous": return target.isSynchronous();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
+        case "trustallcertificates":
+        case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
         case "uriendpointoverride":
         case "uriEndpointOverride": return target.getConfiguration().getUriEndpointOverride();
         case "useawskms":
