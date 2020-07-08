@@ -50,7 +50,7 @@
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3-version}</version>
         </dependency>
-
+        
         <!-- logging -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
