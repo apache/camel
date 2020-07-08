@@ -59,6 +59,8 @@ public class Ddb2StreamConfiguration implements Cloneable {
     private String proxyHost;
     @UriParam(description = "To define a proxy port when instantiating the DDBStreams client")
     private Integer proxyPort;
+    @UriParam(defaultValue = "false", description = "If we want to trust all certificates in case of overriding the endpoint")
+    private boolean trustAllCertificates;
 
     public DynamoDbStreamsClient getAmazonDynamoDbStreamsClient() {
         return amazonDynamoDbStreamsClient;
@@ -146,6 +148,14 @@ public class Ddb2StreamConfiguration implements Cloneable {
 
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
+    }
+    
+    public boolean isTrustAllCertificates() {
+        return trustAllCertificates;
+    }
+
+    public void setTrustAllCertificates(boolean trustAllCertificates) {
+        this.trustAllCertificates = trustAllCertificates;
     }
 
     // *************************************************
