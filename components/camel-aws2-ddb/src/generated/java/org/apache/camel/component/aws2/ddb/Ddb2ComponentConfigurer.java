@@ -53,6 +53,8 @@ public class Ddb2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "trustallcertificates":
+        case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "writecapacity":
         case "writeCapacity": getOrCreateConfiguration(target).setWriteCapacity(property(camelContext, java.lang.Long.class, value)); return true;
         default: return false;
@@ -77,6 +79,7 @@ public class Ddb2ComponentConfigurer extends PropertyConfigurerSupport implement
         answer.put("readCapacity", java.lang.Long.class);
         answer.put("region", java.lang.String.class);
         answer.put("secretKey", java.lang.String.class);
+        answer.put("trustAllCertificates", boolean.class);
         answer.put("writeCapacity", java.lang.Long.class);
         return answer;
     }
@@ -112,6 +115,8 @@ public class Ddb2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "region": return getOrCreateConfiguration(target).getRegion();
         case "secretkey":
         case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
+        case "trustallcertificates":
+        case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
         case "writecapacity":
         case "writeCapacity": return getOrCreateConfiguration(target).getWriteCapacity();
         default: return null;
