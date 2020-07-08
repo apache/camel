@@ -326,6 +326,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                     .withTag(Tags.SPAN_KIND.getKey(), sd.getReceiverSpanKind()).start();
                 sd.pre(span, exchange, route.getEndpoint());
                 ActiveSpanManager.activate(exchange, span);
+                tracer.scopeManager().activate(span);
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("OpenTracing: start server span={}", span);
                 }

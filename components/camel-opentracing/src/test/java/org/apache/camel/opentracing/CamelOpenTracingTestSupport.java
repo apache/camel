@@ -60,6 +60,7 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
         ottracer.setExcludePatterns(getExcludePatterns());
 
         ottracer.init(context);
+        context.getRegistry().bind("mockTracer", tracer);
 
         return context;
     }
