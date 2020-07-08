@@ -18,10 +18,13 @@ package org.apache.camel.component.micrometer.routepolicy;
 
 import java.util.List;
 
+import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
+
+import static org.apache.camel.component.micrometer.MicrometerConstants.*;
 
 /**
  * CAMEL-9226 - check metrics are counted correctly in multicast sub-routes
@@ -42,14 +45,32 @@ public class MicrometerRoutePolicyMulticastSubRouteTest extends AbstractMicromet
 
         assertMockEndpointsSatisfied();
 
-        // there should be 3 names
+        // there should be 9 names
         List<Meter> meters = meterRegistry.getMeters();
-        assertEquals(3, meters.size());
-
+        assertEquals(9, meters.size());
 
         meters.forEach(meter -> {
-            Timer timer = (Timer) meter;
-            assertEquals("Timer " + timer.getId() + " should have count of " + count,  count, timer.count());
+            String meterName = meter.getId().getName();
+            switch (meterName) {
+                case DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME:
+                    Timer timer = (Timer) meter;
+                    assertEquals("Timer " + timer.getId() + " should have count of " + count, count, timer.count());
+                    break;
+                case DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME: {
+                    Counter counter = (Counter) meter;
+                    assertEquals("Counter " + counter.getId() + " should have count of " + count, count, counter.count(), 0.01D);
+                    break;
+                }
+                case DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME: {
+                    Counter counter = (Counter) meter;
+                    assertEquals("Counter " + counter.getId() + " should have count of " + 0, 0, counter.count(), 0.01D);
+                    break;
+                }
+                default: {
+                    fail("Unexpected meter " + meterName);
+                    break;
+                }
+            }
         });
     }
 

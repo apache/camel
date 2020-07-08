@@ -48,9 +48,9 @@ public class ManagedMicrometerRoutePolicyTest extends AbstractMicrometerRoutePol
 
         assertMockEndpointsSatisfied();
 
-        // there should be 3 names
+        // there should be 7 names
         List<Meter> meters = meterRegistry.getMeters();
-        assertEquals(3, meters.size());
+        assertEquals(7, meters.size());
 
         String name = String.format("org.apache.camel:context=%s,type=services,name=MicrometerRoutePolicyService", context.getManagementName());
         ObjectName on = ObjectName.getInstance(name);
