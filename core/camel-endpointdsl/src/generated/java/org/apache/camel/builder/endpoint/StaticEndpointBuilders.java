@@ -921,7 +921,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path tableName
      */
-    static org.apache.camel.builder.endpoint.dsl.Ddb2StreamEndpointBuilderFactory.Ddb2StreamEndpointBuilder aws2Ddbstream(
+    public static org.apache.camel.builder.endpoint.dsl.Ddb2StreamEndpointBuilderFactory.Ddb2StreamEndpointBuilder aws2Ddbstream(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Ddb2StreamEndpointBuilderFactory.endpointBuilder("aws2-ddbstream", path);
     }
@@ -943,7 +943,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path tableName
      */
-    static org.apache.camel.builder.endpoint.dsl.Ddb2StreamEndpointBuilderFactory.Ddb2StreamEndpointBuilder aws2Ddbstream(
+    public static org.apache.camel.builder.endpoint.dsl.Ddb2StreamEndpointBuilderFactory.Ddb2StreamEndpointBuilder aws2Ddbstream(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Ddb2StreamEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -963,7 +963,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path label
      */
-    public static org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.AWS2EC2EndpointBuilder aws2Ec2(
+    static org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.AWS2EC2EndpointBuilder aws2Ec2(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.endpointBuilder("aws2-ec2", path);
     }
@@ -984,7 +984,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path label
      */
-    public static org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.AWS2EC2EndpointBuilder aws2Ec2(
+    static org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.AWS2EC2EndpointBuilder aws2Ec2(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.endpointBuilder(componentName, path);
