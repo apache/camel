@@ -525,17 +525,17 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     public boolean isTrustAllCertificates() {
-		return trustAllCertificates;
-	}
+        return trustAllCertificates;
+    }
 
     /**
      * If we want to trust all certificates in case of overriding the endpoint
      */
-	public void setTrustAllCertificates(boolean trustAllCertificates) {
-		this.trustAllCertificates = trustAllCertificates;
-	}
+    public void setTrustAllCertificates(boolean trustAllCertificates) {
+        this.trustAllCertificates = trustAllCertificates;
+    }
 
-	public AWS2S3Configuration copy() {
+    public AWS2S3Configuration copy() {
         try {
             return (AWS2S3Configuration)super.clone();
         } catch (CloneNotSupportedException e) {
