@@ -18,6 +18,7 @@ package org.apache.camel.component.micrometer.routepolicy;
 
 import java.util.concurrent.TimeUnit;
 
+import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.Timer;
@@ -51,11 +52,15 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         private final MeterRegistry meterRegistry;
         private final Route route;
         private final MicrometerRoutePolicyNamingStrategy namingStrategy;
+        private final Counter exchangesSucceeded;
+        private final Counter exchangesFailed;
 
         private MetricsStatistics(MeterRegistry meterRegistry, Route route, MicrometerRoutePolicyNamingStrategy namingStrategy) {
             this.meterRegistry = ObjectHelper.notNull(meterRegistry, "MeterRegistry", this);
             this.namingStrategy = ObjectHelper.notNull(namingStrategy, "MicrometerRoutePolicyNamingStrategy", this);
             this.route = route;
+            this.exchangesSucceeded = createCounter(namingStrategy.getExchangesSucceededName(route));
+            this.exchangesFailed = createCounter(namingStrategy.getExchangesFailedName(route));
         }
 
         public void onExchangeBegin(Exchange exchange) {
@@ -72,10 +77,23 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
                         .register(meterRegistry);
                 sample.stop(timer);
             }
+
+            if (exchange.isFailed()) {
+                exchangesFailed.increment();
+            } else {
+                exchangesSucceeded.increment();
+            }
         }
 
         private String propertyName(Exchange exchange) {
             return String.format("%s-%s-%s", DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME, route.getId(), exchange.getExchangeId());
+        }
+
+        private Counter createCounter(String meterName) {
+            return Counter.builder(meterName)
+                .tags(namingStrategy.getExchangeStatusTags(route))
+                .description(route.getDescription())
+                .register(meterRegistry);
         }
     }
 
