@@ -42,6 +42,7 @@ import org.apache.camel.Header;
 import org.apache.camel.Headers;
 import org.apache.camel.Message;
 import org.apache.camel.PropertyInject;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
@@ -93,6 +94,17 @@ public class BeanInfo {
     }
 
     public BeanInfo(CamelContext camelContext, Class<?> type, Method explicitMethod, ParameterMappingStrategy strategy) {
+        while (type.isSynthetic()) {
+            type = type.getSuperclass();
+            if (explicitMethod != null) {
+                try {
+                    explicitMethod = type.getDeclaredMethod(explicitMethod.getName(), explicitMethod.getParameterTypes());
+                } catch (NoSuchMethodException e) {
+                    throw new RuntimeCamelException("Unable to find a method " + explicitMethod + " on " + type, e);
+                }
+            }
+        }
+
         this.camelContext = camelContext;
         this.type = type;
         this.strategy = strategy;
@@ -404,6 +416,10 @@ public class BeanInfo {
 
         boolean hasCustomAnnotation = false;
         boolean hasHandlerAnnotation = org.apache.camel.util.ObjectHelper.hasAnnotation(method.getAnnotations(), Handler.class);
+
+        if (!hasHandlerAnnotation) {
+
+        }
 
         int size = parameterTypes.length;
         if (LOG.isTraceEnabled()) {
