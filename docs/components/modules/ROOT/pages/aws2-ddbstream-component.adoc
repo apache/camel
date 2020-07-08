@@ -44,7 +44,7 @@ The stream needs to be created prior to it being used. +
 
 
 // component options: START
-The AWS 2 DynamoDB Streams component supports 13 options, which are listed below.
+The AWS 2 DynamoDB Streams component supports 14 options, which are listed below.
 
 
 
@@ -61,6 +61,7 @@ The AWS 2 DynamoDB Streams component supports 13 options, which are listed below
 | *proxyProtocol* (consumer) | To define a proxy protocol when instantiating the DDBStreams client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *region* (consumer) | The region in which DDBStreams client needs to work |  | String
 | *sequenceNumberProvider* (consumer) | Provider for the sequence number when using one of the two ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER iterator types. Can be a registry reference or a literal sequence number. |  | SequenceNumberProvider
+| *trustAllCertificates* (consumer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
@@ -91,7 +92,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (31 parameters):
+=== Query Parameters (32 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -107,6 +108,7 @@ with the following path and query parameters:
 | *region* (consumer) | The region in which DDBStreams client needs to work |  | String
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *sequenceNumberProvider* (consumer) | Provider for the sequence number when using one of the two ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER iterator types. Can be a registry reference or a literal sequence number. |  | SequenceNumberProvider
+| *trustAllCertificates* (consumer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
