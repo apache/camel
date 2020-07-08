@@ -54,6 +54,8 @@ public class Cw2Configuration implements Cloneable {
     private Integer proxyPort;
     @UriParam
     private String region;
+    @UriParam(defaultValue = "false")
+    private boolean trustAllCertificates;
 
     public String getAccessKey() {
         return accessKey;
@@ -188,6 +190,17 @@ public class Cw2Configuration implements Cloneable {
      */
     public void setRegion(String region) {
         this.region = region;
+    }
+    
+    public boolean isTrustAllCertificates() {
+        return trustAllCertificates;
+    }
+
+    /**
+     * If we want to trust all certificates in case of overriding the endpoint
+     */
+    public void setTrustAllCertificates(boolean trustAllCertificates) {
+        this.trustAllCertificates = trustAllCertificates;
     }
 
     // *************************************************

@@ -39,6 +39,8 @@ public class Cw2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timestamp": target.getConfiguration().setTimestamp(property(camelContext, java.time.Instant.class, value)); return true;
+        case "trustallcertificates":
+        case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "unit": target.getConfiguration().setUnit(property(camelContext, java.lang.String.class, value)); return true;
         case "value": target.getConfiguration().setValue(property(camelContext, java.lang.Double.class, value)); return true;
         default: return false;
@@ -60,6 +62,7 @@ public class Cw2EndpointConfigurer extends PropertyConfigurerSupport implements 
         answer.put("secretKey", java.lang.String.class);
         answer.put("synchronous", boolean.class);
         answer.put("timestamp", java.time.Instant.class);
+        answer.put("trustAllCertificates", boolean.class);
         answer.put("unit", java.lang.String.class);
         answer.put("value", java.lang.Double.class);
         return answer;
@@ -89,6 +92,8 @@ public class Cw2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "secretKey": return target.getConfiguration().getSecretKey();
         case "synchronous": return target.isSynchronous();
         case "timestamp": return target.getConfiguration().getTimestamp();
+        case "trustallcertificates":
+        case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
         case "unit": return target.getConfiguration().getUnit();
         case "value": return target.getConfiguration().getValue();
         default: return null;

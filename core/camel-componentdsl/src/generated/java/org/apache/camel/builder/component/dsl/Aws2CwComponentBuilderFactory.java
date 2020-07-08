@@ -167,6 +167,20 @@ public interface Aws2CwComponentBuilderFactory {
             return this;
         }
         /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Aws2CwComponentBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
          * The metric unit.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -257,6 +271,7 @@ public interface Aws2CwComponentBuilderFactory {
             case "proxyProtocol": getOrCreateConfiguration((Cw2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((Cw2Component) component).setRegion((java.lang.String) value); return true;
             case "timestamp": getOrCreateConfiguration((Cw2Component) component).setTimestamp((java.time.Instant) value); return true;
+            case "trustAllCertificates": getOrCreateConfiguration((Cw2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "unit": getOrCreateConfiguration((Cw2Component) component).setUnit((java.lang.String) value); return true;
             case "value": getOrCreateConfiguration((Cw2Component) component).setValue((java.lang.Double) value); return true;
             case "basicPropertyBinding": ((Cw2Component) component).setBasicPropertyBinding((boolean) value); return true;
