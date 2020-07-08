@@ -20,8 +20,15 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class Sjms2EndpointTest extends CamelTestSupport {
 
@@ -130,9 +137,10 @@ public class Sjms2EndpointTest extends CamelTestSupport {
         assertEquals(qe.createExchange().getPattern(), ExchangePattern.InOut);
     }
 
-    @Test(expected = Exception.class)
+    @Test
     public void testNamedReplyToAndMEPMismatch() throws Exception {
-        context.getEndpoint("sjms2:queue:test?namedReplyTo=reply.to.queue&exchangePattern=" + ExchangePattern.InOnly);
+        assertThrows(Exception.class,
+            () -> context.getEndpoint("sjms2:queue:test?namedReplyTo=reply.to.queue&exchangePattern=" + ExchangePattern.InOnly));
     }
 
     @Test
