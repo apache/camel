@@ -95,6 +95,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.ApnsComponentBuilderFactory.apns();
     }
     /**
+     * ArangoDb (camel-arangodb)
+     * Perform operations on ArangoDb documents, collections and graphs.
+     * 
+     * Category: database,nosql
+     * Since: 3.5.0-SNAPSHOT
+     * Maven coordinates: org.apache.camel:camel-arangodb
+     */
+    static org.apache.camel.builder.component.dsl.ArangodbComponentBuilderFactory.ArangodbComponentBuilder arangodb() {
+        return org.apache.camel.builder.component.dsl.ArangodbComponentBuilderFactory.arangodb();
+    }
+    /**
      * AS2 (camel-as2)
      * Transfer data securely and reliably using the AS2 protocol (RFC4130).
      * 

@@ -94,6 +94,7 @@
         <module>camel-amqp</module>
         <module>camel-any23</module>
         <module>camel-apns</module>
+        <module>camel-arangodb</module>
         <module>camel-as2</module>
         <module>camel-asn1</module>
         <module>camel-asterisk</module>
