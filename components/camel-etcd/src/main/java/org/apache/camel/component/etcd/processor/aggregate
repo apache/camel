@@ -1,0 +1,434 @@
+package org.apache.camel.component.etcd.processor.aggregate;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.DefaultExchangeHolder;
+import org.apache.camel.processor.aggregate.hazelcast.HazelcastAggregationRepository;
+import org.apache.camel.spi.OptimisticLockingAggregationRepository;
+import org.apache.camel.spi.RecoverableAggregationRepository;
+import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hazelcast.config.Config;
+import com.hazelcast.config.XmlConfigBuilder;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.IMap;
+import com.hazelcast.core.TransactionalMap;
+import com.hazelcast.transaction.TransactionContext;
+import com.hazelcast.transaction.TransactionOptions;
+
+import io.etcd.jetcd.ByteSequence;
+import io.etcd.jetcd.Client;
+import io.etcd.jetcd.KV;
+import io.etcd.jetcd.KeyValue;
+import io.etcd.jetcd.Lock;
+import io.etcd.jetcd.Txn;
+import io.etcd.jetcd.kv.DeleteResponse;
+import io.etcd.jetcd.kv.GetResponse;
+import io.etcd.jetcd.kv.PutResponse;
+import io.etcd.jetcd.options.GetOption;
+
+public class EtcdAggregationRepository extends ServiceSupport
+                                                  implements RecoverableAggregationRepository,
+                                                             OptimisticLockingAggregationRepository {
+    private static final Logger LOG = LoggerFactory.getLogger(EtcdAggregationRepository.class.getName());
+    private static final String COMPLETED_SUFFIX = "-completed";
+    
+    private boolean optimistic;
+    private boolean useRecovery = true;
+    private String endpoint;
+    private Client client;
+    private KV kvClient;
+    private String prefixName;
+    private String persistencePrefixName;
+    private String deadLetterChannel;
+    private long recoveryInterval = 5000;
+    private int maximumRedeliveries = 3;
+    private boolean allowSerializedHeaders;
+
+    public EtcdAggregationRepository(final String prefixName, final String endpoint) {
+        this.prefixName = prefixName;
+        this.persistencePrefixName = String.format("%s%s", prefixName, COMPLETED_SUFFIX);
+        this.optimistic = false;
+        this.endpoint = endpoint;
+    }
+
+    public EtcdAggregationRepository(final String prefixName, final String persistencePrefixName, final String endpoint) {
+        this.prefixName = prefixName;
+        this.persistencePrefixName = persistencePrefixName;
+        this.optimistic = false;
+        this.endpoint = endpoint;
+    }
+
+    public EtcdAggregationRepository(final String prefixName, final String endpoint, boolean optimistic) {
+        this(prefixName, endpoint);
+        this.optimistic = optimistic;
+    }
+
+    public EtcdAggregationRepository(final String repositoryName, final String persistentRepositoryName, final String endpoint, boolean optimistic) {
+        this(repositoryName, persistentRepositoryName, endpoint);
+        this.optimistic = optimistic;
+    }
+
+    @Override
+    public Exchange add(CamelContext camelContext, String key, Exchange oldExchange, Exchange newExchange) throws OptimisticLockingException {
+        if (!optimistic) {
+            throw new UnsupportedOperationException();
+        }
+        LOG.trace("Adding an Exchange with ID {} for key {} in an optimistic manner.", newExchange.getExchangeId(), key);
+        try {
+          if (oldExchange == null) {
+    		 DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(newExchange, true, allowSerializedHeaders);
+    		 CompletableFuture<GetResponse> completableGetResponse = kvClient.get(ByteSequence.from(String.format("%s/%s",prefixName,key).getBytes()));
+        	 GetResponse getResponse = completableGetResponse.get();
+        	 List<KeyValue> keyValues = getResponse.getKvs();
+        	 if(keyValues.isEmpty()) {
+        		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        	    ObjectOutputStream oos = new ObjectOutputStream(bos);
+        	    oos.writeObject(holder);
+        	    oos.flush();
+        	    byte [] data = bos.toByteArray();
+        	    CompletableFuture<PutResponse> completablePutResponse = kvClient.put(ByteSequence.from(String.format("%s/%s",prefixName,key).getBytes()), ByteSequence.from(data));
+        	    completablePutResponse.get();
+        	 }else {
+        		byte[] data = keyValues.get(0).getValue().getBytes();
+        		ByteArrayInputStream in = new ByteArrayInputStream(data);
+        	    ObjectInputStream is = new ObjectInputStream(in);
+        	    DefaultExchangeHolder misbehaviorHolder = (DefaultExchangeHolder) is.readObject();
+        	    Exchange misbehaviorEx = unmarshallExchange(camelContext, misbehaviorHolder);
+                LOG.error("Optimistic locking failed for exchange with key {}: kvClient.get returned Exchange with ID {}, while it's expected no exchanges to be returned",
+                          key, misbehaviorEx != null ? misbehaviorEx.getExchangeId() : "<null>");
+                throw  new OptimisticLockingException();
+        	 }
+    	  } else {
+	    	  DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(newExchange, true, allowSerializedHeaders);
+	    	  ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	    	  ObjectOutputStream oos = new ObjectOutputStream(bos);
+	    	  oos.writeObject(newHolder);
+	    	  oos.flush();
+	    	  byte [] data = bos.toByteArray();
+	    	  CompletableFuture<DeleteResponse> completableDeleteResponse = kvClient.delete(ByteSequence.from(String.format("%s/%s",prefixName,key).getBytes()));
+	    	  DeleteResponse deleteResponse = completableDeleteResponse.get();
+	    	  if(deleteResponse.getDeleted()==0) {
+	    	  	LOG.error("Optimistic locking failed for exchange with key {}: kvClient.get returned no Exchanges, while it's expected to replace one", key);
+	    		throw new OptimisticLockingException();
+	    	  }
+	    	  CompletableFuture<PutResponse> completablePutResponse = kvClient.put(ByteSequence.from(String.format("%s/%s",prefixName,key).getBytes()), ByteSequence.from(data));
+	    	  completablePutResponse.get();
+	    	}
+        } catch (InterruptedException | ExecutionException | IOException | ClassNotFoundException e) {
+        	LOG.error(e.getMessage(),e);
+			throw new OptimisticLockingException();
+        }
+        LOG.trace("Added an Exchange with ID {} for key {} in optimistic manner.", newExchange.getExchangeId(), key);
+        return oldExchange;
+    }
+
+    @Override
+    public Exchange add(CamelContext camelContext, String key, Exchange exchange) {
+        if (optimistic) {
+            throw new UnsupportedOperationException();
+        }
+        LOG.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
+        Lock lock = null;
+        DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
+        try {
+	    	lock = client.getLockClient();
+	        lock.lock(ByteSequence.from(key.getBytes()), 60000);
+	        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		    ObjectOutputStream oos = new ObjectOutputStream(bos);
+		    oos.writeObject(newHolder);
+		    oos.flush();
+		    byte [] data = bos.toByteArray();
+		    CompletableFuture<PutResponse> completablePutResponse = kvClient.put(ByteSequence.from(String.format("%s/%s",prefixName,key).getBytes()), ByteSequence.from(data));
+		    completablePutResponse.get();
+		} catch (InterruptedException | ExecutionException | IOException e) {
+			LOG.error(e.getMessage(),e);
+		} finally {  
+			if(lock!=null) {
+				lock.unlock(ByteSequence.from(key.getBytes()));
+			}
+		}
+        return unmarshallExchange(camelContext, newHolder);
+    }
+
+    @Override
+    public Set<String> scan(CamelContext camelContext) {
+        if (useRecovery) {
+        	LOG.trace("Scanning for exchanges to recover in {} context", camelContext.getName());
+        	CompletableFuture<GetResponse> completableGetResponse = kvClient.get(ByteSequence.from(prefixName.getBytes()),GetOption.newBuilder()
+																			.withPrefix(ByteSequence.from(prefixName.getBytes()))
+																			.build());
+            Set<String> scanned = Collections.unmodifiableSet(new TreeSet<>());
+            try {
+				GetResponse getResponse = completableGetResponse.get();
+				Set<String> keys = new TreeSet<>();
+	            getResponse.getKvs().forEach(kv -> keys.add(new String(kv.getKey().getBytes())));
+	            scanned = Collections.unmodifiableSet(keys);
+	            LOG.trace("Found {} keys for exchanges to recover in {} context", scanned.size(), camelContext.getName());
+	        } catch (InterruptedException e) {
+				LOG.error(e.getMessage(),e);
+			} catch (ExecutionException e) {
+				LOG.error(e.getMessage(),e);
+			}
+            return scanned;
+        } else {
+            LOG.warn("What for to run recovery scans in {} context while prefix {} is running in non-recoverable aggregation repository mode?!",
+                    camelContext.getName(), prefixName);
+            return Collections.emptySet();
+        }
+    }
+
+    @Override
+    public Exchange recover(CamelContext camelContext, String exchangeId) {
+        LOG.trace("Recovering an Exchange with ID {}.", exchangeId);
+        CompletableFuture<GetResponse> completableResponse = 
+        		kvClient.get(ByteSequence.from(String.format("%s/%s",persistencePrefixName,exchangeId).getBytes()));
+        try {
+			GetResponse getResponse = completableResponse.get();
+			byte[] data = getResponse.getKvs().get(0).getValue().getBytes();
+	        ByteArrayInputStream in = new ByteArrayInputStream(data);
+		    ObjectInputStream is = new ObjectInputStream(in);
+		    DefaultExchangeHolder holder = (DefaultExchangeHolder) is.readObject();
+		    return useRecovery ? unmarshallExchange(camelContext, holder):null;
+		} catch (InterruptedException | ExecutionException | IOException | ClassNotFoundException e) {
+			LOG.error(e.getMessage(),e);
+		} 
+        return null;
+    }
+
+    @Override
+    public void setRecoveryInterval(long interval, TimeUnit timeUnit) {
+        this.recoveryInterval = timeUnit.toMillis(interval);
+    }
+
+    @Override
+    public void setRecoveryInterval(long interval) {
+        this.recoveryInterval = interval;
+    }
+
+    @Override
+    public long getRecoveryIntervalInMillis() {
+        return recoveryInterval;
+    }
+
+    @Override
+    public void setUseRecovery(boolean useRecovery) {
+        this.useRecovery = useRecovery;
+    }
+
+    @Override
+    public boolean isUseRecovery() {
+        return useRecovery;
+    }
+
+    @Override
+    public void setDeadLetterUri(String deadLetterUri) {
+        this.deadLetterChannel = deadLetterUri;
+    }
+
+    @Override
+    public String getDeadLetterUri() {
+        return deadLetterChannel;
+    }
+
+    @Override
+    public void setMaximumRedeliveries(int maximumRedeliveries) {
+        this.maximumRedeliveries = maximumRedeliveries;
+    }
+
+    @Override
+    public int getMaximumRedeliveries() {
+        return maximumRedeliveries;
+    }
+
+    @Override
+    public Exchange get(CamelContext camelContext, String key) {
+    	CompletableFuture<GetResponse> completableResponse = 
+        		kvClient.get(ByteSequence.from(String.format("%s/%s",prefixName,key).getBytes()));
+        try {
+			GetResponse getResponse = completableResponse.get();
+			byte[] data = getResponse.getKvs().get(0).getValue().getBytes();
+	        ByteArrayInputStream in = new ByteArrayInputStream(data);
+		    ObjectInputStream is = new ObjectInputStream(in);
+		    DefaultExchangeHolder holder = (DefaultExchangeHolder) is.readObject();
+            return unmarshallExchange(camelContext, holder);
+        } catch (InterruptedException | ExecutionException | IOException | ClassNotFoundException e) {
+			LOG.error(e.getMessage(),e);
+		} 
+        return null;
+    }
+    
+    public boolean isAllowSerializedHeaders() {
+        return allowSerializedHeaders;
+    }
+
+    public void setAllowSerializedHeaders(boolean allowSerializedHeaders) {
+        this.allowSerializedHeaders = allowSerializedHeaders;
+    }
+
+    @Override
+    public void remove(CamelContext camelContext, String key, Exchange exchange) {
+        DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
+        if (optimistic) {
+            LOG.trace("Removing an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
+            CompletableFuture<DeleteResponse> completableDeleteResponse = kvClient.delete(ByteSequence.from(String.format("%s/%s",prefixName,key).getBytes()));
+	    	DeleteResponse deleteResponse;
+			try {
+				deleteResponse = completableDeleteResponse.get();
+				if(deleteResponse.getDeleted()==0) { 
+					LOG.error("Optimistic locking failed for exchange with key {}: kvClient.delete removed no Exchanges, while it's expected to remove one.",
+                        key);
+					throw new OptimisticLockingException();
+				}
+			} catch (InterruptedException | ExecutionException e) {
+				LOG.error(e.getMessage(),e);
+			}
+            LOG.trace("Removed an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
+            if (useRecovery) {
+                LOG.trace("Putting an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
+                        exchange.getExchangeId(), key);
+                try {
+                	ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            	    ObjectOutputStream oos = new ObjectOutputStream(bos);
+            	    oos.writeObject(holder);
+            	    oos.flush();
+            	    byte [] data = bos.toByteArray();
+            	    CompletableFuture<PutResponse> completablePutResponse = kvClient.put(
+            	    		ByteSequence.from(String.format("%s/%s", persistencePrefixName, key).getBytes()), ByteSequence.from(data));
+            	    completablePutResponse.get();
+                    LOG.trace("Put an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
+                            exchange.getExchangeId(), key);
+				} catch (IOException | InterruptedException | ExecutionException e) {
+					LOG.error(e.getMessage(),e);
+				}
+        	    
+            }
+        } else {
+            if (useRecovery) {
+                LOG.trace("Removing an exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
+                // The only considerable case for transaction usage is fault tolerance:
+                // the transaction will be rolled back automatically (default timeout is 2 minutes)
+                // if no commit occurs during the timeout. So we are still consistent whether local node crashes.
+                TransactionOptions tOpts = new TransactionOptions();
+                tOpts.setTransactionType(TransactionOptions.TransactionType.ONE_PHASE);
+                Txn transaction = kvClient.txn();
+                try {
+	                CompletableFuture<GetResponse> completableResponse = 
+	                		kvClient.get(ByteSequence.from(String.format("%s/%s",prefixName,key).getBytes()));
+	                GetResponse getResponse = completableResponse.get();
+	        		byte[] data = getResponse.getKvs().get(0).getValue().getBytes();
+	        	    ByteArrayInputStream in = new ByteArrayInputStream(data);
+	        		ObjectInputStream is = new ObjectInputStream(in);
+	        		DefaultExchangeHolder removedHolder = (DefaultExchangeHolder) is.readObject();
+	        		LOG.trace("Removing an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
+	                CompletableFuture<DeleteResponse> completableDeleteResponse = kvClient.delete(ByteSequence.from(
+	                		String.format("%s/%s", prefixName, key).getBytes()));
+	    	    	DeleteResponse deleteResponse = completableDeleteResponse.get();
+	                LOG.trace("Putting an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
+	                          exchange.getExchangeId(), key);
+	                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	        	    ObjectOutputStream oos = new ObjectOutputStream(bos);
+	        	    oos.writeObject(removedHolder);
+	        	    oos.flush();
+	        	    data = bos.toByteArray();
+	        	    CompletableFuture<PutResponse> completablePutResponse = kvClient.put(
+	        	    		ByteSequence.from(String.format("%s/%s", persistencePrefixName, key).getBytes()), ByteSequence.from(data));
+	        	    completablePutResponse.get();
+	                transaction.commit();
+	                LOG.trace("Removed an exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
+	                LOG.trace("Put an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
+	                        exchange.getExchangeId(), key);
+                } catch (Throwable throwable) {
+                    throw new RuntimeException(throwable);
+                }
+            } else {
+            	CompletableFuture<DeleteResponse> completableDeleteResponse = kvClient.delete(ByteSequence.from(
+                		String.format("%s/%s", prefixName, key).getBytes()));
+    	    	try {
+					DeleteResponse deleteResponse = completableDeleteResponse.get();
+				} catch (InterruptedException | ExecutionException e) {
+					LOG.error(e.getMessage(),e);
+				} 
+            }
+        }
+    }
+
+    @Override
+    public void confirm(CamelContext camelContext, String exchangeId) {
+        LOG.trace("Confirming an exchange with ID {}.", exchangeId);
+        if (useRecovery) {
+        	CompletableFuture<DeleteResponse> completableDeleteResponse = kvClient.delete(ByteSequence.from(String.format("%s/%s",prefixName,exchangeId).getBytes()));
+            try {
+				completableDeleteResponse.get();
+			} catch (InterruptedException | ExecutionException e) {
+				LOG.error(e.getMessage(),e);
+			} 
+        }
+    }
+
+    @Override
+    public Set<String> getKeys() {
+    	CompletableFuture<GetResponse> completableGetResponse = kvClient.get(ByteSequence.from(prefixName.getBytes()),
+				 GetOption.newBuilder()
+				 		  .withRange(ByteSequence.from(prefixName.getBytes()))
+				 		  .build());
+    	Set<String> scanned = Collections.unmodifiableSet(new TreeSet<>());
+        try {
+			GetResponse getResponse = completableGetResponse.get();
+			Set<String> keys = new TreeSet<>();
+            getResponse.getKvs().forEach(kv -> keys.add(new String(kv.getKey().getBytes())));
+            scanned = Collections.unmodifiableSet(keys);
+        } catch (InterruptedException e) {
+			LOG.error(e.getMessage(),e);
+		} catch (ExecutionException e) {
+			LOG.error(e.getMessage(),e);
+		}
+        return scanned;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (maximumRedeliveries < 0) {
+            throw new IllegalArgumentException("Maximum redelivery retries must be zero or a positive integer.");
+        }
+        if (recoveryInterval < 0) {
+            throw new IllegalArgumentException("Recovery interval must be zero or a positive integer.");
+        }
+        StringHelper.notEmpty(prefixName, "prefixName");
+        client = Client.builder().endpoints(endpoint).build();
+        kvClient = client.getKVClient();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        client.close();
+    }
+
+    protected Exchange unmarshallExchange(CamelContext camelContext, DefaultExchangeHolder holder) {
+        Exchange exchange = null;
+        if (holder != null) {
+            exchange = new DefaultExchange(camelContext);
+            DefaultExchangeHolder.unmarshal(exchange, holder);
+        }
+        return exchange;
+    }
+}
