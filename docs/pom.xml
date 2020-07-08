@@ -57,37 +57,22 @@
                             <yarnVersion>v1.12.3</yarnVersion>
                         </configuration>
                     </execution>
-                </executions>
-            </plugin>
-            <!--
-              executing yarn via frontend-maven yielded Process exited with an error: 134 (Exit value: 134)
-              using exec-maven plugin instead.
-            -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <executions>
                     <execution>
                         <id>yarn-install</id>
                         <goals>
-                            <goal>exec</goal>
+                            <goal>yarn</goal>
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <executable>${project.basedir}/node/node</executable>
-                            <commandlineArgs>${project.basedir}/node/yarn/dist/bin/yarn.js install --no-progress --force --non-interactive --frozen-lockfile</commandlineArgs>
+                            <arguments>install --no-progress --force --non-interactive --frozen-lockfile</arguments>
                         </configuration>
                     </execution>
                     <execution>
                         <id>yarn-gulp</id>
                         <goals>
-                            <goal>exec</goal>
+                            <goal>gulp</goal>
                         </goals>
                         <phase>generate-resources</phase>
-                        <configuration>
-                            <executable>${project.basedir}/node/node</executable>
-                            <commandlineArgs>${project.basedir}/node/yarn/dist/bin/yarn.js --non-interactive gulp</commandlineArgs>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
