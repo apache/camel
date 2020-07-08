@@ -85,7 +85,7 @@ public class RestOpenApiProcessor implements Processor {
                 support.renderCamelContexts(exchange.getContext(), adapter, contextId, contextIdPattern, json, yaml, configuration);
             } else {
                 String name;
-                if (ObjectHelper.isNotEmpty(route)) {
+                if (contextIdListing && ObjectHelper.isNotEmpty(route)) {
                     // first part is the camel context
                     if (route.startsWith("/")) {
                         route = route.substring(1);
@@ -98,6 +98,8 @@ public class RestOpenApiProcessor implements Processor {
                 } else {
                     // listing not enabled then get current camel context as the name
                     name = exchange.getContext().getName();
+                    // prevent route filtering
+                    route = "";
                 }
 
                 boolean match = true;
