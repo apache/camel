@@ -198,6 +198,20 @@ public interface Aws2Ec2ComponentBuilderFactory {
             return this;
         }
         /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Aws2Ec2ComponentBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
          * 
@@ -246,6 +260,7 @@ public interface Aws2Ec2ComponentBuilderFactory {
             case "proxyProtocol": getOrCreateConfiguration((AWS2EC2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((AWS2EC2Component) component).setRegion((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((AWS2EC2Component) component).setSecretKey((java.lang.String) value); return true;
+            case "trustAllCertificates": getOrCreateConfiguration((AWS2EC2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "basicPropertyBinding": ((AWS2EC2Component) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
