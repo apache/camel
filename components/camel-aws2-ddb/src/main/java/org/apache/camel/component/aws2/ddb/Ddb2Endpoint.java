@@ -32,6 +32,8 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.http.apache.ProxyConfiguration;
 import software.amazon.awssdk.regions.Region;
@@ -44,6 +46,7 @@ import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
+import software.amazon.awssdk.utils.AttributeMap;
 
 /**
  * Store and retrieve data from AWS DynamoDB service using AWS SDK version 2.x.
@@ -155,6 +158,16 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint {
         }
         if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
             clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
+        }
+        if (configuration.isTrustAllCertificates()) {
+            SdkHttpClient ahc = ApacheHttpClient.builder().buildWithDefaults(AttributeMap
+                    .builder()
+                    .put(
+                            SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
+                            Boolean.TRUE
+                    )
+                    .build());
+            clientBuilder.httpClient(ahc);
         }
         client = clientBuilder.build();
         return client;
