@@ -125,6 +125,20 @@ public interface Aws2LambdaComponentBuilderFactory {
             return this;
         }
         /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Aws2LambdaComponentBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
          * To use a existing configured AwsLambdaClient as client.
          * 
          * The option is a:
@@ -239,6 +253,7 @@ public interface Aws2LambdaComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((Lambda2Component) component).setOperation((org.apache.camel.component.aws2.lambda.Lambda2Operations) value); return true;
             case "pojoRequest": getOrCreateConfiguration((Lambda2Component) component).setPojoRequest((boolean) value); return true;
             case "region": getOrCreateConfiguration((Lambda2Component) component).setRegion((java.lang.String) value); return true;
+            case "trustAllCertificates": getOrCreateConfiguration((Lambda2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "awsLambdaClient": getOrCreateConfiguration((Lambda2Component) component).setAwsLambdaClient((software.amazon.awssdk.services.lambda.LambdaClient) value); return true;
             case "basicPropertyBinding": ((Lambda2Component) component).setBasicPropertyBinding((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((Lambda2Component) component).setProxyHost((java.lang.String) value); return true;

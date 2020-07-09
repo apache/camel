@@ -1211,7 +1211,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path label
      */
-    static org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory.KMS2EndpointBuilder aws2Kms(
+    public static org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory.KMS2EndpointBuilder aws2Kms(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory.endpointBuilder("aws2-kms", path);
     }
@@ -1232,7 +1232,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path label
      */
-    static org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory.KMS2EndpointBuilder aws2Kms(
+    public static org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory.KMS2EndpointBuilder aws2Kms(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -1252,7 +1252,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path function
      */
-    public static org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.Lambda2EndpointBuilder aws2Lambda(
+    static org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.Lambda2EndpointBuilder aws2Lambda(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.endpointBuilder("aws2-lambda", path);
     }
@@ -1273,7 +1273,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path function
      */
-    public static org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.Lambda2EndpointBuilder aws2Lambda(
+    static org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.Lambda2EndpointBuilder aws2Lambda(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.endpointBuilder(componentName, path);
