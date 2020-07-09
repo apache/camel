@@ -29,11 +29,14 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.http.apache.ProxyConfiguration;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.awssdk.services.kms.KmsClientBuilder;
+import software.amazon.awssdk.utils.AttributeMap;
 
 /**
  * Manage keys stored in AWS KMS instances using AWS SDK version 2.x.
@@ -113,6 +116,16 @@ public class KMS2Endpoint extends ScheduledPollEndpoint {
         }
         if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
             clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
+        }
+        if (configuration.isTrustAllCertificates()) {
+            SdkHttpClient ahc = ApacheHttpClient.builder().buildWithDefaults(AttributeMap
+                    .builder()
+                    .put(
+                            SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
+                            Boolean.TRUE
+                    )
+                    .build());
+            clientBuilder.httpClient(ahc);
         }
         client = clientBuilder.build();
         return client;
