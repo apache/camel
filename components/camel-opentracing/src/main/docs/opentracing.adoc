@@ -104,3 +104,32 @@ You can find an example demonstrating the three ways to configure OpenTracing he
 https://github.com/apache/camel-spring-boot-examples/tree/master/camel-example-spring-boot-opentracing[camel-example-spring-boot-opentracing]
 
 include::camel-spring-boot::page$opentracing-starter.adoc[]
+
+== Span Operations Processors
+
+The OpenTracing Component exposes the Java API span operations as a set of Processors: `TagProcessor`, `SetBaggageProcessor`, and `GetBaggageProcessor`.
+
+=== Example
+
+[source,java]
+---------------------------------------------------------------------------------------------------------
+from("seda:a").routeId("a")
+        .process(new SetBaggageProcessor("a-baggage", simple("${header.request-header}")))
+        .to("seda:b")
+        .to("seda:c");
+
+from("seda:b").routeId("b")
+        .process(new TagProcessor("b-tag", simple("${header.request-header}")));
+
+from("seda:c").routeId("c")
+        .process(new GetBaggageProcessor("a-baggage", "baggage-header"));
+---------------------------------------------------------------------------------------------------------
+
+Where the value of header "request-header" is "foo", the resulting trace from executing route "seda:a" would include:
+
+* Span "a" with a baggage item named "a-baggage" of value "foo"
+* Span "b" with a tag named "b-tag" of value "foo"
+
+and the resulting message would contain:
+
+* Header "baggage-header" of value "foo"
