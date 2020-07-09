@@ -152,6 +152,34 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default Kinesis2EndpointConsumerBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default Kinesis2EndpointConsumerBuilder trustAllCertificates(
+                String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -998,6 +1026,34 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default Kinesis2EndpointProducerBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default Kinesis2EndpointProducerBuilder trustAllCertificates(
+                String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -1240,6 +1296,34 @@ public interface Kinesis2EndpointBuilderFactory {
          */
         default Kinesis2EndpointBuilder region(String region) {
             doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default Kinesis2EndpointBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default Kinesis2EndpointBuilder trustAllCertificates(
+                String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
             return this;
         }
         /**

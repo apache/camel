@@ -38,6 +38,8 @@ public class KinesisFirehose2EndpointConfigurer extends PropertyConfigurerSuppor
         case "secretkey":
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "trustallcertificates":
+        case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -56,6 +58,7 @@ public class KinesisFirehose2EndpointConfigurer extends PropertyConfigurerSuppor
         answer.put("region", java.lang.String.class);
         answer.put("secretKey", java.lang.String.class);
         answer.put("synchronous", boolean.class);
+        answer.put("trustAllCertificates", boolean.class);
         return answer;
     }
 
@@ -82,6 +85,8 @@ public class KinesisFirehose2EndpointConfigurer extends PropertyConfigurerSuppor
         case "secretkey":
         case "secretKey": return target.getConfiguration().getSecretKey();
         case "synchronous": return target.isSynchronous();
+        case "trustallcertificates":
+        case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
         default: return null;
         }
     }

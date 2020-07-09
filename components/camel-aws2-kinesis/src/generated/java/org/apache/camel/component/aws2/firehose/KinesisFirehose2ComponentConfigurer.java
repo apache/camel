@@ -45,6 +45,8 @@ public class KinesisFirehose2ComponentConfigurer extends PropertyConfigurerSuppo
         case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "trustallcertificates":
+        case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -63,6 +65,7 @@ public class KinesisFirehose2ComponentConfigurer extends PropertyConfigurerSuppo
         answer.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
         answer.put("region", java.lang.String.class);
         answer.put("secretKey", java.lang.String.class);
+        answer.put("trustAllCertificates", boolean.class);
         return answer;
     }
 
@@ -89,6 +92,8 @@ public class KinesisFirehose2ComponentConfigurer extends PropertyConfigurerSuppo
         case "region": return getOrCreateConfiguration(target).getRegion();
         case "secretkey":
         case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
+        case "trustallcertificates":
+        case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
         default: return null;
         }
     }

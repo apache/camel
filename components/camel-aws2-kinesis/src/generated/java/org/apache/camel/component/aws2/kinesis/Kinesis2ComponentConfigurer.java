@@ -56,6 +56,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "shardClosed": getOrCreateConfiguration(target).setShardClosed(property(camelContext, org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum.class, value)); return true;
         case "shardid":
         case "shardId": getOrCreateConfiguration(target).setShardId(property(camelContext, java.lang.String.class, value)); return true;
+        case "trustallcertificates":
+        case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -79,6 +81,7 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         answer.put("sequenceNumber", java.lang.String.class);
         answer.put("shardClosed", org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum.class);
         answer.put("shardId", java.lang.String.class);
+        answer.put("trustAllCertificates", boolean.class);
         return answer;
     }
 
@@ -116,6 +119,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "shardClosed": return getOrCreateConfiguration(target).getShardClosed();
         case "shardid":
         case "shardId": return getOrCreateConfiguration(target).getShardId();
+        case "trustallcertificates":
+        case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
         default: return null;
         }
     }
