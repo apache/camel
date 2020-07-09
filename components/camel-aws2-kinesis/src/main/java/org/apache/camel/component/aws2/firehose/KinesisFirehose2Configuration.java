@@ -46,7 +46,9 @@ public class KinesisFirehose2Configuration implements Cloneable {
     @UriParam(description = "To define a proxy port when instantiating the Kinesis Firehose client")
     private Integer proxyPort;
     @UriParam(label = "producer", description = "The operation to do in case the user don't want to send only a record")
-    private KinesisFirehose2Operations operation;
+    private KinesisFirehose2Operations operation;   
+    @UriParam(defaultValue = "false", description = "If we want to trust all certificates in case of overriding the endpoint")
+    private boolean trustAllCertificates;
 
     public void setAmazonKinesisFirehoseClient(FirehoseClient client) {
         this.amazonKinesisFirehoseClient = client;
@@ -118,6 +120,14 @@ public class KinesisFirehose2Configuration implements Cloneable {
 
     public void setOperation(KinesisFirehose2Operations operation) {
         this.operation = operation;
+    }
+    
+    public boolean isTrustAllCertificates() {
+        return trustAllCertificates;
+    }
+
+    public void setTrustAllCertificates(boolean trustAllCertificates) {
+        this.trustAllCertificates = trustAllCertificates;
     }
 
     // *************************************************
