@@ -18,7 +18,9 @@ package org.apache.camel.component.mybatis;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MyBatisPollingDelayRouteTest extends MyBatisTestSupport {
 
@@ -31,7 +33,7 @@ public class MyBatisPollingDelayRouteTest extends MyBatisTestSupport {
         assertMockEndpointsSatisfied();
         long delta = System.currentTimeMillis() - start;
 
-        assertTrue("Should not take that long: " + delta, delta < 7000);
+        assertTrue(delta < 7000, "Should not take that long: " + delta);
     }
 
     @Override
