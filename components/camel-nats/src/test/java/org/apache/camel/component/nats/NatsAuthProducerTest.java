@@ -17,7 +17,7 @@
 package org.apache.camel.component.nats;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class NatsAuthProducerTest extends NatsAuthTestSupport {
     
