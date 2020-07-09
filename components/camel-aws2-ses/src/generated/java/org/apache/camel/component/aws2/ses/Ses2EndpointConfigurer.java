@@ -43,6 +43,8 @@ public class Ses2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "subject": target.getConfiguration().setSubject(property(camelContext, java.lang.String.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "to": target.getConfiguration().setTo(property(camelContext, java.util.List.class, value)); return true;
+        case "trustallcertificates":
+        case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -64,6 +66,7 @@ public class Ses2EndpointConfigurer extends PropertyConfigurerSupport implements
         answer.put("subject", java.lang.String.class);
         answer.put("synchronous", boolean.class);
         answer.put("to", java.util.List.class);
+        answer.put("trustAllCertificates", boolean.class);
         return answer;
     }
 
@@ -95,6 +98,8 @@ public class Ses2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "subject": return target.getConfiguration().getSubject();
         case "synchronous": return target.isSynchronous();
         case "to": return target.getConfiguration().getTo();
+        case "trustallcertificates":
+        case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
         default: return null;
         }
     }

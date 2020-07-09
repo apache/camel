@@ -50,6 +50,8 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "subject": getOrCreateConfiguration(target).setSubject(property(camelContext, java.lang.String.class, value)); return true;
         case "to": getOrCreateConfiguration(target).setTo(property(camelContext, java.util.List.class, value)); return true;
+        case "trustallcertificates":
+        case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -71,6 +73,7 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         answer.put("secretKey", java.lang.String.class);
         answer.put("subject", java.lang.String.class);
         answer.put("to", java.util.List.class);
+        answer.put("trustAllCertificates", boolean.class);
         return answer;
     }
 
@@ -102,6 +105,8 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         case "subject": return getOrCreateConfiguration(target).getSubject();
         case "to": return getOrCreateConfiguration(target).getTo();
+        case "trustallcertificates":
+        case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
         default: return null;
         }
     }
