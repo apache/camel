@@ -47,6 +47,8 @@ public class Sqs2Configuration implements Cloneable {
     private Integer proxyPort;
     @UriParam(defaultValue = "true")
     private boolean autoCreateQueue = true;
+    @UriParam(defaultValue = "false")
+    private boolean trustAllCertificates;
 
     // consumer properties
     @UriParam(label = "consumer", defaultValue = "true")
@@ -557,6 +559,17 @@ public class Sqs2Configuration implements Cloneable {
      */
     public void setProtocol(String protocol) {
         this.protocol = protocol;
+    }
+    
+    public boolean isTrustAllCertificates() {
+        return trustAllCertificates;
+    }
+
+    /**
+     * If we want to trust all certificates in case of overriding the endpoint
+     */
+    public void setTrustAllCertificates(boolean trustAllCertificates) {
+        this.trustAllCertificates = trustAllCertificates;
     }
 
     // *************************************************
