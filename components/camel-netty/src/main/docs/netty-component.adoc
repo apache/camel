@@ -433,7 +433,7 @@ Spring DSL based configuration of endpoint
 ...
 ----
 
-[[Netty-UsingBasicSSL/TLSconfigurationontheJettyComponent]]
+[[Netty-UsingBasicSSLTLSconfigurationontheJettyComponent]]
 Using Basic SSL/TLS configuration on the Jetty Component
 
 [source,java]
