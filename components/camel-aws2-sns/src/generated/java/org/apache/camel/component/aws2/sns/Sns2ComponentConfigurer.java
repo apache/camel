@@ -58,6 +58,8 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "subject": getOrCreateConfiguration(target).setSubject(property(camelContext, java.lang.String.class, value)); return true;
         case "subscribesnstosqs":
         case "subscribeSNStoSQS": getOrCreateConfiguration(target).setSubscribeSNStoSQS(property(camelContext, boolean.class, value)); return true;
+        case "trustallcertificates":
+        case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -83,6 +85,7 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         answer.put("serverSideEncryptionEnabled", boolean.class);
         answer.put("subject", java.lang.String.class);
         answer.put("subscribeSNStoSQS", boolean.class);
+        answer.put("trustAllCertificates", boolean.class);
         return answer;
     }
 
@@ -122,6 +125,8 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "subject": return getOrCreateConfiguration(target).getSubject();
         case "subscribesnstosqs":
         case "subscribeSNStoSQS": return getOrCreateConfiguration(target).isSubscribeSNStoSQS();
+        case "trustallcertificates":
+        case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
         default: return null;
         }
     }
