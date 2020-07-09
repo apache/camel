@@ -19,7 +19,13 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class NettyHttpSSLHandshakeErrorTest extends BaseNettyTest {
 
@@ -31,9 +37,7 @@ public class NettyHttpSSLHandshakeErrorTest extends BaseNettyTest {
     @Test
     public void testHttpsHandshakeError() throws Exception {
         // ibm jdks dont have sun security algorithms
-        if (isJavaVendor("ibm")) {
-            return;
-        }
+        assumeFalse(isJavaVendor("ibm"));
 
         getMockEndpoint("mock:target").expectedMessageCount(0);
 
@@ -53,9 +57,9 @@ public class NettyHttpSSLHandshakeErrorTest extends BaseNettyTest {
 
         Exception ex = response.getException();
 
-        assertTrue("should have failed", response.isFailed());
+        assertTrue(response.isFailed(), "should have failed");
         assertNotNull(ex.getCause());
-        assertEquals("exception expected", javax.net.ssl.SSLHandshakeException.class, ex.getCause().getClass());
+        assertEquals(javax.net.ssl.SSLHandshakeException.class, ex.getCause().getClass(), "exception expected");
 
         assertMockEndpointsSatisfied();
     }

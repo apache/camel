@@ -19,11 +19,18 @@ package org.apache.camel.component.netty.http.rest;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.http.BaseNettyTest;
 import org.apache.camel.model.rest.RestParamType;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Ignore("Does not run well on CI due test uses JMX mbeans")
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@Disabled("Does not run well on CI due test uses JMX mbeans")
 public class RestApiNettyTest extends BaseNettyTest {
+
+    protected Logger log = LoggerFactory.getLogger(RestApiNettyTest.class);
 
     @Override
     protected boolean useJmx() {

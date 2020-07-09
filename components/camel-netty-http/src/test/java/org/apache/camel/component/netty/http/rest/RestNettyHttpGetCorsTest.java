@@ -20,7 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.http.BaseNettyTest;
 import org.apache.camel.spi.RestConfiguration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestNettyHttpGetCorsTest extends BaseNettyTest {
 

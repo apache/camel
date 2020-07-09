@@ -19,7 +19,12 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class NettyHttpRedirectTest extends BaseNettyTest {
 
@@ -31,8 +36,8 @@ public class NettyHttpRedirectTest extends BaseNettyTest {
         } catch (RuntimeCamelException e) {
             NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
             assertEquals(301, cause.getStatusCode());
-            assertEquals(true, cause.isRedirectError());
-            assertEquals(true, cause.hasRedirectLocation());
+            assertTrue(cause.isRedirectError());
+            assertTrue(cause.hasRedirectLocation());
             assertEquals("http://localhost:" + getPort() + "/newtest", cause.getRedirectLocation());
         }
     }

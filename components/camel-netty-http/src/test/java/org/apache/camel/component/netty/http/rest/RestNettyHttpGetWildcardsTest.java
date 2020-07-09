@@ -20,7 +20,9 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.http.BaseNettyTest;
 import org.apache.camel.component.netty.http.RestNettyHttpBinding;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestNettyHttpGetWildcardsTest extends BaseNettyTest {
 

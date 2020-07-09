@@ -18,21 +18,25 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         System.setProperty("java.security.auth.login.config", "src/test/resources/myjaas.config");
         super.setUp();
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         System.clearProperty("java.security.auth.login.config");
         super.tearDown();

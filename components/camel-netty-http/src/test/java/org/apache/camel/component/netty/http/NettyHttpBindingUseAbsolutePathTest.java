@@ -20,7 +20,9 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMethods;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpBindingUseAbsolutePathTest extends BaseNettyTest {
 
@@ -56,11 +58,11 @@ public class NettyHttpBindingUseAbsolutePathTest extends BaseNettyTest {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("netty-http:http://localhost:{{port}}/mypath").process(exchange -> {
-                    assertEquals("Get a wrong form parameter from the message header", "localhost:" + getPort(), exchange.getIn().getHeader("host"));
+                    assertEquals("localhost:" + getPort(), exchange.getIn().getHeader("host"), "Get a wrong form parameter from the message header");
 
                     NettyHttpMessage in = (NettyHttpMessage) exchange.getIn();
                     FullHttpRequest request = in.getHttpRequest();
-                    assertEquals("Relative path not used in POST", "http://localhost:" + getPort() + "/mypath", request.uri());
+                    assertEquals("http://localhost:" + getPort() + "/mypath", request.uri(), "Relative path not used in POST");
 
                     // send a response
                     exchange.getMessage().getHeaders().clear();
@@ -69,11 +71,11 @@ public class NettyHttpBindingUseAbsolutePathTest extends BaseNettyTest {
                 });
 
                 from("netty-http:http://localhost:{{port}}").process(exchange -> {
-                    assertEquals("Get a wrong form parameter from the message header", "localhost:" + getPort(), exchange.getIn().getHeader("host"));
+                    assertEquals("localhost:" + getPort(), exchange.getIn().getHeader("host"), "Get a wrong form parameter from the message header");
 
                     NettyHttpMessage in = (NettyHttpMessage) exchange.getIn();
                     FullHttpRequest request = in.getHttpRequest();
-                    assertEquals("Relative path not used in POST", "http://localhost:" + getPort() + "/", request.uri());
+                    assertEquals("http://localhost:" + getPort() + "/", request.uri(), "Relative path not used in POST");
 
                     // send a response
                     exchange.getMessage().getHeaders().clear();

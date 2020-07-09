@@ -23,10 +23,14 @@ import javax.net.ssl.SSLSession;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.NettyConstants;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class NettyHttpSSLTest extends BaseNettyTest {
 
@@ -35,7 +39,7 @@ public class NettyHttpSSLTest extends BaseNettyTest {
     protected Properties originalValues = new Properties();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // ensure jsse clients can validate the self signed dummy localhost cert,
         // use the server keystore as the trust store for these tests
@@ -47,7 +51,7 @@ public class NettyHttpSSLTest extends BaseNettyTest {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         restoreSystemProperties();
         super.tearDown();
@@ -77,9 +81,7 @@ public class NettyHttpSSLTest extends BaseNettyTest {
     @Test
     public void testSSLInOutWithNettyConsumer() throws Exception {
         // ibm jdks dont have sun security algorithms
-        if (isJavaVendor("ibm")) {
-            return;
-        }
+        assumeFalse(isJavaVendor("ibm"));
 
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
 

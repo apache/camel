@@ -19,9 +19,16 @@ package org.apache.camel.component.netty.http.rest;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.http.BaseNettyTest;
 import org.apache.camel.model.rest.RestParamType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestApiMatchUriNettyTest extends BaseNettyTest {
+
+    protected Logger log = LoggerFactory.getLogger(RestApiMatchUriNettyTest.class);
 
     @Test
     public void testApi() throws Exception {

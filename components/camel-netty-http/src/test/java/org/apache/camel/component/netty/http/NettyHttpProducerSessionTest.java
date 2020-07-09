@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.base.cookie.ExchangeCookieHandler;
 import org.apache.camel.http.base.cookie.InstanceCookieHandler;
 import org.apache.camel.http.common.HttpMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class NettyHttpProducerSessionTest extends BaseNettyTest {
 
