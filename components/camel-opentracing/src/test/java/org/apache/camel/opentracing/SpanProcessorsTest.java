@@ -26,7 +26,7 @@ import static org.apache.camel.language.simple.SimpleLanguage.simple;
 
 public class SpanProcessorsTest extends CamelOpenTracingTestSupport {
 
-    private static final SpanTestData[] testdata = {
+    private static final SpanTestData[] TEST_DATA = {
             new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
                     .setKind(Tags.SPAN_KIND_SERVER).setParentId(1).addLogMessage("routing at b")
                     .addTag("b-tag", "request-header-value"),
@@ -48,16 +48,16 @@ public class SpanProcessorsTest extends CamelOpenTracingTestSupport {
     };
 
     public SpanProcessorsTest() {
-        super(testdata);
+        super(TEST_DATA);
     }
 
     @Test
     public void testRoute() throws Exception {
         Exchange result = template.request("direct:start",
-                exchange -> {
-                    exchange.getIn().setBody("Hello");
-                    exchange.getIn().setHeader("request-header", simple("request-header-value"));
-                });
+            exchange -> {
+                exchange.getIn().setBody("Hello");
+                exchange.getIn().setHeader("request-header", simple("request-header-value"));
+            });
 
         verify();
         assertEquals("request-header-value", result.getMessage().getHeader("baggage-header", String.class));
