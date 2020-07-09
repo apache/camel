@@ -270,7 +270,7 @@
         <jackson-version>1.9.12</jackson-version>
         <jackson-spark-version>2.10.4</jackson-spark-version>
         <jackson2-version>2.10.4</jackson2-version>
-        <jackrabbit-version>2.21.1</jackrabbit-version>
+        <jackrabbit-version>2.21.2</jackrabbit-version>
         <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
         <jasminb-jsonapi-version>0.10</jasminb-jsonapi-version>
         <jandex-version>2.1.3.Final</jandex-version>
