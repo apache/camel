@@ -643,7 +643,7 @@ And the same example in Spring XML:
     </camelContext>
 ----
 
-[[ExceptionClause-WhatistheDifferenceBetweenHandledandContinued?]]
+[[ExceptionClause-WhatistheDifferenceBetweenHandledandContinued]]
 == What is the Difference Between Handled and Continued?
 
 If handled is true, then the thrown exception will be _handled_ and

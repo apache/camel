@@ -31,7 +31,7 @@ utilizing Route Policies are
 * xref:components:others:shiro.adoc[Shiro Security]
 * xref:components:others:spring-security.adoc[Spring Security]
 
-[[Security-PayloadSecurity-DataFormatsandProducers/Consumersofferingencryption/decryptionservices]]
+[[Security-PayloadSecurity-DataFormatsandProducersConsumersofferingencryptiondecryptionservices]]
 == Payload Security - Data Formats and Producers/Consumers offering encryption/decryption services
 
 Camel offers encryption/decryption services to secure payloads or

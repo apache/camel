@@ -154,9 +154,8 @@ The following files should now exist and can be used to run the example
 ls -l ~/.gnupg/pubring.gpg ~/.gnupg/secring.gpg
 -----------------------------------------------
 
-[[Crypto-PGPDecrypting/VerifyingofMessagesEncrypted/SignedbyDifferentPrivate/PublicKeys]]
-PGP Decrypting/Verifying of Messages Encrypted/Signed by Different
-== Private/Public Keys
+[[Crypto-PGPDecryptingVerifyingofMessagesEncryptedSignedbyDifferentPrivatePublicKeys]]
+== PGP Decrypting/Verifying of Messages Encrypted/Signed by Different Private/Public Keys
 
 A PGP Data Formater can decrypt/verify messages which have been
 encrypted by different public keys or signed by different private keys.

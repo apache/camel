@@ -192,7 +192,7 @@ public class Foo {
 }
 ----
 
-[[ParameterBindingAnnotations-Advancedexampleusing@Bean]]
+[[ParameterBindingAnnotations-AdvancedexampleusingBean]]
 ==== Advanced example using @Bean
 
 And an example of using the the
