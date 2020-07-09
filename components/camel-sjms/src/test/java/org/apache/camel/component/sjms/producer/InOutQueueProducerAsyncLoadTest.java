@@ -28,9 +28,13 @@ import javax.jms.TextMessage;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class InOutQueueProducerAsyncLoadTest extends JmsTestSupport {
     
@@ -47,7 +51,7 @@ public class InOutQueueProducerAsyncLoadTest extends JmsTestSupport {
     }
     
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         mc1 = createQueueConsumer(TEST_DESTINATION_NAME + ".request");
@@ -57,7 +61,7 @@ public class InOutQueueProducerAsyncLoadTest extends JmsTestSupport {
     }
     
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         MyMessageListener l1 = (MyMessageListener)mc1.getMessageListener();
         l1.close();
@@ -108,7 +112,7 @@ public class InOutQueueProducerAsyncLoadTest extends JmsTestSupport {
     }
 
     /**
-     * @see org.apache.camel.test.junit4.CamelTestSupport#createRouteBuilder()
+     * @see org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
      * 
      * @return
      * 

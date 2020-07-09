@@ -29,14 +29,18 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TransactedAsyncExceptionTest extends CamelTestSupport {
 
     private static final String BROKER_URI = "vm://tqc_test_broker?broker.persistent=false&broker.useJmx=false";
 
     private static final int TRANSACTION_REDELIVERY_COUNT = 10;
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Test
     public void testRouteWithThread() throws Exception {

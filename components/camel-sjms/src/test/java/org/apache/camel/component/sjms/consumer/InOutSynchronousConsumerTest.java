@@ -18,7 +18,10 @@ package org.apache.camel.component.sjms.consumer;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InOutSynchronousConsumerTest extends JmsTestSupport {
 
@@ -31,7 +34,7 @@ public class InOutSynchronousConsumerTest extends JmsTestSupport {
         String reply = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", reply);
 
-        assertTrue("Should use same threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertTrue(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use same threads");
     }
 
     @Override
