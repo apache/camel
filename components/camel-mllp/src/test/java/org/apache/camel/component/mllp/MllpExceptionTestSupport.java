@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.mllp;
 
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 
 public class MllpExceptionTestSupport {
     public static final String HL7_MESSAGE =
@@ -34,7 +34,7 @@ public class MllpExceptionTestSupport {
 
     public static final Exception CAUSE = new Exception("Dummy Exception");
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         System.clearProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY);
         System.clearProperty(MllpComponent.MLLP_LOG_PHI_MAX_BYTES_PROPERTY);

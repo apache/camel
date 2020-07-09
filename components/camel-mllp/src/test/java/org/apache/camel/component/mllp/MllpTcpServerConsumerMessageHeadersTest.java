@@ -27,12 +27,16 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Rule;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MllpTcpServerConsumerMessageHeadersTest extends CamelTestSupport {
-    @Rule
+
+    @RegisterExtension
     public MllpClientResource mllpClient = new MllpClientResource();
 
     @EndpointInject("mock://result")
@@ -92,8 +96,8 @@ public class MllpTcpServerConsumerMessageHeadersTest extends CamelTestSupport {
 
         Message message = result.getExchanges().get(0).getIn();
 
-        assertNotNull("Should have header" + MllpConstants.MLLP_LOCAL_ADDRESS, message.getHeader(MllpConstants.MLLP_LOCAL_ADDRESS));
-        assertNotNull("Should have header" + MllpConstants.MLLP_REMOTE_ADDRESS, message.getHeader(MllpConstants.MLLP_REMOTE_ADDRESS));
+        assertNotNull(message.getHeader(MllpConstants.MLLP_LOCAL_ADDRESS), "Should have header" + MllpConstants.MLLP_LOCAL_ADDRESS);
+        assertNotNull(message.getHeader(MllpConstants.MLLP_REMOTE_ADDRESS), "Should have header" + MllpConstants.MLLP_REMOTE_ADDRESS);
     }
 
 
@@ -113,19 +117,19 @@ public class MllpTcpServerConsumerMessageHeadersTest extends CamelTestSupport {
 
         Message message = result.getExchanges().get(0).getIn();
 
-        assertNotNull("Should have header" + MllpConstants.MLLP_LOCAL_ADDRESS, message.getHeader(MllpConstants.MLLP_LOCAL_ADDRESS));
-        assertNotNull("Should have header" + MllpConstants.MLLP_REMOTE_ADDRESS, message.getHeader(MllpConstants.MLLP_REMOTE_ADDRESS));
+        assertNotNull(message.getHeader(MllpConstants.MLLP_LOCAL_ADDRESS), "Should have header" + MllpConstants.MLLP_LOCAL_ADDRESS);
+        assertNotNull(message.getHeader(MllpConstants.MLLP_REMOTE_ADDRESS), "Should have header" + MllpConstants.MLLP_REMOTE_ADDRESS);
 
-        assertNull("Should NOT have header" + MllpConstants.MLLP_SENDING_APPLICATION, message.getHeader(MllpConstants.MLLP_SENDING_APPLICATION));
-        assertNull("Should NOT have header" + MllpConstants.MLLP_SENDING_FACILITY, message.getHeader(MllpConstants.MLLP_SENDING_FACILITY));
-        assertNull("Should NOT have header" + MllpConstants.MLLP_RECEIVING_APPLICATION, message.getHeader(MllpConstants.MLLP_RECEIVING_APPLICATION));
-        assertNull("Should NOT have header" + MllpConstants.MLLP_TIMESTAMP, message.getHeader(MllpConstants.MLLP_TIMESTAMP));
-        assertNull("Should NOT have header" + MllpConstants.MLLP_SECURITY, message.getHeader(MllpConstants.MLLP_SECURITY));
-        assertNull("Should NOT have header" + MllpConstants.MLLP_MESSAGE_TYPE, message.getHeader(MllpConstants.MLLP_MESSAGE_TYPE));
-        assertNull("Should NOT have header" + MllpConstants.MLLP_EVENT_TYPE, message.getHeader(MllpConstants.MLLP_EVENT_TYPE));
-        assertNull("Should NOT have header" + MllpConstants.MLLP_MESSAGE_CONTROL, message.getHeader(MllpConstants.MLLP_MESSAGE_CONTROL));
-        assertNull("Should NOT have header" + MllpConstants.MLLP_PROCESSING_ID, message.getHeader(MllpConstants.MLLP_PROCESSING_ID));
-        assertNull("Should NOT have header" + MllpConstants.MLLP_VERSION_ID, message.getHeader(MllpConstants.MLLP_VERSION_ID));
+        assertNull(message.getHeader(MllpConstants.MLLP_SENDING_APPLICATION), "Should NOT have header" + MllpConstants.MLLP_SENDING_APPLICATION);
+        assertNull(message.getHeader(MllpConstants.MLLP_SENDING_FACILITY), "Should NOT have header" + MllpConstants.MLLP_SENDING_FACILITY);
+        assertNull(message.getHeader(MllpConstants.MLLP_RECEIVING_APPLICATION), "Should NOT have header" + MllpConstants.MLLP_RECEIVING_APPLICATION);
+        assertNull(message.getHeader(MllpConstants.MLLP_TIMESTAMP), "Should NOT have header" + MllpConstants.MLLP_TIMESTAMP);
+        assertNull(message.getHeader(MllpConstants.MLLP_SECURITY), "Should NOT have header" + MllpConstants.MLLP_SECURITY);
+        assertNull(message.getHeader(MllpConstants.MLLP_MESSAGE_TYPE), "Should NOT have header" + MllpConstants.MLLP_MESSAGE_TYPE);
+        assertNull(message.getHeader(MllpConstants.MLLP_EVENT_TYPE), "Should NOT have header" + MllpConstants.MLLP_EVENT_TYPE);
+        assertNull(message.getHeader(MllpConstants.MLLP_MESSAGE_CONTROL), "Should NOT have header" + MllpConstants.MLLP_MESSAGE_CONTROL);
+        assertNull(message.getHeader(MllpConstants.MLLP_PROCESSING_ID), "Should NOT have header" + MllpConstants.MLLP_PROCESSING_ID);
+        assertNull(message.getHeader(MllpConstants.MLLP_VERSION_ID), "Should NOT have header" + MllpConstants.MLLP_VERSION_ID);
     }
 
     void addTestRoute(final boolean hl7Headers) throws Exception {

@@ -20,7 +20,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MllpTcpServerConsumerOptionalEndOfDataWithValidationTest extends TcpServerConsumerEndOfDataAndValidationTestSupport {
 
@@ -78,7 +80,7 @@ public class MllpTcpServerConsumerOptionalEndOfDataWithValidationTest extends Tc
 
         mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage().replaceFirst("PID", "PID" + MllpProtocolConstants.END_OF_BLOCK));
 
-        assertTrue("Exchange should have completed", done.matches(5, TimeUnit.SECONDS));
+        assertTrue(done.matches(5, TimeUnit.SECONDS), "Exchange should have completed");
     }
 
     @Override
