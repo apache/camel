@@ -38,7 +38,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS 2 Simple Email Service (SES) component supports 14 options, which are listed below.
+The AWS 2 Simple Email Service (SES) component supports 15 options, which are listed below.
 
 
 
@@ -56,6 +56,7 @@ The AWS 2 Simple Email Service (SES) component supports 14 options, which are li
 | *returnPath* (producer) | The email address to which bounce notifications are to be forwarded, override it using 'CamelAwsSesReturnPath' header. |  | String
 | *subject* (producer) | The subject which is used if the message header 'CamelAwsSesSubject' is not present. |  | String
 | *to* (producer) | List of destination email address. Can be overriden with 'CamelAwsSesTo' header. |  | List
+| *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
@@ -84,7 +85,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (14 parameters):
+=== Query Parameters (15 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -100,6 +101,7 @@ with the following path and query parameters:
 | *returnPath* (producer) | The email address to which bounce notifications are to be forwarded, override it using 'CamelAwsSesReturnPath' header. |  | String
 | *subject* (producer) | The subject which is used if the message header 'CamelAwsSesSubject' is not present. |  | String
 | *to* (producer) | List of destination email address. Can be overriden with 'CamelAwsSesTo' header. |  | List
+| *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
