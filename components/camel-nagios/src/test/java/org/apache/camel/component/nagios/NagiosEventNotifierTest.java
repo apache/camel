@@ -21,13 +21,16 @@ import com.googlecode.jsendnsca.NagiosPassiveCheckSender;
 import com.googlecode.jsendnsca.PassiveCheckSender;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.verify;
 
 public class NagiosEventNotifierTest extends CamelTestSupport {
     protected boolean canRun;
@@ -41,7 +44,7 @@ public class NagiosEventNotifierTest extends CamelTestSupport {
         return true;
     }
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         canRun = true;
