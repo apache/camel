@@ -43,7 +43,7 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.errors.ApiException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
@@ -51,6 +51,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -117,7 +118,7 @@ public class KafkaProducerTest {
         assertRecordMetadataExists();
     }
 
-    @Test(expected = Exception.class)
+    @Test
     @SuppressWarnings({"unchecked"})
     public void processSendsMessageWithException() throws Exception {
         endpoint.getConfiguration().setTopic("sometopic");
@@ -127,9 +128,8 @@ public class KafkaProducerTest {
         Mockito.when(exchange.getIn()).thenReturn(in);
         in.setHeader(KafkaConstants.PARTITION_KEY, 4);
 
-        producer.process(exchange);
-
-        assertRecordMetadataExists();
+        assertThrows(Exception.class,
+            () -> producer.process(exchange));
     }
 
     @Test

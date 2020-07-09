@@ -25,8 +25,10 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.StateRepository;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KafkaConsumerRebalanceTest extends BaseEmbeddedKafkaTest {
     private static final String TOPIC = "offset-rebalance";
@@ -47,10 +49,10 @@ public class KafkaConsumerRebalanceTest extends BaseEmbeddedKafkaTest {
     @Test
     public void offsetGetStateMustHaveBeenCalledTwice() throws Exception {
         boolean offsetGetStateCalled = messagesLatch.await(30000, TimeUnit.MILLISECONDS);
-        assertTrue("StateRepository.getState should have been called twice for topic " + TOPIC + ". Remaining count : " + messagesLatch.getCount(), offsetGetStateCalled);
+        assertTrue(offsetGetStateCalled, "StateRepository.getState should have been called twice for topic " + TOPIC + ". Remaining count : " + messagesLatch.getCount());
     }
 
-    @After
+    @AfterEach
     public void after() {
         // clean all test topics
         kafkaAdminClient.deleteTopics(Collections.singletonList(TOPIC));

@@ -23,7 +23,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.BaseEmbeddedKafkaTest;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.*; import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test for non-eager idempotentRepository usage.
