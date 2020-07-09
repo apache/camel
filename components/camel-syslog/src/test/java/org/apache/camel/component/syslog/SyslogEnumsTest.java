@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.syslog;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class SyslogEnumsTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class SyslogEnumsTest {
 
     @Test
     public void testFacilityConstants() {
