@@ -318,7 +318,7 @@ there is only a single parameter of the type
  }
 ----
 
-[[SpringRemoting-@Handler]]
+[[SpringRemoting-Handler]]
 === @Handler
 
 You can mark a method in your bean with the `@Handler` annotation to

@@ -277,7 +277,7 @@ Create camel context and declare apns component programmatically
     }
 ----------------------------------------------------------------------------------
 
-[[APNS-ApnsProducer-iOStargetdevicedynamicallyconfiguredviaheader:"CamelApnsTokens"]]
+[[APNS-ApnsProducer-iOStargetdevicedynamicallyconfiguredviaheader:CamelApnsTokens]]
 ApnsProducer - iOS target device dynamically configured via header:
 `"CamelApnsTokens"`
 

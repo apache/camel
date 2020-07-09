@@ -190,7 +190,7 @@ Now Camel matches step 5, and loses the prefix *on* in the name, and
 looks for 'service' as the property. And because there is a
 getServiceEndpoint method, Camel will use that.
 
-[[POJOConsuming-Whichapproachtouse?]]
+[[POJOConsuming-Whichapproachtouse]]
 == Which approach to use?
 
 Using the @Consume annotations are simpler when you are creating a
