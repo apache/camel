@@ -20,7 +20,10 @@ import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MyBatisQueueTest extends MyBatisTestSupport {
     
@@ -61,14 +64,14 @@ public class MyBatisQueueTest extends MyBatisTestSupport {
         // now lets poll that the account has been inserted
         List<?> body = template.requestBody("mybatis:selectProcessedAccounts?statementType=SelectList", null, List.class);
 
-        assertEquals("Wrong size: " + body, 2, body.size());
+        assertEquals(2, body.size(), "Wrong size: " + body);
         Account actual = assertIsInstanceOf(Account.class, body.get(0));
 
-        assertEquals("Account.getFirstName()", "Bob", actual.getFirstName());
-        assertEquals("Account.getLastName()", "Denver", actual.getLastName());
+        assertEquals("Bob", actual.getFirstName(), "Account.getFirstName()");
+        assertEquals("Denver", actual.getLastName(), "Account.getLastName()");
 
         body = template.requestBody("mybatis:selectUnprocessedAccounts?statementType=SelectList", null, List.class);
-        assertEquals("Wrong size: " + body, 0, body.size());
+        assertEquals(0, body.size(), "Wrong size: " + body);
     }
 
     @Override

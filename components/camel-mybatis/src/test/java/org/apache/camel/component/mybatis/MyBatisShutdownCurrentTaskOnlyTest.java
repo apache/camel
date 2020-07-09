@@ -19,13 +19,15 @@ package org.apache.camel.component.mybatis;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MyBatisShutdownCurrentTaskOnlyTest extends MyBatisTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -92,7 +94,7 @@ public class MyBatisShutdownCurrentTaskOnlyTest extends MyBatisTestSupport {
         context.stop();
 
         // should NOT route all 8
-        assertTrue("Should NOT complete all messages, was: " + bar.getReceivedCounter(), bar.getReceivedCounter() < 8);
+        assertTrue(bar.getReceivedCounter() < 8, "Should NOT complete all messages, was: " + bar.getReceivedCounter());
     }
 
     @Override
