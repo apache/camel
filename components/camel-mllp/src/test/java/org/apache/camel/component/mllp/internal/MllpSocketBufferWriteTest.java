@@ -20,11 +20,12 @@ import java.net.SocketTimeoutException;
 
 import org.apache.camel.component.mllp.MllpProtocolConstants;
 import org.apache.camel.test.stub.tcp.SocketStub;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests for the overridden methods in the MllpSocketBuffer class.
@@ -335,15 +336,12 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
             assertEquals(expectedMessage, expectedEx.getMessage());
         }
 
-        try {
-            instance.write("BLAH".getBytes());
-            instance.ensureCapacity(MllpSocketBuffer.MAX_BUFFER_SIZE);
-            fail("Should have thrown an exception");
-        } catch (IllegalStateException expectedEx) {
-            String expectedMessage = "Cannot increase the buffer size <2048> in order to increase the available capacity from <2044> to <1073741824>"
-                + " because the required buffer size <1073741828> exceeds the maximum buffer size <1073741824>";
-            assertEquals(expectedMessage, expectedEx.getMessage());
-        }
+        instance.write("BLAH".getBytes());
+        IllegalStateException expectedEx = assertThrows(IllegalStateException.class,
+            () -> instance.ensureCapacity(MllpSocketBuffer.MAX_BUFFER_SIZE));
+        String expectedMessage = "Cannot increase the buffer size <2048> in order to increase the available capacity from <2044> to <1073741824>"
+            + " because the required buffer size <1073741828> exceeds the maximum buffer size <1073741824>";
+        assertEquals(expectedMessage, expectedEx.getMessage());
     }
 
     /**
@@ -357,16 +355,11 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
 
         instance.ensureCapacity(MllpSocketBuffer.MAX_BUFFER_SIZE);
 
-        try {
-            instance.ensureCapacity(MllpSocketBuffer.MAX_BUFFER_SIZE + 1);
-            fail("Should have thrown an exception");
-        } catch (IllegalStateException expectedEx) {
-            String expectedMessage = "Cannot increase the buffer size from <1073741824> to <1073741825> in order to increase the available capacity"
-                + " from <1073741824> to <1073741825> because the buffer is already the maximum size <1073741824>";
-            assertEquals(expectedMessage, expectedEx.getMessage());
-        }
-
-
+        IllegalStateException expectedEx = assertThrows(IllegalStateException.class,
+            () -> instance.ensureCapacity(MllpSocketBuffer.MAX_BUFFER_SIZE + 1));
+        String expectedMessage = "Cannot increase the buffer size from <1073741824> to <1073741825> in order to increase the available capacity"
+            + " from <1073741824> to <1073741825> because the buffer is already the maximum size <1073741824>";
+        assertEquals(expectedMessage, expectedEx.getMessage());
     }
 
     /**
@@ -374,7 +367,7 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
      *
      * @throws Exception in the event of a test error.
      */
-    @Test(expected = SocketTimeoutException.class)
+    @Test
     public void testReadFrom() throws Exception {
         SocketStub socketStub = new SocketStub();
         socketStub.inputStreamStub
@@ -384,9 +377,8 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
         endpoint.setReceiveTimeout(500);
         endpoint.setReadTimeout(100);
 
-        instance.readFrom(socketStub);
-
-        assertArrayEquals("FOOBAR".getBytes(), instance.toByteArray());
+        assertThrows(SocketTimeoutException.class,
+            () -> instance.readFrom(socketStub));
     }
 
 }

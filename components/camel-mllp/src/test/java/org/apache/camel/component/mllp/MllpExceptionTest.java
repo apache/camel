@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.mllp;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MllpExceptionTest extends MllpExceptionTestSupport {
     static final String EXCEPTION_MESSAGE = "Test MllpException";
@@ -30,7 +30,7 @@ public class MllpExceptionTest extends MllpExceptionTestSupport {
 
     MllpException instance;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         instance = new MllpException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
     }
