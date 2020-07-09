@@ -134,6 +134,18 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
                 assertEquals(td.getLogMessages().get(i), span.logEntries().get(i).fields().get("message"));
             }
         }
+
+        if (!td.getTags().isEmpty()) {
+            for (Map.Entry<String, String> entry : td.getTags().entrySet()) {
+                assertEquals(entry.getValue(), span.tags().get(entry.getKey()));
+            }
+        }
+
+        if (!td.getBaggage().isEmpty()) {
+            for (Map.Entry<String, String> entry : td.getBaggage().entrySet()) {
+                assertEquals(entry.getValue(), span.getBaggageItem(entry.getKey()));
+            }
+        }
     }
 
     protected void verifySameTrace() {
