@@ -211,6 +211,20 @@ public interface Aws2TranslateComponentBuilderFactory {
             return this;
         }
         /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Aws2TranslateComponentBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
          * 
@@ -284,6 +298,7 @@ public interface Aws2TranslateComponentBuilderFactory {
             case "sourceLanguage": getOrCreateConfiguration((Translate2Component) component).setSourceLanguage((java.lang.String) value); return true;
             case "targetLanguage": getOrCreateConfiguration((Translate2Component) component).setTargetLanguage((java.lang.String) value); return true;
             case "translateClient": getOrCreateConfiguration((Translate2Component) component).setTranslateClient((software.amazon.awssdk.services.translate.TranslateClient) value); return true;
+            case "trustAllCertificates": getOrCreateConfiguration((Translate2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "basicPropertyBinding": ((Translate2Component) component).setBasicPropertyBinding((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((Translate2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Translate2Component) component).setSecretKey((java.lang.String) value); return true;

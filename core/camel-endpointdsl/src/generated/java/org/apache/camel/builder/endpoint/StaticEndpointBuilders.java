@@ -1503,7 +1503,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path queueNameOrArn
      */
-    static org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.Sqs2EndpointBuilder aws2Sqs(
+    public static org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.Sqs2EndpointBuilder aws2Sqs(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.endpointBuilder("aws2-sqs", path);
     }
@@ -1525,7 +1525,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path queueNameOrArn
      */
-    static org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.Sqs2EndpointBuilder aws2Sqs(
+    public static org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.Sqs2EndpointBuilder aws2Sqs(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -1545,7 +1545,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path label
      */
-    public static org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.Translate2EndpointBuilder aws2Translate(
+    static org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.Translate2EndpointBuilder aws2Translate(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder("aws2-translate", path);
     }
@@ -1566,7 +1566,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path label
      */
-    public static org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.Translate2EndpointBuilder aws2Translate(
+    static org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.Translate2EndpointBuilder aws2Translate(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder(componentName, path);

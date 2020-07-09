@@ -46,6 +46,8 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         case "targetLanguage": target.getConfiguration().setTargetLanguage(property(camelContext, java.lang.String.class, value)); return true;
         case "translateclient":
         case "translateClient": target.getConfiguration().setTranslateClient(property(camelContext, software.amazon.awssdk.services.translate.TranslateClient.class, value)); return true;
+        case "trustallcertificates":
+        case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -68,6 +70,7 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         answer.put("synchronous", boolean.class);
         answer.put("targetLanguage", java.lang.String.class);
         answer.put("translateClient", software.amazon.awssdk.services.translate.TranslateClient.class);
+        answer.put("trustAllCertificates", boolean.class);
         return answer;
     }
 
@@ -102,6 +105,8 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         case "targetLanguage": return target.getConfiguration().getTargetLanguage();
         case "translateclient":
         case "translateClient": return target.getConfiguration().getTranslateClient();
+        case "trustallcertificates":
+        case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
         default: return null;
         }
     }
