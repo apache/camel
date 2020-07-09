@@ -41,7 +41,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS 2 DynamoDB component supports 16 options, which are listed below.
+The AWS 2 DynamoDB component supports 17 options, which are listed below.
 
 
 
@@ -60,6 +60,7 @@ The AWS 2 DynamoDB component supports 16 options, which are listed below.
 | *proxyProtocol* (producer) | To define a proxy protocol when instantiating the DDB client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *readCapacity* (producer) | The provisioned throughput to reserve for reading resources from your table |  | Long
 | *region* (producer) | The region in which DDB client needs to work |  | String
+| *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
 | *writeCapacity* (producer) | The provisioned throughput to reserved for writing resources to your table |  | Long
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
@@ -89,7 +90,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (16 parameters):
+=== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -106,6 +107,7 @@ with the following path and query parameters:
 | *proxyProtocol* (producer) | To define a proxy protocol when instantiating the DDB client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *readCapacity* (producer) | The provisioned throughput to reserve for reading resources from your table |  | Long
 | *region* (producer) | The region in which DDB client needs to work |  | String
+| *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
 | *writeCapacity* (producer) | The provisioned throughput to reserved for writing resources to your table |  | Long
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
