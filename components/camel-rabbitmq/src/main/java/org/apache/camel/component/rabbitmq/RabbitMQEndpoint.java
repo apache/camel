@@ -47,6 +47,8 @@ import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.component.rabbitmq.RabbitMQComponent.BINDING_ARG_PREFIX;
+import static org.apache.camel.component.rabbitmq.RabbitMQComponent.DLQ_ARG_PREFIX;
+import static org.apache.camel.component.rabbitmq.RabbitMQComponent.DLQ_BINDING_PREFIX;
 import static org.apache.camel.component.rabbitmq.RabbitMQComponent.EXCHANGE_ARG_PREFIX;
 import static org.apache.camel.component.rabbitmq.RabbitMQComponent.QUEUE_ARG_PREFIX;
 
@@ -99,6 +101,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean skipQueueDeclare;
     @UriParam(label = "common")
     private boolean skipQueueBind;
+    @UriParam(label = "common")
+    private boolean skipDlqDeclare;
     @UriParam(label = "common")
     private boolean skipExchangeDeclare;
     @UriParam(label = "common")
@@ -423,6 +427,19 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     public boolean isSkipQueueDeclare() {
         return skipQueueDeclare;
+    }
+
+    /**
+     * If true the producer will not declare and bind a dead letter queue. This can be used
+     * if you have also DLQ rabbitmq consumer and you want to avoid argument clashing between Producer and Consumer.
+     * This option have no effect, if DLQ configured (deadLetterExchange option is not set).
+     */
+    public void setSkipDlqDeclare(boolean skipDlqDeclare) {
+        this.skipDlqDeclare = skipDlqDeclare;
+    }
+
+    public boolean isSkipDlqDeclare() {
+        return skipDlqDeclare;
     }
 
     /**
@@ -809,6 +826,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
      * <li>Exchange: arg.exchange.</li>
      * <li>Queue: arg.queue.</li>
      * <li>Binding: arg.binding.</li>
+     * <li>DLQ: arg.dlq.queue.</li>
+     * <li>DLQ binding: arg.dlq.binding.</li>
      * </ul>
      * For example to declare a queue with message ttl argument:
      * http://localhost:5672/exchange/queue?args=arg.queue.x-message-ttl=60000
@@ -827,6 +846,14 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     public Map<String, Object> getQueueArgs() {
         return PropertiesHelper.extractProperties(args, QUEUE_ARG_PREFIX, false);
+    }
+
+    public Map<String, Object> getDlqArgs() {
+        return PropertiesHelper.extractProperties(args, DLQ_ARG_PREFIX, false);
+    }
+
+    public Map<String, Object> getDlqBindingArgs() {
+        return PropertiesHelper.extractProperties(args, DLQ_BINDING_PREFIX, false);
     }
 
     public Map<String, Object> getBindingArgs() {

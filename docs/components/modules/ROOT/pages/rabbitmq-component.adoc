@@ -99,7 +99,7 @@ The RabbitMQ component supports 53 options, which are listed below.
 | *mandatory* (producer) | This flag tells the server how to react if the message cannot be routed to a queue. If this flag is set, the server will return an unroutable message with a Return method. If this flag is zero, the server silently drops the message. If the header is present rabbitmq.MANDATORY it will override this option. | false | boolean
 | *publisherAcknowledgements* (producer) | When true, the message will be published with publisher acknowledgements turned on | false | boolean
 | *publisherAcknowledgements Timeout* (producer) | The amount of time in milliseconds to wait for a basic.ack response from RabbitMQ server |  | long
-| *args* (advanced) | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. For example to declare a queue with message ttl argument: \http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000 |  | Map
+| *args* (advanced) | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. DLQ: arg.dlq.queue. DLQ Binding: arg.dlq.binding. For example to declare a queue with message ttl argument: \http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000 |  | Map
 | *autoDetectConnectionFactory* (advanced) | Whether to auto-detect looking up RabbitMQ connection factory from the registry. When enabled and a single instance of the connection factory is found then it will be used. An explicit connection factory can be configured on the component or endpoint level which takes precedence. | true | boolean
 | *automaticRecoveryEnabled* (advanced) | Enables connection automatic recovery (uses connection implementation that performs automatic recovery when connection shutdown is not initiated by the application) |  | Boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
@@ -141,7 +141,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (63 parameters):
+=== Query Parameters (64 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -164,6 +164,7 @@ with the following path and query parameters:
 | *portNumber* (common) | Port number for the host with the running rabbitmq instance or cluster. Default value is 5672. |  | int
 | *queue* (common) | The queue to receive messages from |  | String
 | *routingKey* (common) | The routing key to use when binding a consumer queue to the exchange. For producer routing keys, you set the header rabbitmq.ROUTING_KEY. |  | String
+| *skipDlqDeclare* (common) | If true the producer will not declare and bind a dead letter queue. This can be used if you have also DLQ rabbitmq consumer and you want to avoid argument clashing between Producer and Consumer. This option have no effect, if DLQ configured (deadLetterExchange option is not set). | false | boolean
 | *skipExchangeDeclare* (common) | This can be used if we need to declare the queue but not the exchange | false | boolean
 | *skipQueueBind* (common) | If true the queue will not be bound to the exchange after declaring it | false | boolean
 | *skipQueueDeclare* (common) | If true the producer will not declare and bind a queue. This can be used for directing messages via an existing routing key. | false | boolean
@@ -191,7 +192,7 @@ with the following path and query parameters:
 | *mandatory* (producer) | This flag tells the server how to react if the message cannot be routed to a queue. If this flag is set, the server will return an unroutable message with a Return method. If this flag is zero, the server silently drops the message. If the header is present rabbitmq.MANDATORY it will override this option. | false | boolean
 | *publisherAcknowledgements* (producer) | When true, the message will be published with publisher acknowledgements turned on | false | boolean
 | *publisherAcknowledgements Timeout* (producer) | The amount of time in milliseconds to wait for a basic.ack response from RabbitMQ server |  | long
-| *args* (advanced) | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. For example to declare a queue with message ttl argument: \http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000 |  | Map
+| *args* (advanced) | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. DLQ: arg.dlq.queue. DLQ binding: arg.dlq.binding. For example to declare a queue with message ttl argument: \http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000 |  | Map
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *clientProperties* (advanced) | Connection client properties (client info used in negotiating with the server) |  | Map
 | *connectionFactoryException Handler* (advanced) | Custom rabbitmq ExceptionHandler for ConnectionFactory |  | ExceptionHandler

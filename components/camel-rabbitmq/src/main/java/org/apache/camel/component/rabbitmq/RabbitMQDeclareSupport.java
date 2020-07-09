@@ -37,10 +37,11 @@ public class RabbitMQDeclareSupport {
     }
 
     private void declareAndBindDeadLetterExchangeWithQueue(final Channel channel) throws IOException {
-        if (endpoint.getDeadLetterExchange() != null) {
-            // TODO Do we need to setup the args for the DeadLetter?
+        if (endpoint.getDeadLetterExchange() != null && !endpoint.isSkipDlqDeclare()) {
+            Map<String, Object> queueArgs = new HashMap<>(endpoint.getDlqArgs());
+            formatSpecialQueueArguments(queueArgs);
             declareExchange(channel, endpoint.getDeadLetterExchange(), endpoint.getDeadLetterExchangeType(), Collections.<String, Object> emptyMap());
-            declareAndBindQueue(channel, endpoint.getDeadLetterQueue(), endpoint.getDeadLetterExchange(), endpoint.getDeadLetterRoutingKey(), null, null);
+            declareAndBindQueue(channel, endpoint.getDeadLetterQueue(), endpoint.getDeadLetterExchange(), endpoint.getDeadLetterRoutingKey(), queueArgs, endpoint.getDlqBindingArgs());
         }
     }
 

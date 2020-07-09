@@ -368,6 +368,40 @@ public interface RabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * If true the producer will not declare and bind a dead letter queue.
+         * This can be used if you have also DLQ rabbitmq consumer and you want
+         * to avoid argument clashing between Producer and Consumer. This option
+         * have no effect, if DLQ configured (deadLetterExchange option is not
+         * set).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default RabbitMQEndpointConsumerBuilder skipDlqDeclare(
+                boolean skipDlqDeclare) {
+            doSetProperty("skipDlqDeclare", skipDlqDeclare);
+            return this;
+        }
+        /**
+         * If true the producer will not declare and bind a dead letter queue.
+         * This can be used if you have also DLQ rabbitmq consumer and you want
+         * to avoid argument clashing between Producer and Consumer. This option
+         * have no effect, if DLQ configured (deadLetterExchange option is not
+         * set).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default RabbitMQEndpointConsumerBuilder skipDlqDeclare(
+                String skipDlqDeclare) {
+            doSetProperty("skipDlqDeclare", skipDlqDeclare);
+            return this;
+        }
+        /**
          * This can be used if we need to declare the queue but not the
          * exchange.
          * 
@@ -909,8 +943,9 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Specify arguments for configuring the different RabbitMQ concepts, a
          * different prefix is required for each: Exchange: arg.exchange. Queue:
-         * arg.queue. Binding: arg.binding. For example to declare a queue with
-         * message ttl argument:
+         * arg.queue. Binding: arg.binding. DLQ: arg.dlq.queue. DLQ binding:
+         * arg.dlq.binding. For example to declare a queue with message ttl
+         * argument:
          * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
@@ -930,8 +965,9 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Specify arguments for configuring the different RabbitMQ concepts, a
          * different prefix is required for each: Exchange: arg.exchange. Queue:
-         * arg.queue. Binding: arg.binding. For example to declare a queue with
-         * message ttl argument:
+         * arg.queue. Binding: arg.binding. DLQ: arg.dlq.queue. DLQ binding:
+         * arg.dlq.binding. For example to declare a queue with message ttl
+         * argument:
          * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
@@ -1636,6 +1672,40 @@ public interface RabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * If true the producer will not declare and bind a dead letter queue.
+         * This can be used if you have also DLQ rabbitmq consumer and you want
+         * to avoid argument clashing between Producer and Consumer. This option
+         * have no effect, if DLQ configured (deadLetterExchange option is not
+         * set).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default RabbitMQEndpointProducerBuilder skipDlqDeclare(
+                boolean skipDlqDeclare) {
+            doSetProperty("skipDlqDeclare", skipDlqDeclare);
+            return this;
+        }
+        /**
+         * If true the producer will not declare and bind a dead letter queue.
+         * This can be used if you have also DLQ rabbitmq consumer and you want
+         * to avoid argument clashing between Producer and Consumer. This option
+         * have no effect, if DLQ configured (deadLetterExchange option is not
+         * set).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default RabbitMQEndpointProducerBuilder skipDlqDeclare(
+                String skipDlqDeclare) {
+            doSetProperty("skipDlqDeclare", skipDlqDeclare);
+            return this;
+        }
+        /**
          * This can be used if we need to declare the queue but not the
          * exchange.
          * 
@@ -2175,8 +2245,9 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Specify arguments for configuring the different RabbitMQ concepts, a
          * different prefix is required for each: Exchange: arg.exchange. Queue:
-         * arg.queue. Binding: arg.binding. For example to declare a queue with
-         * message ttl argument:
+         * arg.queue. Binding: arg.binding. DLQ: arg.dlq.queue. DLQ binding:
+         * arg.dlq.binding. For example to declare a queue with message ttl
+         * argument:
          * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
@@ -2196,8 +2267,9 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Specify arguments for configuring the different RabbitMQ concepts, a
          * different prefix is required for each: Exchange: arg.exchange. Queue:
-         * arg.queue. Binding: arg.binding. For example to declare a queue with
-         * message ttl argument:
+         * arg.queue. Binding: arg.binding. DLQ: arg.dlq.queue. DLQ binding:
+         * arg.dlq.binding. For example to declare a queue with message ttl
+         * argument:
          * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
@@ -2902,6 +2974,38 @@ public interface RabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * If true the producer will not declare and bind a dead letter queue.
+         * This can be used if you have also DLQ rabbitmq consumer and you want
+         * to avoid argument clashing between Producer and Consumer. This option
+         * have no effect, if DLQ configured (deadLetterExchange option is not
+         * set).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default RabbitMQEndpointBuilder skipDlqDeclare(boolean skipDlqDeclare) {
+            doSetProperty("skipDlqDeclare", skipDlqDeclare);
+            return this;
+        }
+        /**
+         * If true the producer will not declare and bind a dead letter queue.
+         * This can be used if you have also DLQ rabbitmq consumer and you want
+         * to avoid argument clashing between Producer and Consumer. This option
+         * have no effect, if DLQ configured (deadLetterExchange option is not
+         * set).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default RabbitMQEndpointBuilder skipDlqDeclare(String skipDlqDeclare) {
+            doSetProperty("skipDlqDeclare", skipDlqDeclare);
+            return this;
+        }
+        /**
          * This can be used if we need to declare the queue but not the
          * exchange.
          * 
@@ -3111,8 +3215,9 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Specify arguments for configuring the different RabbitMQ concepts, a
          * different prefix is required for each: Exchange: arg.exchange. Queue:
-         * arg.queue. Binding: arg.binding. For example to declare a queue with
-         * message ttl argument:
+         * arg.queue. Binding: arg.binding. DLQ: arg.dlq.queue. DLQ binding:
+         * arg.dlq.binding. For example to declare a queue with message ttl
+         * argument:
          * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
@@ -3130,8 +3235,9 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Specify arguments for configuring the different RabbitMQ concepts, a
          * different prefix is required for each: Exchange: arg.exchange. Queue:
-         * arg.queue. Binding: arg.binding. For example to declare a queue with
-         * message ttl argument:
+         * arg.queue. Binding: arg.binding. DLQ: arg.dlq.queue. DLQ binding:
+         * arg.dlq.binding. For example to declare a queue with message ttl
+         * argument:
          * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
