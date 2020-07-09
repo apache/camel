@@ -29,19 +29,28 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceException;
 import org.apache.camel.test.junit.rule.mllp.MllpServerResource;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class MllpTcpClientProducerIdleConnectionTimeoutTest extends CamelTestSupport {
+
     static final int CONNECT_TIMEOUT = 500;
     static final int RECEIVE_TIMEOUT = 1000;
     static final int READ_TIMEOUT = 500;
     static final int IDLE_TIMEOUT = RECEIVE_TIMEOUT * 3;
 
-    @Rule
-    public MllpServerResource mllpServer = new MllpServerResource("localhost", AvailablePortFinder.getNextAvailable());
+    Logger log = LoggerFactory.getLogger(MllpTcpClientProducerIdleConnectionTimeoutTest.class);
+
+    @RegisterExtension
+    MllpServerResource mllpServer = new MllpServerResource("localhost", AvailablePortFinder.getNextAvailable());
 
     @EndpointInject("direct://source")
     ProducerTemplate source;
@@ -94,7 +103,7 @@ public class MllpTcpClientProducerIdleConnectionTimeoutTest extends CamelTestSup
         };
     }
 
-    @Test(expected = MllpJUnitResourceException.class)
+    @Test
     public void testIdleConnectionTimeout() throws Exception {
         complete.expectedMessageCount(2);
         writeEx.expectedMessageCount(0);
@@ -108,13 +117,14 @@ public class MllpTcpClientProducerIdleConnectionTimeoutTest extends CamelTestSup
         Thread.sleep(IDLE_TIMEOUT / 2);
         source.sendBody(Hl7TestMessageGenerator.generateMessage());
 
-        assertTrue("Should have completed two exchanges", done.matches(5, TimeUnit.SECONDS));
+        assertTrue(done.matches(5, TimeUnit.SECONDS), "Should have completed two exchanges");
 
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
 
         Thread.sleep((long) (IDLE_TIMEOUT * 1.1));
 
-        mllpServer.checkClientConnections();
+        assertThrows(MllpJUnitResourceException.class,
+            () -> mllpServer.checkClientConnections());
     }
 
     @Test
@@ -131,7 +141,7 @@ public class MllpTcpClientProducerIdleConnectionTimeoutTest extends CamelTestSup
         Thread.sleep(IDLE_TIMEOUT / 2);
         source.sendBody(Hl7TestMessageGenerator.generateMessage());
 
-        assertTrue("Should have completed two exchanges", done.matches(5, TimeUnit.SECONDS));
+        assertTrue(done.matches(5, TimeUnit.SECONDS), "Should have completed two exchanges");
 
         Thread.sleep((long) (IDLE_TIMEOUT * 1.1));
 

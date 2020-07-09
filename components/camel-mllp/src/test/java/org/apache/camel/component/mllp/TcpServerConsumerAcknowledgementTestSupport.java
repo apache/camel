@@ -27,8 +27,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Rule;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelTestSupport {
     static final String TEST_MESSAGE =
@@ -39,7 +41,7 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
         "MSH|^~\\&|^org^sys||APP_A|FAC_A|||ACK^A04^ADT_A04|||2.6" + '\r'
         + "MSA|AA|" + '\r';
 
-    @Rule
+    @RegisterExtension
     public MllpClientResource mllpClient = new MllpClientResource();
 
     @EndpointInject("mock://result")
@@ -128,7 +130,7 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
 
         mllpClient.sendFramedData(TEST_MESSAGE);
 
-        assertTrue("Exchange should have completed", done.matches(10, TimeUnit.SECONDS));
+        assertTrue(done.matches(10, TimeUnit.SECONDS), "Exchange should have completed");
 
         assertMockEndpointsSatisfied();
     }
@@ -149,7 +151,7 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
         mllpClient.connect();
         mllpClient.sendFramedData(testMessage);
 
-        assertTrue("One exchange should have complete", done.matches(5, TimeUnit.SECONDS));
+        assertTrue(done.matches(5, TimeUnit.SECONDS), "One exchange should have complete");
         assertMockEndpointsSatisfied();
     }
 }

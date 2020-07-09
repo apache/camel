@@ -31,7 +31,9 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.camel.component.mllp.MllpProtocolConstants;
-import org.junit.rules.ExternalResource;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +42,8 @@ import org.slf4j.LoggerFactory;
  *
  * The server can be configured to simulate a large number of error conditions.
  */
-public class MllpServerResource extends ExternalResource {
+public class MllpServerResource implements BeforeEachCallback, AfterEachCallback {
+
     Logger log = LoggerFactory.getLogger(this.getClass());
 
     String listenHost;
@@ -154,16 +157,13 @@ public class MllpServerResource extends ExternalResource {
         }
     }
 
-
     @Override
-    protected void before() throws Throwable {
+    public void beforeEach(ExtensionContext context) throws Exception {
         startup();
-        super.before();
     }
 
     @Override
-    protected void after() {
-        super.after();
+    public void afterEach(ExtensionContext context) throws Exception {
         shutdown();
     }
 

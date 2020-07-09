@@ -21,14 +21,15 @@ import java.io.ByteArrayOutputStream;
 import org.apache.camel.component.mllp.MllpAcknowledgementGenerationException;
 import org.apache.camel.component.mllp.MllpProtocolConstants;
 import org.apache.camel.test.stub.camel.MllpEndpointStub;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class Hl7UtilTest {
     // @formatter:off
@@ -83,7 +84,7 @@ public class Hl7UtilTest {
     public void testGenerateInvalidPayloadExceptionMessage() throws Exception {
         String message = Hl7Util.generateInvalidPayloadExceptionMessage(TEST_MESSAGE.getBytes());
 
-        assertNull("Valid payload should result in a null message", message);
+        assertNull(message, "Valid payload should result in a null message");
     }
 
     @Test
@@ -91,7 +92,7 @@ public class Hl7UtilTest {
         byte[] payload = TEST_MESSAGE.getBytes();
         String message = Hl7Util.generateInvalidPayloadExceptionMessage(payload, payload.length * 2);
 
-        assertNull("Valid payload should result in a null message", message);
+        assertNull(message, "Valid payload should result in a null message");
     }
 
     @Test
@@ -182,12 +183,11 @@ public class Hl7UtilTest {
      *
      * @throws Exception in the event of a test error.
      */
-    @Test(expected = MllpAcknowledgementGenerationException.class)
+    @Test
     public void testGenerateAcknowledgementPayloadFromNullMessage() throws Exception {
         MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
-        Hl7Util.generateAcknowledgementPayload(mllpSocketBuffer, null, "AA");
-
-        assertEquals(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD, mllpSocketBuffer.toString());
+        assertThrows(MllpAcknowledgementGenerationException.class,
+            () -> Hl7Util.generateAcknowledgementPayload(mllpSocketBuffer, null, "AA"));
     }
 
     /**
@@ -195,12 +195,11 @@ public class Hl7UtilTest {
      *
      * @throws Exception in the event of a test error.
      */
-    @Test(expected = MllpAcknowledgementGenerationException.class)
+    @Test
     public void testGenerateAcknowledgementPayloadFromEmptyMessage() throws Exception {
         MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
-        Hl7Util.generateAcknowledgementPayload(mllpSocketBuffer, new byte[0], "AA");
-
-        assertEquals(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD, mllpSocketBuffer.toString());
+        assertThrows(MllpAcknowledgementGenerationException.class,
+            () -> Hl7Util.generateAcknowledgementPayload(mllpSocketBuffer, new byte[0], "AA"));
     }
 
     /**
@@ -208,12 +207,13 @@ public class Hl7UtilTest {
      *
      * @throws Exception in the event of a test error.
      */
-    @Test(expected = MllpAcknowledgementGenerationException.class)
+    @Test
     public void testGenerateAcknowledgementPayloadWithoutEnoughFields() throws Exception {
         final byte[] testMessage = TEST_MESSAGE.replace("||ORM^O01|00001|D|2.3|||||||", "").getBytes();
 
         MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
-        Hl7Util.generateAcknowledgementPayload(mllpSocketBuffer, testMessage, "AA");
+        assertThrows(MllpAcknowledgementGenerationException.class,
+            () -> Hl7Util.generateAcknowledgementPayload(mllpSocketBuffer, testMessage, "AA"));
     }
 
     /**

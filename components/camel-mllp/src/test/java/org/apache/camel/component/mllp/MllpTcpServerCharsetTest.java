@@ -26,9 +26,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Rule;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class MllpTcpServerCharsetTest extends CamelTestSupport {
     static final String TEST_MESSAGE =
@@ -44,7 +44,7 @@ public class MllpTcpServerCharsetTest extends CamelTestSupport {
         
     static final String TARGET_URI = "mock://target";
 
-    @Rule
+    @RegisterExtension
     public MllpClientResource mllpClient = new MllpClientResource();
 
     @EndpointInject(TARGET_URI)

@@ -25,14 +25,15 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
+
 
 /**
  * Various tests used to validate the behaviour of Java Sockets.
@@ -42,7 +43,7 @@ import static org.junit.Assert.fail;
  *
  * NOTE:  This class may be deleted in the future
  */
-@Ignore(value = "Tests validating Java Socket behaviours")
+@Disabled(value = "Tests validating Java Socket behaviours")
 public class JavaSocketTests {
     Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -51,12 +52,12 @@ public class JavaSocketTests {
 
     int messageCount = 10;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         serverSocket = new ServerSocket(0);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (null != clientSocket) {
             clientSocket.close();

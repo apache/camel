@@ -28,10 +28,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpServerResource;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends CamelTestSupport {
     static final int RECEIVE_TIMEOUT = 1000;
@@ -63,7 +65,7 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
             + "MSA|AE|00001|" + '\r'
             + '\n';
 
-    @Rule
+    @RegisterExtension
     public MllpServerResource mllpServer = new MllpServerResource("localhost", AvailablePortFinder.getNextAvailable());
 
     @EndpointInject("direct://source")
@@ -201,7 +203,7 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
         for (int i = 0; i < expectedAACount; ++i) {
             source.sendBody(Hl7TestMessageGenerator.generateMessage(i + 1));
-            assertTrue("Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS));
+            assertTrue(complete[i].matches(1, TimeUnit.SECONDS), "Message " + i + " not completed");
         }
     }
 
@@ -230,7 +232,7 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
         for (int i = 0; i < expectedAACount; ++i) {
             source.sendBody(Hl7TestMessageGenerator.generateMessage(i + 1));
-            assertTrue("Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS));
+            assertTrue(complete[i].matches(1, TimeUnit.SECONDS), "Message " + i + " not completed");
         }
     }
 
@@ -251,7 +253,7 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
         for (int i = 0; i < messageCount; ++i) {
             source.sendBody(Hl7TestMessageGenerator.generateMessage(i + 1));
-            assertTrue("Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS));
+            assertTrue(complete[i].matches(1, TimeUnit.SECONDS), "Message " + i + " not completed");
         }
     }
 
@@ -272,13 +274,13 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
         mllpServer.disableResponse();
 
         source.sendBody(Hl7TestMessageGenerator.generateMessage(1));
-        assertTrue("Messege 1 not completed", complete[0].matches(1, TimeUnit.SECONDS));
+        assertTrue(complete[0].matches(1, TimeUnit.SECONDS), "Message 0 not completed");
 
         mllpServer.enableResponse();
 
         for (int i = 1; i < sendMessageCount; ++i) {
             source.sendBody(Hl7TestMessageGenerator.generateMessage(i + 1));
-            assertTrue("Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS));
+            assertTrue(complete[i].matches(1, TimeUnit.SECONDS), "Message " + i + " not completed");
         }
     }
 
@@ -300,7 +302,7 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
         for (int i = 0; i < sendMessageCount; ++i) {
             source.sendBody(Hl7TestMessageGenerator.generateMessage(i + 1));
-            assertTrue("Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS));
+            assertTrue(complete[i].matches(1, TimeUnit.SECONDS), "Message " + i + " not completed");
         }
     }
 
@@ -398,7 +400,7 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
         for (int i = 0; i < sendMessageCount; ++i) {
             source.sendBody(Hl7TestMessageGenerator.generateMessage(i + 1));
-            assertTrue("Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS));
+            assertTrue(complete[i].matches(1, TimeUnit.SECONDS), "Message " + i + " not completed");
         }
     }
 
@@ -446,7 +448,7 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
         for (int i = 0; i < sendMessageCount; ++i) {
             source.sendBody(Hl7TestMessageGenerator.generateMessage(i + 1));
-            assertTrue("Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS));
+            assertTrue(complete[i].matches(1, TimeUnit.SECONDS), "Message " + i + " not completed");
         }
     }
 
@@ -468,7 +470,7 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
         for (int i = 0; i < messageCount; ++i) {
             source.sendBody(Hl7TestMessageGenerator.generateMessage(i + 1));
-            assertTrue("Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS));
+            assertTrue(complete[i].matches(1, TimeUnit.SECONDS), "Message " + i + " not completed");
         }
     }
 

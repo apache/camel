@@ -23,7 +23,7 @@ import org.apache.camel.component.mllp.MllpComponent;
 import org.apache.camel.component.mllp.MllpConfiguration;
 import org.apache.camel.component.mllp.MllpEndpoint;
 import org.apache.camel.component.mllp.MllpProtocolConstants;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class SocketBufferTestSupport {
     static final String TEST_HL7_MESSAGE =
@@ -33,7 +33,7 @@ public class SocketBufferTestSupport {
     MllpEndpoint endpoint;
     MllpSocketBuffer instance;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         endpoint = new MllpEndpoint("mllp://dummy", new MllpComponent(), new MllpConfiguration());
         instance = new MllpSocketBuffer(endpoint);
