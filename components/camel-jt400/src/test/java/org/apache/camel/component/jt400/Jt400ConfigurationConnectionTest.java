@@ -17,9 +17,12 @@
 package org.apache.camel.component.jt400;
 
 import com.ibm.as400.access.AS400;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class Jt400ConfigurationConnectionTest extends Jt400TestSupport {
 
@@ -27,7 +30,7 @@ public class Jt400ConfigurationConnectionTest extends Jt400TestSupport {
     private AS400 connection;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -37,7 +40,7 @@ public class Jt400ConfigurationConnectionTest extends Jt400TestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (connection != null) {
             jt400Configuration.releaseConnection(connection);
