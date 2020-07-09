@@ -49,6 +49,8 @@ public class MQ2Configuration implements Cloneable {
     private String region;
     @UriParam(defaultValue = "false")
     private boolean pojoRequest;
+    @UriParam(defaultValue = "false")
+    private boolean trustAllCertificates;
 
     public MqClient getAmazonMqClient() {
         return amazonMqClient;
@@ -150,6 +152,17 @@ public class MQ2Configuration implements Cloneable {
      */
     public void setPojoRequest(boolean pojoRequest) {
         this.pojoRequest = pojoRequest;
+    }
+    
+    public boolean isTrustAllCertificates() {
+        return trustAllCertificates;
+    }
+
+    /**
+     * If we want to trust all certificates in case of overriding the endpoint
+     */
+    public void setTrustAllCertificates(boolean trustAllCertificates) {
+        this.trustAllCertificates = trustAllCertificates;
     }
 
     // *************************************************
