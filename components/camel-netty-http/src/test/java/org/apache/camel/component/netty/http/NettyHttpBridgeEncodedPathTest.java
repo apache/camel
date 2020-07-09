@@ -26,7 +26,10 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
 
@@ -38,7 +41,7 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
     @Test
     public void testEncodedQuery() throws Exception {
         String response = template.requestBody("http://localhost:" + port2 + "/nettyTestRouteA?param1=%2B447777111222", null, String.class);
-        assertEquals("Get a wrong response", "param1=+447777111222", response);
+        assertEquals("param1=+447777111222", response, "Get a wrong response");
     }
 
     @Test
@@ -54,7 +57,7 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
             HttpGet httpGet = new HttpGet("http://localhost:" + port4 + "/nettyTestRouteC/" + path);
 
             try (CloseableHttpResponse response = client.execute(httpGet)) {
-                assertEquals("Get a wrong response status", 200, response.getStatusLine().getStatusCode());
+                assertEquals(200, response.getStatusLine().getStatusCode(), "Get a wrong response status");
                 assertMockEndpointsSatisfied();
             }
         }

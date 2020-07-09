@@ -17,7 +17,14 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.isPlatform;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class NettyHttpSuspendResumeTest extends BaseNettyTest {
 
@@ -26,9 +33,7 @@ public class NettyHttpSuspendResumeTest extends BaseNettyTest {
     @Test
     public void testNettySuspendResume() throws Exception {
         // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
+        assumeFalse(isPlatform("windows"));
 
         context.getShutdownStrategy().setTimeout(50);
 

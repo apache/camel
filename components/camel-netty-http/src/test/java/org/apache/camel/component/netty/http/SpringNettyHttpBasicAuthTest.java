@@ -23,17 +23,18 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
+@CamelSpringTest
 @ContextConfiguration(locations = {"/org/apache/camel/component/netty/http/SpringNettyHttpBasicAuthTest.xml"})
-public class SpringNettyHttpBasicAuthTest extends Assert {
+public class SpringNettyHttpBasicAuthTest {
 
     @Produce
     private ProducerTemplate template;
@@ -52,12 +53,12 @@ public class SpringNettyHttpBasicAuthTest extends Assert {
         this.port = port;
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpJaas() throws Exception {
         System.setProperty("java.security.auth.login.config", "src/test/resources/myjaas.config");
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownJaas() throws Exception {
         System.clearProperty("java.security.auth.login.config");
     }

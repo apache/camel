@@ -19,9 +19,10 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.HttpMethods;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.Exchange.HTTP_RESPONSE_CODE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpRestOptionsAllowTest extends BaseNettyTest {
 

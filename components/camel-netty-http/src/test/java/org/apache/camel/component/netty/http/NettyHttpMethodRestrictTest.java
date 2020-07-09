@@ -25,7 +25,9 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpMethodRestrictTest extends BaseNettyTest {
 
@@ -40,10 +42,10 @@ public class NettyHttpMethodRestrictTest extends BaseNettyTest {
             httpPost.setEntity(new StringEntity("This is a test"));
 
             try (CloseableHttpResponse response = client.execute(httpPost)) {
-                assertEquals("Get a wrong response status", 200, response.getStatusLine().getStatusCode());
+                assertEquals(200, response.getStatusLine().getStatusCode(), "Get a wrong response status");
 
                 String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
-                assertEquals("Get a wrong result", "This is a test response", responseString);
+                assertEquals("This is a test response", responseString, "Get a wrong result");
             }
         }
     }
@@ -53,7 +55,7 @@ public class NettyHttpMethodRestrictTest extends BaseNettyTest {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             HttpGet httpGet = new HttpGet(getUrl());
             try (CloseableHttpResponse response = client.execute(httpGet)) {
-                assertEquals("Get a wrong response status", 405, response.getStatusLine().getStatusCode());
+                assertEquals(405, response.getStatusLine().getStatusCode(), "Get a wrong response status");
             }
         }
     }

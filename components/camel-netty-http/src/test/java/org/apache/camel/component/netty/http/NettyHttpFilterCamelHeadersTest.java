@@ -21,7 +21,11 @@ import java.util.Map;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NettyHttpFilterCamelHeadersTest extends BaseNettyTest {
 
@@ -43,7 +47,7 @@ public class NettyHttpFilterCamelHeadersTest extends BaseNettyTest {
         Map<String, Object> headers = out.getMessage().getHeaders();
         for (String key : headers.keySet()) {
             if (!key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_CODE) && !key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_TEXT)) {
-                assertTrue("Should not contain any Camel internal headers", !key.toLowerCase().startsWith("camel"));
+                assertFalse(key.toLowerCase().startsWith("camel"), "Should not contain any Camel internal headers");
             }
         }
         assertEquals(200, headers.get(Exchange.HTTP_RESPONSE_CODE));

@@ -25,7 +25,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class NettyHttpStreamTest extends BaseNettyTest {
     public static final long SIZE =  10 * 256;
@@ -40,12 +43,12 @@ public class NettyHttpStreamTest extends BaseNettyTest {
         Exchange response = template.send("direct:upstream-call", request);
 
         //validate response success
-        assertFalse("ups", response.isFailed());
+        assertFalse(response.isFailed(), "ups");
 
         //validate request stream at server
         MockEndpoint mock = context.getEndpoint("mock:stream-size", MockEndpoint.class);
         Long requestSize = mock.getExchanges().get(0).getIn().getBody(Long.class);
-        assertEquals("request size not matching.", SIZE, requestSize.longValue());
+        assertEquals(SIZE, requestSize.longValue(), "request size not matching.");
     }
 
     @Test
@@ -58,10 +61,10 @@ public class NettyHttpStreamTest extends BaseNettyTest {
         Exchange response = template.send("direct:download-call", request);
 
         //validate response success
-        assertFalse("ups", response.isFailed());
+        assertFalse(response.isFailed(), "ups");
 
         //validate response stream at client
-        assertEquals("response size not matching.", SIZE, response.getIn().getBody(Long.class).longValue());
+        assertEquals(SIZE, response.getIn().getBody(Long.class).longValue(), "response size not matching.");
     }
 
     @Override

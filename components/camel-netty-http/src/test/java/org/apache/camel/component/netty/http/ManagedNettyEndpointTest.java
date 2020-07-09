@@ -24,7 +24,11 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.isPlatform;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class ManagedNettyEndpointTest extends BaseNettyTest {
 
@@ -46,9 +50,7 @@ public class ManagedNettyEndpointTest extends BaseNettyTest {
     @Test
     public void testManagement() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
+        assumeFalse(isPlatform("aix"));
 
         // should not add 10 endpoints
         getMockEndpoint("mock:foo").expectedMessageCount(10);

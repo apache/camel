@@ -18,7 +18,7 @@ package org.apache.camel.component.netty.http.rest;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.http.BaseNettyTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class RestNettyProducerPutTest extends BaseNettyTest {
 

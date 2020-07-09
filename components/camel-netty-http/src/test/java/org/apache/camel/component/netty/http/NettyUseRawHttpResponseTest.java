@@ -23,7 +23,9 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.NettyConverter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyUseRawHttpResponseTest extends BaseNettyTest {
 
