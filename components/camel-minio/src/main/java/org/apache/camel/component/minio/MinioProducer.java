@@ -18,13 +18,27 @@ package org.apache.camel.component.minio;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import io.minio.CopyObjectArgs;
+import io.minio.CopySource;
+import io.minio.GetObjectArgs;
+import io.minio.ListObjectsArgs;
 import io.minio.MinioClient;
 import io.minio.ObjectWriteResponse;
 import io.minio.PutObjectArgs;
-import io.minio.UploadObjectArgs;
-import org.apache.camel.*;
+import io.minio.RemoveBucketArgs;
+import io.minio.RemoveObjectArgs;
+import io.minio.RemoveObjectsArgs;
+import io.minio.Result;
+import io.minio.messages.Bucket;
+import io.minio.messages.Item;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Message;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -65,6 +79,9 @@ public class MinioProducer extends DefaultProducer {
                 case deleteObject:
                     deleteObject(minioClient, exchange);
                     break;
+                case deleteObjects:
+                    deleteObjects(minioClient, exchange);
+                    break;
                 case listBuckets:
                     listBuckets(minioClient, exchange);
                     break;
@@ -77,8 +94,8 @@ public class MinioProducer extends DefaultProducer {
                 case getObject:
                     getObject(minioClient, exchange);
                     break;
-                case getObjectRange:
-                    getObjectRange(minioClient, exchange);
+                case getPartialObject:
+                    getPartialObject(minioClient, exchange);
                     break;
                 default:
                     throw new IllegalArgumentException("Unsupported operation");
@@ -97,8 +114,6 @@ public class MinioProducer extends DefaultProducer {
         InputStream is;
         ByteArrayOutputStream baos;
         Object obj = exchange.getIn().getMandatoryBody();
-        PutObjectArgs.Builder putObjectRequest = null;
-        UploadObjectArgs.Builder uploadObjectRequest;
 
         // Need to check if the message body is WrappedFile
         if (obj instanceof WrappedFile) {
@@ -122,7 +137,7 @@ public class MinioProducer extends DefaultProducer {
                 }
             }
         }
-        putObjectRequest = PutObjectArgs.builder().stream(is, is.available(), -1).extraHeaders(extraHeaders).userMetadata(objectMetadata);
+        PutObjectArgs.Builder putObjectRequest = PutObjectArgs.builder().stream(is, is.available(), -1).bucket(bucketName).object(key).extraHeaders(extraHeaders).userMetadata(objectMetadata);
 
         if (getConfiguration().getServerSideEncryption() != null) {
             putObjectRequest.sse(getConfiguration().getServerSideEncryption());
@@ -169,16 +184,15 @@ public class MinioProducer extends DefaultProducer {
         return extraHeaders;
     }
 
-    private void copyObject(MinioClient minioClient, Exchange exchange) throws InvalidPayloadException {
+    private void copyObject(MinioClient minioClient, Exchange exchange) throws Exception {
         final String bucketName = determineBucketName(exchange);
         final String sourceKey = determineKey(exchange);
         final String destinationKey = exchange.getIn().getHeader(MinioConstants.DESTINATION_KEY, String.class);
         final String bucketNameDestination = exchange.getIn().getHeader(MinioConstants.BUCKET_DESTINATION_NAME, String.class);
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof CopyObjectRequest) {
-                CopyObjectResponse result;
-                result = minioClient.copyObject((CopyObjectRequest) payload);
+            if (payload instanceof CopyObjectArgs) {
+                ObjectWriteResponse result = minioClient.copyObject((CopyObjectArgs) payload);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
@@ -189,28 +203,18 @@ public class MinioProducer extends DefaultProducer {
             if (ObjectHelper.isEmpty(destinationKey)) {
                 throw new IllegalArgumentException("Destination Key must be specified for copyObject Operation");
             }
-            CopyObjectRequest.Builder copyObjectRequest = CopyObjectRequest.builder();
-            copyObjectRequest = CopyObjectRequest.builder().destinationBucket(bucketNameDestination).destinationKey(destinationKey).copySource(bucketName + "/" + sourceKey);
+            CopyObjectArgs.Builder copyObjectRequest;
+            copyObjectRequest = CopyObjectArgs.builder().bucket(bucketNameDestination).object(destinationKey).source(
+                    CopySource.builder()
+                            .bucket(bucketName)
+                            .object(sourceKey)
+                            .build());
 
-            if (getConfiguration().isUseAwsKMS()) {
-                if (ObjectHelper.isNotEmpty(getConfiguration().getAwsKMSKeyId())) {
-                    copyObjectRequest.ssekmsKeyId(getConfiguration().getAwsKMSKeyId());
-                }
+            if (getConfiguration().getServerSideEncryption() != null) {
+                copyObjectRequest.sse(getConfiguration().getServerSideEncryption());
             }
 
-            if (getConfiguration().isUseCustomerKey()) {
-                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyId())) {
-                    copyObjectRequest.sseCustomerKey(getConfiguration().getCustomerKeyId());
-                }
-                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyMD5())) {
-                    copyObjectRequest.sseCustomerKeyMD5(getConfiguration().getCustomerKeyMD5());
-                }
-                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerAlgorithm())) {
-                    copyObjectRequest.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
-                }
-            }
-
-            CopyObjectResponse copyObjectResult = minioClient.copyObject(copyObjectRequest.build());
+            ObjectWriteResponse copyObjectResult = minioClient.copyObject(copyObjectRequest.build());
 
             Message message = getMessageForResponse(exchange);
             if (copyObjectResult.versionId() != null) {
@@ -219,98 +223,114 @@ public class MinioProducer extends DefaultProducer {
         }
     }
 
-    private void deleteObject(MinioClient minioClient, Exchange exchange) throws InvalidPayloadException {
+    private void deleteObject(MinioClient minioClient, Exchange exchange) throws Exception {
         final String bucketName = determineBucketName(exchange);
         final String sourceKey = determineKey(exchange);
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteObjectRequest) {
-                minioClient.deleteObject((DeleteObjectRequest) payload);
+            if (payload instanceof RemoveObjectArgs) {
+                minioClient.removeObject((RemoveObjectArgs) payload);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(true);
             }
         } else {
+            RemoveObjectArgs.Builder deleteObjectRequest = RemoveObjectArgs.builder().bucket(bucketName).object(sourceKey).bypassGovernanceMode(getConfiguration().isBypassGovernanceMode());
 
-            DeleteObjectRequest.Builder deleteObjectRequest = DeleteObjectRequest.builder().bucket(bucketName).key(sourceKey);
-            minioClient.deleteObject(deleteObjectRequest.build());
+            if (getConfiguration().getVersionId() != null) {
+                deleteObjectRequest.versionId(getConfiguration().getVersionId());
+            }
 
+            minioClient.removeObject(deleteObjectRequest.build());
             Message message = getMessageForResponse(exchange);
             message.setBody(true);
         }
     }
 
-    private void listBuckets(MinioClient minioClient, Exchange exchange) {
-        ListBucketsResponse bucketsList = minioClient.listBuckets();
-
-        Message message = getMessageForResponse(exchange);
-        message.setBody(bucketsList.buckets());
+    private void deleteObjects(MinioClient minioClient, Exchange exchange) throws Exception {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof RemoveObjectsArgs) {
+                minioClient.removeObjects((RemoveObjectsArgs) payload);
+                Message message = getMessageForResponse(exchange);
+                message.setBody(true);
+            }
+        } else {
+            throw new IllegalArgumentException("Cannot delete multiple objects without a POJO request");
+        }
     }
 
-    private void deleteBucket(MinioClient minioClient, Exchange exchange) throws InvalidPayloadException {
+    private void listBuckets(MinioClient minioClient, Exchange exchange) throws Exception {
+        List<Bucket> bucketsList = minioClient.listBuckets();
+
+        Message message = getMessageForResponse(exchange);
+        //returns iterator of bucketList
+        message.setBody(bucketsList.iterator());
+    }
+
+    private void deleteBucket(MinioClient minioClient, Exchange exchange) throws Exception {
         final String bucketName = determineBucketName(exchange);
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteBucketRequest) {
-                DeleteBucketResponse resp = minioClient.deleteBucket((DeleteBucketRequest) payload);
+            if (payload instanceof RemoveBucketArgs) {
+                minioClient.removeBucket((RemoveBucketArgs) payload);
                 Message message = getMessageForResponse(exchange);
-                message.setBody(resp);
+                message.setBody("ok");
             }
         } else {
 
-            DeleteBucketRequest.Builder deleteBucketRequest = DeleteBucketRequest.builder().bucket(bucketName);
-            DeleteBucketResponse resp = minioClient.deleteBucket(deleteBucketRequest.build());
-
+            RemoveBucketArgs.Builder deleteBucketRequest = RemoveBucketArgs.builder().bucket(bucketName);
+            minioClient.removeBucket(deleteBucketRequest.build());
             Message message = getMessageForResponse(exchange);
-            message.setBody(resp);
+            message.setBody("ok");
         }
     }
 
-    private void getObject(MinioClient minioClient, Exchange exchange) throws InvalidPayloadException {
+    private void getObject(MinioClient minioClient, Exchange exchange) throws Exception {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetObjectRequest) {
-                ResponseInputStream<GetObjectResponse> res = minioClient.getObject((GetObjectRequest) payload, ResponseTransformer.toInputStream());
+            if (payload instanceof GetObjectArgs) {
+                InputStream respond = minioClient.getObject((GetObjectArgs) payload);
                 Message message = getMessageForResponse(exchange);
-                message.setBody(res);
+                message.setBody(respond);
             }
         } else {
             final String bucketName = determineBucketName(exchange);
             final String sourceKey = determineKey(exchange);
-            GetObjectRequest.Builder req = GetObjectRequest.builder().bucket(bucketName).key(sourceKey);
-            ResponseInputStream<GetObjectResponse> res = minioClient.getObject(req.build(), ResponseTransformer.toInputStream());
+            GetObjectArgs.Builder getObjectRequest = GetObjectArgs.builder().bucket(bucketName).object(sourceKey);
+            InputStream respond = minioClient.getObject(getObjectRequest.build());
 
             Message message = getMessageForResponse(exchange);
-            message.setBody(res);
+            message.setBody(respond);
         }
     }
 
-    private void getObjectRange(MinioClient minioClient, Exchange exchange) throws InvalidPayloadException {
+    private void getPartialObject(MinioClient minioClient, Exchange exchange) throws Exception {
         final String bucketName = determineBucketName(exchange);
         final String sourceKey = determineKey(exchange);
-        final String rangeStart = exchange.getIn().getHeader(MinioConstants.RANGE_START, String.class);
-        final String rangeEnd = exchange.getIn().getHeader(MinioConstants.RANGE_END, String.class);
+        final String offset = exchange.getIn().getHeader(MinioConstants.OFFSET, String.class);
+        final String length = exchange.getIn().getHeader(MinioConstants.LENGTH, String.class);
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetObjectRequest) {
-                ResponseInputStream<GetObjectResponse> res = minioClient.getObject((GetObjectRequest) payload, ResponseTransformer.toInputStream());
+            if (payload instanceof GetObjectArgs) {
+                InputStream respond = minioClient.getObject((GetObjectArgs) payload);
                 Message message = getMessageForResponse(exchange);
-                message.setBody(res);
+                message.setBody(respond);
             }
         } else {
 
-            if (ObjectHelper.isEmpty(rangeStart) || ObjectHelper.isEmpty(rangeEnd)) {
-                throw new IllegalArgumentException("A Range start and range end header must be configured to perform a range get operation.");
+            if (ObjectHelper.isEmpty(offset) || ObjectHelper.isEmpty(length)) {
+                throw new IllegalArgumentException("A Offset and length header must be configured to perform a partial get operation.");
             }
 
-            GetObjectRequest.Builder req = GetObjectRequest.builder().bucket(bucketName).key(sourceKey)
-                    .range("bytes=" + Long.parseLong(rangeStart) + "-" + Long.parseLong(rangeEnd));
-            ResponseInputStream<GetObjectResponse> res = minioClient.getObject(req.build(), ResponseTransformer.toInputStream());
+            GetObjectArgs.Builder getPartialRequest = GetObjectArgs.builder().bucket(bucketName).object(sourceKey)
+                    .offset(Long.parseLong(offset)).length(Long.parseLong(length));
+            InputStream respond = minioClient.getObject(getPartialRequest.build());
 
             Message message = getMessageForResponse(exchange);
-            message.setBody(res);
+            message.setBody(respond);
         }
     }
 
@@ -319,17 +339,17 @@ public class MinioProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListObjectsRequest) {
-                ListObjectsResponse objectList = minioClient.listObjects((ListObjectsRequest) payload);
+            if (payload instanceof ListObjectsArgs) {
+                Iterable<Result<Item>> objectList = minioClient.listObjects((ListObjectsArgs) payload);
                 Message message = getMessageForResponse(exchange);
-                message.setBody(objectList.contents());
+                message.setBody(objectList.iterator());
             }
         } else {
 
-            ListObjectsResponse objectList = minioClient.listObjects(ListObjectsRequest.builder().bucket(bucketName).build());
+            Iterable<Result<Item>> objectList = minioClient.listObjects(ListObjectsArgs.builder().bucket(bucketName).recursive(getConfiguration().isRecursive()).build());
 
             Message message = getMessageForResponse(exchange);
-            message.setBody(objectList.contents());
+            message.setBody(objectList.iterator());
         }
     }
 

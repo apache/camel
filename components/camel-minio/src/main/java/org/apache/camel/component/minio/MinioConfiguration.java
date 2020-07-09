@@ -107,6 +107,12 @@ public class MinioConfiguration implements Cloneable {
     private MinioOperations operation;
     @UriParam
     private boolean pathStyleAccess;
+    @UriParam(defaultValue = "false")
+    private boolean pojoRequest;
+    @UriParam(label = "producer")
+    private String versionId;
+    @UriParam(defaultValue = "false")
+    private boolean bypassGovernanceMode;
 
 
     public String getEndpoint() {
@@ -520,5 +526,38 @@ public class MinioConfiguration implements Cloneable {
      */
     public void setPathStyleAccess(boolean pathStyleAccess) {
         this.pathStyleAccess = pathStyleAccess;
+    }
+
+    public boolean isPojoRequest() {
+        return pojoRequest;
+    }
+
+    /**
+     * If we want to use a POJO request as body or not
+     */
+    public void setPojoRequest(boolean pojoRequest) {
+        this.pojoRequest = pojoRequest;
+    }
+
+    public String getVersionId() {
+        return versionId;
+    }
+
+    /**
+     * Set specific version_ID of a object when deleting the object
+     */
+    public void setVersionId(String versionId) {
+        this.versionId = versionId;
+    }
+
+    public boolean isBypassGovernanceMode() {
+        return bypassGovernanceMode;
+    }
+
+    /**
+     * Set this flag if you want to bypassGovernanceMode when deleting a particular object
+     */
+    public void setBypassGovernanceMode(boolean bypassGovernanceMode) {
+        this.bypassGovernanceMode = bypassGovernanceMode;
     }
 }

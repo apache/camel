@@ -37,10 +37,10 @@ public interface MinioConstants {
     String VERSION_ID = "CamelMinioVersionId";
     String CANNED_ACL = "CamelMinioCannedAcl";
     String ACL = "CamelMinioAcl";
-    String S3_OPERATION = "CamelMinioOperation";
+    String Minio_OPERATION = "CamelMinioOperation";
     String SERVER_SIDE_ENCRYPTION = "CamelMinioServerSideEncryption";
     String EXPIRATION_TIME = "CamelMinioExpirationTime";
     String REPLICATION_STATUS = "CamelMinioReplicationStatus";
-    String RANGE_START = "CamelMinioRangeStart";
-    String RANGE_END = "CamelMinioRangeEnd";
+    String OFFSET = "CamelMinioRangeStart";
+    String LENGTH = "CamelMinioRangeEnd";
 }

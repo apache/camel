@@ -20,7 +20,10 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-import io.minio.*;
+import io.minio.MakeBucketArgs;
+import io.minio.MinioClient;
+import io.minio.ObjectStat;
+import io.minio.StatObjectArgs;
 import io.minio.errors.InvalidBucketNameException;
 import jdk.internal.org.jline.utils.Log;
 import org.apache.camel.Category;

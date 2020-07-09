@@ -20,9 +20,10 @@ public enum MinioOperations {
     copyObject,
     listObjects,
     deleteObject,
+    deleteObjects,
     deleteBucket,
     listBuckets,
     getObject,
-    getObjectRange
+    getPartialObject
 
 }
