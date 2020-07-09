@@ -38,6 +38,8 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.http.apache.ProxyConfiguration;
 import software.amazon.awssdk.regions.Region;
@@ -51,6 +53,7 @@ import software.amazon.awssdk.services.sns.model.SetTopicAttributesRequest;
 import software.amazon.awssdk.services.sns.model.SubscribeRequest;
 import software.amazon.awssdk.services.sns.model.SubscribeResponse;
 import software.amazon.awssdk.services.sns.model.Topic;
+import software.amazon.awssdk.utils.AttributeMap;
 
 /**
  * Send messages to an AWS Simple Notification Topic using AWS SDK version 2.x.
@@ -230,6 +233,16 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
         }
         if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
             clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
+        }
+        if (configuration.isTrustAllCertificates()) {
+            SdkHttpClient ahc = ApacheHttpClient.builder().buildWithDefaults(AttributeMap
+                    .builder()
+                    .put(
+                            SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
+                            Boolean.TRUE
+                    )
+                    .build());
+            clientBuilder.httpClient(ahc);
         }
         client = clientBuilder.build();
         return client;
