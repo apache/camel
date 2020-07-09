@@ -55,6 +55,8 @@ public class Translate2Configuration implements Cloneable {
     private boolean autodetectSourceLanguage;
     @UriParam(defaultValue = "false")
     private boolean pojoRequest;
+    @UriParam(defaultValue = "false")
+    private boolean trustAllCertificates;
 
     public TranslateClient getTranslateClient() {
         return translateClient;
@@ -188,6 +190,17 @@ public class Translate2Configuration implements Cloneable {
      */
     public void setPojoRequest(boolean pojoRequest) {
         this.pojoRequest = pojoRequest;
+    }
+    
+    public boolean isTrustAllCertificates() {
+        return trustAllCertificates;
+    }
+
+    /**
+     * If we want to trust all certificates in case of overriding the endpoint
+     */
+    public void setTrustAllCertificates(boolean trustAllCertificates) {
+        this.trustAllCertificates = trustAllCertificates;
     }
 
     // *************************************************
