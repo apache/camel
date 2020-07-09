@@ -31,11 +31,14 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.http.apache.ProxyConfiguration;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.lambda.LambdaClient;
 import software.amazon.awssdk.services.lambda.LambdaClientBuilder;
+import software.amazon.awssdk.utils.AttributeMap;
 
 /**
  * Manage and invoke AWS Lambda functions using AWS SDK version 2.x.
@@ -128,6 +131,16 @@ public class Lambda2Endpoint extends DefaultEndpoint {
         }
         if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
             clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
+        }
+        if (configuration.isTrustAllCertificates()) {
+            SdkHttpClient ahc = ApacheHttpClient.builder().buildWithDefaults(AttributeMap
+                    .builder()
+                    .put(
+                            SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
+                            Boolean.TRUE
+                    )
+                    .build());
+            clientBuilder.httpClient(ahc);
         }
         client = clientBuilder.build();
         return client;
