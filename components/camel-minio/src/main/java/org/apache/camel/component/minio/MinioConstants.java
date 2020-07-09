@@ -30,14 +30,14 @@ public interface MinioConstants {
     String CONTENT_MD5 = "CamelMinioContentMD5";
     String CONTENT_TYPE = "CamelMinioContentType";
     String E_TAG = "CamelMinioETag";
-    String KEY = "CamelMinioKey";
+    String OBJECT_NAME = "CamelMinioKey";
     String DESTINATION_KEY = "CamelMinioDestinationKey";
     String LAST_MODIFIED = "CamelMinioLastModified";
     String STORAGE_CLASS = "CamelMinioStorageClass";
     String VERSION_ID = "CamelMinioVersionId";
     String CANNED_ACL = "CamelMinioCannedAcl";
     String ACL = "CamelMinioAcl";
-    String Minio_OPERATION = "CamelMinioOperation";
+    String MINIO_OPERATION = "CamelMinioOperation";
     String SERVER_SIDE_ENCRYPTION = "CamelMinioServerSideEncryption";
     String EXPIRATION_TIME = "CamelMinioExpirationTime";
     String REPLICATION_STATUS = "CamelMinioReplicationStatus";

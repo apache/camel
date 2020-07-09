@@ -20,6 +20,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.ObjectStat;
@@ -42,6 +43,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -162,7 +164,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
                     exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                         @Override
                         public void onDone(Exchange exchange) {
-                            closeObject(minioObject);
+                            IOHelper.close(minioObject);
                         }
                     });
                 }
@@ -174,19 +176,10 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         } else {
             message.setBody(null);
             getObjectTags(key, bucketName, message);
-            closeObject(minioObject);
+            IOHelper.close(minioObject);
         }
 
         return exchange;
-    }
-
-    private void closeObject(InputStream minioObject) {
-        try {
-            minioObject.close();
-
-        } catch (IOException e) {
-            LOG.warn("Error closing MinioObject due: {}, Could not release network resources properly", e.getMessage());
-        }
     }
 
     private void getObjectTags(String key, String bucketName, Message message) {
@@ -195,7 +188,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
                     StatObjectArgs.builder().bucket(bucketName).object(key).build());
 
             // set all stat as message headers
-            message.setHeader(MinioConstants.KEY, key);
+            message.setHeader(MinioConstants.OBJECT_NAME, key);
             message.setHeader(MinioConstants.BUCKET_NAME, bucketName);
             message.setHeader(MinioConstants.E_TAG, stat.etag());
             message.setHeader(MinioConstants.LAST_MODIFIED, stat.httpHeaders().get("last-modified"));
@@ -267,7 +260,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
 
     private boolean bucketExists(MinioClient minioClient, String bucketName) throws Exception {
         try {
-            return minioClient.bucketExists(bucketName);
+            return minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
 
         } catch (Throwable e) {
             LOG.warn("Error checking bucket, due: {}", e.getMessage());

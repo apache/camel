@@ -20,7 +20,6 @@ import java.util.Set;
 
 import io.minio.MinioClient;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.aws2.s3.AWS2S3ComponentVerifierExtension;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -45,15 +44,10 @@ public class MinioComponent extends DefaultComponent {
 
     public MinioComponent(CamelContext context) {
         super(context);
-
-        if (configuration.isUseAWSIAMCredentials()) {
-            registerExtension(new AWS2S3ComponentVerifierExtension());
-        }
     }
 
     @Override
-    protected MinioEndpoint createEndpoint(String uri, String remaining, java.util.Map<String, Object> parameters)
-            throws Exception {
+    protected MinioEndpoint createEndpoint(String uri, String remaining, java.util.Map<String, Object> parameters) throws Exception {
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Bucket name must be specified.");
         }
@@ -64,9 +58,6 @@ public class MinioComponent extends DefaultComponent {
         MinioEndpoint endpoint = new MinioEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration, endpoint);
-        if (!configuration.isUseAWSIAMCredentials() && configuration.getMinioClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("useAWSIAMCredentials is set to false, MinioClient or accessKeyId and secretAccessKey must be specified");
-        }
 
         return endpoint;
     }

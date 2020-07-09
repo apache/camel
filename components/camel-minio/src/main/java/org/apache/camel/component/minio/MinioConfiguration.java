@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.minio;
 
-import io.minio.CopyConditions;
+import java.time.ZonedDateTime;
+
 import io.minio.MinioClient;
-import io.minio.ServerSideEncryption;
 import io.minio.ServerSideEncryptionCustomerKey;
 import io.minio.SetBucketPolicyArgs;
 import okhttp3.OkHttpClient;
@@ -38,15 +38,10 @@ public class MinioConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     private String secretKey;
     @UriParam(defaultValue = "false")
-    private boolean useAWSIAMCredentials;
-    @UriParam(defaultValue = "false")
     private boolean isSecure;
 
     @UriParam
     private String region;
-
-    @UriParam(defaultValue = "false")
-    private boolean objectLock;
 
     @UriParam
     private OkHttpClient customHttpClient;
@@ -55,11 +50,13 @@ public class MinioConfiguration implements Cloneable {
     private String bucketName;
     @UriParam(defaultValue = "true")
     private boolean autoCreateBucket = true;
+    @UriParam(defaultValue = "false")
+    private boolean objectLock;
 
     @UriParam
     private ServerSideEncryptionCustomerKey serverSideEncryption;
     @UriParam
-    private ServerSideEncryption srcServerSideEncryption;
+    private ServerSideEncryptionCustomerKey destinationServerSideEncryption;
 
     @UriParam
     private MinioClient minioClient;
@@ -67,21 +64,37 @@ public class MinioConfiguration implements Cloneable {
     @UriParam(label = "consumer")
     private String objectName;
     @UriParam(label = "consumer")
+    private String delimiter;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean includeUserMetadata;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean includeVersions;
+    @UriParam(label = "consumer")
     private String prefix;
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean recursive;
+    @UriParam(label = "consumer")
+    private String startAfter;
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean useVersion1;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean includeFolders;
     @UriParam(label = "consumer")
     private long offset;
     @UriParam(label = "consumer")
     private long length;
     @UriParam(label = "consumer")
-    private String srcBucketName;
+    private String matchETag;
     @UriParam(label = "consumer")
-    private String srcObjectName;
+    private String notMatchETag;
     @UriParam(label = "consumer")
-    private CopyConditions copyConditions;
+    private ZonedDateTime modifiedSince;
+    @UriParam(label = "consumer")
+    private ZonedDateTime unModifiedSince;
+    @UriParam(label = "consumer")
+    private String destinationBucketName;
+    @UriParam(label = "consumer")
+    private String destinationObjectName;
     @UriParam(label = "consumer")
     private String fileName;
     @UriParam(label = "consumer", defaultValue = "true")
@@ -103,13 +116,11 @@ public class MinioConfiguration implements Cloneable {
     private SetBucketPolicyArgs policy;
     @UriParam(label = "producer")
     private String storageClass;
-    @UriParam(label = "producer", enums = "copyObject,listObjects,deleteObject,deleteBucket,listBuckets,getObject,getObjectRange")
+    @UriParam(label = "producer", enums = "copyObject,listObjects,deleteObject,deleteObjects,deleteBucket,listBuckets,getObject,getObjectRange")
     private MinioOperations operation;
-    @UriParam
-    private boolean pathStyleAccess;
+
     @UriParam(defaultValue = "false")
     private boolean pojoRequest;
-    @UriParam(label = "producer")
     private String versionId;
     @UriParam(defaultValue = "false")
     private boolean bypassGovernanceMode;
@@ -161,18 +172,6 @@ public class MinioConfiguration implements Cloneable {
         this.secretKey = secretKey;
     }
 
-    public boolean isUseAWSIAMCredentials() {
-        return useAWSIAMCredentials;
-    }
-
-    /**
-     * Set this flag true if you use AWS IAM Credentials to create MinIO client object
-     * if this is set to false (as by default value) camel will not look for AWS connection.
-     */
-    public void setUseAWSIAMCredentials(boolean useAWSIAMCredentials) {
-        this.useAWSIAMCredentials = useAWSIAMCredentials;
-    }
-
     public boolean isSecure() {
         return isSecure;
     }
@@ -195,14 +194,6 @@ public class MinioConfiguration implements Cloneable {
      */
     public void setRegion(String region) {
         this.region = region;
-    }
-
-    public boolean isObjectLock() {
-        return objectLock;
-    }
-
-    public void setObjectLock(boolean objectLock) {
-        this.objectLock = objectLock;
     }
 
     public OkHttpClient getCustomHttpClient() {
@@ -239,6 +230,17 @@ public class MinioConfiguration implements Cloneable {
         this.autoCreateBucket = autoCreateBucket;
     }
 
+    public boolean isObjectLock() {
+        return objectLock;
+    }
+
+    /**
+     * (Optional) Set when creating new bucket.
+     */
+    public void setObjectLock(boolean objectLock) {
+        this.objectLock = objectLock;
+    }
+
     public ServerSideEncryptionCustomerKey getServerSideEncryption() {
         return serverSideEncryption;
     }
@@ -250,15 +252,15 @@ public class MinioConfiguration implements Cloneable {
         this.serverSideEncryption = serverSideEncryption;
     }
 
-    public ServerSideEncryption getSrcServerSideEncryption() {
-        return srcServerSideEncryption;
+    public ServerSideEncryptionCustomerKey getDestinationServerSideEncryption() {
+        return destinationServerSideEncryption;
     }
 
     /**
      * (Optional) Server-side encryption for source object while copy/move objects.
      */
-    public void setSrcServerSideEncryption(ServerSideEncryption srcServerSideEncryption) {
-        this.srcServerSideEncryption = srcServerSideEncryption;
+    public void setDestinationServerSideEncryption(ServerSideEncryptionCustomerKey destinationServerSideEncryption) {
+        this.destinationServerSideEncryption = destinationServerSideEncryption;
     }
 
     public MinioClient getMinioClient() {
@@ -283,6 +285,55 @@ public class MinioConfiguration implements Cloneable {
         this.objectName = objectName;
     }
 
+    public String getDelimiter() {
+        return delimiter;
+    }
+
+    /**
+     * The delimiter which is used in the
+     * ListObjectsRequest to only consume
+     * objects we are interested in.
+     */
+    public void setDelimiter(String delimiter) {
+        this.delimiter = delimiter;
+    }
+
+    /**
+     * The flag which is used in the
+     * ListObjectsRequest to get objects with user meta data.
+     */
+    public boolean isIncludeUserMetadata() {
+        return includeUserMetadata;
+    }
+
+    public void setIncludeUserMetadata(boolean includeUserMetadata) {
+        this.includeUserMetadata = includeUserMetadata;
+    }
+
+    public boolean isIncludeVersions() {
+        return includeVersions;
+    }
+
+    /**
+     * The flag which is used in the
+     * ListObjectsRequest to get objects with versioning.
+     */
+    public void setIncludeVersions(boolean includeVersions) {
+        this.includeVersions = includeVersions;
+    }
+
+    public boolean isIncludeFolders() {
+        return includeFolders;
+    }
+
+    /**
+     * The flag which is used in the
+     * ListObjectsRequest to set include folders.
+     */
+    public void setIncludeFolders(boolean includeFolders) {
+        this.includeFolders = includeFolders;
+    }
+
     public String getPrefix() {
         return prefix;
     }
@@ -303,6 +354,18 @@ public class MinioConfiguration implements Cloneable {
      */
     public void setRecursive(boolean recursive) {
         this.recursive = recursive;
+    }
+
+
+    public String getStartAfter() {
+        return startAfter;
+    }
+
+    /**
+     * list objects in bucket after this object name.
+     */
+    public void setStartAfter(String startAfter) {
+        this.startAfter = startAfter;
     }
 
     public boolean isUseVersion1() {
@@ -338,26 +401,70 @@ public class MinioConfiguration implements Cloneable {
         this.length = length;
     }
 
-    public String getSrcBucketName() {
-        return srcBucketName;
+    public String getMatchETag() {
+        return matchETag;
+    }
+
+    /**
+     * Set match ETag parameter for get object(s).
+     */
+    public void setMatchETag(String matchETag) {
+        this.matchETag = matchETag;
+    }
+
+    public String getNotMatchETag() {
+        return notMatchETag;
+    }
+
+    /**
+     * Set not match ETag parameter for get object(s).
+     */
+    public void setNotMatchETag(String notMatchETag) {
+        this.notMatchETag = notMatchETag;
+    }
+
+    public ZonedDateTime getModifiedSince() {
+        return modifiedSince;
+    }
+
+    /**
+     * Set modified since parameter for get object(s).
+     */
+    public void setModifiedSince(ZonedDateTime modifiedSince) {
+        this.modifiedSince = modifiedSince;
+    }
+
+    public ZonedDateTime getUnModifiedSince() {
+        return unModifiedSince;
+    }
+
+    /**
+     * Set un modified since parameter for get object(s).
+     */
+    public void setUnModifiedSince(ZonedDateTime unModifiedSince) {
+        this.unModifiedSince = unModifiedSince;
+    }
+
+    public String getDestinationBucketName() {
+        return destinationBucketName;
     }
 
     /**
      * Source bucket name.
      */
-    public void setSrcBucketName(String srcBucketName) {
-        this.srcBucketName = srcBucketName;
+    public void setDestinationBucketName(String destinationBucketName) {
+        this.destinationBucketName = destinationBucketName;
     }
 
-    public String getSrcObjectName() {
-        return srcObjectName;
+    public String getDestinationObjectName() {
+        return destinationObjectName;
     }
 
     /**
      * (Optional) Source object name.
      */
-    public void setSrcObjectName(String srcObjectName) {
-        this.srcObjectName = srcObjectName;
+    public void setDestinationObjectName(String destinationObjectName) {
+        this.destinationObjectName = destinationObjectName;
     }
 
     public String getFileName() {
@@ -383,8 +490,8 @@ public class MinioConfiguration implements Cloneable {
      * If this option is false, then the same objects will be retrieve over and
      * over again on the polls. Therefore you need to use the Idempotent
      * Consumer EIP in the route to filter out duplicates. You can filter using
-     * the {@link MinioConstants#BUCKET_NAME} and {@link MinioConstants#KEY}
-     * headers, or only the {@link MinioConstants#KEY} header.
+     * the {@link MinioConstants#BUCKET_NAME} and {@link MinioConstants#OBJECT_NAME}
+     * headers, or only the {@link MinioConstants#OBJECT_NAME} header.
      */
     public void setDeleteAfterRead(boolean deleteAfterRead) {
         this.deleteAfterRead = deleteAfterRead;
@@ -495,17 +602,6 @@ public class MinioConfiguration implements Cloneable {
         this.storageClass = storageClass;
     }
 
-    public CopyConditions getCopyConditions() {
-        return copyConditions;
-    }
-
-    /**
-     * (Optional) Conditions to be used in copy operation.
-     */
-    public void setCopyConditions(CopyConditions copyConditions) {
-        this.copyConditions = copyConditions;
-    }
-
     public MinioOperations getOperation() {
         return operation;
     }
@@ -515,17 +611,6 @@ public class MinioConfiguration implements Cloneable {
      */
     public void setOperation(MinioOperations operation) {
         this.operation = operation;
-    }
-
-    public boolean isPathStyleAccess() {
-        return pathStyleAccess;
-    }
-
-    /**
-     * Some description of this option(isPathStyleAccess), and what it does
-     */
-    public void setPathStyleAccess(boolean pathStyleAccess) {
-        this.pathStyleAccess = pathStyleAccess;
     }
 
     public boolean isPojoRequest() {

@@ -44,53 +44,32 @@ public class GetMinioClient implements MinioCamelInternalClient {
      */
     @Override
     public MinioClient getMinioClient() {
-        assert configuration.getEndpoint() != null;
-        try {
-            if (configuration.getCustomHttpClient() != null) {
-                return new MinioClient(configuration.getEndpoint(),
-                        configuration.getProxyPort(),
-                        configuration.getAccessKey(),
-                        configuration.getSecretKey(),
-                        configuration.getRegion(),
-                        configuration.isSecure(),
-                        configuration.getCustomHttpClient());
-            } else {
-                if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
-                    if (configuration.getRegion() != null) {
-                        if (configuration.getProxyPort() != null) {
-                            return new MinioClient(configuration.getEndpoint(),
-                                    configuration.getProxyPort(),
-                                    configuration.getAccessKey(),
-                                    configuration.getSecretKey(),
-                                    configuration.getRegion(),
-                                    configuration.isSecure());
-                        } else {
-                            return new MinioClient(configuration.getEndpoint(),
-                                    configuration.getAccessKey(),
-                                    configuration.getSecretKey(),
-                                    configuration.getRegion());
-                        }
-                    } else {
-                        if (configuration.getProxyPort() != null) {
-                            return new MinioClient(configuration.getEndpoint(),
-                                    configuration.getProxyPort(),
-                                    configuration.getAccessKey(),
-                                    configuration.getSecretKey(),
-                                    configuration.isSecure());
-                        } else {
-                            return new MinioClient(configuration.getEndpoint(),
-                                    configuration.getAccessKey(),
-                                    configuration.getSecretKey(),
-                                    configuration.isSecure());
-                        }
-                    }
+        if (configuration.getEndpoint() != null) {
+            try {
+                MinioClient.Builder minioClientRequest = MinioClient.builder();
+
+                if (configuration.getProxyPort() != null) {
+                    minioClientRequest.endpoint(configuration.getEndpoint(), configuration.getProxyPort(), configuration.isSecure());
                 } else {
-                    return new MinioClient(configuration.getEndpoint());
+                    minioClientRequest.endpoint(configuration.getEndpoint());
                 }
+                if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
+                    minioClientRequest.credentials(configuration.getAccessKey(), configuration.getSecretKey());
+                }
+                if (configuration.getRegion() != null) {
+                    minioClientRequest.region(configuration.getRegion());
+                }
+                if (configuration.getCustomHttpClient() != null) {
+                    minioClientRequest.httpClient(configuration.getCustomHttpClient());
+                }
+                return minioClientRequest.build();
+
+            } catch (Throwable e) {
+                LOG.warn("Error Creating an Minio client, due {}", e.getMessage());
+                throw e;
             }
-        } catch (Throwable e) {
-            LOG.warn("Error Creating an Minio client, due {}", e.getMessage());
-            throw e;
+        } else {
+            throw new IllegalArgumentException("Endpoint must be specified");
         }
     }
 }

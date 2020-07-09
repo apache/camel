@@ -203,15 +203,17 @@ public class MinioProducer extends DefaultProducer {
             if (ObjectHelper.isEmpty(destinationKey)) {
                 throw new IllegalArgumentException("Destination Key must be specified for copyObject Operation");
             }
-            CopyObjectArgs.Builder copyObjectRequest;
-            copyObjectRequest = CopyObjectArgs.builder().bucket(bucketNameDestination).object(destinationKey).source(
-                    CopySource.builder()
-                            .bucket(bucketName)
-                            .object(sourceKey)
-                            .build());
+
+            CopySource.Builder copySourceBuilder = CopySource.builder().bucket(bucketName).object(sourceKey);
 
             if (getConfiguration().getServerSideEncryption() != null) {
-                copyObjectRequest.sse(getConfiguration().getServerSideEncryption());
+                copySourceBuilder.ssec(getConfiguration().getServerSideEncryption());
+            }
+
+            CopyObjectArgs.Builder copyObjectRequest = CopyObjectArgs.builder().bucket(bucketNameDestination).object(destinationKey).source(copySourceBuilder.build());
+
+            if (getConfiguration().getDestinationServerSideEncryption() != null) {
+                copyObjectRequest.sse(getConfiguration().getDestinationServerSideEncryption());
             }
 
             ObjectWriteResponse copyObjectResult = minioClient.copyObject(copyObjectRequest.build());
@@ -354,7 +356,7 @@ public class MinioProducer extends DefaultProducer {
     }
 
     private MinioOperations determineOperation(Exchange exchange) {
-        MinioOperations operation = exchange.getIn().getHeader(MinioConstants.Minio_OPERATION, MinioOperations.class);
+        MinioOperations operation = exchange.getIn().getHeader(MinioConstants.MINIO_OPERATION, MinioOperations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
@@ -421,7 +423,7 @@ public class MinioProducer extends DefaultProducer {
     }
 
     private String determineKey(final Exchange exchange) {
-        String key = exchange.getIn().getHeader(MinioConstants.KEY, String.class);
+        String key = exchange.getIn().getHeader(MinioConstants.OBJECT_NAME, String.class);
         if (ObjectHelper.isEmpty(key)) {
             key = getConfiguration().getKeyName();
         }

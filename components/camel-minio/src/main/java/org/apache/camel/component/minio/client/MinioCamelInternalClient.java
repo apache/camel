@@ -29,5 +29,5 @@ public interface MinioCamelInternalClient {
      *
      * @return Minio Minio
      */
-    MinioClient getMinioClient() throws Exception;
+    MinioClient getMinioClient();
 }
