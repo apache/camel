@@ -61,6 +61,8 @@ public class Sns2Configuration implements Cloneable {
     private String messageStructure;
     @UriParam
     private String region;
+    @UriParam(defaultValue = "false")
+    private boolean trustAllCertificates;
 
     public String getSubject() {
         return subject;
@@ -252,6 +254,17 @@ public class Sns2Configuration implements Cloneable {
      */
     public void setAutoCreateTopic(boolean autoCreateTopic) {
         this.autoCreateTopic = autoCreateTopic;
+    }
+    
+    public boolean isTrustAllCertificates() {
+        return trustAllCertificates;
+    }
+
+    /**
+     * If we want to trust all certificates in case of overriding the endpoint
+     */
+    public void setTrustAllCertificates(boolean trustAllCertificates) {
+        this.trustAllCertificates = trustAllCertificates;
     }
 
     // *************************************************
