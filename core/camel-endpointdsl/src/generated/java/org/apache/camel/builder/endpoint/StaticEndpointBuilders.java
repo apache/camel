@@ -1460,7 +1460,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path topicNameOrArn
      */
-    static org.apache.camel.builder.endpoint.dsl.Sns2EndpointBuilderFactory.Sns2EndpointBuilder aws2Sns(
+    public static org.apache.camel.builder.endpoint.dsl.Sns2EndpointBuilderFactory.Sns2EndpointBuilder aws2Sns(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Sns2EndpointBuilderFactory.endpointBuilder("aws2-sns", path);
     }
@@ -1482,7 +1482,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path topicNameOrArn
      */
-    static org.apache.camel.builder.endpoint.dsl.Sns2EndpointBuilderFactory.Sns2EndpointBuilder aws2Sns(
+    public static org.apache.camel.builder.endpoint.dsl.Sns2EndpointBuilderFactory.Sns2EndpointBuilder aws2Sns(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Sns2EndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -1503,7 +1503,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path queueNameOrArn
      */
-    public static org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.Sqs2EndpointBuilder aws2Sqs(
+    static org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.Sqs2EndpointBuilder aws2Sqs(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.endpointBuilder("aws2-sqs", path);
     }
@@ -1525,7 +1525,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path queueNameOrArn
      */
-    public static org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.Sqs2EndpointBuilder aws2Sqs(
+    static org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.Sqs2EndpointBuilder aws2Sqs(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.endpointBuilder(componentName, path);
