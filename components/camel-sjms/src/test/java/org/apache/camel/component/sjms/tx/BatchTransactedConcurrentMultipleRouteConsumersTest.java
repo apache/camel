@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.sjms.tx;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Verify that batch transactions are processed correctly when dealing with

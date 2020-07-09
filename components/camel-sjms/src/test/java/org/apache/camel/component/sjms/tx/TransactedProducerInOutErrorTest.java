@@ -18,14 +18,17 @@ package org.apache.camel.component.sjms.tx;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToStartRouteException;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.CamelJmsTestHelper;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * A unit test to ensure the error is raised against incompatible configuration, InOut + transacted.
@@ -34,20 +37,15 @@ public class TransactedProducerInOutErrorTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactedProducerInOutErrorTest.class);
 
-    @Test(expected = FailedToStartRouteException.class)
+    @Test
     public void test() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(createRouteBuilder());
         SjmsComponent component = context.getComponent("sjms", SjmsComponent.class);
         component.setConnectionFactory(CamelJmsTestHelper.createConnectionFactory());
-        try {
-            context.start();
-        } catch (Throwable t) {
-            Assert.assertEquals(FailedToStartRouteException.class, t.getClass());
-            Assert.assertEquals(IllegalArgumentException.class, t.getCause().getCause().getClass());
-            LOG.info("Exception was thrown as expected", t);
-            throw t;
-        }
+        FailedToStartRouteException t = assertThrows(FailedToStartRouteException.class, context::start);
+        assertEquals(IllegalArgumentException.class, t.getCause().getCause().getClass());
+        LOG.info("Exception was thrown as expected", t);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
