@@ -112,6 +112,8 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "requestedHeartbeat": target.setRequestedHeartbeat(property(camelContext, int.class, value)); return true;
         case "routingkey":
         case "routingKey": target.setRoutingKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "skipdlqdeclare":
+        case "skipDlqDeclare": target.setSkipDlqDeclare(property(camelContext, boolean.class, value)); return true;
         case "skipexchangedeclare":
         case "skipExchangeDeclare": target.setSkipExchangeDeclare(property(camelContext, boolean.class, value)); return true;
         case "skipqueuebind":
@@ -190,6 +192,7 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         answer.put("requestedFrameMax", int.class);
         answer.put("requestedHeartbeat", int.class);
         answer.put("routingKey", java.lang.String.class);
+        answer.put("skipDlqDeclare", boolean.class);
         answer.put("skipExchangeDeclare", boolean.class);
         answer.put("skipQueueBind", boolean.class);
         answer.put("skipQueueDeclare", boolean.class);
@@ -301,6 +304,8 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "requestedHeartbeat": return target.getRequestedHeartbeat();
         case "routingkey":
         case "routingKey": return target.getRoutingKey();
+        case "skipdlqdeclare":
+        case "skipDlqDeclare": return target.isSkipDlqDeclare();
         case "skipexchangedeclare":
         case "skipExchangeDeclare": return target.isSkipExchangeDeclare();
         case "skipqueuebind":

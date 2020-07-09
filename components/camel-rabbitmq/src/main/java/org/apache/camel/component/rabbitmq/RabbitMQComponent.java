@@ -38,6 +38,8 @@ public class RabbitMQComponent extends DefaultComponent {
     public static final String ARG_PREFIX = "arg.";
     public static final String EXCHANGE_ARG_PREFIX = "exchange.";
     public static final String QUEUE_ARG_PREFIX = "queue.";
+    public static final String DLQ_ARG_PREFIX = "dlq.queue.";
+    public static final String DLQ_BINDING_PREFIX = "dlq.binding.";
     public static final String BINDING_ARG_PREFIX = "binding.";
 
     private static final Logger LOG = LoggerFactory.getLogger(RabbitMQComponent.class);
@@ -655,6 +657,8 @@ public class RabbitMQComponent extends DefaultComponent {
      * <li>Exchange: arg.exchange.</li>
      * <li>Queue: arg.queue.</li>
      * <li>Binding: arg.binding.</li>
+     * <li>DLQ: arg.dlq.queue.</li>
+     * <li>DLQ Binding: arg.dlq.binding.</li>
      * </ul>
      * For example to declare a queue with message ttl argument:
      * http://localhost:5672/exchange/queue?args=arg.queue.x-message-ttl=60000
