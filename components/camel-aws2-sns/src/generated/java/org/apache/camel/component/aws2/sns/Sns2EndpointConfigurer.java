@@ -53,6 +53,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "subscribesnstosqs":
         case "subscribeSNStoSQS": target.getConfiguration().setSubscribeSNStoSQS(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "trustallcertificates":
+        case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -79,6 +81,7 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         answer.put("subject", java.lang.String.class);
         answer.put("subscribeSNStoSQS", boolean.class);
         answer.put("synchronous", boolean.class);
+        answer.put("trustAllCertificates", boolean.class);
         return answer;
     }
 
@@ -120,6 +123,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "subscribesnstosqs":
         case "subscribeSNStoSQS": return target.getConfiguration().isSubscribeSNStoSQS();
         case "synchronous": return target.isSynchronous();
+        case "trustallcertificates":
+        case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
         default: return null;
         }
     }
