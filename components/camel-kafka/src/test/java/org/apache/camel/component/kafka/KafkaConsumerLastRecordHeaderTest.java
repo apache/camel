@@ -25,9 +25,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class KafkaConsumerLastRecordHeaderTest extends BaseEmbeddedKafkaTest {
     private static final String TOPIC = "last-record";
@@ -37,13 +40,13 @@ public class KafkaConsumerLastRecordHeaderTest extends BaseEmbeddedKafkaTest {
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 
-    @Before
+    @BeforeEach
     public void before() {
         Properties props = getDefaultProperties();
         producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
     }
 
-    @After
+    @AfterEach
     public void after() {
         if (producer != null) {
             producer.close();
@@ -71,12 +74,12 @@ public class KafkaConsumerLastRecordHeaderTest extends BaseEmbeddedKafkaTest {
         List<Exchange> exchanges = result.getExchanges();
         for (int i = 0; i < exchanges.size(); i++) {
             Boolean header = exchanges.get(i).getIn().getHeader(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, Boolean.class);
-            assertNotNull("Header not set for #" + i, header);
-            assertEquals("Header invalid for #" + i, header, i == exchanges.size() - 1);
+            assertNotNull(header, "Header not set for #" + i);
+            assertEquals(header, i == exchanges.size() - 1, "Header invalid for #" + i);
             // as long as the partitions count is 1 on topic:
             header = exchanges.get(i).getIn().getHeader(KafkaConstants.LAST_POLL_RECORD, Boolean.class);
-            assertNotNull("Last record header not set for #" + i, header);
-            assertEquals("Last record header invalid for #" + i, header, i == exchanges.size() - 1);
+            assertNotNull(header, "Last record header not set for #" + i);
+            assertEquals(header, i == exchanges.size() - 1, "Last record header invalid for #" + i);
         }
     }
 
