@@ -26,10 +26,10 @@ import com.googlecode.jsendnsca.PassiveCheckSender;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -42,12 +42,12 @@ public class NagiosTest extends CamelTestSupport {
 
     protected boolean canRun;
 
-    @BeforeClass
+    @BeforeAll
     public static void setSender() {
         nagiosPassiveCheckSender =  Mockito.mock(NagiosPassiveCheckSender.class);
     }
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         canRun = true;
