@@ -1252,7 +1252,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path function
      */
-    static org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.Lambda2EndpointBuilder aws2Lambda(
+    public static org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.Lambda2EndpointBuilder aws2Lambda(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.endpointBuilder("aws2-lambda", path);
     }
@@ -1273,7 +1273,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path function
      */
-    static org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.Lambda2EndpointBuilder aws2Lambda(
+    public static org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.Lambda2EndpointBuilder aws2Lambda(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -7857,7 +7857,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path host/base
      */
-    public static org.apache.camel.builder.endpoint.dsl.JcrEndpointBuilderFactory.JcrEndpointBuilder jcr(
+    static org.apache.camel.builder.endpoint.dsl.JcrEndpointBuilderFactory.JcrEndpointBuilder jcr(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.JcrEndpointBuilderFactory.endpointBuilder("jcr", path);
     }
@@ -7882,7 +7882,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path host/base
      */
-    public static org.apache.camel.builder.endpoint.dsl.JcrEndpointBuilderFactory.JcrEndpointBuilder jcr(
+    static org.apache.camel.builder.endpoint.dsl.JcrEndpointBuilderFactory.JcrEndpointBuilder jcr(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.JcrEndpointBuilderFactory.endpointBuilder(componentName, path);
