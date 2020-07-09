@@ -17,11 +17,11 @@
 package org.apache.camel.component.netty.http;
 
 import io.netty.handler.codec.http.DefaultLastHttpContent;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.core.IsNot.not;
-import static org.hamcrest.core.StringContains.containsString;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 
 public class NettyHttpOperationFailedExceptionTest {
 

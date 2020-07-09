@@ -21,7 +21,11 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NettyHttpProducerTwoParametersWithSameKeyTest extends BaseNettyTest {
 
@@ -30,7 +34,7 @@ public class NettyHttpProducerTwoParametersWithSameKeyTest extends BaseNettyTest
         Exchange out = template.request("netty-http:http://localhost:{{port}}/myapp?from=me&to=foo&to=bar", null);
 
         assertNotNull(out);
-        assertFalse("Should not fail", out.isFailed());
+        assertFalse(out.isFailed(), "Should not fail");
         assertEquals("OK", out.getMessage().getBody(String.class));
         assertEquals("yes", out.getMessage().getHeader("bar"));
 
@@ -53,7 +57,7 @@ public class NettyHttpProducerTwoParametersWithSameKeyTest extends BaseNettyTest
         });
 
         assertNotNull(out);
-        assertFalse("Should not fail", out.isFailed());
+        assertFalse(out.isFailed(), "Should not fail");
         assertEquals("OK", out.getMessage().getBody(String.class));
         assertEquals("yes", out.getMessage().getHeader("bar"));
 

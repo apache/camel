@@ -20,7 +20,9 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMethods;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpBindingUseRelativePathInPostTest extends BaseNettyTest {
 
@@ -44,16 +46,16 @@ public class NettyHttpBindingUseRelativePathInPostTest extends BaseNettyTest {
                     String body = exchange.getIn().getBody(String.class);
 
                     // for unit testing make sure we got right message
-                    assertEquals("The body message is wrong", "b1=x&b2=y", body);
-                    assertEquals("Get a wrong query parameter from the message header", "a", exchange.getIn().getHeader("query1"));
-                    assertEquals("Get a wrong query parameter from the message header", "b", exchange.getIn().getHeader("query2"));
-                    assertEquals("Get a wrong form parameter from the message header", "x", exchange.getIn().getHeader("b1"));
-                    assertEquals("Get a wrong form parameter from the message header", "y", exchange.getIn().getHeader("b2"));
-                    assertEquals("Get a wrong form parameter from the message header", "localhost:" + getPort(), exchange.getIn().getHeader("host"));
+                    assertEquals("b1=x&b2=y", body, "The body message is wrong");
+                    assertEquals("a", exchange.getIn().getHeader("query1"), "Get a wrong query parameter from the message header");
+                    assertEquals("b", exchange.getIn().getHeader("query2"), "Get a wrong query parameter from the message header");
+                    assertEquals("x", exchange.getIn().getHeader("b1"), "Get a wrong form parameter from the message header");
+                    assertEquals("y", exchange.getIn().getHeader("b2"), "Get a wrong form parameter from the message header");
+                    assertEquals("localhost:" + getPort(), exchange.getIn().getHeader("host"), "Get a wrong form parameter from the message header");
 
                     NettyHttpMessage in = (NettyHttpMessage) exchange.getIn();
                     FullHttpRequest request = in.getHttpRequest();
-                    assertEquals("Relative path not used in POST", "/myapp/myservice?query1=a&query2=b", request.uri());
+                    assertEquals("/myapp/myservice?query1=a&query2=b", request.uri(), "Relative path not used in POST");
 
                     // send a response
                     exchange.getMessage().getHeaders().clear();

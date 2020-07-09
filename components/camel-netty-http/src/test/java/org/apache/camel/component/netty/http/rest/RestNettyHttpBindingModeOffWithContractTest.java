@@ -23,7 +23,11 @@ import org.apache.camel.component.netty.http.BaseNettyTest;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestNettyHttpBindingModeOffWithContractTest extends BaseNettyTest {
 
@@ -37,7 +41,7 @@ public class RestNettyHttpBindingModeOffWithContractTest extends BaseNettyTest {
         Object answer = template.requestBodyAndHeader("netty-http:http://localhost:" + getPort() + "/users/new", body, Exchange.CONTENT_TYPE, "application/json");
         assertNotNull(answer);
         String answerString = new String((byte[])answer);
-        assertTrue("Unexpected response: " + answerString, answerString.contains("\"active\":true"));
+        assertTrue(answerString.contains("\"active\":true"), "Unexpected response: " + answerString);
 
         assertMockEndpointsSatisfied();
 
