@@ -93,6 +93,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "serversideencryptionenabled":
         case "serverSideEncryptionEnabled": getOrCreateConfiguration(target).setServerSideEncryptionEnabled(property(camelContext, boolean.class, value)); return true;
+        case "trustallcertificates":
+        case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "visibilitytimeout":
         case "visibilityTimeout": getOrCreateConfiguration(target).setVisibilityTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "waittimeseconds":
@@ -140,6 +142,7 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         answer.put("region", java.lang.String.class);
         answer.put("secretKey", java.lang.String.class);
         answer.put("serverSideEncryptionEnabled", boolean.class);
+        answer.put("trustAllCertificates", boolean.class);
         answer.put("visibilityTimeout", java.lang.Integer.class);
         answer.put("waitTimeSeconds", java.lang.Integer.class);
         return answer;
@@ -216,6 +219,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         case "serversideencryptionenabled":
         case "serverSideEncryptionEnabled": return getOrCreateConfiguration(target).isServerSideEncryptionEnabled();
+        case "trustallcertificates":
+        case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
         case "visibilitytimeout":
         case "visibilityTimeout": return getOrCreateConfiguration(target).getVisibilityTimeout();
         case "waittimeseconds":
