@@ -19,7 +19,7 @@ package org.apache.camel.component.sjms.consumer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class InOnlyQueueConsumerTest extends JmsTestSupport {
     
@@ -45,7 +45,7 @@ public class InOnlyQueueConsumerTest extends JmsTestSupport {
     }
 
     /**
-     * @see org.apache.camel.test.junit4.CamelTestSupport#createRouteBuilder()
+     * @see org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
      *
      * @return
      * @throws Exception

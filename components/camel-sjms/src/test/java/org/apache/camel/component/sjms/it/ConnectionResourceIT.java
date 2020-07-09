@@ -30,7 +30,10 @@ import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Integration test that verifies we can replace the internal
@@ -76,7 +79,7 @@ public class ConnectionResourceIT extends JmsTestSupport {
     }
 
     /*
-     * @see org.apache.camel.test.junit4.CamelTestSupport#createCamelContext()
+     * @see org.apache.camel.test.junit5.CamelTestSupport#createCamelContext()
      * @return
      * @throws Exception
      */

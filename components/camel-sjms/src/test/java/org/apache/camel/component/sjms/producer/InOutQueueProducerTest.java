@@ -28,7 +28,12 @@ import javax.jms.TextMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class InOutQueueProducerTest extends JmsTestSupport {
     
@@ -78,7 +83,7 @@ public class InOutQueueProducerTest extends JmsTestSupport {
     }
 
     /*
-     * @see org.apache.camel.test.junit4.CamelTestSupport#createRouteBuilder()
+     * @see org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
      * 
      * @return
      * 
