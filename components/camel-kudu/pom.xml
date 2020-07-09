@@ -31,6 +31,22 @@
     <name>Camel :: Kudu</name>
     <description>Camel Apache Kudu support</description>
 
+    <profiles>
+        <profile>
+            <!-- kudu-binary is not available for Windows. It is needed for tests, so skip that on Windows OS -->
+            <id>Windows-Kudu-SkipTests</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+                <os.detected.classifier>linux-x86_64</os.detected.classifier> <!-- Fake classifier to allow dependency resolution. kudu-binary will not be executed anyway on Windows -->
+            </properties>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
