@@ -1086,7 +1086,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path label
      */
-    static org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.IAM2EndpointBuilder aws2Iam(
+    public static org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.IAM2EndpointBuilder aws2Iam(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.endpointBuilder("aws2-iam", path);
     }
@@ -1107,7 +1107,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path label
      */
-    static org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.IAM2EndpointBuilder aws2Iam(
+    public static org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.IAM2EndpointBuilder aws2Iam(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -1128,7 +1128,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path streamName
      */
-    public static org.apache.camel.builder.endpoint.dsl.Kinesis2EndpointBuilderFactory.Kinesis2EndpointBuilder aws2Kinesis(
+    static org.apache.camel.builder.endpoint.dsl.Kinesis2EndpointBuilderFactory.Kinesis2EndpointBuilder aws2Kinesis(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Kinesis2EndpointBuilderFactory.endpointBuilder("aws2-kinesis", path);
     }
@@ -1150,7 +1150,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path streamName
      */
-    public static org.apache.camel.builder.endpoint.dsl.Kinesis2EndpointBuilderFactory.Kinesis2EndpointBuilder aws2Kinesis(
+    static org.apache.camel.builder.endpoint.dsl.Kinesis2EndpointBuilderFactory.Kinesis2EndpointBuilder aws2Kinesis(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Kinesis2EndpointBuilderFactory.endpointBuilder(componentName, path);

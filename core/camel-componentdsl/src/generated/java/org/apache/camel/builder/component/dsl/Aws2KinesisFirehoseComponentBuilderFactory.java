@@ -168,6 +168,20 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
             return this;
         }
         /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Aws2KinesisFirehoseComponentBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
          * 
@@ -237,6 +251,7 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
             case "proxyPort": getOrCreateConfiguration((KinesisFirehose2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((KinesisFirehose2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((KinesisFirehose2Component) component).setRegion((java.lang.String) value); return true;
+            case "trustAllCertificates": getOrCreateConfiguration((KinesisFirehose2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "basicPropertyBinding": ((KinesisFirehose2Component) component).setBasicPropertyBinding((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((KinesisFirehose2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((KinesisFirehose2Component) component).setSecretKey((java.lang.String) value); return true;

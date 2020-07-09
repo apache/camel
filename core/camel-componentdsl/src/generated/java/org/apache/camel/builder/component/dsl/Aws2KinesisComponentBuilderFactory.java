@@ -129,6 +129,20 @@ public interface Aws2KinesisComponentBuilderFactory {
             return this;
         }
         /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default Aws2KinesisComponentBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -304,6 +318,7 @@ public interface Aws2KinesisComponentBuilderFactory {
             case "proxyPort": getOrCreateConfiguration((Kinesis2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Kinesis2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((Kinesis2Component) component).setRegion((java.lang.String) value); return true;
+            case "trustAllCertificates": getOrCreateConfiguration((Kinesis2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "bridgeErrorHandler": ((Kinesis2Component) component).setBridgeErrorHandler((boolean) value); return true;
             case "iteratorType": getOrCreateConfiguration((Kinesis2Component) component).setIteratorType((software.amazon.awssdk.services.kinesis.model.ShardIteratorType) value); return true;
             case "maxResultsPerRequest": getOrCreateConfiguration((Kinesis2Component) component).setMaxResultsPerRequest((int) value); return true;

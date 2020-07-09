@@ -80,6 +80,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "trustallcertificates":
+        case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -122,6 +124,7 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         answer.put("startScheduler", boolean.class);
         answer.put("synchronous", boolean.class);
         answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
+        answer.put("trustAllCertificates", boolean.class);
         answer.put("useFixedDelay", boolean.class);
         return answer;
     }
@@ -191,6 +194,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "synchronous": return target.isSynchronous();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
+        case "trustallcertificates":
+        case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
         default: return null;
