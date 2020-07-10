@@ -24,6 +24,7 @@ import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.ObjectStat;
+import io.minio.SetBucketPolicyArgs;
 import io.minio.StatObjectArgs;
 import io.minio.errors.InvalidBucketNameException;
 import jdk.internal.org.jline.utils.Log;
@@ -51,7 +52,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Store and retrie objects from Minio Storage Service using Minio SDK.
  */
-@UriEndpoint(firstVersion = "3.5.0", scheme = "minio", title = "Minio Storage Service", syntax = "minio:url", category = {Category.CLOUD, Category.FILE})
+@UriEndpoint(firstVersion = "3.5.0", scheme = "minio", title = "Minio Storage Service", syntax = "minio:bucketNameOrArn", category = {Category.CLOUD, Category.FILE})
 public class MinioEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioEndpoint.class);
@@ -60,7 +61,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
 
     @UriPath(description = "Qualified url")
     @Metadata(required = true)
-    private String url; // to support component docs
+    private String bucketNameOrArn; // to support component docs
     @UriParam
     private MinioConfiguration configuration;
     @UriParam(label = "consumer", defaultValue = "10")
@@ -94,14 +95,13 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
                 ? configuration.getMinioClient()
                 : MinioClientFactory.getClient(configuration).getMinioClient();
 
-        String fileName = getConfiguration().getFileName();
+        String objectName = getConfiguration().getObjectName();
 
-        if (fileName != null) {
-            LOG.trace("File name {} requested, so skipping bucket check...", fileName);
+        if (objectName != null) {
+            LOG.trace("Object name {} requested, so skipping bucket check...", objectName);
             return;
         }
 
-        assert getConfiguration().getBucketName() != null;
         String bucketName = getConfiguration().getBucketName();
         LOG.trace("Querying whether bucket {} already exists...", bucketName);
 
@@ -111,23 +111,14 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
             if (!getConfiguration().isAutoCreateBucket()) {
                 throw new InvalidBucketNameException("Bucket {} does not exists, set autoCreateBucket option for bucket auto creation", bucketName);
             } else {
-                LOG.trace("Bucket {} doesn't exist yet", bucketName);
-                // creates the new bucket because it doesn't exist yet
-
-                LOG.trace("Creating bucket {} in region {} with request...", bucketName, configuration.getRegion());
-
-                makeBucket(bucketName, configuration.getRegion(), configuration.isObjectLock());
-
+                LOG.trace("AutoCreateBucket set to true, Creating bucket {}...", bucketName);
+                makeBucket(bucketName);
                 LOG.trace("Bucket created");
             }
         }
 
         if (configuration.getPolicy() != null) {
-            LOG.trace("Updating bucket {} with policy...", bucketName);
-
-            minioClient.setBucketPolicy(configuration.getPolicy());
-
-            LOG.trace("Bucket policy updated");
+            setBucketPolicy(bucketName);
         }
     }
 
@@ -141,25 +132,24 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         super.doStop();
     }
 
-    public Exchange createExchange(InputStream minioObject, String key) {
-        return createExchange(getExchangePattern(), minioObject, key);
+    public Exchange createExchange(InputStream minioObject, String objectName) {
+        return createExchange(getExchangePattern(), minioObject, objectName);
     }
 
     public Exchange createExchange(ExchangePattern pattern,
-                                   InputStream minioObject, String key) {
+                                   InputStream minioObject, String objectName) {
         String bucketName = getConfiguration().getBucketName();
-        LOG.trace("Getting object with key {} from bucket {}...", key, bucketName);
+        LOG.trace("Getting object with objectName {} from bucket {}...", objectName, bucketName);
 
         Exchange exchange = super.createExchange(pattern);
         Message message = exchange.getIn();
-
-        assert message != null;
         LOG.trace("Got object!");
+
+        getObjectTags(objectName, bucketName, message);
 
         if (configuration.isIncludeBody()) {
             try {
                 message.setBody(readInputStream(minioObject));
-                getObjectTags(key, bucketName, message);
                 if (configuration.isAutocloseBody()) {
                     exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                         @Override
@@ -175,34 +165,10 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
             }
         } else {
             message.setBody(null);
-            getObjectTags(key, bucketName, message);
             IOHelper.close(minioObject);
         }
 
         return exchange;
-    }
-
-    private void getObjectTags(String key, String bucketName, Message message) {
-        try {
-            ObjectStat stat = minioClient.statObject(
-                    StatObjectArgs.builder().bucket(bucketName).object(key).build());
-
-            // set all stat as message headers
-            message.setHeader(MinioConstants.OBJECT_NAME, key);
-            message.setHeader(MinioConstants.BUCKET_NAME, bucketName);
-            message.setHeader(MinioConstants.E_TAG, stat.etag());
-            message.setHeader(MinioConstants.LAST_MODIFIED, stat.httpHeaders().get("last-modified"));
-            message.setHeader(MinioConstants.VERSION_ID, stat.httpHeaders().get("x-amz-version-id"));
-            message.setHeader(MinioConstants.CONTENT_TYPE, stat.contentType());
-            message.setHeader(MinioConstants.CONTENT_LENGTH, stat.length());
-            message.setHeader(MinioConstants.SERVER_SIDE_ENCRYPTION, stat.httpHeaders().get("x-amz-server-side-encryption"));
-            message.setHeader(MinioConstants.EXPIRATION_TIME, stat.httpHeaders().get("x-amz-expiration"));
-            message.setHeader(MinioConstants.REPLICATION_STATUS, stat.httpHeaders().get("x-amz-replication-status"));
-            message.setHeader(MinioConstants.STORAGE_CLASS, stat.httpHeaders().get("x-amz-storage-class"));
-
-        } catch (Exception e) {
-            Log.warn("Error getting message headers, due {}", e.getMessage());
-        }
     }
 
     public MinioConfiguration getConfiguration() {
@@ -268,24 +234,52 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         }
     }
 
-    private void makeBucket(String bucketName, String region, boolean isObjectLock) throws Exception {
+    private void makeBucket(String bucketName) throws Exception {
         try {
-            if (region != null) {
-                minioClient.makeBucket(MakeBucketArgs.builder()
-                        .bucket(bucketName)
-                        .region(region)
-                        .objectLock(isObjectLock)
-                        .build());
-            } else {
-                minioClient.makeBucket(MakeBucketArgs.builder()
-                        .bucket(bucketName)
-                        .objectLock(isObjectLock)
-                        .build());
+            MakeBucketArgs.Builder makeBucketRequest = MakeBucketArgs.builder().bucket(bucketName).objectLock(configuration.isObjectLock());
+            if (configuration.getRegion() != null) {
+                makeBucketRequest.region(configuration.getRegion());
             }
+            minioClient.makeBucket(makeBucketRequest.build());
 
         } catch (Throwable e) {
             LOG.warn("Error making bucket, due: {}", e.getMessage());
             throw e;
+        }
+    }
+
+    private void setBucketPolicy(String bucketName) throws Exception {
+        try {
+            LOG.trace("Updating bucket {} with policy...", bucketName);
+            minioClient.setBucketPolicy(
+                    SetBucketPolicyArgs.builder().bucket(bucketName).config(configuration.getPolicy()).build());
+            LOG.trace("Bucket policy updated");
+        } catch (Throwable e) {
+            Log.warn("Error updating policy, due {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    private void getObjectTags(String objectName, String bucketName, Message message) {
+        try {
+            ObjectStat stat = minioClient.statObject(
+                    StatObjectArgs.builder().bucket(bucketName).object(objectName).build());
+
+            // set all stat as message headers
+            message.setHeader(MinioConstants.OBJECT_NAME, objectName);
+            message.setHeader(MinioConstants.BUCKET_NAME, bucketName);
+            message.setHeader(MinioConstants.E_TAG, stat.etag());
+            message.setHeader(MinioConstants.LAST_MODIFIED, stat.httpHeaders().get("last-modified"));
+            message.setHeader(MinioConstants.VERSION_ID, stat.httpHeaders().get("x-amz-version-id"));
+            message.setHeader(MinioConstants.CONTENT_TYPE, stat.contentType());
+            message.setHeader(MinioConstants.CONTENT_LENGTH, stat.length());
+            message.setHeader(MinioConstants.SERVER_SIDE_ENCRYPTION, stat.httpHeaders().get("x-amz-server-side-encryption"));
+            message.setHeader(MinioConstants.EXPIRATION_TIME, stat.httpHeaders().get("x-amz-expiration"));
+            message.setHeader(MinioConstants.REPLICATION_STATUS, stat.httpHeaders().get("x-amz-replication-status"));
+            message.setHeader(MinioConstants.STORAGE_CLASS, stat.httpHeaders().get("x-amz-storage-class"));
+
+        } catch (Exception e) {
+            Log.warn("Error getting message headers, due {}", e.getMessage());
         }
     }
 }

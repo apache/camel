@@ -61,10 +61,6 @@ public class MinioProducer extends DefaultProducer {
         super(endpoint);
     }
 
-    public static Message getMessageForResponse(final Exchange exchange) {
-        return exchange.getMessage();
-    }
-
     @Override
     public void process(final Exchange exchange) throws Exception {
         MinioOperations operation = determineOperation(exchange);
@@ -137,7 +133,12 @@ public class MinioProducer extends DefaultProducer {
                 }
             }
         }
-        PutObjectArgs.Builder putObjectRequest = PutObjectArgs.builder().stream(is, is.available(), -1).bucket(bucketName).object(key).extraHeaders(extraHeaders).userMetadata(objectMetadata);
+        PutObjectArgs.Builder putObjectRequest = PutObjectArgs.builder()
+                .stream(is, is.available(), -1)
+                .bucket(bucketName)
+                .object(key)
+                .extraHeaders(extraHeaders)
+                .userMetadata(objectMetadata);
 
         if (getConfiguration().getServerSideEncryption() != null) {
             putObjectRequest.sse(getConfiguration().getServerSideEncryption());
@@ -467,6 +468,10 @@ public class MinioProducer extends DefaultProducer {
     @Override
     public MinioEndpoint getEndpoint() {
         return (MinioEndpoint) super.getEndpoint();
+    }
+
+    public static Message getMessageForResponse(final Exchange exchange) {
+        return exchange.getMessage();
     }
 
 }

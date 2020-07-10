@@ -20,8 +20,8 @@ import java.time.ZonedDateTime;
 
 import io.minio.MinioClient;
 import io.minio.ServerSideEncryptionCustomerKey;
-import io.minio.SetBucketPolicyArgs;
 import okhttp3.OkHttpClient;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -46,7 +46,6 @@ public class MinioConfiguration implements Cloneable {
     @UriParam
     private OkHttpClient customHttpClient;
 
-    @UriParam
     private String bucketName;
     @UriParam(defaultValue = "true")
     private boolean autoCreateBucket = true;
@@ -95,8 +94,6 @@ public class MinioConfiguration implements Cloneable {
     private String destinationBucketName;
     @UriParam(label = "consumer")
     private String destinationObjectName;
-    @UriParam(label = "consumer")
-    private String fileName;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean deleteAfterRead = true;
     @UriParam(label = "consumer", defaultValue = "false")
@@ -113,7 +110,7 @@ public class MinioConfiguration implements Cloneable {
     @UriParam(label = "producer", defaultValue = "" + 25 * 1024 * 1024)
     private long partSize = 25 * 1024 * 1024;
     @UriParam
-    private SetBucketPolicyArgs policy;
+    private String policy;
     @UriParam(label = "producer")
     private String storageClass;
     @UriParam(label = "producer", enums = "copyObject,listObjects,deleteObject,deleteObjects,deleteBucket,listBuckets,getObject,getObjectRange")
@@ -298,14 +295,14 @@ public class MinioConfiguration implements Cloneable {
         this.delimiter = delimiter;
     }
 
-    /**
-     * The flag which is used in the
-     * ListObjectsRequest to get objects with user meta data.
-     */
     public boolean isIncludeUserMetadata() {
         return includeUserMetadata;
     }
 
+    /**
+     * The flag which is used in the
+     * ListObjectsRequest to get objects with user meta data.
+     */
     public void setIncludeUserMetadata(boolean includeUserMetadata) {
         this.includeUserMetadata = includeUserMetadata;
     }
@@ -356,7 +353,6 @@ public class MinioConfiguration implements Cloneable {
         this.recursive = recursive;
     }
 
-
     public String getStartAfter() {
         return startAfter;
     }
@@ -390,13 +386,13 @@ public class MinioConfiguration implements Cloneable {
         this.offset = offset;
     }
 
-    /**
-     * (Optional) Number of bytes of object data from offset.
-     */
     public long getLength() {
         return length;
     }
 
+    /**
+     * (Optional) Number of bytes of object data from offset.
+     */
     public void setLength(long length) {
         this.length = length;
     }
@@ -467,17 +463,6 @@ public class MinioConfiguration implements Cloneable {
         this.destinationObjectName = destinationObjectName;
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-
-    /**
-     * (Optional) Set destination folder when downloads object in bucket.
-     */
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
     public boolean isDeleteAfterRead() {
         return deleteAfterRead;
     }
@@ -497,16 +482,16 @@ public class MinioConfiguration implements Cloneable {
         this.deleteAfterRead = deleteAfterRead;
     }
 
-    /**
-     * Move objects from S3 bucket to a different bucket after they have been retrieved. To accomplish the operation
-     * the destinationBucket option must be set.
-     * The copy bucket operation is only performed if the Exchange is committed. If a rollback occurs, the object
-     * is not moved.
-     */
     public boolean isMoveAfterRead() {
         return moveAfterRead;
     }
 
+    /**
+     * Move objects from bucket to a different bucket after they have been retrieved. To accomplish the operation
+     * the destinationBucket option must be set.
+     * The copy bucket operation is only performed if the Exchange is committed. If a rollback occurs, the object
+     * is not moved.
+     */
     public void setMoveAfterRead(boolean moveAfterRead) {
         this.moveAfterRead = moveAfterRead;
     }
@@ -544,7 +529,6 @@ public class MinioConfiguration implements Cloneable {
         this.autocloseBody = autocloseBody;
     }
 
-
     public String getKeyName() {
         return keyName;
     }
@@ -580,14 +564,14 @@ public class MinioConfiguration implements Cloneable {
         this.partSize = partSize;
     }
 
-    public SetBucketPolicyArgs getPolicy() {
+    public String getPolicy() {
         return policy;
     }
 
     /**
      * The policy for this queue to set in the method.
      */
-    public void setPolicy(SetBucketPolicyArgs policy) {
+    public void setPolicy(String policy) {
         this.policy = policy;
     }
 
@@ -644,5 +628,13 @@ public class MinioConfiguration implements Cloneable {
      */
     public void setBypassGovernanceMode(boolean bypassGovernanceMode) {
         this.bypassGovernanceMode = bypassGovernanceMode;
+    }
+
+    public MinioConfiguration copy() {
+        try {
+            return (MinioConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }

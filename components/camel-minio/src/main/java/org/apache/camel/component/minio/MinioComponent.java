@@ -54,6 +54,7 @@ public class MinioComponent extends DefaultComponent {
         if (remaining.startsWith("arn:")) {
             remaining = remaining.substring(remaining.lastIndexOf(':') + 1);
         }
+        final MinioConfiguration configuration = this.configuration != null ? this.configuration.copy() : new MinioConfiguration();
         configuration.setBucketName(remaining);
         MinioEndpoint endpoint = new MinioEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
