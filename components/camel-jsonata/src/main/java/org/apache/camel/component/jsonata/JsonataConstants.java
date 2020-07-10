@@ -21,9 +21,9 @@ package org.apache.camel.component.jsonata;
  */
 public final class JsonataConstants {
 
-    public static final String Jsonata_RESOURCE_URI = "CamelJsonataResourceUri";
+    public static final String JSONATA_RESOURCE_URI = "CamelJsonataResourceUri";
 
-    public static final String Jsonata_CONTEXT = "CamelJsonataContext";
+    public static final String JSONATA_CONTEXT = "CamelJsonataContext";
 
     private JsonataConstants() {
         // Utility class
