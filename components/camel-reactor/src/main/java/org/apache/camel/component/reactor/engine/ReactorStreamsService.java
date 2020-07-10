@@ -64,6 +64,11 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
         return ReactorStreamsConstants.SERVICE_NAME;
     }
 
+    @Override
+    public CamelContext getCamelContext() {
+        return context;
+    }
+
     // ******************************************
     // Lifecycle
     // ******************************************

@@ -162,7 +162,9 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
         CountDownLatch latch = new CountDownLatch(3);
 
         Flowable.fromPublisher(timer).map(exchange -> ExchangeHelper.getHeaderOrProperty(exchange, Exchange.TIMER_COUNTER, Integer.class))
-            .doOnNext(res -> Assert.assertEquals(value.incrementAndGet(), res.intValue())).doOnNext(res -> latch.countDown()).subscribe();
+            .doOnNext(res -> Assert.assertEquals(value.incrementAndGet(), res.intValue()))
+            .doOnNext(res -> latch.countDown())
+            .subscribe();
 
         Assert.assertTrue(latch.await(2, TimeUnit.SECONDS));
     }
@@ -255,7 +257,7 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
         AtomicInteger value = new AtomicInteger(0);
         CountDownLatch latch = new CountDownLatch(1);
 
-        Flowable.just(1, 2, 3).flatMap(e -> crs.to("bean:hello", e)).map(e -> e.getMessage()).map(e -> e.getBody(String.class))
+        Flowable.just(1, 2, 3).flatMap(e -> crs.to("bean:hello", e)).map(Exchange::getMessage).map(e -> e.getBody(String.class))
             .doOnNext(res -> Assert.assertEquals("Hello " + value.incrementAndGet(), res)).doOnNext(res -> latch.countDown()).subscribe();
 
         Assert.assertTrue(latch.await(2, TimeUnit.SECONDS));
@@ -282,7 +284,7 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
         CountDownLatch latch = new CountDownLatch(1);
         Function<Object, Publisher<Exchange>> fun = crs.to("bean:hello");
 
-        Flowable.just(1, 2, 3).flatMap(fun::apply).map(e -> e.getMessage()).map(e -> e.getBody(String.class))
+        Flowable.just(1, 2, 3).flatMap(fun::apply).map(Exchange::getMessage).map(e -> e.getBody(String.class))
             .doOnNext(res -> Assert.assertEquals("Hello " + value.incrementAndGet(), res)).doOnNext(res -> latch.countDown()).subscribe();
 
         Assert.assertTrue(latch.await(2, TimeUnit.SECONDS));
@@ -310,7 +312,7 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
 
         int idx = 1;
         for (Exchange ex : mock.getExchanges()) {
-            Assert.assertEquals(new Integer(idx++), ex.getIn().getBody(Integer.class));
+            Assert.assertEquals(Integer.valueOf(idx++), ex.getIn().getBody(Integer.class));
         }
     }
 

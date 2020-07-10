@@ -30,7 +30,7 @@ import org.reactivestreams.Subscription;
  * It calls the dispatch callback if defined.
  */
 public class UnwrappingPublisher implements Publisher<Exchange> {
-    private Publisher<Exchange> delegate;
+    private final Publisher<Exchange> delegate;
 
     public UnwrappingPublisher(Publisher<Exchange> delegate) {
         Objects.requireNonNull(delegate, "delegate publisher cannot be null");

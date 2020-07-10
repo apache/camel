@@ -110,7 +110,6 @@ public final class ReactiveStreamsHelper {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static CamelReactiveStreamsServiceFactory resolveServiceFactory(CamelContext context, String serviceType) {
         try {
             FactoryFinder finder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(ReactiveStreamsConstants.SERVICE_PATH);

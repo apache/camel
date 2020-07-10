@@ -45,13 +45,13 @@ public class CamelPublisher implements Publisher<Exchange>, AutoCloseable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelPublisher.class);
 
-    private ExecutorService workerPool;
+    private final ExecutorService workerPool;
 
-    private String name;
+    private final String name;
+
+    private final List<CamelSubscription> subscriptions = new CopyOnWriteArrayList<>();
 
     private ReactiveStreamsBackpressureStrategy backpressureStrategy;
-
-    private List<CamelSubscription> subscriptions = new CopyOnWriteArrayList<>();
 
     private ReactiveStreamsProducer producer;
 

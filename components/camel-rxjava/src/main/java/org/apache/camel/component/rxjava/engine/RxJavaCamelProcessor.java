@@ -38,7 +38,7 @@ final class RxJavaCamelProcessor implements Closeable {
     private final String name;
     private final RxJavaStreamsService service;
     private final AtomicReference<FlowableEmitter<Exchange>> camelEmitter;
-    private FlowableProcessor<Exchange> publisher;
+    private final FlowableProcessor<Exchange> publisher;
     private ReactiveStreamsProducer camelProducer;
 
     RxJavaCamelProcessor(RxJavaStreamsService service, String name) {

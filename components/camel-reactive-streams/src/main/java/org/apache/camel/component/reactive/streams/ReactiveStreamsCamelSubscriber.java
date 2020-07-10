@@ -37,11 +37,11 @@ public class ReactiveStreamsCamelSubscriber implements Subscriber<Exchange>, Clo
      */
     private static final long UNBOUNDED_REQUESTS = Long.MAX_VALUE;
 
+    private final String name;
+
     private ReactiveStreamsConsumer consumer;
 
     private Subscription subscription;
-
-    private String name;
 
     private long requested;
 

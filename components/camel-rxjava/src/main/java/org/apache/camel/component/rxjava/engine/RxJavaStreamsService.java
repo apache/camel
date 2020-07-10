@@ -64,6 +64,11 @@ final class RxJavaStreamsService extends ServiceSupport implements CamelReactive
         return RxJavaStreamsConstants.SERVICE_NAME;
     }
 
+    @Override
+    public CamelContext getCamelContext() {
+        return context;
+    }
+
     // ******************************************
     // Lifecycle
     // ******************************************
