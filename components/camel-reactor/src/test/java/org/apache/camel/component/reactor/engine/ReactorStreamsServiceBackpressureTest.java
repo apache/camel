@@ -108,7 +108,7 @@ public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsService
         Thread.sleep(200); // add other time to ensure no other items arrive
         Assert.assertEquals(2, queue.size());
 
-        int sum = queue.stream().reduce((i, j) -> i + j).get();
+        int sum = queue.stream().reduce(Integer::sum).get();
         Assert.assertEquals(3, sum); // 1 + 2 = 3
 
         subscriber.cancel();
@@ -158,7 +158,7 @@ public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsService
         // Assert.assertEquals(2, queue.size());
         Assert.assertEquals(3, queue.size());
 
-        int sum = queue.stream().reduce((i, j) -> i + j).get();
+        int sum = queue.stream().reduce(Integer::sum).get();
         // Assert.assertEquals(21, sum); // 1 + 20 = 21
         Assert.assertEquals(23, sum); // 1 + 2 + 20 = 23
 

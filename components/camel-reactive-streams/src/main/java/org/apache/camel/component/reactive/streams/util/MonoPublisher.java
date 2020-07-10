@@ -27,7 +27,7 @@ import org.reactivestreams.Subscription;
  */
 public class MonoPublisher<T> implements Publisher<T> {
 
-    private T item;
+    private final T item;
 
     public MonoPublisher(T item) {
         this.item = item;

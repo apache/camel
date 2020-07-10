@@ -43,17 +43,17 @@ public class CamelSubscription implements Subscription {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelSubscription.class);
 
-    private String id;
+    private final String id;
 
-    private ExecutorService workerPool;
+    private final ExecutorService workerPool;
 
-    private String streamName;
+    private final String streamName;
 
-    private CamelPublisher publisher;
+    private final CamelPublisher publisher;
+
+    private final Subscriber<? super Exchange> subscriber;
 
     private ReactiveStreamsBackpressureStrategy backpressureStrategy;
-
-    private Subscriber<? super Exchange> subscriber;
 
     /**
      * The lock is used just for the time necessary to read/write shared variables.
