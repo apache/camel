@@ -88,6 +88,11 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
     }
 
     @Override
+    public CamelContext getCamelContext() {
+        return context;
+    }
+
+    @Override
     protected void doInit() {
         if (this.workerPool == null) {
             this.workerPool = context.getExecutorServiceManager().newThreadPool(
