@@ -34,7 +34,6 @@ public class JsonataFirstSampleTest extends CamelTestSupport {
 
     @Test
     public void testFirstSampleJsonata() throws Exception {
-        //getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
         getMockEndpoint("mock:result").expectedBodiesReceived(
             IOHelper.loadText(
                 ResourceHelper.resolveMandatoryResourceAsInputStream(
@@ -56,13 +55,13 @@ public class JsonataFirstSampleTest extends CamelTestSupport {
                 Map<String, String> contextMap = new HashMap<>();
                 contextMap.put("contextB", "bb");
 
-                exchange.getIn().setHeader(JsonataConstants.Jsonata_CONTEXT, contextMap);
+                exchange.getIn().setHeader(JsonataConstants.JSONATA_CONTEXT, contextMap);
             }
         };
 
         return new RouteBuilder() {
             public void configure() {
-                JsonataComponent Jsonata = context.getComponent("jsonata", JsonataComponent.class);
+                JsonataComponent jsonata = context.getComponent("jsonata", JsonataComponent.class);
 
                 from("direct://start")
                         .process(processor)
