@@ -37,13 +37,16 @@ import org.dizitart.no2.IndexType;
 import org.dizitart.no2.WriteResult;
 import org.dizitart.no2.meta.Attributes;
 import org.dizitart.no2.objects.filters.ObjectFilters;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
 
-    @Before
+    @BeforeEach
     public void insertData() {
         template.sendBody(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
                 new MyPersistentObject(1, "a", "b", "")
@@ -65,9 +68,9 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
                 List.class
         );
 
-        Assert.assertEquals(1, result.size());
-        Assert.assertEquals("c", result.get(0).getKey1());
-        Assert.assertEquals("d", result.get(0).getKey2());
+        assertEquals(1, result.size());
+        assertEquals("c", result.get(0).getKey1());
+        assertEquals("d", result.get(0).getKey2());
     }
 
     @Test
@@ -76,7 +79,7 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
         exchange.getMessage().setHeader(NitriteConstants.OPERATION, new RemoveRepositoryOperation(ObjectFilters.eq("key2", "b")));
 
         template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()), exchange);
-        Assert.assertEquals(
+        assertEquals(
                 1,
                 exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount()
         );
@@ -89,7 +92,7 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
         exchange.getMessage().setBody(new MyPersistentObject(3, "updatedA", "updatedB", ""));
 
         template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()), exchange);
-        Assert.assertEquals(
+        assertEquals(
                 1,
                 exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount()
         );
@@ -106,7 +109,7 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
         listIndices.getMessage().setHeader(NitriteConstants.OPERATION, new ListIndicesOperation());
         template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()), listIndices);
 
-        Assert.assertEquals(4, listIndices.getMessage().getBody(List.class).size());
+        assertEquals(4, listIndices.getMessage().getBody(List.class).size());
     }
 
     @Test
@@ -121,7 +124,7 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
         listIndices.getMessage().setHeader(NitriteConstants.OPERATION, new ListIndicesOperation());
         template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()), listIndices);
 
-        Assert.assertEquals(3, listIndices.getMessage().getBody(List.class).size());
+        assertEquals(3, listIndices.getMessage().getBody(List.class).size());
     }
 
     @Test
@@ -130,7 +133,7 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
         exchange.getMessage().setHeader(NitriteConstants.OPERATION, new GetAttributesOperation());
 
         template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()), exchange);
-        Assert.assertNotNull(exchange.getMessage().getBody(Attributes.class));
+        assertNotNull(exchange.getMessage().getBody(Attributes.class));
     }
 
     @Test
@@ -141,7 +144,7 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
         ));
 
         template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()), exchange);
-        Assert.assertEquals(
+        assertEquals(
                 1,
                 exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount()
         );
@@ -155,7 +158,7 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
         listIndices.getMessage().setHeader(NitriteConstants.OPERATION, new ListIndicesOperation());
         template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()), listIndices);
 
-        Assert.assertEquals(4, listIndices.getMessage().getBody(List.class).size());
+        assertEquals(4, listIndices.getMessage().getBody(List.class).size());
     }
 
     @Test
@@ -178,7 +181,7 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
         ));
 
         template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()), exchange);
-        Assert.assertEquals(
+        assertEquals(
                 1,
                 exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount()
         );
@@ -192,7 +195,7 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
         ));
 
         template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()), exchange);
-        Assert.assertEquals(
+        assertEquals(
                 1,
                 exchange.getMessage().getHeader(NitriteConstants.WRITE_RESULT, WriteResult.class).getAffectedCount()
         );
@@ -205,9 +208,9 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
 
         template.send(String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()), exchange);
 
-        Assert.assertTrue(
-                String.format("Expected exception of type IllegalArgumentException, %s given", exchange.getException()),
-                exchange.getException() instanceof IllegalArgumentException
+        assertTrue(
+                exchange.getException() instanceof IllegalArgumentException,
+                String.format("Expected exception of type IllegalArgumentException, %s given", exchange.getException())
         );
     }
 }
