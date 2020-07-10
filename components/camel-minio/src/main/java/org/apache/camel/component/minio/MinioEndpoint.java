@@ -27,7 +27,6 @@ import io.minio.ObjectStat;
 import io.minio.SetBucketPolicyArgs;
 import io.minio.StatObjectArgs;
 import io.minio.errors.InvalidBucketNameException;
-import jdk.internal.org.jline.utils.Log;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -255,7 +254,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
                     SetBucketPolicyArgs.builder().bucket(bucketName).config(configuration.getPolicy()).build());
             LOG.trace("Bucket policy updated");
         } catch (Throwable e) {
-            Log.warn("Error updating policy, due {}", e.getMessage());
+            LOG.warn("Error updating policy, due {}", e.getMessage());
             throw e;
         }
     }
@@ -279,7 +278,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
             message.setHeader(MinioConstants.STORAGE_CLASS, stat.httpHeaders().get("x-amz-storage-class"));
 
         } catch (Exception e) {
-            Log.warn("Error getting message headers, due {}", e.getMessage());
+            LOG.warn("Error getting message headers, due {}", e.getMessage());
         }
     }
 }

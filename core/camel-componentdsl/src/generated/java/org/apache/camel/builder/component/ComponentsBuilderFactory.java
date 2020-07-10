@@ -2615,10 +2615,10 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.MinaComponentBuilderFactory.mina();
     }
     /**
-     * Minio (camel-minio)
-     * Represents a Minio endpoint.
+     * Minio Storage Service (camel-minio)
+     * Store and retrie objects from Minio Storage Service using Minio SDK.
      * 
-     * Category: storage,cloud,file
+     * Category: cloud,file
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-minio
      */

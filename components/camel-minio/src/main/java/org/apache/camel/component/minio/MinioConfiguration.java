@@ -38,7 +38,7 @@ public class MinioConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     private String secretKey;
     @UriParam(defaultValue = "false")
-    private boolean isSecure;
+    private boolean secure;
 
     @UriParam
     private String region;
@@ -170,14 +170,14 @@ public class MinioConfiguration implements Cloneable {
     }
 
     public boolean isSecure() {
-        return isSecure;
+        return secure;
     }
 
     /**
      * (Optional) Flag to indicate to use secure connection to minio service or not.
      */
     public void setSecure(boolean secure) {
-        isSecure = secure;
+        this.secure = secure;
     }
 
     public String getRegion() {

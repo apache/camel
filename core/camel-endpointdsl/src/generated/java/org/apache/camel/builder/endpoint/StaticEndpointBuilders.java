@@ -10073,48 +10073,42 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.MinaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Minio (camel-minio)
-     * Represents a Minio endpoint.
+     * Minio Storage Service (camel-minio)
+     * Store and retrie objects from Minio Storage Service using Minio SDK.
      * 
-     * Category: storage,cloud,file
+     * Category: cloud,file
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-minio
      * 
-     * Syntax: <code>minio:url</code>
-     * 
-     * Path parameter: name (required)
-     * Some description of this option, and what it does
+     * Syntax: <code>minio:bucketNameOrArn</code>
      * 
      * Path parameter: bucketNameOrArn (required)
-     * Bucket name or ARN
+     * Qualified url
      * 
-     * @param path url
+     * @param path bucketNameOrArn
      */
-    static org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.MinioEndpointBuilder minio(
+    public static org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.MinioEndpointBuilder minio(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.endpointBuilder("minio", path);
     }
     /**
-     * Minio (camel-minio)
-     * Represents a Minio endpoint.
+     * Minio Storage Service (camel-minio)
+     * Store and retrie objects from Minio Storage Service using Minio SDK.
      * 
-     * Category: storage,cloud,file
+     * Category: cloud,file
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-minio
      * 
-     * Syntax: <code>minio:url</code>
-     * 
-     * Path parameter: name (required)
-     * Some description of this option, and what it does
+     * Syntax: <code>minio:bucketNameOrArn</code>
      * 
      * Path parameter: bucketNameOrArn (required)
-     * Bucket name or ARN
+     * Qualified url
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path url
+     * @param path bucketNameOrArn
      */
-    static org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.MinioEndpointBuilder minio(
+    public static org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.MinioEndpointBuilder minio(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.endpointBuilder(componentName, path);
