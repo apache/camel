@@ -74,7 +74,7 @@ public class JsonataEndpoint extends ResourceEndpoint {
     }
 
     /**
-     * Specifies if the output should be hydrated JSON or a JSON String.
+     * Specifies if the output should be Jackson JsNode or a JSON String.
      */
     public void setOutputType(JsonataInputOutputType outputType) {
         this.outputType = outputType;
@@ -91,12 +91,6 @@ public class JsonataEndpoint extends ResourceEndpoint {
         this.inputType = inputType;
     }
 
-    public JsonataEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
-        String newUri = uri.replace(getResourceUri(), newResourceUri);
-        log.debug("Getting endpoint with URI: {}", newUri);
-        return getCamelContext().getEndpoint(newUri, JsonataEndpoint.class);
-    }
-
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
         String path = getResourceUri();
@@ -110,9 +104,7 @@ public class JsonataEndpoint extends ResourceEndpoint {
             input = (JsonNode)exchange.getIn().getBody();
         }
 
-        Map<String, Object> inputContextMap = null;
         JsonNode output=null;
-        JsonNode jsonObj = null;
         if(expressions == null) {
             String spec = new BufferedReader(
                       new InputStreamReader(getResourceAsInputStream(), StandardCharsets.UTF_8))
@@ -121,7 +113,7 @@ public class JsonataEndpoint extends ResourceEndpoint {
             expressions = Expressions.parse(spec);
         }
         output = expressions.evaluate(input);
-        
+
         // now lets output the results to the exchange 
         Message out = exchange.getOut(); // getOut() is depricated
         if (getOutputType() == JsonataInputOutputType.JsonString) {
@@ -131,5 +123,4 @@ public class JsonataEndpoint extends ResourceEndpoint {
         }
         out.setHeaders(exchange.getIn().getHeaders());
     }
-
 }
