@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.jsonata;
 
-import java.io.InputStream;
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
-import java.util.Map;
+
+import com.api.jsonata4java.expressions.Expressions;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -30,21 +33,14 @@ import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
-import com.api.jsonata4java.expressions.EvaluateException;
-import com.api.jsonata4java.expressions.EvaluateRuntimeException;
-import com.api.jsonata4java.expressions.Expressions;
-import com.api.jsonata4java.expressions.ParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * JSON to JSON transformation using JSONATA.
  */
-@UriEndpoint(firstVersion = "3.4.0", scheme = "jsonata", title = "JSONATA", syntax = "jsonata:resourceUri", producerOnly = true, category = {Category.TRANSFORMATION})
+@UriEndpoint(firstVersion = "3.5.0", scheme = "jsonata", title = "JSONATA", syntax = "jsonata:resourceUri", producerOnly = true, category = {Category.TRANSFORMATION})
 public class JsonataEndpoint extends ResourceEndpoint {
 
-    private Expressions expressions = null;
+    private Expressions expressions;
 
     @UriParam(defaultValue = "Jackson")
     private JsonataInputOutputType outputType;
@@ -74,7 +70,7 @@ public class JsonataEndpoint extends ResourceEndpoint {
     }
 
     /**
-     * Specifies if the output should be Jackson JsNode or a JSON String.
+     * Specifies if the output should be Jackson JsonNode or a JSON String.
      */
     public void setOutputType(JsonataInputOutputType outputType) {
         this.outputType = outputType;
@@ -85,7 +81,7 @@ public class JsonataEndpoint extends ResourceEndpoint {
     }
 
     /**
-     * Specifies if the input is hydrated JSON or a JSON String.
+     * Specifies if the output should be Jackson JsonNode or a JSON String.
      */
     public void setInputType(JsonataInputOutputType inputType) {
         this.inputType = inputType;
@@ -104,8 +100,8 @@ public class JsonataEndpoint extends ResourceEndpoint {
             input = (JsonNode)exchange.getIn().getBody();
         }
 
-        JsonNode output=null;
-        if(expressions == null) {
+        JsonNode output = null;
+        if (expressions == null) {
             String spec = new BufferedReader(
                       new InputStreamReader(getResourceAsInputStream(), StandardCharsets.UTF_8))
                 .lines()
