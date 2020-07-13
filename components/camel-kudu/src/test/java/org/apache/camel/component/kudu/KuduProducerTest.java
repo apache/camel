@@ -30,8 +30,8 @@ import org.apache.kudu.ColumnSchema;
 import org.apache.kudu.Schema;
 import org.apache.kudu.Type;
 import org.apache.kudu.client.CreateTableOptions;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class KuduProducerTest extends AbstractKuduTest {
 
@@ -65,7 +65,7 @@ public class KuduProducerTest extends AbstractKuduTest {
         };
     }
 
-    @Before
+    @BeforeEach
     public void resetEndpoints() {
         errorEndpoint.reset();
         successEndpoint.reset();
@@ -74,7 +74,6 @@ public class KuduProducerTest extends AbstractKuduTest {
 
     @Test
     public void createTable() throws InterruptedException {
-
         errorEndpoint.expectedMessageCount(0);
         successEndpoint.expectedMessageCount(1);
 
