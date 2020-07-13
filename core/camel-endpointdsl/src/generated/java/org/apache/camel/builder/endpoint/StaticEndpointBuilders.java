@@ -3173,7 +3173,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path host
      */
-    public static org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.CMEndpointBuilder cmSms(
+    static org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.CMEndpointBuilder cmSms(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.endpointBuilder("cm-sms", path);
     }
@@ -3194,7 +3194,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path host
      */
-    public static org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.CMEndpointBuilder cmSms(
+    static org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.CMEndpointBuilder cmSms(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -4515,7 +4515,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path operation
      */
-    static org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.DockerEndpointBuilder docker(
+    public static org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.DockerEndpointBuilder docker(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.endpointBuilder("docker", path);
     }
@@ -4544,7 +4544,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path operation
      */
-    static org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.DockerEndpointBuilder docker(
+    public static org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.DockerEndpointBuilder docker(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.endpointBuilder(componentName, path);
