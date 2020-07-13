@@ -2542,7 +2542,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path queueName
      */
-    public static org.apache.camel.builder.endpoint.dsl.QueueEndpointBuilderFactory.QueueEndpointBuilder azureStorageQueue(
+    static org.apache.camel.builder.endpoint.dsl.QueueEndpointBuilderFactory.QueueEndpointBuilder azureStorageQueue(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.QueueEndpointBuilderFactory.endpointBuilder("azure-storage-queue", path);
     }
@@ -2568,7 +2568,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path queueName
      */
-    public static org.apache.camel.builder.endpoint.dsl.QueueEndpointBuilderFactory.QueueEndpointBuilder azureStorageQueue(
+    static org.apache.camel.builder.endpoint.dsl.QueueEndpointBuilderFactory.QueueEndpointBuilder azureStorageQueue(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.QueueEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -10712,7 +10712,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path apiName/methodName
      */
-    static org.apache.camel.builder.endpoint.dsl.Olingo4EndpointBuilderFactory.Olingo4EndpointBuilder olingo4(
+    public static org.apache.camel.builder.endpoint.dsl.Olingo4EndpointBuilderFactory.Olingo4EndpointBuilder olingo4(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Olingo4EndpointBuilderFactory.endpointBuilder("olingo4", path);
     }
@@ -10737,7 +10737,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path apiName/methodName
      */
-    static org.apache.camel.builder.endpoint.dsl.Olingo4EndpointBuilderFactory.Olingo4EndpointBuilder olingo4(
+    public static org.apache.camel.builder.endpoint.dsl.Olingo4EndpointBuilderFactory.Olingo4EndpointBuilder olingo4(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Olingo4EndpointBuilderFactory.endpointBuilder(componentName, path);
