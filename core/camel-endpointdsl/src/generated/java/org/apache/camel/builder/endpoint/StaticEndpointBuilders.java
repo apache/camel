@@ -7949,7 +7949,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path httpUri
      */
-    public static org.apache.camel.builder.endpoint.dsl.JettyHttpEndpointBuilderFactory.JettyHttpEndpointBuilder jetty(
+    static org.apache.camel.builder.endpoint.dsl.JettyHttpEndpointBuilderFactory.JettyHttpEndpointBuilder jetty(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.JettyHttpEndpointBuilderFactory.endpointBuilder("jetty", path);
     }
@@ -7970,7 +7970,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path httpUri
      */
-    public static org.apache.camel.builder.endpoint.dsl.JettyHttpEndpointBuilderFactory.JettyHttpEndpointBuilder jetty(
+    static org.apache.camel.builder.endpoint.dsl.JettyHttpEndpointBuilderFactory.JettyHttpEndpointBuilder jetty(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.JettyHttpEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -10522,7 +10522,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path protocol:host:port/path
      */
-    static org.apache.camel.builder.endpoint.dsl.NettyHttpEndpointBuilderFactory.NettyHttpEndpointBuilder nettyHttp(
+    public static org.apache.camel.builder.endpoint.dsl.NettyHttpEndpointBuilderFactory.NettyHttpEndpointBuilder nettyHttp(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.NettyHttpEndpointBuilderFactory.endpointBuilder("netty-http", path);
     }
@@ -10555,7 +10555,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path protocol:host:port/path
      */
-    static org.apache.camel.builder.endpoint.dsl.NettyHttpEndpointBuilderFactory.NettyHttpEndpointBuilder nettyHttp(
+    public static org.apache.camel.builder.endpoint.dsl.NettyHttpEndpointBuilderFactory.NettyHttpEndpointBuilder nettyHttp(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.NettyHttpEndpointBuilderFactory.endpointBuilder(componentName, path);
