@@ -143,7 +143,11 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
             }
         }
 
-        return processBatch(CastUtils.cast(exchanges));
+        if (CastUtils.cast(exchanges) != null) {
+            return processBatch(CastUtils.cast(exchanges));
+        } else {
+            throw new IllegalAccessException("Cannot process null exchanges");
+        }
     }
 
     protected Queue<Exchange> createExchanges(InputStream objectStream, String objectName) {
@@ -214,8 +218,8 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         try {
             GetObjectArgs.Builder getObjectRequest = GetObjectArgs.builder().bucket(bucketName).object(objectName);
 
-            if (getConfiguration().getServerSideEncryption() != null) {
-                getObjectRequest.ssec(getConfiguration().getServerSideEncryption());
+            if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+                getObjectRequest.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
             }
             if (getConfiguration().getOffset() != 0) {
                 getObjectRequest.offset(getConfiguration().getOffset());
@@ -342,8 +346,8 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                     srcBucketName, srcObjectName, destinationBucketName);
 
             CopySource.Builder copySource = CopySource.builder().bucket(srcBucketName).object(srcObjectName);
-            if (getConfiguration().getServerSideEncryption() != null) {
-                copySource.ssec(getConfiguration().getServerSideEncryption());
+            if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+                copySource.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
             }
             if (getConfiguration().getOffset() != 0) {
                 copySource.offset(getConfiguration().getOffset());
@@ -372,8 +376,8 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                     .bucket(getConfiguration().getDestinationBucketName())
                     .object(destinationObjectName);
 
-            if (getConfiguration().getDestinationServerSideEncryption() != null) {
-                copyObjectRequest.sse(getConfiguration().getDestinationServerSideEncryption());
+            if (getConfiguration().getServerSideEncryption() != null) {
+                copyObjectRequest.sse(getConfiguration().getServerSideEncryption());
             }
 
             getMinioClient().copyObject(copyObjectRequest.build());

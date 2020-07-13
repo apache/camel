@@ -140,8 +140,8 @@ public class MinioProducer extends DefaultProducer {
                 .extraHeaders(extraHeaders)
                 .userMetadata(objectMetadata);
 
-        if (getConfiguration().getServerSideEncryption() != null) {
-            putObjectRequest.sse(getConfiguration().getServerSideEncryption());
+        if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+            putObjectRequest.sse(getConfiguration().getServerSideEncryptionCustomerKey());
         }
 
         LOG.trace("Put object from exchange...");
@@ -188,12 +188,12 @@ public class MinioProducer extends DefaultProducer {
     private void copyObject(MinioClient minioClient, Exchange exchange) throws Exception {
         final String bucketName = determineBucketName(exchange);
         final String sourceKey = determineKey(exchange);
-        final String destinationKey = exchange.getIn().getHeader(MinioConstants.DESTINATION_KEY, String.class);
+        final String destinationKey = exchange.getIn().getHeader(MinioConstants.DESTINATION_OBJECT_NAME, String.class);
         final String bucketNameDestination = exchange.getIn().getHeader(MinioConstants.BUCKET_DESTINATION_NAME, String.class);
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof CopyObjectArgs) {
-                ObjectWriteResponse result = minioClient.copyObject((CopyObjectArgs) payload);
+            CopyObjectArgs.Builder payload = exchange.getIn().getMandatoryBody(CopyObjectArgs.Builder.class);
+            if (payload != null) {
+                ObjectWriteResponse result = minioClient.copyObject(payload.build());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
@@ -207,14 +207,14 @@ public class MinioProducer extends DefaultProducer {
 
             CopySource.Builder copySourceBuilder = CopySource.builder().bucket(bucketName).object(sourceKey);
 
-            if (getConfiguration().getServerSideEncryption() != null) {
-                copySourceBuilder.ssec(getConfiguration().getServerSideEncryption());
+            if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+                copySourceBuilder.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
             }
 
             CopyObjectArgs.Builder copyObjectRequest = CopyObjectArgs.builder().bucket(bucketNameDestination).object(destinationKey).source(copySourceBuilder.build());
 
-            if (getConfiguration().getDestinationServerSideEncryption() != null) {
-                copyObjectRequest.sse(getConfiguration().getDestinationServerSideEncryption());
+            if (getConfiguration().getServerSideEncryption() != null) {
+                copyObjectRequest.sse(getConfiguration().getServerSideEncryption());
             }
 
             ObjectWriteResponse copyObjectResult = minioClient.copyObject(copyObjectRequest.build());
@@ -230,9 +230,9 @@ public class MinioProducer extends DefaultProducer {
         final String bucketName = determineBucketName(exchange);
         final String sourceKey = determineKey(exchange);
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof RemoveObjectArgs) {
-                minioClient.removeObject((RemoveObjectArgs) payload);
+            RemoveObjectArgs.Builder payload = exchange.getIn().getMandatoryBody(RemoveObjectArgs.Builder.class);
+            if (payload != null) {
+                minioClient.removeObject(payload.build());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(true);
             }
@@ -251,9 +251,9 @@ public class MinioProducer extends DefaultProducer {
 
     private void deleteObjects(MinioClient minioClient, Exchange exchange) throws Exception {
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof RemoveObjectsArgs) {
-                minioClient.removeObjects((RemoveObjectsArgs) payload);
+            RemoveObjectsArgs.Builder payload = exchange.getIn().getMandatoryBody(RemoveObjectsArgs.Builder.class);
+            if (payload != null) {
+                minioClient.removeObjects(payload.build());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(true);
             }
@@ -264,7 +264,6 @@ public class MinioProducer extends DefaultProducer {
 
     private void listBuckets(MinioClient minioClient, Exchange exchange) throws Exception {
         List<Bucket> bucketsList = minioClient.listBuckets();
-
         Message message = getMessageForResponse(exchange);
         //returns iterator of bucketList
         message.setBody(bucketsList.iterator());
@@ -274,9 +273,9 @@ public class MinioProducer extends DefaultProducer {
         final String bucketName = determineBucketName(exchange);
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof RemoveBucketArgs) {
-                minioClient.removeBucket((RemoveBucketArgs) payload);
+            RemoveBucketArgs.Builder payload = exchange.getIn().getMandatoryBody(RemoveBucketArgs.Builder.class);
+            if (payload != null) {
+                minioClient.removeBucket(payload.build());
                 Message message = getMessageForResponse(exchange);
                 message.setBody("ok");
             }
@@ -292,9 +291,9 @@ public class MinioProducer extends DefaultProducer {
     private void getObject(MinioClient minioClient, Exchange exchange) throws Exception {
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetObjectArgs) {
-                InputStream respond = minioClient.getObject((GetObjectArgs) payload);
+            GetObjectArgs.Builder payload = exchange.getIn().getMandatoryBody(GetObjectArgs.Builder.class);
+            if (payload != null) {
+                InputStream respond = minioClient.getObject(payload.build());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(respond);
             }
@@ -316,9 +315,9 @@ public class MinioProducer extends DefaultProducer {
         final String length = exchange.getIn().getHeader(MinioConstants.LENGTH, String.class);
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetObjectArgs) {
-                InputStream respond = minioClient.getObject((GetObjectArgs) payload);
+            GetObjectArgs.Builder payload = exchange.getIn().getMandatoryBody(GetObjectArgs.Builder.class);
+            if (payload != null) {
+                InputStream respond = minioClient.getObject(payload.build());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(respond);
             }
@@ -341,9 +340,9 @@ public class MinioProducer extends DefaultProducer {
         final String bucketName = determineBucketName(exchange);
 
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListObjectsArgs) {
-                Iterable<Result<Item>> objectList = minioClient.listObjects((ListObjectsArgs) payload);
+            ListObjectsArgs.Builder payload = exchange.getIn().getMandatoryBody(ListObjectsArgs.Builder.class);
+            if (payload != null) {
+                Iterable<Result<Item>> objectList = minioClient.listObjects(payload.build());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(objectList.iterator());
             }

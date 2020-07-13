@@ -51,9 +51,7 @@ public class MinioComponent extends DefaultComponent {
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Bucket name must be specified.");
         }
-        if (remaining.startsWith("arn:")) {
-            remaining = remaining.substring(remaining.lastIndexOf(':') + 1);
-        }
+
         final MinioConfiguration configuration = this.configuration != null ? this.configuration.copy() : new MinioConfiguration();
         configuration.setBucketName(remaining);
         MinioEndpoint endpoint = new MinioEndpoint(uri, this, configuration);

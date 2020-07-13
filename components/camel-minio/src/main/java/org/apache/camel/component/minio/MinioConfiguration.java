@@ -19,6 +19,7 @@ package org.apache.camel.component.minio;
 import java.time.ZonedDateTime;
 
 import io.minio.MinioClient;
+import io.minio.ServerSideEncryption;
 import io.minio.ServerSideEncryptionCustomerKey;
 import okhttp3.OkHttpClient;
 import org.apache.camel.RuntimeCamelException;
@@ -53,9 +54,9 @@ public class MinioConfiguration implements Cloneable {
     private boolean objectLock;
 
     @UriParam
-    private ServerSideEncryptionCustomerKey serverSideEncryption;
+    private ServerSideEncryptionCustomerKey serverSideEncryptionCustomerKey;
     @UriParam
-    private ServerSideEncryptionCustomerKey destinationServerSideEncryption;
+    private ServerSideEncryption serverSideEncryption;
 
     @UriParam
     private MinioClient minioClient;
@@ -238,7 +239,18 @@ public class MinioConfiguration implements Cloneable {
         this.objectLock = objectLock;
     }
 
-    public ServerSideEncryptionCustomerKey getServerSideEncryption() {
+    public ServerSideEncryptionCustomerKey getServerSideEncryptionCustomerKey() {
+        return serverSideEncryptionCustomerKey;
+    }
+
+    /**
+     * (Optional) Server-side encryption for source object while copy/move objects.
+     */
+    public void setServerSideEncryptionCustomerKey(ServerSideEncryptionCustomerKey serverSideEncryptionCustomerKey) {
+        this.serverSideEncryptionCustomerKey = serverSideEncryptionCustomerKey;
+    }
+
+    public ServerSideEncryption getServerSideEncryption() {
         return serverSideEncryption;
     }
 
@@ -247,17 +259,6 @@ public class MinioConfiguration implements Cloneable {
      */
     public void setServerSideEncryption(ServerSideEncryptionCustomerKey serverSideEncryption) {
         this.serverSideEncryption = serverSideEncryption;
-    }
-
-    public ServerSideEncryptionCustomerKey getDestinationServerSideEncryption() {
-        return destinationServerSideEncryption;
-    }
-
-    /**
-     * (Optional) Server-side encryption for source object while copy/move objects.
-     */
-    public void setDestinationServerSideEncryption(ServerSideEncryptionCustomerKey destinationServerSideEncryption) {
-        this.destinationServerSideEncryption = destinationServerSideEncryption;
     }
 
     public MinioClient getMinioClient() {

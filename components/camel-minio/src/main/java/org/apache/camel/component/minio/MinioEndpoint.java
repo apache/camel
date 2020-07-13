@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Store and retrie objects from Minio Storage Service using Minio SDK.
  */
-@UriEndpoint(firstVersion = "3.5.0", scheme = "minio", title = "Minio Storage Service", syntax = "minio:bucketNameOrArn", category = {Category.CLOUD, Category.FILE})
+@UriEndpoint(firstVersion = "3.5.0", scheme = "minio", title = "Minio Storage Service", syntax = "minio:bucketName", category = {Category.CLOUD, Category.FILE})
 public class MinioEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioEndpoint.class);
@@ -60,7 +60,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
 
     @UriPath(description = "Qualified url")
     @Metadata(required = true)
-    private String bucketNameOrArn; // to support component docs
+    private String bucketName; // to support component docs
     @UriParam
     private MinioConfiguration configuration;
     @UriParam(label = "consumer", defaultValue = "10")
@@ -206,7 +206,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * Set the maxConnections parameter in the S3 client configuration
+     * Set the maxConnections parameter in the minio client configuration
      */
     public void setMaxConnections(int maxConnections) {
         this.maxConnections = maxConnections;

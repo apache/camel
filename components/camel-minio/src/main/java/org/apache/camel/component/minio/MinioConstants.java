@@ -30,8 +30,8 @@ public interface MinioConstants {
     String CONTENT_MD5 = "CamelMinioContentMD5";
     String CONTENT_TYPE = "CamelMinioContentType";
     String E_TAG = "CamelMinioETag";
-    String OBJECT_NAME = "CamelMinioKey";
-    String DESTINATION_KEY = "CamelMinioDestinationKey";
+    String OBJECT_NAME = "CamelMinioObjectName";
+    String DESTINATION_OBJECT_NAME = "CamelMinioDestinationKey";
     String LAST_MODIFIED = "CamelMinioLastModified";
     String STORAGE_CLASS = "CamelMinioStorageClass";
     String VERSION_ID = "CamelMinioVersionId";
