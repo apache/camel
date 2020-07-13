@@ -151,7 +151,7 @@
         <djl-mxnet-native-version>1.7.0-a</djl-mxnet-native-version>
         <djl-pytorch-native-version>1.5.0</djl-pytorch-native-version>
         <djl-tensorflow-native-version>2.1.0</djl-tensorflow-native-version>
-        <docker-java-version>3.2.1</docker-java-version>
+        <docker-java-version>3.2.5</docker-java-version>
         <dozer-version>6.5.0</dozer-version>
         <drools-version>7.39.0.Final</drools-version>
         <dropbox-version>3.1.4</dropbox-version>
