@@ -172,7 +172,7 @@
     <djl-pytorch-native-version>1.5.0</djl-pytorch-native-version>
     <djl-tensorflow-native-version>2.1.0</djl-tensorflow-native-version>
     <djl-version>0.5.0</djl-version>
-    <dnsjava-version>3.1.0</dnsjava-version>
+    <dnsjava-version>3.2.1</dnsjava-version>
     <docker-java-version>3.2.5</docker-java-version>
     <dozer-version>6.5.0</dozer-version>
     <drools-version>7.39.0.Final</drools-version>
