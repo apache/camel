@@ -4515,7 +4515,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path operation
      */
-    public static org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.DockerEndpointBuilder docker(
+    static org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.DockerEndpointBuilder docker(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.endpointBuilder("docker", path);
     }
@@ -4544,7 +4544,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path operation
      */
-    public static org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.DockerEndpointBuilder docker(
+    static org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.DockerEndpointBuilder docker(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -13194,7 +13194,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path jobName
      */
-    static org.apache.camel.builder.endpoint.dsl.SpringBatchEndpointBuilderFactory.SpringBatchEndpointBuilder springBatch(
+    public static org.apache.camel.builder.endpoint.dsl.SpringBatchEndpointBuilderFactory.SpringBatchEndpointBuilder springBatch(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.SpringBatchEndpointBuilderFactory.endpointBuilder("spring-batch", path);
     }
@@ -13215,7 +13215,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path jobName
      */
-    static org.apache.camel.builder.endpoint.dsl.SpringBatchEndpointBuilderFactory.SpringBatchEndpointBuilder springBatch(
+    public static org.apache.camel.builder.endpoint.dsl.SpringBatchEndpointBuilderFactory.SpringBatchEndpointBuilder springBatch(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.SpringBatchEndpointBuilderFactory.endpointBuilder(componentName, path);
