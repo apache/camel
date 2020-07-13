@@ -88,7 +88,8 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
      * @param exceptionType the exception(s)
      * @return the try builder
      */
-    public TryDefinition doCatch(Class<? extends Throwable>... exceptionType) {
+    @SafeVarargs
+    public final TryDefinition doCatch(Class<? extends Throwable>... exceptionType) {
         popBlock();
         List<Class<? extends Throwable>> list = Arrays.asList(exceptionType);
         CatchDefinition answer = new CatchDefinition(list);
