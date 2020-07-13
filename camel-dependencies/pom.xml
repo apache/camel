@@ -524,7 +524,7 @@
     <solr-version-range>[8,9)</solr-version-range>
     <spark-version>2.4.6</spark-version>
     <splunk-version>1.6.5.0_1</splunk-version>
-    <spring-batch-version>4.2.2.RELEASE</spring-batch-version>
+    <spring-batch-version>4.2.4.RELEASE</spring-batch-version>
     <spring-data-redis-version>2.3.0.RELEASE</spring-data-redis-version>
     <spring-integration-version>5.3.0.RELEASE</spring-integration-version>
     <spring-ldap-version>2.3.3.RELEASE</spring-ldap-version>
