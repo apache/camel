@@ -4465,7 +4465,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path dnsType
      */
-    static org.apache.camel.builder.endpoint.dsl.DnsEndpointBuilderFactory.DnsEndpointBuilder dns(
+    public static org.apache.camel.builder.endpoint.dsl.DnsEndpointBuilderFactory.DnsEndpointBuilder dns(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.DnsEndpointBuilderFactory.endpointBuilder("dns", path);
     }
@@ -4487,7 +4487,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path dnsType
      */
-    static org.apache.camel.builder.endpoint.dsl.DnsEndpointBuilderFactory.DnsEndpointBuilder dns(
+    public static org.apache.camel.builder.endpoint.dsl.DnsEndpointBuilderFactory.DnsEndpointBuilder dns(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.DnsEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -4515,7 +4515,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path operation
      */
-    public static org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.DockerEndpointBuilder docker(
+    static org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.DockerEndpointBuilder docker(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.endpointBuilder("docker", path);
     }
@@ -4544,7 +4544,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path operation
      */
-    public static org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.DockerEndpointBuilder docker(
+    static org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.DockerEndpointBuilder docker(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.endpointBuilder(componentName, path);

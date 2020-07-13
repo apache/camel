@@ -478,13 +478,13 @@ public class FakeDockerCmdExecFactory implements DockerCmdExecFactory {
         return null;
     }
 
-	@Override
-	public ResizeContainerCmd.Exec createResizeContainerCmdExec() {
-		return null;
-	}
+    @Override
+    public ResizeContainerCmd.Exec createResizeContainerCmdExec() {
+        return null;
+    }
 
-	@Override
-	public ResizeExecCmd.Exec createResizeExecCmdExec() {
-		return null;
-	}
+    @Override
+    public ResizeExecCmd.Exec createResizeExecCmdExec() {
+        return null;
+    }
 }
