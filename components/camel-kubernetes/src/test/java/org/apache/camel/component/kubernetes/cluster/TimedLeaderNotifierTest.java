@@ -26,11 +26,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.kubernetes.cluster.lock.KubernetesClusterEvent;
 import org.apache.camel.component.kubernetes.cluster.lock.TimedLeaderNotifier;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test the behavior of the timed notifier.
@@ -45,7 +45,7 @@ public class TimedLeaderNotifierTest {
 
     private volatile Set<String> currentMembers;
 
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         this.context = new DefaultCamelContext();
         this.context.start();
@@ -60,7 +60,7 @@ public class TimedLeaderNotifierTest {
         this.notifier.start();
     }
 
-    @After
+    @AfterEach
     public void destroy() throws Exception {
         this.notifier.stop();
         this.context.stop();

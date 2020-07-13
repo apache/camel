@@ -22,16 +22,18 @@ import io.fabric8.kubernetes.api.model.APIGroupListBuilder;
 import io.fabric8.openshift.api.model.BuildConfig;
 import io.fabric8.openshift.api.model.BuildConfigListBuilder;
 import io.fabric8.openshift.client.NamespacedOpenShiftClient;
-import io.fabric8.openshift.client.server.mock.OpenShiftServer;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.OpenShiftServer;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OpenshiftBuildConfigsProducerTest extends KubernetesTestSupport {
 
-    @Rule
+    @RegisterExtension
     public OpenShiftServer server = new OpenShiftServer();
 
     @BindToRegistry("client")
