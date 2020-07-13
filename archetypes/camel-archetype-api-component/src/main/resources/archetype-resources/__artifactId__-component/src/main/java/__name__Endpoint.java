@@ -72,7 +72,7 @@ public class ${name}Endpoint extends AbstractApiEndpoint<${name}ApiName, ${name}
 
     @Override
     protected ApiMethodPropertiesHelper<${name}Configuration> getPropertiesHelper() {
-        return ${name}PropertiesHelper.getHelper();
+        return ${name}PropertiesHelper.getHelper(getCamelContext());
     }
 
     protected String getThreadProfileName() {
