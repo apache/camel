@@ -30,6 +30,7 @@ import com.github.dockerjava.api.command.CopyFileFromContainerCmd;
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.CreateImageCmd;
 import com.github.dockerjava.api.command.CreateNetworkCmd;
+import com.github.dockerjava.api.command.CreateSecretCmd;
 import com.github.dockerjava.api.command.CreateServiceCmd;
 import com.github.dockerjava.api.command.CreateVolumeCmd;
 import com.github.dockerjava.api.command.DisconnectFromNetworkCmd;
@@ -53,6 +54,7 @@ import com.github.dockerjava.api.command.LeaveSwarmCmd;
 import com.github.dockerjava.api.command.ListContainersCmd;
 import com.github.dockerjava.api.command.ListImagesCmd;
 import com.github.dockerjava.api.command.ListNetworksCmd;
+import com.github.dockerjava.api.command.ListSecretsCmd;
 import com.github.dockerjava.api.command.ListServicesCmd;
 import com.github.dockerjava.api.command.ListSwarmNodesCmd;
 import com.github.dockerjava.api.command.ListTasksCmd;
@@ -68,12 +70,16 @@ import com.github.dockerjava.api.command.PushImageCmd;
 import com.github.dockerjava.api.command.RemoveContainerCmd;
 import com.github.dockerjava.api.command.RemoveImageCmd;
 import com.github.dockerjava.api.command.RemoveNetworkCmd;
+import com.github.dockerjava.api.command.RemoveSecretCmd;
 import com.github.dockerjava.api.command.RemoveServiceCmd;
 import com.github.dockerjava.api.command.RemoveSwarmNodeCmd;
 import com.github.dockerjava.api.command.RemoveVolumeCmd;
 import com.github.dockerjava.api.command.RenameContainerCmd;
+import com.github.dockerjava.api.command.ResizeContainerCmd;
+import com.github.dockerjava.api.command.ResizeExecCmd;
 import com.github.dockerjava.api.command.RestartContainerCmd;
 import com.github.dockerjava.api.command.SaveImageCmd;
+import com.github.dockerjava.api.command.SaveImagesCmd;
 import com.github.dockerjava.api.command.SearchImagesCmd;
 import com.github.dockerjava.api.command.StartContainerCmd;
 import com.github.dockerjava.api.command.StatsCmd;
@@ -453,26 +459,32 @@ public class FakeDockerCmdExecFactory implements DockerCmdExecFactory {
     }
 
     @Override
-    public com.github.dockerjava.api.command.SaveImagesCmd.Exec createSaveImagesCmdExec() {
-        // TODO Auto-generated method stub
+    public SaveImagesCmd.Exec createSaveImagesCmdExec() {
         return null;
     }
 
     @Override
-    public com.github.dockerjava.api.command.ListSecretsCmd.Exec createListSecretsCmdExec() {
-        // TODO Auto-generated method stub
+    public ListSecretsCmd.Exec createListSecretsCmdExec() {
         return null;
     }
 
     @Override
-    public com.github.dockerjava.api.command.CreateSecretCmd.Exec createCreateSecretCmdExec() {
-        // TODO Auto-generated method stub
+    public CreateSecretCmd.Exec createCreateSecretCmdExec() {
         return null;
     }
 
     @Override
-    public com.github.dockerjava.api.command.RemoveSecretCmd.Exec createRemoveSecretCmdExec() {
-        // TODO Auto-generated method stub
+    public RemoveSecretCmd.Exec createRemoveSecretCmdExec() {
         return null;
     }
+
+	@Override
+	public ResizeContainerCmd.Exec createResizeContainerCmdExec() {
+		return null;
+	}
+
+	@Override
+	public ResizeExecCmd.Exec createResizeExecCmdExec() {
+		return null;
+	}
 }
