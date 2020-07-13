@@ -31,10 +31,16 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.cluster.utils.ConfigMapLockSimulator;
 import org.apache.camel.component.kubernetes.cluster.utils.LeaderRecorder;
 import org.apache.camel.component.kubernetes.cluster.utils.LockTestServer;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test leader election scenarios using a mock server.
@@ -50,13 +56,13 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
 
     private Map<String, LockTestServer> lockServers;
 
-    @Before
+    @BeforeEach
     public void prepareLock() {
         this.lockSimulator = new ConfigMapLockSimulator("leaders");
         this.lockServers = new HashMap<>();
     }
 
-    @After
+    @AfterEach
     public void shutdownLock() {
         for (LockTestServer server : this.lockServers.values()) {
             try {
@@ -79,7 +85,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
         String leader = mypod1.getCurrentLeader();
         assertNotNull(leader);
         assertTrue(leader.startsWith("mypod"));
-        assertEquals("Leaders should be equals", mypod2.getCurrentLeader(), leader);
+        assertEquals(mypod2.getCurrentLeader(), leader, "Leaders should be equals");
     }
 
     @Test
@@ -111,7 +117,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
 
         String leader = mypod1.getCurrentLeader();
         assertTrue(leader.startsWith("mypod"));
-        assertEquals("Leaders should be equals", mypod2.getCurrentLeader(), leader);
+        assertEquals(mypod2.getCurrentLeader(), leader, "Leaders should be equals");
     }
 
     @Test
@@ -135,13 +141,13 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
         formerLoserRecorder.waitForANewLeader(firstLeader, 7, TimeUnit.SECONDS);
 
         String secondLeader = formerLoserRecorder.getCurrentLeader();
-        assertNotEquals("The firstLeader should be different from the new one", firstLeader, secondLeader);
+        assertNotEquals(firstLeader, secondLeader, "The firstLeader should be different from the new one");
 
         Long lossTimestamp = formerLeaderRecorder.getLastTimeOf(l -> l == null);
         Long gainTimestamp = formerLoserRecorder.getLastTimeOf(secondLeader::equals);
 
-        assertTrue("At least half distance must elapse from leadership loss and regain (see renewDeadlineSeconds)",
-                   gainTimestamp >= lossTimestamp + (LEASE_TIME_MILLIS - RENEW_DEADLINE_MILLIS) / 2);
+        assertTrue(gainTimestamp >= lossTimestamp + (LEASE_TIME_MILLIS - RENEW_DEADLINE_MILLIS) / 2,
+                "At least half distance must elapse from leadership loss and regain (see renewDeadlineSeconds)");
         checkLeadershipChangeDistance((LEASE_TIME_MILLIS - RENEW_DEADLINE_MILLIS) / 2, TimeUnit.MILLISECONDS, mypod1, mypod2);
     }
 
@@ -249,8 +255,8 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
                 } else if (info.getLeader() != null && !info.getLeader().equals(currentLeaderLastSeen.getLeader())) {
                     // switch
                     long delay = info.getChangeTimestamp() - currentLeaderLastSeen.getChangeTimestamp();
-                    assertTrue("Lease time not elapsed between switch, minimum=" + TimeUnit.MILLISECONDS.convert(minimum, unit) + ", found=" + delay,
-                               delay >= TimeUnit.MILLISECONDS.convert(minimum, unit));
+                    assertTrue(delay >= TimeUnit.MILLISECONDS.convert(minimum, unit),
+                            "Lease time not elapsed between switch, minimum=" + TimeUnit.MILLISECONDS.convert(minimum, unit) + ", found=" + delay);
                     currentLeaderLastSeen = info;
                 }
             }

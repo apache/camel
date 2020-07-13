@@ -25,19 +25,22 @@ import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscaler;
 import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerBuilder;
 import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerListBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
-import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.KubernetesServer;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KubernetesHPAProducerTest extends KubernetesTestSupport {
 
-    @Rule
+    @RegisterExtension
     public KubernetesServer server = new KubernetesServer();
 
     @BindToRegistry("kubernetesClient")
