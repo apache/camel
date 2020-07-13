@@ -19,11 +19,11 @@ package org.apache.camel.component.kubernetes.cluster.utils;
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Basic tests on the lock test server.
@@ -40,11 +40,9 @@ public class LockTestServerTest {
 
         client.configMaps().withName("xxx").createNew().withNewMetadata().withName("xxx").and().done();
 
-        try {
-            client.configMaps().withName("xxx").createNew().withNewMetadata().withName("xxx").and().done();
-            Assert.fail("Should have failed for duplicate insert");
-        } catch (Exception e) {
-        }
+        assertThrows(Exception.class,
+            () -> client.configMaps().withName("xxx").createNew().withNewMetadata().withName("xxx").and().done(),
+            "Should have failed for duplicate insert");
 
         client.configMaps().withName("xxx").createOrReplaceWithNew().editOrNewMetadata().withName("xxx").addToLabels("a", "b").and().done();
 
@@ -57,12 +55,10 @@ public class LockTestServerTest {
         ConfigMap newMap = client.configMaps().withName("xxx").get();
         assertEquals("d", newMap.getMetadata().getLabels().get("c"));
 
-        try {
+        assertThrows(Exception.class, () ->
             client.configMaps().withName("xxx").lockResourceVersion(map.getMetadata().getResourceVersion())
-                .replace(new ConfigMapBuilder(map).editOrNewMetadata().withName("xxx").addToLabels("e", "f").and().build());
-            Assert.fail("Should have failed for wrong version");
-        } catch (Exception ex) {
-        }
+                .replace(new ConfigMapBuilder(map).editOrNewMetadata().withName("xxx").addToLabels("e", "f").and().build()),
+            "Should have failed for wrong version");
 
         ConfigMap newMap2 = client.configMaps().withName("xxx").get();
         assertNull(newMap2.getMetadata().getLabels().get("e"));

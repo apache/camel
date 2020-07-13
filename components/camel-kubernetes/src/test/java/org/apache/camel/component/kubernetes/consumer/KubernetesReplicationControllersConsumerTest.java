@@ -32,10 +32,13 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Requires a running Kubernetes Cluster")
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@Disabled("Requires a running Kubernetes Cluster")
 public class KubernetesReplicationControllersConsumerTest extends KubernetesTestSupport {
 
     @EndpointInject("mock:result")
