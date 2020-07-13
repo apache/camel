@@ -2493,7 +2493,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path containerName
      */
-    static org.apache.camel.builder.endpoint.dsl.BlobEndpointBuilderFactory.BlobEndpointBuilder azureStorageBlob(
+    public static org.apache.camel.builder.endpoint.dsl.BlobEndpointBuilderFactory.BlobEndpointBuilder azureStorageBlob(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.BlobEndpointBuilderFactory.endpointBuilder("azure-storage-blob", path);
     }
@@ -2517,7 +2517,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path containerName
      */
-    static org.apache.camel.builder.endpoint.dsl.BlobEndpointBuilderFactory.BlobEndpointBuilder azureStorageBlob(
+    public static org.apache.camel.builder.endpoint.dsl.BlobEndpointBuilderFactory.BlobEndpointBuilder azureStorageBlob(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.BlobEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -13194,7 +13194,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path jobName
      */
-    public static org.apache.camel.builder.endpoint.dsl.SpringBatchEndpointBuilderFactory.SpringBatchEndpointBuilder springBatch(
+    static org.apache.camel.builder.endpoint.dsl.SpringBatchEndpointBuilderFactory.SpringBatchEndpointBuilder springBatch(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.SpringBatchEndpointBuilderFactory.endpointBuilder("spring-batch", path);
     }
@@ -13215,7 +13215,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path jobName
      */
-    public static org.apache.camel.builder.endpoint.dsl.SpringBatchEndpointBuilderFactory.SpringBatchEndpointBuilder springBatch(
+    static org.apache.camel.builder.endpoint.dsl.SpringBatchEndpointBuilderFactory.SpringBatchEndpointBuilder springBatch(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.SpringBatchEndpointBuilderFactory.endpointBuilder(componentName, path);
