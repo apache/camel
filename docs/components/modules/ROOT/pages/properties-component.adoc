@@ -94,7 +94,7 @@ token when you are providing a default value.
 
 == Defining location
 
-The properties component need to know a location(s) where to resolve the
+The properties component needs to know a location(s) where to resolve the
 properties. You can define 1 to many locations. If you define the
 location in a single String property you can separate multiple locations
 with comma such as:
