@@ -16,6 +16,7 @@
  */
 package org.apache.camel.opentracing.propagation;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -30,7 +31,13 @@ public final class CamelMessagingHeadersExtractAdapter implements TextMap {
     public CamelMessagingHeadersExtractAdapter(final Map<String, Object> map, boolean jmsEncoding) {
         // Extract string valued map entries
         this.jmsEncoding = jmsEncoding;
-        map.entrySet().stream().filter(e -> e.getValue() instanceof String).forEach(e -> this.map.put(decodeDash(e.getKey()), (String)e.getValue()));
+        map.entrySet().stream().filter(e -> e.getValue() instanceof String || e.getValue() instanceof byte[]).forEach(e -> {
+            if (e.getValue() instanceof byte[]) {
+                this.map.put(decodeDash(e.getKey()), new String((byte[])e.getValue(), StandardCharsets.UTF_8));
+            } else {
+                this.map.put(decodeDash(e.getKey()), (String)e.getValue());
+            }
+        });
     }
 
     @Override
