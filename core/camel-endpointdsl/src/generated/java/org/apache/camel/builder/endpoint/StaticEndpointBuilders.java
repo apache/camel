@@ -4734,7 +4734,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path clusterName
      */
-    static org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.ElasticsearchEndpointBuilder elasticsearchRest(
+    public static org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.ElasticsearchEndpointBuilder elasticsearchRest(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.endpointBuilder("elasticsearch-rest", path);
     }
@@ -4755,7 +4755,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path clusterName
      */
-    static org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.ElasticsearchEndpointBuilder elasticsearchRest(
+    public static org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.ElasticsearchEndpointBuilder elasticsearchRest(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -9509,7 +9509,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path host:operation
      */
-    public static org.apache.camel.builder.endpoint.dsl.LuceneEndpointBuilderFactory.LuceneEndpointBuilder lucene(
+    static org.apache.camel.builder.endpoint.dsl.LuceneEndpointBuilderFactory.LuceneEndpointBuilder lucene(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.LuceneEndpointBuilderFactory.endpointBuilder("lucene", path);
     }
@@ -9534,7 +9534,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path host:operation
      */
-    public static org.apache.camel.builder.endpoint.dsl.LuceneEndpointBuilderFactory.LuceneEndpointBuilder lucene(
+    static org.apache.camel.builder.endpoint.dsl.LuceneEndpointBuilderFactory.LuceneEndpointBuilder lucene(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.LuceneEndpointBuilderFactory.endpointBuilder(componentName, path);
