@@ -33,6 +33,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -374,7 +375,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                         if (i == 8) {
                             // final byte componentSeparator = hl7MessageBytes[4];
                             String componentSeparator = new String(hl7MessageBytes, 4, 1, charset);
-                            String[] components = headerValue.split(String.format("\\Q%s\\E", componentSeparator), 3);
+                            String[] components = headerValue.split(Pattern.quote(componentSeparator), 3);
                             message.setHeader(MllpConstants.MLLP_EVENT_TYPE, components[0]);
                             if (2 <= components.length) {
                                 message.setHeader(MllpConstants.MLLP_TRIGGER_EVENT, components[1]);
