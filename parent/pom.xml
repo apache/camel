@@ -443,7 +443,7 @@
         <olingo2-version>2.0.11</olingo2-version>
         <olingo4-version>4.7.1</olingo4-version>
         <ognl-version>3.1.12</ognl-version>
-        <openjpa-version>3.1.1</openjpa-version>
+        <openjpa-version>3.1.2</openjpa-version>
         <openstack4j-version>3.0.2</openstack4j-version>
         <opentracing-version>0.33.0</opentracing-version>
         <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
