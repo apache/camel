@@ -42,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class NamedCassandraAggregationRepositoryTest extends BaseCassandraTest {
 
     @RegisterExtension
+
     static CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit("NamedAggregationDataSet.cql");
 
     private CassandraAggregationRepository aggregationRepository;
@@ -51,19 +52,19 @@ public class NamedCassandraAggregationRepositoryTest extends BaseCassandraTest {
     @BeforeEach
     public void setUp() throws Exception {
         camelContext = new DefaultCamelContext();
-        aggregationRepository = new NamedCassandraAggregationRepository(cassandra.cluster, CassandraUnitUtils.KEYSPACE, "ID");
+        aggregationRepository = new NamedCassandraAggregationRepository(cassandra.session, "ID");
         aggregationRepository.setTable("NAMED_CAMEL_AGGREGATION");
         aggregationRepository.start();
     }
 
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        aggregationRepository.stop();
-    }
+//    @Override
+//    @AfterEach
+//    public void tearDown() throws Exception {
+//        aggregationRepository.stop();
+//    }
 
     private boolean exists(String key) {
-        return cassandra.session.execute("select KEY from NAMED_CAMEL_AGGREGATION where NAME=? and KEY=?", "ID", key).one() != null;
+        return cassandra.session.execute(String.format("select KEY from NAMED_CAMEL_AGGREGATION where NAME='ID' and KEY='%s'", key)).one() != null;
     }
 
     @Test

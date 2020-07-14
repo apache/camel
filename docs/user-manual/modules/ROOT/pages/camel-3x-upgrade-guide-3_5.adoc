@@ -11,6 +11,20 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 The `bean(class)` EIP will now lookup in the registry first whether there is a single bean instance of the given class type
 and use the existing bean (for singleton scope) instead of creating a new instance.
 
+=== camel-cassandraql
+
+Load-balancing policy has changed. There are no existing load balancing policies (see https://docs.datastax.com/en/developer/java-driver/4.3/upgrade_guide/#load-balancing-policy[upgrade guide]).
+To customize load balancing policy, please use the parameter `loadBalancingPolicyClass` and provide own implementation
+of load balancing policy.
+
+Session impelentation class has changed from `com.datastax.driver.core.Session` to
+`com.datastax.oss.driver.api.core.CqlSession` (see https://docs.datastax.com/en/developer/java-driver/4.3/upgrade_guide/#session[upgrade guide]).
+This could have direct impact on the type of parameter `beanRef` if you are using `Provided Session reference`.
+
+There is a new parameter `datacenter` (with default value `datacenter1`). Data center has to be defined for the proper
+behavior of the default load balancing policy.
+
+
 === Camel Karaf
 
 The following features has been removed due they become not compatible with OSGi: `camel-couchbase`.

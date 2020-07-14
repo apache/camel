@@ -35,5 +35,4 @@ public abstract class BaseCassandraTest extends CamelTestSupport {
             // ignore shutdown errors
         }
     }
-
 }

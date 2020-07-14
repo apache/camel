@@ -16,11 +16,17 @@
  */
 package org.apache.camel.component.cassandra;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Session;
+import java.net.InetSocketAddress;
+
+import com.datastax.oss.driver.api.core.ConsistencyLevel;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.CqlSessionBuilder;
+import com.datastax.oss.driver.api.core.DefaultConsistencyLevel;
+import com.datastax.oss.driver.api.core.config.DefaultDriverOption;
+import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
+import com.datastax.oss.driver.api.core.cql.PreparedStatement;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -32,8 +38,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ScheduledPollEndpoint;
-import org.apache.camel.utils.cassandra.CassandraLoadBalancingPolicies;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
+
+
 
 /**
  * Integrate with Cassandra 2.0+ using the CQL3 API (not the Thrift API).
@@ -52,6 +59,8 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
     private Integer port;
     @UriPath
     private String keyspace;
+    @UriParam(defaultValue = "datacenter1")
+    private String datacenter = "datacenter1";
     @UriParam
     private String cql;
     @UriParam(defaultValue = "true")
@@ -63,13 +72,11 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
     @UriParam
     private String password;
     @UriParam
-    private Cluster cluster;
+    private CqlSession session;
     @UriParam
-    private Session session;
+    private DefaultConsistencyLevel consistencyLevel;
     @UriParam
-    private ConsistencyLevel consistencyLevel;
-    @UriParam
-    private String loadBalancingPolicy;
+    private String loadBalancingPolicyClass;
     @UriParam
     private ResultSetConversionStrategy resultSetConversionStrategy = ResultSetConversionStrategies.all();
 
@@ -77,9 +84,8 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
         super(endpointUri, component);
     }
 
-    public CassandraEndpoint(String uri, CassandraComponent component, Cluster cluster, Session session, String keyspace) {
+    public CassandraEndpoint(String uri, CassandraComponent component, CqlSession session, String keyspace) {
         super(uri, component);
-        this.cluster = cluster;
         this.session = session;
         this.keyspace = keyspace;
     }
@@ -101,31 +107,22 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
         super.doStart();
 
         // we can get the cluster using various ways
-
-        if (cluster == null && beanRef != null) {
+        if (session == null && beanRef != null) {
             Object bean = CamelContextHelper.mandatoryLookup(getCamelContext(), beanRef);
-            if (bean instanceof Session) {
-                session = (Session)bean;
-                cluster = session.getCluster();
-                keyspace = session.getLoggedKeyspace();
-            } else if (bean instanceof Cluster) {
-                cluster = (Cluster)bean;
-                session = null;
+            if (bean instanceof CqlSession) {
+                session = (CqlSession)bean;
+                keyspace = session.getKeyspace().isPresent() ? session.getKeyspace().get().toString() : null;
             } else {
-                throw new IllegalArgumentException("CQL Bean type should be of type Session or Cluster but was " + bean);
+                throw new IllegalArgumentException("CQL Bean type should be of type CqlSession but was " + bean);
             }
         }
 
-        if (cluster == null && hosts != null) {
-            // use the cluster builder to create the cluster
-            cluster = createClusterBuilder().build();
+        if (session == null && hosts != null) {
+            // use the session builder to create the cluster
+            session = createSessionBuilder().build();
         }
 
-        if (cluster != null) {
-            sessionHolder = new CassandraSessionHolder(cluster, keyspace);
-        } else {
-            sessionHolder = new CassandraSessionHolder(session);
-        }
+        sessionHolder = new CassandraSessionHolder(session);
 
         sessionHolder.start();
     }
@@ -140,36 +137,33 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
         return sessionHolder;
     }
 
-    protected Cluster.Builder createClusterBuilder() throws Exception {
-        CassandraLoadBalancingPolicies cassLoadBalancingPolicies = new CassandraLoadBalancingPolicies();
-        Cluster.Builder clusterBuilder = Cluster.builder();
+    protected CqlSessionBuilder createSessionBuilder() throws Exception {
+        CqlSessionBuilder sessionBuilder = CqlSession.builder();
         for (String host : hosts.split(",")) {
-            clusterBuilder = clusterBuilder.addContactPoint(host);
-        }
-        if (port != null) {
-            clusterBuilder = clusterBuilder.withPort(port);
-        }
-        if (clusterName != null) {
-            clusterBuilder = clusterBuilder.withClusterName(clusterName);
+            sessionBuilder.addContactPoint(new InetSocketAddress(host, port == null ? 9042 : port));
         }
         if (username != null && !username.isEmpty() && password != null) {
-            clusterBuilder.withCredentials(username, password);
+            sessionBuilder.withAuthCredentials(username, password);
         }
-        if (loadBalancingPolicy != null && !loadBalancingPolicy.isEmpty()) {
-            clusterBuilder.withLoadBalancingPolicy(cassLoadBalancingPolicies.getLoadBalancingPolicy(loadBalancingPolicy));
+        if (loadBalancingPolicyClass != null && !loadBalancingPolicyClass.isEmpty()) {
+            DriverConfigLoader driverConfigLoader = DriverConfigLoader.programmaticBuilder()
+                    .withString(DefaultDriverOption.LOAD_BALANCING_POLICY_CLASS, loadBalancingPolicyClass)
+                    .build();
+            sessionBuilder.withConfigLoader(driverConfigLoader);
         }
-        return clusterBuilder;
+
+        sessionBuilder.withLocalDatacenter(datacenter);
+        sessionBuilder.withKeyspace(keyspace);
+        return sessionBuilder;
     }
 
     /**
      * Create and configure a Prepared CQL statement
      */
     protected PreparedStatement prepareStatement(String cql) {
-        PreparedStatement preparedStatement = getSessionHolder().getSession().prepare(cql);
-        if (consistencyLevel != null) {
-            preparedStatement.setConsistencyLevel(consistencyLevel);
-        }
-        return preparedStatement;
+        SimpleStatement statement = SimpleStatement.builder(cql)
+                .setConsistencyLevel(consistencyLevel).build();
+        return getSessionHolder().getSession().prepare(statement);
     }
 
     /**
@@ -242,6 +236,17 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
         this.keyspace = keyspace;
     }
 
+    public String getDatacenter() {
+        return datacenter;
+    }
+
+    /**
+     * Datacenter to use
+     */
+    public void setDatacenter(String datacenter) {
+        this.datacenter = datacenter;
+    }
+
     public String getCql() {
         return cql;
     }
@@ -254,18 +259,7 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
         this.cql = cql;
     }
 
-    public Cluster getCluster() {
-        return cluster;
-    }
-
-    /**
-     * To use the Cluster instance (you would normally not use this option)
-     */
-    public void setCluster(Cluster cluster) {
-        this.cluster = cluster;
-    }
-
-    public Session getSession() {
+    public CqlSession getSession() {
         if (session == null) {
             return sessionHolder.getSession();
         } else {
@@ -276,7 +270,7 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
     /**
      * To use the Session instance (you would normally not use this option)
      */
-    public void setSession(Session session) {
+    public void setSession(CqlSession session) {
         this.session = session;
     }
 
@@ -320,7 +314,7 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
     /**
      * Consistency level to use
      */
-    public void setConsistencyLevel(ConsistencyLevel consistencyLevel) {
+    public void setConsistencyLevel(DefaultConsistencyLevel consistencyLevel) {
         this.consistencyLevel = consistencyLevel;
     }
 
@@ -348,14 +342,15 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * To use a specific LoadBalancingPolicy
+     * To use a specific LoadBalancingPolicyClass
      */
-    public String getLoadBalancingPolicy() {
-        return loadBalancingPolicy;
+    public String getLoadBalancingPolicyClass() {
+        return loadBalancingPolicyClass;
     }
 
-    public void setLoadBalancingPolicy(String loadBalancingPolicy) {
-        this.loadBalancingPolicy = loadBalancingPolicy;
+    public void setLoadBalancingPolicyClass(String loadBalancingPolicyClass) {
+        this.loadBalancingPolicyClass = loadBalancingPolicyClass;
     }
+
 
 }

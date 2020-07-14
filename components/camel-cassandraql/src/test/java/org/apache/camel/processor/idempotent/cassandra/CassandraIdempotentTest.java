@@ -37,7 +37,7 @@ public class CassandraIdempotentTest extends BaseCassandraTest {
 
     @Override
     protected void doPreSetup() throws Exception {
-        idempotentRepository = new NamedCassandraIdempotentRepository(cassandra.cluster, CassandraUnitUtils.KEYSPACE, "ID");
+        idempotentRepository = new NamedCassandraIdempotentRepository(cassandra.session, "ID");
         idempotentRepository.setTable("NAMED_CAMEL_IDEMPOTENT");
         idempotentRepository.start();
         super.doPreSetup();

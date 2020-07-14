@@ -40,7 +40,7 @@ public class NamedCassandraIdempotentRepositoryTest extends BaseCassandraTest {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        idempotentRepository = new NamedCassandraIdempotentRepository(cassandra.cluster, CassandraUnitUtils.KEYSPACE, "ID");
+        idempotentRepository = new NamedCassandraIdempotentRepository(cassandra.session, "ID");
         idempotentRepository.setTable("NAMED_CAMEL_IDEMPOTENT");
         idempotentRepository.start();
         super.setUp();
@@ -54,7 +54,7 @@ public class NamedCassandraIdempotentRepositoryTest extends BaseCassandraTest {
     }
 
     private boolean exists(String key) {
-        return cassandra.session.execute("select KEY from NAMED_CAMEL_IDEMPOTENT where NAME=? and KEY=?", "ID", key).one() != null;
+        return cassandra.session.execute(String.format("select KEY from NAMED_CAMEL_IDEMPOTENT where NAME='ID' and KEY='%s'", key)).one() != null;
     }
 
     @Test

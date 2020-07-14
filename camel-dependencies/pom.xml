@@ -111,10 +111,10 @@
     <camel.osgi.symbolic.name>${project.groupId}.${project.artifactId}</camel.osgi.symbolic.name>
     <camel.osgi.version>version=${project.version}</camel.osgi.version>
     <camel.surefire.fork.vmargs></camel.surefire.fork.vmargs>
-    <cassandra-driver-guava-version>19.0</cassandra-driver-guava-version>
-    <cassandra-driver-version>3.7.2</cassandra-driver-version>
-    <cassandra-unit-version>3.1.3.2</cassandra-unit-version>
-    <cassandra-version>3.7</cassandra-version>
+    <cassandra-driver-guava-version>25.1-jre</cassandra-driver-guava-version>
+    <cassandra-driver-version>4.7.2</cassandra-driver-version>
+    <cassandra-unit-version>4.3.1.0</cassandra-unit-version>
+    <cassandra-version>3.11.5</cassandra-version>
     <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
     <cglib-version>3.2.12</cglib-version>
     <chunk-templates-version>3.5.0</chunk-templates-version>

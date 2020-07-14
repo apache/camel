@@ -16,21 +16,16 @@
  */
 package org.apache.camel.utils.cassandra;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
+import com.datastax.oss.driver.api.core.CqlSession;
 
 /**
  * Holds a Cassandra Session and manages its lifecycle
  */
 public class CassandraSessionHolder {
     /**
-     * Cluster
-     */
-    private final Cluster cluster;
-    /**
      * Session
      */
-    private Session session;
+    private CqlSession session;
     /**
      * Keyspace name
      */
@@ -40,27 +35,12 @@ public class CassandraSessionHolder {
      */
     private final boolean managedSession;
 
-    public CassandraSessionHolder(Cluster cluster, String keyspace) {
-        this.cluster = cluster;
-        this.keyspace = keyspace;
-        this.managedSession = true;
-    }
-
-    public CassandraSessionHolder(Session session) {
-        this.cluster = session.getCluster();
+    public CassandraSessionHolder(CqlSession session) {
         this.session = session;
-        this.keyspace = session.getLoggedKeyspace();
         this.managedSession = false;
     }
 
     public void start() {
-        if (managedSession) {
-            if (keyspace == null) {
-                this.session = cluster.connect();
-            } else {
-                this.session = cluster.connect(keyspace);
-            }
-        }
     }
 
     public void stop() {
@@ -70,16 +50,7 @@ public class CassandraSessionHolder {
         }
     }
 
-    public Session getSession() {
+    public CqlSession getSession() {
         return session;
     }
-
-    public Cluster getCluster() {
-        return cluster;
-    }
-
-    public String getKeyspace() {
-        return keyspace;
-    }
-
 }

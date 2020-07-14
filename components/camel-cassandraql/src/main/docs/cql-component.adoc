@@ -106,15 +106,15 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *cluster* (common) | To use the Cluster instance (you would normally not use this option) |  | Cluster
 | *clusterName* (common) | Cluster name |  | String
-| *consistencyLevel* (common) | Consistency level to use. The value can be one of: ANY, ONE, TWO, THREE, QUORUM, ALL, LOCAL_QUORUM, EACH_QUORUM, SERIAL, LOCAL_SERIAL, LOCAL_ONE |  | ConsistencyLevel
+| *consistencyLevel* (common) | Consistency level to use. The value can be one of: ANY, ONE, TWO, THREE, QUORUM, ALL, LOCAL_ONE, LOCAL_QUORUM, EACH_QUORUM, SERIAL, LOCAL_SERIAL |  | DefaultConsistencyLevel
 | *cql* (common) | CQL query to perform. Can be overridden with the message header with key CamelCqlQuery. |  | String
-| *loadBalancingPolicy* (common) | To use a specific LoadBalancingPolicy |  | String
+| *datacenter* (common) | Datacenter to use | datacenter1 | String
+| *loadBalancingPolicyClass* (common) | To use a specific LoadBalancingPolicyClass |  | String
 | *password* (common) | Password for session authentication |  | String
 | *prepareStatements* (common) | Whether to use PreparedStatements or regular Statements | true | boolean
 | *resultSetConversionStrategy* (common) | To use a custom class that implements logic for converting ResultSet into message body ALL, ONE, LIMIT_10, LIMIT_100... |  | ResultSetConversionStrategy
-| *session* (common) | To use the Session instance (you would normally not use this option) |  | Session
+| *session* (common) | To use the Session instance (you would normally not use this option) |  | CqlSession
 | *username* (common) | Username for session authentication |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean

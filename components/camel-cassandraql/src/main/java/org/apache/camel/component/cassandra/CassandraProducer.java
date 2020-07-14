@@ -18,10 +18,11 @@ package org.apache.camel.component.cassandra;
 
 import java.util.Collection;
 
-import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.RegularStatement;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Session;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.PreparedStatement;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import com.datastax.oss.driver.api.querybuilder.condition.ConditionalStatement;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
@@ -99,7 +100,7 @@ public class CassandraProducer extends DefaultProducer {
         Object[] cqlParams = getCqlParams(message);
 
         ResultSet resultSet;
-        Session session = getEndpoint().getSessionHolder().getSession();
+        CqlSession session = getEndpoint().getSessionHolder().getSession();
         if (isPrepareStatements()) {
             resultSet = executePreparedStatement(session, messageCql, cqlParams);
         } else {
@@ -111,7 +112,7 @@ public class CassandraProducer extends DefaultProducer {
     /**
      * Execute CQL as PreparedStatement
      */
-    private ResultSet executePreparedStatement(Session session, Object messageCql, Object[] cqlParams) {
+    private ResultSet executePreparedStatement(CqlSession session, Object messageCql, Object[] cqlParams) {
         ResultSet resultSet;
         PreparedStatement lPreparedStatement;
         if (messageCql == null) {
@@ -120,9 +121,9 @@ public class CassandraProducer extends DefaultProducer {
         } else if (messageCql instanceof String) {
             // Message CQL
             lPreparedStatement = getEndpoint().prepareStatement((String)messageCql);
-        } else if (messageCql instanceof RegularStatement) {
+        }  else if (messageCql instanceof SimpleStatement) {
             // Message Statement
-            lPreparedStatement = getEndpoint().getSession().prepare((RegularStatement)messageCql);
+            lPreparedStatement = getEndpoint().getSession().prepare((SimpleStatement) messageCql);
         } else {
             throw new IllegalArgumentException("Invalid " + CassandraConstants.CQL_QUERY + " header");
         }
@@ -137,19 +138,19 @@ public class CassandraProducer extends DefaultProducer {
     /**
      * Execute CQL as is
      */
-    private ResultSet executeStatement(Session session, Object messageCql, Object[] cqlParams) {
-        ResultSet resultSet;
+    private ResultSet executeStatement(CqlSession session, Object messageCql, Object[] cqlParams) {
+        ResultSet resultSet = null;
         String cql = null;
-        RegularStatement statement = null;
+        SimpleStatement statement = null;
         if (messageCql == null) {
             // URI CQL
             cql = getEndpoint().getCql();
         } else if (messageCql instanceof String) {
             // Message CQL
             cql = (String)messageCql;
-        } else if (messageCql instanceof RegularStatement) {
+        } else if (messageCql instanceof SimpleStatement) {
             // Message Statement
-            statement = (RegularStatement)messageCql;
+            statement = (SimpleStatement) messageCql;
         } else {
             throw new IllegalArgumentException("Invalid " + CassandraConstants.CQL_QUERY + " header");
         }
@@ -158,7 +159,8 @@ public class CassandraProducer extends DefaultProducer {
         } else if (isEmpty(cqlParams)) {
             resultSet = session.execute(cql);
         } else {
-            resultSet = session.execute(cql, cqlParams);
+            resultSet = session.execute(
+                    SimpleStatement.builder(cql).addPositionalValues(cqlParams).build());
         }
         return resultSet;
     }

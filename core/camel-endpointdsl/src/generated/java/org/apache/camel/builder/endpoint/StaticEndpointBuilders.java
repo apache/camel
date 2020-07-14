@@ -3589,7 +3589,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path beanRef:hosts:port/keyspace
      */
-    public static org.apache.camel.builder.endpoint.dsl.CassandraEndpointBuilderFactory.CassandraEndpointBuilder cql(
+    static org.apache.camel.builder.endpoint.dsl.CassandraEndpointBuilderFactory.CassandraEndpointBuilder cql(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.CassandraEndpointBuilderFactory.endpointBuilder("cql", path);
     }
@@ -3620,7 +3620,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path beanRef:hosts:port/keyspace
      */
-    public static org.apache.camel.builder.endpoint.dsl.CassandraEndpointBuilderFactory.CassandraEndpointBuilder cql(
+    static org.apache.camel.builder.endpoint.dsl.CassandraEndpointBuilderFactory.CassandraEndpointBuilder cql(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.CassandraEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -12975,7 +12975,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path url
      */
-    static org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.SolrEndpointBuilder solr(
+    public static org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.SolrEndpointBuilder solr(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.endpointBuilder("solr", path);
     }
@@ -12996,7 +12996,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path url
      */
-    static org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.SolrEndpointBuilder solr(
+    public static org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.SolrEndpointBuilder solr(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.endpointBuilder(componentName, path);

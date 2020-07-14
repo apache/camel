@@ -94,10 +94,10 @@
         <c3p0-version>0.9.5.5</c3p0-version>
         <caffeine-version>2.8.5</caffeine-version>
         <californium-version>2.2.3</californium-version>
-        <cassandra-driver-version>3.7.2</cassandra-driver-version>
-        <cassandra-driver-guava-version>19.0</cassandra-driver-guava-version>
-        <cassandra-version>3.7</cassandra-version>
-        <cassandra-unit-version>3.1.3.2</cassandra-unit-version>
+        <cassandra-driver-version>4.7.2</cassandra-driver-version>
+        <cassandra-driver-guava-version>25.1-jre</cassandra-driver-guava-version>
+        <cassandra-version>3.11.5</cassandra-version>
+        <cassandra-unit-version>4.3.1.0</cassandra-unit-version>
         <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <cglib-version>3.2.12</cglib-version>
@@ -2613,8 +2613,13 @@
                 <version>${cassandra-version}</version>
             </dependency>
             <dependency>
-                <groupId>com.datastax.cassandra</groupId>
-                <artifactId>cassandra-driver-core</artifactId>
+                <groupId>com.datastax.oss</groupId>
+                <artifactId>java-driver-core</artifactId>
+                <version>${cassandra-driver-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.datastax.oss</groupId>
+                <artifactId>java-driver-query-builder</artifactId>
                 <version>${cassandra-driver-version}</version>
             </dependency>
             <dependency>
