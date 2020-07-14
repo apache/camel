@@ -3173,7 +3173,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path host
      */
-    static org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.CMEndpointBuilder cmSms(
+    public static org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.CMEndpointBuilder cmSms(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.endpointBuilder("cm-sms", path);
     }
@@ -3194,7 +3194,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path host
      */
-    static org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.CMEndpointBuilder cmSms(
+    public static org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.CMEndpointBuilder cmSms(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -8355,7 +8355,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path entityType
      */
-    public static org.apache.camel.builder.endpoint.dsl.JpaEndpointBuilderFactory.JpaEndpointBuilder jpa(
+    static org.apache.camel.builder.endpoint.dsl.JpaEndpointBuilderFactory.JpaEndpointBuilder jpa(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.JpaEndpointBuilderFactory.endpointBuilder("jpa", path);
     }
@@ -8377,7 +8377,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path entityType
      */
-    public static org.apache.camel.builder.endpoint.dsl.JpaEndpointBuilderFactory.JpaEndpointBuilder jpa(
+    static org.apache.camel.builder.endpoint.dsl.JpaEndpointBuilderFactory.JpaEndpointBuilder jpa(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.JpaEndpointBuilderFactory.endpointBuilder(componentName, path);
