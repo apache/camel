@@ -9509,7 +9509,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path host:operation
      */
-    static org.apache.camel.builder.endpoint.dsl.LuceneEndpointBuilderFactory.LuceneEndpointBuilder lucene(
+    public static org.apache.camel.builder.endpoint.dsl.LuceneEndpointBuilderFactory.LuceneEndpointBuilder lucene(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.LuceneEndpointBuilderFactory.endpointBuilder("lucene", path);
     }
@@ -9534,7 +9534,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path host:operation
      */
-    static org.apache.camel.builder.endpoint.dsl.LuceneEndpointBuilderFactory.LuceneEndpointBuilder lucene(
+    public static org.apache.camel.builder.endpoint.dsl.LuceneEndpointBuilderFactory.LuceneEndpointBuilder lucene(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.LuceneEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -12975,7 +12975,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path url
      */
-    public static org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.SolrEndpointBuilder solr(
+    static org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.SolrEndpointBuilder solr(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.endpointBuilder("solr", path);
     }
@@ -12996,7 +12996,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path url
      */
-    public static org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.SolrEndpointBuilder solr(
+    static org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.SolrEndpointBuilder solr(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.endpointBuilder(componentName, path);
