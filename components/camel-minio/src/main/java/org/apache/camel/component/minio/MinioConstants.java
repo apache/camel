@@ -22,7 +22,7 @@ package org.apache.camel.component.minio;
 public interface MinioConstants {
 
     String BUCKET_NAME = "CamelMinioBucketName";
-    String BUCKET_DESTINATION_NAME = "CamelMinioBucketDestinationName";
+    String DESTINATION_BUCKET_NAME = "CamelMinioBucketDestinationName";
     String CACHE_CONTROL = "CamelMinioContentControl";
     String CONTENT_DISPOSITION = "CamelMinioContentDisposition";
     String CONTENT_ENCODING = "CamelMinioContentEncoding";

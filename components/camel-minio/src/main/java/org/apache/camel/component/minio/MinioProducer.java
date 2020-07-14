@@ -18,6 +18,7 @@ package org.apache.camel.component.minio;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -189,7 +190,7 @@ public class MinioProducer extends DefaultProducer {
         final String bucketName = determineBucketName(exchange);
         final String sourceKey = determineKey(exchange);
         final String destinationKey = exchange.getIn().getHeader(MinioConstants.DESTINATION_OBJECT_NAME, String.class);
-        final String bucketNameDestination = exchange.getIn().getHeader(MinioConstants.BUCKET_DESTINATION_NAME, String.class);
+        final String bucketNameDestination = exchange.getIn().getHeader(MinioConstants.DESTINATION_BUCKET_NAME, String.class);
         if (getConfiguration().isPojoRequest()) {
             CopyObjectArgs.Builder payload = exchange.getIn().getMandatoryBody(CopyObjectArgs.Builder.class);
             if (payload != null) {
@@ -344,14 +345,14 @@ public class MinioProducer extends DefaultProducer {
             if (payload != null) {
                 Iterable<Result<Item>> objectList = minioClient.listObjects(payload.build());
                 Message message = getMessageForResponse(exchange);
-                message.setBody(objectList.iterator());
+                message.setBody(objectList);
             }
         } else {
 
             Iterable<Result<Item>> objectList = minioClient.listObjects(ListObjectsArgs.builder().bucket(bucketName).recursive(getConfiguration().isRecursive()).build());
 
             Message message = getMessageForResponse(exchange);
-            message.setBody(objectList.iterator());
+            message.setBody(objectList);
         }
     }
 
