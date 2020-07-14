@@ -127,34 +127,6 @@ public interface MinioEndpointBuilderFactory {
             return this;
         }
         /**
-         * (Optional) Server-side encryption for source object while copy/move
-         * objects.
-         * 
-         * The option is a:
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
-         * 
-         * Group: common
-         */
-        default MinioEndpointConsumerBuilder destinationServerSideEncryption(
-                Object destinationServerSideEncryption) {
-            doSetProperty("destinationServerSideEncryption", destinationServerSideEncryption);
-            return this;
-        }
-        /**
-         * (Optional) Server-side encryption for source object while copy/move
-         * objects.
-         * 
-         * The option will be converted to a
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
-         * 
-         * Group: common
-         */
-        default MinioEndpointConsumerBuilder destinationServerSideEncryption(
-                String destinationServerSideEncryption) {
-            doSetProperty("destinationServerSideEncryption", destinationServerSideEncryption);
-            return this;
-        }
-        /**
          * Endpoint can be an URL, domain name, IPv4 address or IPv6 address.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -315,8 +287,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * (Optional) Server-side encryption.
          * 
-         * The option is a:
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * The option is a: <code>io.minio.ServerSideEncryption</code> type.
          * 
          * Group: common
          */
@@ -329,13 +300,41 @@ public interface MinioEndpointBuilderFactory {
          * (Optional) Server-side encryption.
          * 
          * The option will be converted to a
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * <code>io.minio.ServerSideEncryption</code> type.
          * 
          * Group: common
          */
         default MinioEndpointConsumerBuilder serverSideEncryption(
                 String serverSideEncryption) {
             doSetProperty("serverSideEncryption", serverSideEncryption);
+            return this;
+        }
+        /**
+         * (Optional) Server-side encryption for source object while copy/move
+         * objects.
+         * 
+         * The option is a:
+         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * 
+         * Group: common
+         */
+        default MinioEndpointConsumerBuilder serverSideEncryptionCustomerKey(
+                Object serverSideEncryptionCustomerKey) {
+            doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
+            return this;
+        }
+        /**
+         * (Optional) Server-side encryption for source object while copy/move
+         * objects.
+         * 
+         * The option will be converted to a
+         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * 
+         * Group: common
+         */
+        default MinioEndpointConsumerBuilder serverSideEncryptionCustomerKey(
+                String serverSideEncryptionCustomerKey) {
+            doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
             return this;
         }
         /**
@@ -640,7 +639,7 @@ public interface MinioEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the maxConnections parameter in the S3 client configuration.
+         * Set the maxConnections parameter in the minio client configuration.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -652,7 +651,7 @@ public interface MinioEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the maxConnections parameter in the S3 client configuration.
+         * Set the maxConnections parameter in the minio client configuration.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -1560,34 +1559,6 @@ public interface MinioEndpointBuilderFactory {
             return this;
         }
         /**
-         * (Optional) Server-side encryption for source object while copy/move
-         * objects.
-         * 
-         * The option is a:
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
-         * 
-         * Group: common
-         */
-        default MinioEndpointProducerBuilder destinationServerSideEncryption(
-                Object destinationServerSideEncryption) {
-            doSetProperty("destinationServerSideEncryption", destinationServerSideEncryption);
-            return this;
-        }
-        /**
-         * (Optional) Server-side encryption for source object while copy/move
-         * objects.
-         * 
-         * The option will be converted to a
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
-         * 
-         * Group: common
-         */
-        default MinioEndpointProducerBuilder destinationServerSideEncryption(
-                String destinationServerSideEncryption) {
-            doSetProperty("destinationServerSideEncryption", destinationServerSideEncryption);
-            return this;
-        }
-        /**
          * Endpoint can be an URL, domain name, IPv4 address or IPv6 address.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1748,8 +1719,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * (Optional) Server-side encryption.
          * 
-         * The option is a:
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * The option is a: <code>io.minio.ServerSideEncryption</code> type.
          * 
          * Group: common
          */
@@ -1762,13 +1732,41 @@ public interface MinioEndpointBuilderFactory {
          * (Optional) Server-side encryption.
          * 
          * The option will be converted to a
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * <code>io.minio.ServerSideEncryption</code> type.
          * 
          * Group: common
          */
         default MinioEndpointProducerBuilder serverSideEncryption(
                 String serverSideEncryption) {
             doSetProperty("serverSideEncryption", serverSideEncryption);
+            return this;
+        }
+        /**
+         * (Optional) Server-side encryption for source object while copy/move
+         * objects.
+         * 
+         * The option is a:
+         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * 
+         * Group: common
+         */
+        default MinioEndpointProducerBuilder serverSideEncryptionCustomerKey(
+                Object serverSideEncryptionCustomerKey) {
+            doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
+            return this;
+        }
+        /**
+         * (Optional) Server-side encryption for source object while copy/move
+         * objects.
+         * 
+         * The option will be converted to a
+         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * 
+         * Group: common
+         */
+        default MinioEndpointProducerBuilder serverSideEncryptionCustomerKey(
+                String serverSideEncryptionCustomerKey) {
+            doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
             return this;
         }
         /**
@@ -2092,34 +2090,6 @@ public interface MinioEndpointBuilderFactory {
             return this;
         }
         /**
-         * (Optional) Server-side encryption for source object while copy/move
-         * objects.
-         * 
-         * The option is a:
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
-         * 
-         * Group: common
-         */
-        default MinioEndpointBuilder destinationServerSideEncryption(
-                Object destinationServerSideEncryption) {
-            doSetProperty("destinationServerSideEncryption", destinationServerSideEncryption);
-            return this;
-        }
-        /**
-         * (Optional) Server-side encryption for source object while copy/move
-         * objects.
-         * 
-         * The option will be converted to a
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
-         * 
-         * Group: common
-         */
-        default MinioEndpointBuilder destinationServerSideEncryption(
-                String destinationServerSideEncryption) {
-            doSetProperty("destinationServerSideEncryption", destinationServerSideEncryption);
-            return this;
-        }
-        /**
          * Endpoint can be an URL, domain name, IPv4 address or IPv6 address.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2280,8 +2250,7 @@ public interface MinioEndpointBuilderFactory {
         /**
          * (Optional) Server-side encryption.
          * 
-         * The option is a:
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * The option is a: <code>io.minio.ServerSideEncryption</code> type.
          * 
          * Group: common
          */
@@ -2294,13 +2263,41 @@ public interface MinioEndpointBuilderFactory {
          * (Optional) Server-side encryption.
          * 
          * The option will be converted to a
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * <code>io.minio.ServerSideEncryption</code> type.
          * 
          * Group: common
          */
         default MinioEndpointBuilder serverSideEncryption(
                 String serverSideEncryption) {
             doSetProperty("serverSideEncryption", serverSideEncryption);
+            return this;
+        }
+        /**
+         * (Optional) Server-side encryption for source object while copy/move
+         * objects.
+         * 
+         * The option is a:
+         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * 
+         * Group: common
+         */
+        default MinioEndpointBuilder serverSideEncryptionCustomerKey(
+                Object serverSideEncryptionCustomerKey) {
+            doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
+            return this;
+        }
+        /**
+         * (Optional) Server-side encryption for source object while copy/move
+         * objects.
+         * 
+         * The option will be converted to a
+         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * 
+         * Group: common
+         */
+        default MinioEndpointBuilder serverSideEncryptionCustomerKey(
+                String serverSideEncryptionCustomerKey) {
+            doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
             return this;
         }
         /**
@@ -2419,12 +2416,12 @@ public interface MinioEndpointBuilderFactory {
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-minio
          * 
-         * Syntax: <code>minio:bucketNameOrArn</code>
+         * Syntax: <code>minio:bucketName</code>
          * 
-         * Path parameter: bucketNameOrArn (required)
+         * Path parameter: bucketName (required)
          * Qualified url
          * 
-         * @param path bucketNameOrArn
+         * @param path bucketName
          */
         default MinioEndpointBuilder minio(String path) {
             return MinioEndpointBuilderFactory.endpointBuilder("minio", path);
@@ -2437,14 +2434,14 @@ public interface MinioEndpointBuilderFactory {
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-minio
          * 
-         * Syntax: <code>minio:bucketNameOrArn</code>
+         * Syntax: <code>minio:bucketName</code>
          * 
-         * Path parameter: bucketNameOrArn (required)
+         * Path parameter: bucketName (required)
          * Qualified url
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path bucketNameOrArn
+         * @param path bucketName
          */
         default MinioEndpointBuilder minio(String componentName, String path) {
             return MinioEndpointBuilderFactory.endpointBuilder(componentName, path);

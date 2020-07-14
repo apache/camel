@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class MinioCopyObjectCustomerKeyOperationIntegrationTest extends CamelTestSupport {
     
     String key = UUID.randomUUID().toString();
-    ServerSideEncryptionCustomerKey secretKey = generateSecretKey();
+    final ServerSideEncryptionCustomerKey secretKey = generateSecretKey();
 
     @BindToRegistry("minioClient")
     MinioClient minioClient =
@@ -96,7 +96,7 @@ public class MinioCopyObjectCustomerKeyOperationIntegrationTest extends CamelTes
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

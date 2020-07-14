@@ -50,8 +50,6 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "destinationBucketName": getOrCreateConfiguration(target).setDestinationBucketName(property(camelContext, java.lang.String.class, value)); return true;
         case "destinationobjectname":
         case "destinationObjectName": getOrCreateConfiguration(target).setDestinationObjectName(property(camelContext, java.lang.String.class, value)); return true;
-        case "destinationserversideencryption":
-        case "destinationServerSideEncryption": getOrCreateConfiguration(target).setDestinationServerSideEncryption(property(camelContext, io.minio.ServerSideEncryptionCustomerKey.class, value)); return true;
         case "endpoint": getOrCreateConfiguration(target).setEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "includebody":
         case "includeBody": getOrCreateConfiguration(target).setIncludeBody(property(camelContext, boolean.class, value)); return true;
@@ -96,7 +94,9 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "secure": getOrCreateConfiguration(target).setSecure(property(camelContext, boolean.class, value)); return true;
         case "serversideencryption":
-        case "serverSideEncryption": getOrCreateConfiguration(target).setServerSideEncryption(property(camelContext, io.minio.ServerSideEncryptionCustomerKey.class, value)); return true;
+        case "serverSideEncryption": getOrCreateConfiguration(target).setServerSideEncryption(property(camelContext, io.minio.ServerSideEncryption.class, value)); return true;
+        case "serversideencryptioncustomerkey":
+        case "serverSideEncryptionCustomerKey": getOrCreateConfiguration(target).setServerSideEncryptionCustomerKey(property(camelContext, io.minio.ServerSideEncryptionCustomerKey.class, value)); return true;
         case "startafter":
         case "startAfter": getOrCreateConfiguration(target).setStartAfter(property(camelContext, java.lang.String.class, value)); return true;
         case "storageclass":
@@ -125,7 +125,6 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         answer.put("delimiter", java.lang.String.class);
         answer.put("destinationBucketName", java.lang.String.class);
         answer.put("destinationObjectName", java.lang.String.class);
-        answer.put("destinationServerSideEncryption", io.minio.ServerSideEncryptionCustomerKey.class);
         answer.put("endpoint", java.lang.String.class);
         answer.put("includeBody", boolean.class);
         answer.put("includeFolders", boolean.class);
@@ -152,7 +151,8 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         answer.put("region", java.lang.String.class);
         answer.put("secretKey", java.lang.String.class);
         answer.put("secure", boolean.class);
-        answer.put("serverSideEncryption", io.minio.ServerSideEncryptionCustomerKey.class);
+        answer.put("serverSideEncryption", io.minio.ServerSideEncryption.class);
+        answer.put("serverSideEncryptionCustomerKey", io.minio.ServerSideEncryptionCustomerKey.class);
         answer.put("startAfter", java.lang.String.class);
         answer.put("storageClass", java.lang.String.class);
         answer.put("unModifiedSince", java.time.ZonedDateTime.class);
@@ -188,8 +188,6 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "destinationBucketName": return getOrCreateConfiguration(target).getDestinationBucketName();
         case "destinationobjectname":
         case "destinationObjectName": return getOrCreateConfiguration(target).getDestinationObjectName();
-        case "destinationserversideencryption":
-        case "destinationServerSideEncryption": return getOrCreateConfiguration(target).getDestinationServerSideEncryption();
         case "endpoint": return getOrCreateConfiguration(target).getEndpoint();
         case "includebody":
         case "includeBody": return getOrCreateConfiguration(target).isIncludeBody();
@@ -235,6 +233,8 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "secure": return getOrCreateConfiguration(target).isSecure();
         case "serversideencryption":
         case "serverSideEncryption": return getOrCreateConfiguration(target).getServerSideEncryption();
+        case "serversideencryptioncustomerkey":
+        case "serverSideEncryptionCustomerKey": return getOrCreateConfiguration(target).getServerSideEncryptionCustomerKey();
         case "startafter":
         case "startAfter": return getOrCreateConfiguration(target).getStartAfter();
         case "storageclass":

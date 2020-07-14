@@ -36,7 +36,6 @@ public interface MinioConstants {
     String STORAGE_CLASS = "CamelMinioStorageClass";
     String VERSION_ID = "CamelMinioVersionId";
     String CANNED_ACL = "CamelMinioCannedAcl";
-    String ACL = "CamelMinioAcl";
     String MINIO_OPERATION = "CamelMinioOperation";
     String SERVER_SIDE_ENCRYPTION = "CamelMinioServerSideEncryption";
     String EXPIRATION_TIME = "CamelMinioExpirationTime";

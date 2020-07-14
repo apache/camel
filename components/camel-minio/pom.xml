@@ -53,11 +53,6 @@
             <artifactId>minio</artifactId>
             <version>7.1.0</version>
         </dependency>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>s3</artifactId>
-            <version>${aws-java-sdk2-version}</version>
-        </dependency>
 
         <!-- logging -->
         <dependency>

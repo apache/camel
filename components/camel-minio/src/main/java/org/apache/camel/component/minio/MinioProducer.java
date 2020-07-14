@@ -18,7 +18,6 @@ package org.apache.camel.component.minio;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +46,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.services.s3.model.BucketCannedACL;
 
 /**
  * A Producer which sends messages to the Minio Simple Storage
@@ -176,13 +174,6 @@ public class MinioProducer extends DefaultProducer {
             extraHeaders.put("x-amz-acl", cannedAcl);
         }
 
-        BucketCannedACL acl = exchange.getIn().getHeader(MinioConstants.ACL, BucketCannedACL.class);
-        if (acl != null) {
-            // note: if cannedacl and acl are both specified the last one will
-            // be used. refer to
-            // PutObjectRequest#setAccessControlList for more details
-            extraHeaders.put("x-amz-acl", acl.toString());
-        }
         return extraHeaders;
     }
 

@@ -26,7 +26,6 @@ The Minio Storage Service component supports 45 options, which are listed below.
 | *bypassGovernanceMode* (common) | Set this flag if you want to bypassGovernanceMode when deleting a particular object | false | boolean
 | *configuration* (common) | The component configuration |  | MinioConfiguration
 | *customHttpClient* (common) | (Optional) Set custom HTTP client for authenticated access. |  | OkHttpClient
-| *destinationServerSide Encryption* (common) | (Optional) Server-side encryption for source object while copy/move objects. |  | ServerSideEncryptionCustomerKey
 | *endpoint* (common) | Endpoint can be an URL, domain name, IPv4 address or IPv6 address |  | String
 | *minioClient* (common) | Reference to a Minio Client object in the registry. |  | MinioClient
 | *objectLock* (common) | (Optional) Set when creating new bucket. | false | boolean
@@ -35,7 +34,8 @@ The Minio Storage Service component supports 45 options, which are listed below.
 | *proxyPort* (common) | (Optional) TCP/IP port number. 80 and 443 are used as defaults for HTTP and HTTPS. |  | Integer
 | *region* (common) | (Optional) The region in which Minio client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *secure* (common) | (Optional) Flag to indicate to use secure connection to minio service or not. | false | boolean
-| *serverSideEncryption* (common) | (Optional) Server-side encryption. |  | ServerSideEncryptionCustomerKey
+| *serverSideEncryption* (common) | (Optional) Server-side encryption. |  | ServerSideEncryption
+| *serverSideEncryptionCustomer Key* (common) | (Optional) Server-side encryption for source object while copy/move objects. |  | ServerSideEncryptionCustomerKey
 | *autocloseBody* (consumer) | If this option is true and includeBody is true, then the MinioObject.close() method will be called on exchange completion. This option is strongly related to includeBody option. In case of setting includeBody to true and autocloseBody to false, it will be up to the caller to close the MinioObject stream. Setting autocloseBody to true, will close the MinioObject stream automatically. | true | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *deleteAfterRead* (consumer) | (Optional) Delete objects from Minio after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs, the object is not deleted. If this option is false, then the same objects will be retrieve over and over again on the polls. Therefore you need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the MinioConstants#BUCKET_NAME and MinioConstants#OBJECT_NAME headers, or only the MinioConstants#OBJECT_NAME header. | true | boolean
@@ -74,7 +74,7 @@ The Minio Storage Service component supports 45 options, which are listed below.
 The Minio Storage Service endpoint is configured using URI syntax:
 
 ----
-minio:bucketNameOrArn
+minio:bucketName
 ----
 
 with the following path and query parameters:
@@ -85,7 +85,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *bucketNameOrArn* | *Required* Qualified url |  | String
+| *bucketName* | *Required* Qualified url |  | String
 |===
 
 
@@ -98,7 +98,6 @@ with the following path and query parameters:
 | *autoCreateBucket* (common) | Setting the autocreation of the bucket if bucket name not exist. | true | boolean
 | *bypassGovernanceMode* (common) | Set this flag if you want to bypassGovernanceMode when deleting a particular object | false | boolean
 | *customHttpClient* (common) | (Optional) Set custom HTTP client for authenticated access. |  | OkHttpClient
-| *destinationServerSide Encryption* (common) | (Optional) Server-side encryption for source object while copy/move objects. |  | ServerSideEncryptionCustomerKey
 | *endpoint* (common) | Endpoint can be an URL, domain name, IPv4 address or IPv6 address |  | String
 | *minioClient* (common) | Reference to a Minio Client object in the registry. |  | MinioClient
 | *objectLock* (common) | (Optional) Set when creating new bucket. | false | boolean
@@ -107,7 +106,8 @@ with the following path and query parameters:
 | *proxyPort* (common) | (Optional) TCP/IP port number. 80 and 443 are used as defaults for HTTP and HTTPS. |  | Integer
 | *region* (common) | (Optional) The region in which Minio client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *secure* (common) | (Optional) Flag to indicate to use secure connection to minio service or not. | false | boolean
-| *serverSideEncryption* (common) | (Optional) Server-side encryption. |  | ServerSideEncryptionCustomerKey
+| *serverSideEncryption* (common) | (Optional) Server-side encryption. |  | ServerSideEncryption
+| *serverSideEncryptionCustomer Key* (common) | (Optional) Server-side encryption for source object while copy/move objects. |  | ServerSideEncryptionCustomerKey
 | *autocloseBody* (consumer) | If this option is true and includeBody is true, then the MinioObject.close() method will be called on exchange completion. This option is strongly related to includeBody option. In case of setting includeBody to true and autocloseBody to false, it will be up to the caller to close the MinioObject stream. Setting autocloseBody to true, will close the MinioObject stream automatically. | true | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *deleteAfterRead* (consumer) | (Optional) Delete objects from Minio after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs, the object is not deleted. If this option is false, then the same objects will be retrieve over and over again on the polls. Therefore you need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the MinioConstants#BUCKET_NAME and MinioConstants#OBJECT_NAME headers, or only the MinioConstants#OBJECT_NAME header. | true | boolean
@@ -120,7 +120,7 @@ with the following path and query parameters:
 | *includeVersions* (consumer) | The flag which is used in the ListObjectsRequest to get objects with versioning. | false | boolean
 | *length* (consumer) | (Optional) Number of bytes of object data from offset. |  | long
 | *matchETag* (consumer) | Set match ETag parameter for get object(s). |  | String
-| *maxConnections* (consumer) | Set the maxConnections parameter in the S3 client configuration | 60 | int
+| *maxConnections* (consumer) | Set the maxConnections parameter in the minio client configuration | 60 | int
 | *maxMessagesPerPoll* (consumer) | Gets the maximum number of messages as a limit to poll at each polling. Gets the maximum number of messages as a limit to poll at each polling. The default value is 10. Use 0 or a negative number to set it as unlimited. | 10 | int
 | *modifiedSince* (consumer) | Set modified since parameter for get object(s). |  | ZonedDateTime
 | *moveAfterRead* (consumer) | Move objects from bucket to a different bucket after they have been retrieved. To accomplish the operation the destinationBucket option must be set. The copy bucket operation is only performed if the Exchange is committed. If a rollback occurs, the object is not moved. | false | boolean

@@ -99,20 +99,6 @@ public interface MinioComponentBuilderFactory {
             return this;
         }
         /**
-         * (Optional) Server-side encryption for source object while copy/move
-         * objects.
-         * 
-         * The option is a:
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
-         * 
-         * Group: common
-         */
-        default MinioComponentBuilder destinationServerSideEncryption(
-                io.minio.ServerSideEncryptionCustomerKey destinationServerSideEncryption) {
-            doSetProperty("destinationServerSideEncryption", destinationServerSideEncryption);
-            return this;
-        }
-        /**
          * Endpoint can be an URL, domain name, IPv4 address or IPv6 address.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -212,14 +198,27 @@ public interface MinioComponentBuilderFactory {
         /**
          * (Optional) Server-side encryption.
          * 
+         * The option is a: <code>io.minio.ServerSideEncryption</code> type.
+         * 
+         * Group: common
+         */
+        default MinioComponentBuilder serverSideEncryption(
+                io.minio.ServerSideEncryption serverSideEncryption) {
+            doSetProperty("serverSideEncryption", serverSideEncryption);
+            return this;
+        }
+        /**
+         * (Optional) Server-side encryption for source object while copy/move
+         * objects.
+         * 
          * The option is a:
          * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
          * 
          * Group: common
          */
-        default MinioComponentBuilder serverSideEncryption(
-                io.minio.ServerSideEncryptionCustomerKey serverSideEncryption) {
-            doSetProperty("serverSideEncryption", serverSideEncryption);
+        default MinioComponentBuilder serverSideEncryptionCustomerKey(
+                io.minio.ServerSideEncryptionCustomerKey serverSideEncryptionCustomerKey) {
+            doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
             return this;
         }
         /**
@@ -659,7 +658,6 @@ public interface MinioComponentBuilderFactory {
             case "bypassGovernanceMode": getOrCreateConfiguration((MinioComponent) component).setBypassGovernanceMode((boolean) value); return true;
             case "configuration": ((MinioComponent) component).setConfiguration((org.apache.camel.component.minio.MinioConfiguration) value); return true;
             case "customHttpClient": getOrCreateConfiguration((MinioComponent) component).setCustomHttpClient((okhttp3.OkHttpClient) value); return true;
-            case "destinationServerSideEncryption": getOrCreateConfiguration((MinioComponent) component).setDestinationServerSideEncryption((io.minio.ServerSideEncryptionCustomerKey) value); return true;
             case "endpoint": getOrCreateConfiguration((MinioComponent) component).setEndpoint((java.lang.String) value); return true;
             case "minioClient": getOrCreateConfiguration((MinioComponent) component).setMinioClient((io.minio.MinioClient) value); return true;
             case "objectLock": getOrCreateConfiguration((MinioComponent) component).setObjectLock((boolean) value); return true;
@@ -668,7 +666,8 @@ public interface MinioComponentBuilderFactory {
             case "proxyPort": getOrCreateConfiguration((MinioComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "region": getOrCreateConfiguration((MinioComponent) component).setRegion((java.lang.String) value); return true;
             case "secure": getOrCreateConfiguration((MinioComponent) component).setSecure((boolean) value); return true;
-            case "serverSideEncryption": getOrCreateConfiguration((MinioComponent) component).setServerSideEncryption((io.minio.ServerSideEncryptionCustomerKey) value); return true;
+            case "serverSideEncryption": getOrCreateConfiguration((MinioComponent) component).setServerSideEncryption((io.minio.ServerSideEncryption) value); return true;
+            case "serverSideEncryptionCustomerKey": getOrCreateConfiguration((MinioComponent) component).setServerSideEncryptionCustomerKey((io.minio.ServerSideEncryptionCustomerKey) value); return true;
             case "autocloseBody": getOrCreateConfiguration((MinioComponent) component).setAutocloseBody((boolean) value); return true;
             case "bridgeErrorHandler": ((MinioComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "deleteAfterRead": getOrCreateConfiguration((MinioComponent) component).setDeleteAfterRead((boolean) value); return true;

@@ -49,8 +49,6 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         case "destinationBucketName": target.getConfiguration().setDestinationBucketName(property(camelContext, java.lang.String.class, value)); return true;
         case "destinationobjectname":
         case "destinationObjectName": target.getConfiguration().setDestinationObjectName(property(camelContext, java.lang.String.class, value)); return true;
-        case "destinationserversideencryption":
-        case "destinationServerSideEncryption": target.getConfiguration().setDestinationServerSideEncryption(property(camelContext, io.minio.ServerSideEncryptionCustomerKey.class, value)); return true;
         case "endpoint": target.getConfiguration().setEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
@@ -119,7 +117,9 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "serversideencryption":
-        case "serverSideEncryption": target.getConfiguration().setServerSideEncryption(property(camelContext, io.minio.ServerSideEncryptionCustomerKey.class, value)); return true;
+        case "serverSideEncryption": target.getConfiguration().setServerSideEncryption(property(camelContext, io.minio.ServerSideEncryption.class, value)); return true;
+        case "serversideencryptioncustomerkey":
+        case "serverSideEncryptionCustomerKey": target.getConfiguration().setServerSideEncryptionCustomerKey(property(camelContext, io.minio.ServerSideEncryptionCustomerKey.class, value)); return true;
         case "startafter":
         case "startAfter": target.getConfiguration().setStartAfter(property(camelContext, java.lang.String.class, value)); return true;
         case "startscheduler":
@@ -158,7 +158,6 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         answer.put("delimiter", java.lang.String.class);
         answer.put("destinationBucketName", java.lang.String.class);
         answer.put("destinationObjectName", java.lang.String.class);
-        answer.put("destinationServerSideEncryption", io.minio.ServerSideEncryptionCustomerKey.class);
         answer.put("endpoint", java.lang.String.class);
         answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
@@ -198,7 +197,8 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         answer.put("secretKey", java.lang.String.class);
         answer.put("secure", boolean.class);
         answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("serverSideEncryption", io.minio.ServerSideEncryptionCustomerKey.class);
+        answer.put("serverSideEncryption", io.minio.ServerSideEncryption.class);
+        answer.put("serverSideEncryptionCustomerKey", io.minio.ServerSideEncryptionCustomerKey.class);
         answer.put("startAfter", java.lang.String.class);
         answer.put("startScheduler", boolean.class);
         answer.put("storageClass", java.lang.String.class);
@@ -244,8 +244,6 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         case "destinationBucketName": return target.getConfiguration().getDestinationBucketName();
         case "destinationobjectname":
         case "destinationObjectName": return target.getConfiguration().getDestinationObjectName();
-        case "destinationserversideencryption":
-        case "destinationServerSideEncryption": return target.getConfiguration().getDestinationServerSideEncryption();
         case "endpoint": return target.getConfiguration().getEndpoint();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
@@ -315,6 +313,8 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "serversideencryption":
         case "serverSideEncryption": return target.getConfiguration().getServerSideEncryption();
+        case "serversideencryptioncustomerkey":
+        case "serverSideEncryptionCustomerKey": return target.getConfiguration().getServerSideEncryptionCustomerKey();
         case "startafter":
         case "startAfter": return target.getConfiguration().getStartAfter();
         case "startscheduler":

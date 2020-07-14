@@ -257,7 +257,7 @@ public class MinioConfiguration implements Cloneable {
     /**
      * (Optional) Server-side encryption.
      */
-    public void setServerSideEncryption(ServerSideEncryptionCustomerKey serverSideEncryption) {
+    public void setServerSideEncryption(ServerSideEncryption serverSideEncryption) {
         this.serverSideEncryption = serverSideEncryption;
     }
 

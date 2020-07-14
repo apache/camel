@@ -37,7 +37,7 @@ public class MinioComponentVerifierExtensionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testParameters() throws Exception {
+    public void testParameters() {
         Component component = context().getComponent("minio");
 
         ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
@@ -54,7 +54,7 @@ public class MinioComponentVerifierExtensionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testConnectivity() throws Exception {
+    public void testConnectivity() {
         Component component = context().getComponent("minio");
         ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
@@ -70,7 +70,7 @@ public class MinioComponentVerifierExtensionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testConnectivityAndRegion() throws Exception {
+    public void testConnectivityAndRegion() {
         Component component = context().getComponent("minio");
         ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
