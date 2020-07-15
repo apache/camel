@@ -2814,7 +2814,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path apiName/methodName
      */
-    public static org.apache.camel.builder.endpoint.dsl.BraintreeEndpointBuilderFactory.BraintreeEndpointBuilder braintree(
+    static org.apache.camel.builder.endpoint.dsl.BraintreeEndpointBuilderFactory.BraintreeEndpointBuilder braintree(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.BraintreeEndpointBuilderFactory.endpointBuilder("braintree", path);
     }
@@ -2842,7 +2842,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path apiName/methodName
      */
-    public static org.apache.camel.builder.endpoint.dsl.BraintreeEndpointBuilderFactory.BraintreeEndpointBuilder braintree(
+    static org.apache.camel.builder.endpoint.dsl.BraintreeEndpointBuilderFactory.BraintreeEndpointBuilder braintree(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.BraintreeEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -9117,7 +9117,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path masterUrl
      */
-    static org.apache.camel.builder.endpoint.dsl.KubernetesServiceAccountsEndpointBuilderFactory.KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
+    public static org.apache.camel.builder.endpoint.dsl.KubernetesServiceAccountsEndpointBuilderFactory.KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesServiceAccountsEndpointBuilderFactory.endpointBuilder("kubernetes-service-accounts", path);
     }
@@ -9138,7 +9138,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path masterUrl
      */
-    static org.apache.camel.builder.endpoint.dsl.KubernetesServiceAccountsEndpointBuilderFactory.KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
+    public static org.apache.camel.builder.endpoint.dsl.KubernetesServiceAccountsEndpointBuilderFactory.KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesServiceAccountsEndpointBuilderFactory.endpointBuilder(componentName, path);
