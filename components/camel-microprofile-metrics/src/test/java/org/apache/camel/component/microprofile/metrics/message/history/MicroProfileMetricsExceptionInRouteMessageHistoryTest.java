@@ -25,7 +25,11 @@ import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsTestSu
 import org.eclipse.microprofile.metrics.MetricID;
 import org.eclipse.microprofile.metrics.MetricRegistry.Type;
 import org.eclipse.microprofile.metrics.Timer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MicroProfileMetricsExceptionInRouteMessageHistoryTest extends MicroProfileMetricsTestSupport {
 

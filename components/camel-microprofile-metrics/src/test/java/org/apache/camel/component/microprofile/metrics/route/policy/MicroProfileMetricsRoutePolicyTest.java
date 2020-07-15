@@ -29,7 +29,7 @@ import org.eclipse.microprofile.metrics.Counter;
 import org.eclipse.microprofile.metrics.Snapshot;
 import org.eclipse.microprofile.metrics.Tag;
 import org.eclipse.microprofile.metrics.Timer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.DEFAULT_CAMEL_ROUTE_POLICY_METRIC_NAME;
@@ -41,6 +41,8 @@ import static org.apache.camel.component.microprofile.metrics.MicroProfileMetric
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_INFLIGHT_METRIC_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_TOTAL_METRIC_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.ROUTE_ID_TAG;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MicroProfileMetricsRoutePolicyTest extends MicroProfileMetricsTestSupport {
 

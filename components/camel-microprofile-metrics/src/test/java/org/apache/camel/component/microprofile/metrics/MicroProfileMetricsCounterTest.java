@@ -19,9 +19,10 @@ package org.apache.camel.component.microprofile.metrics;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.microprofile.metrics.Counter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_COUNTER_INCREMENT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MicroProfileMetricsCounterTest extends MicroProfileMetricsTestSupport {
 
