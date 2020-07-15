@@ -25,11 +25,14 @@ import org.apache.camel.Producer;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *  Tests the {@link SplitAttachmentsExpression}.
@@ -40,12 +43,12 @@ public class MailSplitAttachmentsTest extends CamelTestSupport {
     private SplitAttachmentsExpression splitAttachmentsExpression;
     private Exchange exchange;
 
-    @Before
+    @BeforeEach
     public void clearMailBox() {
         Mailbox.clearAll();
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         // create the exchange with the mail message that is multipart with a file and a Hello World text/plain message.
         endpoint = context.getEndpoint("smtp://james@mymailserver.com?password=secret");

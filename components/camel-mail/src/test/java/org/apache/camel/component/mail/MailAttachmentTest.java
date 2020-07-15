@@ -29,9 +29,13 @@ import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for Camel attachments and Mail attachments.
@@ -75,19 +79,19 @@ public class MailAttachmentTest extends CamelTestSupport {
 
         // attachment
         Map<String, Attachment> attachments = out.getIn(AttachmentMessage.class).getAttachmentObjects();
-        assertNotNull("Should have attachments", attachments);
+        assertNotNull(attachments, "Should have attachments");
         assertEquals(1, attachments.size());
 
         Attachment attachment = out.getIn(AttachmentMessage.class).getAttachmentObject("logo.jpeg");
         DataHandler handler = attachment.getDataHandler();
-        assertNotNull("The logo should be there", handler);
+        assertNotNull(handler, "The logo should be there");
 
         // content type should match
         boolean match1 = "image/jpeg; name=logo.jpeg".equals(handler.getContentType());
         boolean match2 = "application/octet-stream; name=logo.jpeg".equals(handler.getContentType());
-        assertTrue("Should match 1 or 2", match1 || match2);
+        assertTrue(match1 || match2, "Should match 1 or 2");
 
-        assertEquals("Handler name should be the file name", "logo.jpeg", handler.getName());
+        assertEquals("logo.jpeg", handler.getName(), "Handler name should be the file name");
 
         assertEquals("some sample content", attachment.getHeader("content-description"));
 

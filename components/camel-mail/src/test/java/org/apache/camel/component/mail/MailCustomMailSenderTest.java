@@ -23,8 +23,10 @@ import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MailCustomMailSenderTest extends CamelTestSupport {
 
@@ -37,7 +39,7 @@ public class MailCustomMailSenderTest extends CamelTestSupport {
     public void testSendWithCustomMailSender() throws Exception {
         sendBody("smtp://claus@localhost?javaMailSender=#mySender", "Hello World");
 
-        assertTrue("Should have used custom mail sender", sent);
+        assertTrue(sent, "Should have used custom mail sender");
     }
 
     private static class MySender implements JavaMailSender {

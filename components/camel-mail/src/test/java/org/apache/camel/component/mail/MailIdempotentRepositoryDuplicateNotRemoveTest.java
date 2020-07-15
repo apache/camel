@@ -18,8 +18,10 @@ package org.apache.camel.component.mail;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for idempotent repository.

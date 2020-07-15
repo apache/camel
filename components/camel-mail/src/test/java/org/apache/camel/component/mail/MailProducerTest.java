@@ -24,9 +24,12 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MailProducerTest extends CamelTestSupport {
 
@@ -39,7 +42,7 @@ public class MailProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
         // need to check the message header
         Exchange exchange = getMockEndpoint("mock:result").getExchanges().get(0);
-        assertNotNull("The message id should not be null", exchange.getIn().getHeader(MailConstants.MAIL_MESSAGE_ID));
+        assertNotNull(exchange.getIn().getHeader(MailConstants.MAIL_MESSAGE_ID), "The message id should not be null");
 
         Mailbox box = Mailbox.get("someone@localhost");
         assertEquals(1, box.size());
@@ -63,7 +66,7 @@ public class MailProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
         // need to check the message header
         Exchange exchange = getMockEndpoint("mock:result").getExchanges().get(0);
-        assertNotNull("The message id should not be null", exchange.getIn().getHeader(MailConstants.MAIL_MESSAGE_ID));
+        assertNotNull(exchange.getIn().getHeader(MailConstants.MAIL_MESSAGE_ID), "The message id should not be null");
 
         Mailbox box = Mailbox.get("someone@localhost");
         assertEquals(0, box.size());
