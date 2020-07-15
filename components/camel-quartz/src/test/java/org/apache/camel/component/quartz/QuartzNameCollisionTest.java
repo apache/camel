@@ -19,12 +19,16 @@ package org.apache.camel.component.quartz;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Check for duplicate name/group collision.
@@ -52,10 +56,10 @@ public class QuartzNameCollisionTest {
                     from("quartz://myGroup/myTimerName?cron=0/2+*+*+*+*+?").to("log:two", "mock:two");
                 }
             });
-            Assert.fail("Should have thrown an exception");
+            fail("Should have thrown an exception");
         } catch (FailedToCreateRouteException e) {
             String reason = e.getMessage();
-            Assert.assertEquals(reason.indexOf("Trigger key myGroup.myTimerName is already in use") >= 0, true);
+            assertTrue(reason.contains("Trigger key myGroup.myTimerName is already in use"));
         }
     }
 
@@ -165,16 +169,16 @@ public class QuartzNameCollisionTest {
         Scheduler scheduler = component.getScheduler();
         TriggerKey triggerKey = TriggerKey.triggerKey("myTimerName", "myGroup");
         Trigger trigger = scheduler.getTrigger(triggerKey);
-        Assert.assertNotNull(trigger);
+        assertNotNull(trigger);
 
         camel1.getRouteController().stopRoute("route-1");
 
         Trigger.TriggerState triggerState = component.getScheduler().getTriggerState(triggerKey);
-        Assert.assertNotNull(trigger);
-        Assert.assertEquals(Trigger.TriggerState.PAUSED, triggerState);
+        assertNotNull(trigger);
+        assertEquals(Trigger.TriggerState.PAUSED, triggerState);
     }
 
-    @After
+    @AfterEach
     public void cleanUp() throws Exception {
         if (camel1 != null) {
             camel1.stop();
