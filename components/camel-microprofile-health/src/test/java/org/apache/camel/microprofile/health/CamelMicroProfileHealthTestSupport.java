@@ -30,14 +30,19 @@ import io.smallrye.health.SmallRyeHealth;
 import io.smallrye.health.SmallRyeHealthReporter;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckResultBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.microprofile.health.HealthCheckResponse;
+import org.junit.jupiter.api.BeforeEach;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
 
     protected SmallRyeHealthReporter reporter;
 
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         reporter = new SmallRyeHealthReporter();
@@ -51,7 +56,7 @@ public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
 
     protected JsonObject getHealthJson(SmallRyeHealth health) {
         JsonParser parser = Json.createParser(new StringReader(getHealthOutput(health)));
-        assertTrue("Health check content is empty", parser.hasNext());
+        assertTrue(parser.hasNext(), "Health check content is empty");
         parser.next();
         return parser.getObject();
     }

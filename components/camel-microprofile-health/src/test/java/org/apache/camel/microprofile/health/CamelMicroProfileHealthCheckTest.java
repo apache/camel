@@ -24,7 +24,10 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
 import org.eclipse.microprofile.health.HealthCheckResponse.State;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTestSupport {
 
