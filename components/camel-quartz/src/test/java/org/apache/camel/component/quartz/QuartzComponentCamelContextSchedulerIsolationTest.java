@@ -19,17 +19,17 @@ package org.apache.camel.component.quartz;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.AfterClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Test;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 public class QuartzComponentCamelContextSchedulerIsolationTest {
 
-    @AfterClass
+    @AfterAll
     public static void afterTests() {
         System.clearProperty(JmxSystemPropertyKeys.DISABLED);
     }

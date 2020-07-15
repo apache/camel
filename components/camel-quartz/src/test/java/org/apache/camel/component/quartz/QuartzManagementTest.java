@@ -20,7 +20,12 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.isPlatform;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class QuartzManagementTest extends BaseQuartzTest {
 
@@ -31,9 +36,7 @@ public class QuartzManagementTest extends BaseQuartzTest {
     @Test
     public void testQuartzRoute() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
+        assumeFalse(isPlatform("aix"));
 
         getMockEndpoint("mock:result").expectedMessageCount(2);
 

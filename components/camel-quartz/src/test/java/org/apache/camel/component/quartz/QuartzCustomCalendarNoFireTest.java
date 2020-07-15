@@ -21,10 +21,12 @@ import java.util.Date;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.Calendar;
 import org.quartz.Scheduler;
 import org.quartz.impl.calendar.HolidayCalendar;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This test a timer endpoint in a route with Custom calendar.

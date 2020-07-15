@@ -17,41 +17,50 @@
 package org.apache.camel.component.quartz;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.junit4.TestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.quartz.CronTrigger;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest extends TestSupport {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest {
 
     private static AbstractXmlApplicationContext db;
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
+
     private AbstractXmlApplicationContext app;
     private AbstractXmlApplicationContext app2;
     private AbstractXmlApplicationContext app3;
 
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDB() {
         // boot up the database the two invocations are going to share inside a clustered quartz setup
         db = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppDatabase.xml");
         db.start();
     }
 
-    @AfterClass
+    @AfterAll
     public static void shutdownDB() {
         db.close();
     }
 
-    @After
+    @AfterEach
     public void closeApps() {
         // we're done so let's properly close the application contexts, but close
         // the second app before the first one so that the quartz scheduler running
