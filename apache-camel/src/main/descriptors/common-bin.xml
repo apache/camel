@@ -236,6 +236,7 @@
         <include>org.apache.camel:camel-jslt</include>
         <include>org.apache.camel:camel-json-validator</include>
         <include>org.apache.camel:camel-jsonapi</include>
+        <include>org.apache.camel:camel-jsonata</include>
         <include>org.apache.camel:camel-jsonpath</include>
         <include>org.apache.camel:camel-jt400</include>
         <include>org.apache.camel:camel-jta</include>

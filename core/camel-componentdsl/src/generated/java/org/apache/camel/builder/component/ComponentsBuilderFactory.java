@@ -2224,6 +2224,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.JsonValidatorComponentBuilderFactory.jsonValidator();
     }
     /**
+     * JSONATA (camel-jsonata)
+     * JSON to JSON transformation using JSONATA.
+     * 
+     * Category: transformation
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-jsonata
+     */
+    static org.apache.camel.builder.component.dsl.JsonataComponentBuilderFactory.JsonataComponentBuilder jsonata() {
+        return org.apache.camel.builder.component.dsl.JsonataComponentBuilderFactory.jsonata();
+    }
+    /**
      * JT400 (camel-jt400)
      * Exchanges messages with an IBM i system using data queues, message
      * queues, or program call. IBM i is the replacement for AS/400 and iSeries

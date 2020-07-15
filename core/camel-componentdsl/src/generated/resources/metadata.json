@@ -4141,6 +4141,27 @@
     "producerOnly": true,
     "lenientProperties": false
   },
+  "JsonataComponentBuilderFactory": {
+    "kind": "component",
+    "name": "jsonata",
+    "title": "JSONATA",
+    "description": "JSON to JSON transformation using JSONATA.",
+    "deprecated": false,
+    "firstVersion": "3.5.0",
+    "label": "transformation",
+    "javaType": "org.apache.camel.component.jsonata.JsonataComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jsonata",
+    "version": "3.5.0-SNAPSHOT",
+    "scheme": "jsonata",
+    "extendsScheme": "",
+    "syntax": "jsonata:resourceUri",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "Jt400ComponentBuilderFactory": {
     "kind": "component",
     "name": "jt400",
