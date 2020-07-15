@@ -100,10 +100,10 @@
     <camel.osgi.import.default.version>[$(version;==;$(@)),$(version;+;$(@)))</camel.osgi.import.default.version>
     <camel.osgi.import.defaults></camel.osgi.import.defaults>
     <camel.osgi.import.pkg>org.apache.camel.*;${camel.osgi.import.camel.version},
-            ${camel.osgi.import.before.defaults},
-            ${camel.osgi.import.defaults},
-            ${camel.osgi.import.additional},
-            *</camel.osgi.import.pkg>
+      ${camel.osgi.import.before.defaults},
+      ${camel.osgi.import.defaults},
+      ${camel.osgi.import.additional},
+      *</camel.osgi.import.pkg>
     <camel.osgi.import.strict.version>version="[$(version;===;${camel.osgi.version.clean}),$(version;==+;${camel.osgi.version.clean}))"</camel.osgi.import.strict.version>
     <camel.osgi.manifest>${project.build.outputDirectory}/META-INF/MANIFEST.MF</camel.osgi.manifest>
     <camel.osgi.private.pkg>!*</camel.osgi.private.pkg>

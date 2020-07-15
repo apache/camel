@@ -22,7 +22,6 @@ import org.apache.camel.Exchange;
 /**
  * Utility class for managing active spans as a stack associated with
  * an exchange.
- *
  */
 public final class ActiveSpanManager {
 
@@ -52,7 +51,7 @@ public final class ActiveSpanManager {
      * onto a stack.
      *
      * @param exchange The exchange
-     * @param span The span
+     * @param span     The span
      */
     public static void activate(Exchange exchange, Span span) {
         exchange.setProperty(ACTIVE_SPAN_PROPERTY,
@@ -79,21 +78,20 @@ public final class ActiveSpanManager {
      * the parent holder. This will be used to maintain a stack for spans, built
      * up during the execution of a series of chained camel exchanges, and then
      * unwound when the responses are processed.
-     *
      */
     public static class Holder {
         private Holder parent;
         private Span span;
-    
+
         public Holder(Holder parent, Span span) {
             this.parent = parent;
             this.span = span;
         }
-    
+
         public Holder getParent() {
             return parent;
         }
-    
+
         public Span getSpan() {
             return span;
         }

@@ -19,7 +19,7 @@ package org.apache.camel.opentracing;
 import io.opentracing.Span;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.opentracing.decorators.SedaSpanDecorator;
+import org.apache.camel.tracing.decorators.SedaSpanDecorator;
 
 public class TestSEDASpanDecorator extends SedaSpanDecorator {
 
