@@ -9117,7 +9117,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path masterUrl
      */
-    public static org.apache.camel.builder.endpoint.dsl.KubernetesServiceAccountsEndpointBuilderFactory.KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
+    static org.apache.camel.builder.endpoint.dsl.KubernetesServiceAccountsEndpointBuilderFactory.KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesServiceAccountsEndpointBuilderFactory.endpointBuilder("kubernetes-service-accounts", path);
     }
@@ -9138,7 +9138,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path masterUrl
      */
-    public static org.apache.camel.builder.endpoint.dsl.KubernetesServiceAccountsEndpointBuilderFactory.KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
+    static org.apache.camel.builder.endpoint.dsl.KubernetesServiceAccountsEndpointBuilderFactory.KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesServiceAccountsEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -11087,7 +11087,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path configFile
      */
-    static org.apache.camel.builder.endpoint.dsl.OptaPlannerEndpointBuilderFactory.OptaPlannerEndpointBuilder optaplanner(
+    public static org.apache.camel.builder.endpoint.dsl.OptaPlannerEndpointBuilderFactory.OptaPlannerEndpointBuilder optaplanner(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.OptaPlannerEndpointBuilderFactory.endpointBuilder("optaplanner", path);
     }
@@ -11108,7 +11108,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path configFile
      */
-    static org.apache.camel.builder.endpoint.dsl.OptaPlannerEndpointBuilderFactory.OptaPlannerEndpointBuilder optaplanner(
+    public static org.apache.camel.builder.endpoint.dsl.OptaPlannerEndpointBuilderFactory.OptaPlannerEndpointBuilder optaplanner(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.OptaPlannerEndpointBuilderFactory.endpointBuilder(componentName, path);
