@@ -26,6 +26,7 @@ import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.contrib.tracerresolver.TracerResolver;
 import io.opentracing.noop.NoopTracerFactory;
+import io.opentracing.propagation.Format;
 import io.opentracing.tag.Tags;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -38,6 +39,10 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.opentracing.decorators.AbstractInternalSpanDecorator;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LogListener;
@@ -45,7 +50,9 @@ import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -69,6 +76,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
     private static final Logger LOG = LoggerFactory.getLogger(OpenTracingTracer.class);
     private static final Map<String, SpanDecorator> DECORATORS = new HashMap<>();
 
+    private final OpenTracingEventNotifier eventNotifier = new OpenTracingEventNotifier();
     private final OpenTracingLogListener logListener = new OpenTracingLogListener();
     private Tracer tracer;
     private CamelContext camelContext;
@@ -188,6 +196,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
     protected void doInit() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
 
+        camelContext.getManagementStrategy().addEventNotifier(eventNotifier);
         if (!camelContext.getRoutePolicyFactories().contains(this)) {
             camelContext.addRoutePolicyFactory(this);
         }
@@ -213,6 +222,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
             tracer = NoopTracerFactory.create();
         }
 
+        ServiceHelper.startService(eventNotifier);
         if (tracer != null) {
             try { // Take care NOT to import GlobalTracer as it is an optional dependency and may not be on the classpath.
                 io.opentracing.util.GlobalTracer.registerIfAbsent(tracer);
@@ -224,8 +234,74 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
 
     @Override
     protected void doShutdown() throws Exception {
+        // stop event notifier
+        camelContext.getManagementStrategy().removeEventNotifier(eventNotifier);
+        ServiceHelper.stopService(eventNotifier);
+
         // remove route policy
         camelContext.getRoutePolicyFactories().remove(this);
+    }
+
+    private final class OpenTracingEventNotifier extends EventNotifierSupport {
+
+        @Override
+        public void notify(CamelEvent event) throws Exception {
+            try {
+                if (event instanceof ExchangeSendingEvent) {
+                    ExchangeSendingEvent ese = (ExchangeSendingEvent)event;
+                    SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
+                    if (sd instanceof AbstractInternalSpanDecorator || !sd.newSpan() || isExcluded(ese.getExchange(), ese.getEndpoint())) {
+                        return;
+                    }
+                    Span parent = ActiveSpanManager.getSpan(ese.getExchange());
+                    Tracer.SpanBuilder spanBuilder = tracer.buildSpan(sd.getOperationName(ese.getExchange(), ese.getEndpoint())).withTag(Tags.SPAN_KIND.getKey(),
+                            sd.getInitiatorSpanKind());
+                    // Temporary workaround to avoid adding 'null' span as a
+                    // parent
+                    if (parent != null) {
+                        spanBuilder.asChildOf(parent);
+                    }
+                    Span span = spanBuilder.start();
+                    sd.pre(span, ese.getExchange(), ese.getEndpoint());
+                    tracer.inject(span.context(), Format.Builtin.TEXT_MAP, sd.getInjectAdapter(ese.getExchange().getIn().getHeaders(), encoding));
+                    ActiveSpanManager.activate(ese.getExchange(), span);
+
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("OpenTracing: start client span={}", span);
+                    }
+                } else if (event instanceof ExchangeSentEvent) {
+                    ExchangeSentEvent ese = (CamelEvent.ExchangeSentEvent)event;
+                    SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
+                    if (sd instanceof AbstractInternalSpanDecorator || !sd.newSpan() || isExcluded(ese.getExchange(), ese.getEndpoint())) {
+                        return;
+                    }
+                    Span span = ActiveSpanManager.getSpan(ese.getExchange());
+                    if (span != null) {
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("OpenTracing: start client span={}", span);
+                        }
+                        sd.post(span, ese.getExchange(), ese.getEndpoint());
+                        span.finish();
+                        ActiveSpanManager.deactivate(ese.getExchange());
+                    } else {
+                        LOG.warn("OpenTracing: could not find managed span for exchange={}", ese.getExchange());
+                    }
+                }
+            } catch (Throwable t) {
+                // This exception is ignored
+                LOG.warn("OpenTracing: Failed to capture tracing data", t);
+            }
+        }
+
+        @Override
+        public boolean isEnabled(CamelEvent event) {
+            return event instanceof ExchangeSendingEvent || event instanceof ExchangeSentEvent;
+        }
+
+        @Override
+        public String toString() {
+            return "OpenTracingEventNotifier";
+        }
     }
 
     protected SpanDecorator getSpanDecorator(Endpoint endpoint) {
