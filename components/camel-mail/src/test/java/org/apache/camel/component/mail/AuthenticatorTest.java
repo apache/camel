@@ -31,9 +31,11 @@ import javax.mail.internet.MimeMultipart;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AuthenticatorTest extends CamelTestSupport {
 
@@ -63,7 +65,7 @@ public class AuthenticatorTest extends CamelTestSupport {
 
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
         String text = exchange.getIn().getBody(String.class);
-        assertEquals("mail body", body, text);
+        assertEquals(body, text, "mail body");
         return body;
     }
 

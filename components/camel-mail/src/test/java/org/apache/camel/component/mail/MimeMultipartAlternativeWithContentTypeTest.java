@@ -24,13 +24,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.mail.MailConstants.MAIL_ALTERNATIVE_BODY;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MimeMultipartAlternativeWithContentTypeTest extends CamelTestSupport {
+    private Logger log = LoggerFactory.getLogger(getClass());
     private String alternativeBody = "hello world! (plain text)";
     private String htmlBody = "<html><body><h1>Hello</h1>World</body></html>";
 
@@ -64,13 +69,13 @@ public class MimeMultipartAlternativeWithContentTypeTest extends CamelTestSuppor
         ByteArrayOutputStream baos = new ByteArrayOutputStream(((MailMessage)out.getIn()).getMessage().getSize());
         ((MailMessage)out.getIn()).getMessage().writeTo(baos);
         String dumpedMessage = baos.toString();
-        assertTrue("There should have the " + expectString, dumpedMessage.indexOf(expectString) > 0);
+        assertTrue(dumpedMessage.indexOf(expectString) > 0, "There should have the " + expectString);
         log.trace("multipart alternative: \n{}", dumpedMessage);
 
         // plain text
         assertEquals(alternativeBody, out.getIn().getBody(String.class));
 
-        assertEquals("multipart body should have 2 parts", 2, out.getIn().getBody(MimeMultipart.class).getCount());
+        assertEquals(2, out.getIn().getBody(MimeMultipart.class).getCount(), "multipart body should have 2 parts");
     }
 
     @Test

@@ -22,9 +22,12 @@ import java.util.Map;
 import javax.mail.Message;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test for Mail using camel headers to set recipient subject.
@@ -53,8 +56,8 @@ public class MailUsingHeadersTest extends CamelTestSupport {
         assertEquals("jstrachan@apache.org", msg.getFrom()[0].toString());
         assertEquals("Camel rocks", msg.getSubject());
         
-        assertNull("We should not get the message header here", msg.getHeader("CamelFileName"));
-        assertNull("We should not get the message header here", msg.getHeader("org.apache.camel.test"));
+        assertNull(msg.getHeader("CamelFileName"), "We should not get the message header here");
+        assertNull(msg.getHeader("org.apache.camel.test"), "We should not get the message header here");
     }
 
     @Test
