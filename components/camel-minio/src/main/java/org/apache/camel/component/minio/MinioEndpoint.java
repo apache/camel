@@ -104,7 +104,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         String bucketName = getConfiguration().getBucketName();
         LOG.trace("Querying whether bucket {} already exists...", bucketName);
 
-        if (bucketExists(minioClient, bucketName)) {
+        if (bucketExists(bucketName)) {
             LOG.trace("Bucket {} already exists", bucketName);
         } else {
             if (!getConfiguration().isAutoCreateBucket()) {
@@ -223,7 +223,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         return textBuilder.toString();
     }
 
-    private boolean bucketExists(MinioClient minioClient, String bucketName) throws Exception {
+    private boolean bucketExists(String bucketName) throws Exception {
         try {
             return minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
 

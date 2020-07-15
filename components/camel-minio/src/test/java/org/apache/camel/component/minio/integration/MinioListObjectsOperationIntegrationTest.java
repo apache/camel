@@ -58,7 +58,7 @@ public class MinioListObjectsOperationIntegrationTest extends CamelTestSupport {
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
-        template.send("direct:listBucket", exchange -> exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.listBuckets));
+        template.send("direct:listBuckets", exchange -> exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.listBuckets));
 
         template.send("direct:addObject", ExchangePattern.InOnly, exchange -> {
             exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest2");

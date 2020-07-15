@@ -48,7 +48,7 @@ public class MinioDeleteBucketOperationIntegrationTest extends CamelTestSupport 
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
-        template.send("direct:listBucket", exchange -> exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.listBuckets));
+        template.send("direct:listBuckets", exchange -> exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.listBuckets));
 
         template.send("direct:deleteBucket", exchange -> {
             exchange.getIn().setHeader(MinioConstants.BUCKET_NAME, "mycamel2");
@@ -65,7 +65,7 @@ public class MinioDeleteBucketOperationIntegrationTest extends CamelTestSupport 
             public void configure() {
                 String minioEndpoint = "minio://mycamel2?autoCreateBucket=true";
 
-                from("direct:listBucket").to(minioEndpoint);
+                from("direct:listBuckets").to(minioEndpoint);
 
                 from("direct:deleteBucket").to(minioEndpoint).to("mock:result");
 

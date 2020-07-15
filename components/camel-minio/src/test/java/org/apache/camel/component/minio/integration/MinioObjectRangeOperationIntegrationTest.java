@@ -57,7 +57,7 @@ public class MinioObjectRangeOperationIntegrationTest extends CamelTestSupport {
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
-        template.send("direct:getObjectRange", exchange -> {
+        template.send("direct:getPartialObject", exchange -> {
             exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "element.txt");
             exchange.getIn().setHeader(MinioConstants.OFFSET, 0);
             exchange.getIn().setHeader(MinioConstants.LENGTH, 9);

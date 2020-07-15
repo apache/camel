@@ -24,8 +24,11 @@ import java.util.UUID;
 
 import javax.crypto.KeyGenerator;
 
+import io.minio.CopyObjectArgs;
+import io.minio.CopySource;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
 import io.minio.ServerSideEncryption;
 import io.minio.ServerSideEncryptionCustomerKey;
 import org.apache.camel.BindToRegistry;
@@ -67,15 +70,35 @@ public class MinioCopyObjectCustomerKeyOperationIntegrationTest extends CamelTes
         result.expectedMessageCount(1);
 
         template.send("direct:putObject", exchange -> {
-            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "test.txt");
-            exchange.getIn().setBody("Test");
+            String string = "Test";
+
+            //use ByteArrayInputStream to get the bytes of the String and convert them to InputStream.
+            InputStream inputStream = new ByteArrayInputStream(string.getBytes(StandardCharsets.UTF_8));
+
+            PutObjectArgs.Builder putObjectRequest = PutObjectArgs.builder()
+                    .stream(inputStream, inputStream.available(), -1)
+                    .bucket("mycamel")
+                    .object("test.txt")
+                    .sse(secretKey);
+
+            exchange.getIn().setBody(putObjectRequest);
         });
 
         template.send("direct:copyObject", exchange -> {
-            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "test.txt");
-            exchange.getIn().setHeader(MinioConstants.DESTINATION_OBJECT_NAME, "test1.txt");
-            exchange.getIn().setHeader(MinioConstants.DESTINATION_BUCKET_NAME, "mycamel1");
+
+            CopySource.Builder copySourceBuilder = CopySource.builder()
+                    .bucket("mycamel")
+                    .object("test.txt")
+                    .ssec(secretKey);
+
+            CopyObjectArgs.Builder copyObjectRequest = CopyObjectArgs.builder()
+                    .bucket("mycamel1")
+                    .object("test1.txt")
+                    .source(copySourceBuilder.build())
+                    .sse(secretKey);
+
             exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.copyObject);
+            exchange.getIn().setBody(copyObjectRequest);
         });
         
         Exchange respond = template.request("direct:getObject", exchange -> {
@@ -83,6 +106,7 @@ public class MinioCopyObjectCustomerKeyOperationIntegrationTest extends CamelTes
                     .object("test1.txt")
                     .bucket("mycamel1")
                     .ssec(secretKey);
+
             exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.getObject);
             exchange.getIn().setBody(getObjectRequest);
         });
@@ -100,9 +124,10 @@ public class MinioCopyObjectCustomerKeyOperationIntegrationTest extends CamelTes
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String minioEndpoint = "minio://mycamel?autoCreateBucket=false";
+                String minioEndpoint = "minio://mycamel?autoCreateBucket=false&pojoRequest=true";
                 String minioEndpoint1 = "minio://mycamel1?autoCreateBucket=false&pojoRequest=true";
-                from("direct:putObject").setHeader(MinioConstants.OBJECT_NAME, constant("test.txt")).setBody(constant("Test")).to(minioEndpoint);
+
+                from("direct:putObject").to(minioEndpoint);
 
                 from("direct:copyObject").to(minioEndpoint);
                 

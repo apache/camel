@@ -105,7 +105,8 @@ public class MinioComponentIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String minioEndpointUri = "minio://mycamelbucket?accessKey=Q3AM3UQ867SPQQA43P2F&secretKey=zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG&region=us-west-1&autoCreateBucket=false";
+                String minioEndpointUri =
+                        "minio://mycamelbucket?accessKey=Q3AM3UQ867SPQQA43P2F&secretKey=zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG&region=us-west-1&autoCreateBucket=true&endpoint=https://play.min.io";
 
                 from("direct:start").to(minioEndpointUri);
 
