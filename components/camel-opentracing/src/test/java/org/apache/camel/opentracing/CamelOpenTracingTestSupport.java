@@ -96,8 +96,9 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
             System.out.println("\tComponent: " + mockSpan.tags().get(Tags.COMPONENT.getKey()));
             System.out.println("\tTags: " + mockSpan.tags());
             System.out.println("\tLogs: ");
-            for (final MockSpan.LogEntry logEntry : mockSpan.logEntries())
+            for (final MockSpan.LogEntry logEntry : mockSpan.logEntries()) {
                 System.out.println("\t" + logEntry.fields());
+            }
         });
 
         for (int i = 0; i < testdata.length; i++) {
@@ -110,7 +111,7 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
             boolean matched = s.operationName().equals(testdata.getOperation());
 
             if (s.tags().containsKey("camel-uri")) {
-              matched = matched && s.tags().get("camel.uri").equals(testdata.getUri());
+                matched = matched && s.tags().get("camel.uri").equals(testdata.getUri());
             }
 
             if (s.tags().containsKey(Tags.SPAN_KIND.getKey())) {

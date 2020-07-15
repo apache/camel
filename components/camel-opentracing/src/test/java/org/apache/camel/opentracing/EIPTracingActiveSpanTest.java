@@ -26,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.InterceptStrategy;
 import org.junit.Test;
 
-import java.lang.reflect.Field;
-
 public class EIPTracingActiveSpanTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
@@ -66,8 +64,7 @@ public class EIPTracingActiveSpanTest extends CamelOpenTracingTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-            from("direct:start").routeId("start")
-                .process(new Processor() {
+                from("direct:start").routeId("start").process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         // here you can use GlobalTracer if it's in your classpath or

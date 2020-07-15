@@ -81,7 +81,7 @@ public class EIPTracingRouteTest extends CamelOpenTracingTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("start")
-                        .to("seda:a").id("direct-to");                        ;
+                        .to("seda:a").id("direct-to");
 
                 from("seda:a").routeId("a")
                     .log("routing at ${routeId}").id("a-log-1")
