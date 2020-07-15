@@ -19,9 +19,10 @@ package org.apache.camel.component.microprofile.metrics;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.microprofile.metrics.Meter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_METER_MARK;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MicroProfileMetricsMeterTest extends MicroProfileMetricsTestSupport {
 
