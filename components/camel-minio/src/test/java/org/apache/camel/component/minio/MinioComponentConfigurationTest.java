@@ -26,8 +26,8 @@ public class MinioComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithMinimalConfiguration() throws Exception {
         MinioComponent component = context.getComponent("minio", MinioComponent.class);
-        MinioEndpoint endpoint = (MinioEndpoint)component
-            .createEndpoint("minio://TestDomain?accessKey=xxx&secretKey=yyy&region=us-west-1&endpoint=http://localhost:4572");
+        MinioEndpoint endpoint = (MinioEndpoint) component
+                .createEndpoint("minio://TestDomain?accessKey=xxx&secretKey=yyy&region=us-west-1&endpoint=http://localhost:4572");
         assertEquals(endpoint.getConfiguration().getEndpoint(), "http://localhost:4572");
     }
 }

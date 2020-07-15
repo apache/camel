@@ -88,7 +88,7 @@ public class MinioObjectRangeOperationIntegrationTest extends CamelTestSupport {
         try (Reader reader = new BufferedReader(new InputStreamReader(minioObject, Charset.forName(StandardCharsets.UTF_8.name())))) {
             int c;
             while ((c = reader.read()) != -1) {
-                textBuilder.append((char)c);
+                textBuilder.append((char) c);
             }
         }
         return textBuilder.toString();

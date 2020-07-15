@@ -51,12 +51,12 @@ public class MinioConsumerIntegrationTest extends CamelTestSupport {
             exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "test.txt");
             exchange.getIn().setBody("Test");
         });
-        
+
         template.send("direct:putObject", exchange -> {
             exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "test1.txt");
             exchange.getIn().setBody("Test1");
         });
-        
+
         template.send("direct:putObject", exchange -> {
             exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "test2.txt");
             exchange.getIn().setBody("Test2");
@@ -71,7 +71,7 @@ public class MinioConsumerIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                    String minioEndpoint = "minio://mycamel?autoCreateBucket=false";
+                String minioEndpoint = "minio://mycamel?autoCreateBucket=false";
 
                 from("direct:putObject").startupOrder(1).to(minioEndpoint).to("mock:result");
 

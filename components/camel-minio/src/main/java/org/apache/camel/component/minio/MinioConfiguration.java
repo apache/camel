@@ -633,7 +633,7 @@ public class MinioConfiguration implements Cloneable {
 
     public MinioConfiguration copy() {
         try {
-            return (MinioConfiguration)super.clone();
+            return (MinioConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

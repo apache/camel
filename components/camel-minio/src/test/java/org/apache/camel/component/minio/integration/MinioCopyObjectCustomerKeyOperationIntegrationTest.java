@@ -48,10 +48,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 @Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
 public class MinioCopyObjectCustomerKeyOperationIntegrationTest extends CamelTestSupport {
-    
-    String key = UUID.randomUUID().toString();
-    final ServerSideEncryptionCustomerKey secretKey = generateSecretKey();
 
+    final ServerSideEncryptionCustomerKey secretKey = generateSecretKey();
+    String key = UUID.randomUUID().toString();
     @BindToRegistry("minioClient")
     MinioClient minioClient =
             MinioClient.builder()
@@ -63,6 +62,18 @@ public class MinioCopyObjectCustomerKeyOperationIntegrationTest extends CamelTes
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
+
+    protected static ServerSideEncryptionCustomerKey generateSecretKey() {
+        KeyGenerator generator;
+        try {
+            generator = KeyGenerator.getInstance("AES");
+            generator.init(256, new SecureRandom());
+            return ServerSideEncryption.withCustomerKey(generator.generateKey());
+        } catch (Exception e) {
+            fail("Unable to generate symmetric key: " + e.getMessage());
+            return null;
+        }
+    }
 
     @Test
     public void sendIn() throws Exception {
@@ -100,7 +111,7 @@ public class MinioCopyObjectCustomerKeyOperationIntegrationTest extends CamelTes
             exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.copyObject);
             exchange.getIn().setBody(copyObjectRequest);
         });
-        
+
         Exchange respond = template.request("direct:getObject", exchange -> {
             GetObjectArgs.Builder getObjectRequest = GetObjectArgs.builder()
                     .object("test1.txt")
@@ -110,9 +121,9 @@ public class MinioCopyObjectCustomerKeyOperationIntegrationTest extends CamelTes
             exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.getObject);
             exchange.getIn().setBody(getObjectRequest);
         });
-        
+
         InputStream minio = respond.getIn().getBody(InputStream.class);
-        
+
 
         assertEquals("Test", readInputStream(minio));
 
@@ -130,31 +141,19 @@ public class MinioCopyObjectCustomerKeyOperationIntegrationTest extends CamelTes
                 from("direct:putObject").to(minioEndpoint);
 
                 from("direct:copyObject").to(minioEndpoint);
-                
+
                 from("direct:getObject").to(minioEndpoint1).to("mock:result");
 
             }
         };
     }
-    
-    protected static ServerSideEncryptionCustomerKey generateSecretKey() {
-        KeyGenerator generator;
-        try {
-            generator = KeyGenerator.getInstance("AES");
-            generator.init(256, new SecureRandom());
-            return ServerSideEncryption.withCustomerKey(generator.generateKey());
-        } catch (Exception e) {
-            fail("Unable to generate symmetric key: " + e.getMessage());
-            return null;
-        }
-    }
-    
+
     private String readInputStream(InputStream minioObject) throws IOException {
         StringBuilder textBuilder = new StringBuilder();
         try (Reader reader = new BufferedReader(new InputStreamReader(minioObject, Charset.forName(StandardCharsets.UTF_8.name())))) {
             int c;
             while ((c = reader.read()) != -1) {
-                textBuilder.append((char)c);
+                textBuilder.append((char) c);
             }
         }
         return textBuilder.toString();

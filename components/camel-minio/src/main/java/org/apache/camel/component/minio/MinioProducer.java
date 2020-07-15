@@ -60,6 +60,10 @@ public class MinioProducer extends DefaultProducer {
         super(endpoint);
     }
 
+    public static Message getMessageForResponse(final Exchange exchange) {
+        return exchange.getMessage();
+    }
+
     @Override
     public void process(final Exchange exchange) throws Exception {
         MinioOperations operation = determineOperation(exchange);
@@ -467,10 +471,6 @@ public class MinioProducer extends DefaultProducer {
     @Override
     public MinioEndpoint getEndpoint() {
         return (MinioEndpoint) super.getEndpoint();
-    }
-
-    public static Message getMessageForResponse(final Exchange exchange) {
-        return exchange.getMessage();
     }
 
 }
