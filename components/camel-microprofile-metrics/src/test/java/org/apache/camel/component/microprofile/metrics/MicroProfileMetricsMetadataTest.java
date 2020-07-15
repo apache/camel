@@ -22,13 +22,14 @@ import java.util.Map;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.microprofile.metrics.Metadata;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_METRIC_DESCRIPTION;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_METRIC_DISPLAY_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_METRIC_UNIT;
 import static org.eclipse.microprofile.metrics.MetricUnits.KILOBYTES;
 import static org.eclipse.microprofile.metrics.MetricUnits.MEGABITS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MicroProfileMetricsMetadataTest extends MicroProfileMetricsTestSupport {
 
