@@ -27,16 +27,19 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mail.MailTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.jsse.SSLContextParameters;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test of integration between the mail component and JSSE Configuration
  * Utility. This test does not easily automate. This test is therefore ignored
  * and the source is maintained here for easier development in the future.
  */
-@Ignore
+@Disabled
 public class SslContextParametersMailRouteTest extends CamelTestSupport {
 
     private String email = "USERNAME@gmail.com";

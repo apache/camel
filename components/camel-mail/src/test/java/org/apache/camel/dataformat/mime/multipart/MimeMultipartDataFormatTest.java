@@ -35,18 +35,25 @@ import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MimeMultipartDataFormatTest extends CamelTestSupport {
     private Exchange exchange;
     private AttachmentMessage in;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         exchange = new DefaultExchange(context);
@@ -112,7 +119,7 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
     }
 
     @Test
-    @Ignore("Fails on CI servers and some platforms - maybe due locale or something")
+    @Disabled("Fails on CI servers and some platforms - maybe due locale or something")
     public void roundtripWithTextAttachmentsAndSpecialCharacters() throws IOException {
         String attContentType = "text/plain";
         String attText = "Attachment Text with special characters: \u00A9";

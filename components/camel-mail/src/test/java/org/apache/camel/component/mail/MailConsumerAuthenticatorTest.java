@@ -24,11 +24,11 @@ import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 
 import org.apache.camel.Processor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 /**
@@ -76,7 +76,7 @@ public class MailConsumerAuthenticatorTest {
                 assertEquals("unauthorized", e.getMessage());
                 exception = true;
             }
-            assertTrue("MessagingException expected with message 'unauthorized'", exception);
+            assertTrue(exception, "MessagingException expected with message 'unauthorized'");
 
             // poll a second time, this time there should be no exception, because we now provide the correct password
             consumer.poll();

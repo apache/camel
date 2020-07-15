@@ -24,10 +24,11 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 
 import com.sun.mail.imap.SortTerm;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.mockito.Mockito.when;
 
 /**

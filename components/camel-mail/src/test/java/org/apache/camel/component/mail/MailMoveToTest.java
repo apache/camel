@@ -25,11 +25,14 @@ import javax.mail.internet.MimeMessage;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for moveTo.
@@ -37,7 +40,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailMoveToTest extends CamelTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
@@ -55,11 +58,11 @@ public class MailMoveToTest extends CamelTestSupport {
         assertEquals(0, Mailbox.get("jones@localhost").getNewMessageCount());
         assertEquals(5, Mailbox.get("moveToFolder-jones@localhost").getNewMessageCount());
 
-        Assert.assertTrue(Mailbox.get("moveToFolder-jones@localhost").get(0).getFlags().contains(Flags.Flag.SEEN));
-        Assert.assertTrue(Mailbox.get("moveToFolder-jones@localhost").get(1).getFlags().contains(Flags.Flag.SEEN));
-        Assert.assertTrue(Mailbox.get("moveToFolder-jones@localhost").get(2).getFlags().contains(Flags.Flag.SEEN));
-        Assert.assertTrue(Mailbox.get("moveToFolder-jones@localhost").get(3).getFlags().contains(Flags.Flag.SEEN));
-        Assert.assertTrue(Mailbox.get("moveToFolder-jones@localhost").get(4).getFlags().contains(Flags.Flag.SEEN));
+        assertTrue(Mailbox.get("moveToFolder-jones@localhost").get(0).getFlags().contains(Flags.Flag.SEEN));
+        assertTrue(Mailbox.get("moveToFolder-jones@localhost").get(1).getFlags().contains(Flags.Flag.SEEN));
+        assertTrue(Mailbox.get("moveToFolder-jones@localhost").get(2).getFlags().contains(Flags.Flag.SEEN));
+        assertTrue(Mailbox.get("moveToFolder-jones@localhost").get(3).getFlags().contains(Flags.Flag.SEEN));
+        assertTrue(Mailbox.get("moveToFolder-jones@localhost").get(4).getFlags().contains(Flags.Flag.SEEN));
     }
 
     @Test
@@ -74,11 +77,11 @@ public class MailMoveToTest extends CamelTestSupport {
         assertEquals(0, Mailbox.get("jones2@localhost").getNewMessageCount());
         assertEquals(5, Mailbox.get("moveToFolder-jones2@localhost").getNewMessageCount());
 
-        Assert.assertFalse(Mailbox.get("moveToFolder-jones2@localhost").get(0).getFlags().contains(Flags.Flag.SEEN));
-        Assert.assertFalse(Mailbox.get("moveToFolder-jones2@localhost").get(1).getFlags().contains(Flags.Flag.SEEN));
-        Assert.assertFalse(Mailbox.get("moveToFolder-jones2@localhost").get(2).getFlags().contains(Flags.Flag.SEEN));
-        Assert.assertFalse(Mailbox.get("moveToFolder-jones2@localhost").get(3).getFlags().contains(Flags.Flag.SEEN));
-        Assert.assertFalse(Mailbox.get("moveToFolder-jones2@localhost").get(4).getFlags().contains(Flags.Flag.SEEN));
+        assertFalse(Mailbox.get("moveToFolder-jones2@localhost").get(0).getFlags().contains(Flags.Flag.SEEN));
+        assertFalse(Mailbox.get("moveToFolder-jones2@localhost").get(1).getFlags().contains(Flags.Flag.SEEN));
+        assertFalse(Mailbox.get("moveToFolder-jones2@localhost").get(2).getFlags().contains(Flags.Flag.SEEN));
+        assertFalse(Mailbox.get("moveToFolder-jones2@localhost").get(3).getFlags().contains(Flags.Flag.SEEN));
+        assertFalse(Mailbox.get("moveToFolder-jones2@localhost").get(4).getFlags().contains(Flags.Flag.SEEN));
     }
 
     private void prepareMailbox() throws Exception {
