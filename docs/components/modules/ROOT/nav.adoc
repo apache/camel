@@ -197,6 +197,7 @@
 ** xref:jpa-component.adoc[JPA]
 ** xref:jslt-component.adoc[JSLT]
 ** xref:json-validator-component.adoc[JSON Schema Validator]
+** xref:jsonata-component.adoc[JSONATA]
 ** xref:jt400-component.adoc[JT400]
 ** xref:kafka-component.adoc[Kafka]
 ** xref:kubernetes-summary.adoc[Kubernetes]

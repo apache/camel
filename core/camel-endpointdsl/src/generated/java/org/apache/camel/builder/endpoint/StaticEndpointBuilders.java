@@ -2814,7 +2814,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path apiName/methodName
      */
-    static org.apache.camel.builder.endpoint.dsl.BraintreeEndpointBuilderFactory.BraintreeEndpointBuilder braintree(
+    public static org.apache.camel.builder.endpoint.dsl.BraintreeEndpointBuilderFactory.BraintreeEndpointBuilder braintree(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.BraintreeEndpointBuilderFactory.endpointBuilder("braintree", path);
     }
@@ -2842,7 +2842,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path apiName/methodName
      */
-    static org.apache.camel.builder.endpoint.dsl.BraintreeEndpointBuilderFactory.BraintreeEndpointBuilder braintree(
+    public static org.apache.camel.builder.endpoint.dsl.BraintreeEndpointBuilderFactory.BraintreeEndpointBuilder braintree(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.BraintreeEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -8430,6 +8430,55 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.JsltEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * JSONATA (camel-jsonata)
+     * JSON to JSON transformation using JSONATA.
+     * 
+     * Category: transformation
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-jsonata
+     * 
+     * Syntax: <code>jsonata:resourceUri</code>
+     * 
+     * Path parameter: resourceUri (required)
+     * Path to the resource. You can prefix with: classpath, file, http, ref, or
+     * bean. classpath, file and http loads the resource using these protocols
+     * (classpath is default). ref will lookup the resource in the registry.
+     * bean will call a method on a bean to be used as the resource. For bean
+     * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * 
+     * @param path resourceUri
+     */
+    public static org.apache.camel.builder.endpoint.dsl.JsonataEndpointBuilderFactory.JsonataEndpointBuilder jsonata(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.JsonataEndpointBuilderFactory.endpointBuilder("jsonata", path);
+    }
+    /**
+     * JSONATA (camel-jsonata)
+     * JSON to JSON transformation using JSONATA.
+     * 
+     * Category: transformation
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-jsonata
+     * 
+     * Syntax: <code>jsonata:resourceUri</code>
+     * 
+     * Path parameter: resourceUri (required)
+     * Path to the resource. You can prefix with: classpath, file, http, ref, or
+     * bean. classpath, file and http loads the resource using these protocols
+     * (classpath is default). ref will lookup the resource in the registry.
+     * bean will call a method on a bean to be used as the resource. For bean
+     * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path resourceUri
+     */
+    public static org.apache.camel.builder.endpoint.dsl.JsonataEndpointBuilderFactory.JsonataEndpointBuilder jsonata(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.JsonataEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * JSON Schema Validator (camel-json-validator)
@@ -15381,7 +15430,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path serverUrls/path
      */
-    public static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
+    static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder("zookeeper", path);
     }
@@ -15405,7 +15454,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path serverUrls/path
      */
-    public static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
+    static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder(componentName, path);
