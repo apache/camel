@@ -26,10 +26,12 @@ import org.apache.camel.component.micrometer.eventnotifier.AbstractMicrometerEve
 import org.apache.camel.component.micrometer.eventnotifier.MicrometerExchangeEventNotifier;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ExpressionAdapter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT;
 import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MicrometerExchangeEventNotifierTest extends AbstractMicrometerEventNotifierTest {
 
