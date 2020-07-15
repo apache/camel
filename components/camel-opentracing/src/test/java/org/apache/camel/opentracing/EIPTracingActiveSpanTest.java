@@ -17,26 +17,36 @@
 package org.apache.camel.opentracing;
 
 import io.opentracing.tag.Tags;
+import io.opentracing.util.GlobalTracer;
+import io.opentracing.util.GlobalTracerTestUtil;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.InterceptStrategy;
 import org.junit.Test;
 
-public class ABCRouteTest extends CamelOpenTracingTestSupport {
+import java.lang.reflect.Field;
+
+public class EIPTracingActiveSpanTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
-        new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
-            .setParentId(2).addLogMessage("routing at b"),
-        new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
-            .setParentId(2).addLogMessage("Exchange[ExchangePattern: InOut, BodyType: String, Body: Hello]"),
-        new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
-            .setParentId(3).addLogMessage("routing at a").addLogMessage("End of routing"),
+        new SpanTestData().setLabel("active-span server").setOperation("using-active-span")
+            .setParentId(1),
+        new SpanTestData().setLabel("process server").setOperation("direct-processor")
+            .setParentId(2),
         new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
             .setKind(Tags.SPAN_KIND_SERVER)
     };
 
-    public ABCRouteTest() {
+    public EIPTracingActiveSpanTest() {
         super(testdata);
+    }
+
+    @Override
+    public void setUp() throws Exception {
+        GlobalTracerTestUtil.resetGlobalTracer();
+        super.setUp();
     }
 
     @Test
@@ -47,26 +57,27 @@ public class ABCRouteTest extends CamelOpenTracingTestSupport {
     }
 
     @Override
+    protected InterceptStrategy getTracingStrategy() {
+        return new OpenTracingTracingStrategy(getTracer());
+    }
+
+    @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("seda:a").routeId("start");
-
-                from("seda:a").routeId("a")
-                    .log("routing at ${routeId}")
-                    .to("seda:b")
-                    .delay(2000)
-                    .to("seda:c")
-                    .log("End of routing");
-
-                from("seda:b").routeId("b")
-                    .log("routing at ${routeId}")
-                    .delay(simple("${random(1000,2000)}"));
-
-                from("seda:c").routeId("c")
-                    .to("log:test")
-                    .delay(simple("${random(0,100)}"));
+            from("direct:start").routeId("start")
+                .process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        // here you can use GlobalTracer if it's in your classpath or
+                        // use the exchange context to look for a tracer in the registry
+                        GlobalTracer.get().buildSpan("using-active-span")
+                                .withTag(Tags.COMPONENT, "custom-component")
+                                .asChildOf(GlobalTracer.get().activeSpan())
+                                .start().finish();
+                    }
+                }).id("direct-processor");
             }
         };
     }

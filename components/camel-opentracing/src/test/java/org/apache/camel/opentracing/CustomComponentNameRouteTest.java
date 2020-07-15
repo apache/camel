@@ -25,21 +25,13 @@ public class CustomComponentNameRouteTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
         new SpanTestData().setLabel("myseda:b server").setUri("myseda://b").setOperation("b")
-            .setKind(Tags.SPAN_KIND_SERVER).setParentId(1).addLogMessage("routing at b"),
-        new SpanTestData().setLabel("myseda:b client").setUri("myseda://b").setOperation("b")
-            .setKind(Tags.SPAN_KIND_CLIENT).setParentId(4),
+            .setParentId(2).addLogMessage("routing at b"),
         new SpanTestData().setLabel("myseda:c server").setUri("myseda://c").setOperation("c")
-            .setKind(Tags.SPAN_KIND_SERVER).setParentId(3).addLogMessage("Exchange[ExchangePattern: InOut, BodyType: String, Body: Hello]"),
-        new SpanTestData().setLabel("myseda:c client").setUri("myseda://c").setOperation("c")
-            .setKind(Tags.SPAN_KIND_CLIENT).setParentId(4),
+            .setParentId(2).addLogMessage("Exchange[ExchangePattern: InOut, BodyType: String, Body: Hello]"),
         new SpanTestData().setLabel("myseda:a server").setUri("myseda://a").setOperation("a")
-            .setKind(Tags.SPAN_KIND_SERVER).setParentId(5).addLogMessage("routing at a").addLogMessage("End of routing"),
-        new SpanTestData().setLabel("myseda:a client").setUri("myseda://a").setOperation("a")
-            .setKind(Tags.SPAN_KIND_CLIENT).setParentId(6),
+            .setParentId(3).addLogMessage("routing at a").addLogMessage("End of routing"),
         new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
-            .setKind(Tags.SPAN_KIND_SERVER).setParentId(7),
-        new SpanTestData().setLabel("direct:start client").setUri("direct://start").setOperation("start")
-            .setKind(Tags.SPAN_KIND_CLIENT)
+            .setKind(Tags.SPAN_KIND_SERVER)
     };
 
     public CustomComponentNameRouteTest() {

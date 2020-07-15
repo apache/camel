@@ -18,6 +18,7 @@ package org.apache.camel.opentracing;
 
 import io.opentracing.noop.NoopTracer;
 import io.opentracing.noop.NoopTracerFactory;
+import io.opentracing.util.GlobalTracerTestUtil;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -28,6 +29,12 @@ public class OpentracingSpanCollectorInRegistryTest extends CamelTestSupport {
     private OpenTracingTracer openTracing;
     @BindToRegistry("tracer")
     private NoopTracer c = NoopTracerFactory.create();
+
+    @Override
+    public void setUp() throws Exception {
+        GlobalTracerTestUtil.resetGlobalTracer();
+        super.setUp();
+    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

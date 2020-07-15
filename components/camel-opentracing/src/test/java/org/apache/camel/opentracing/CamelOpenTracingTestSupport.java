@@ -32,6 +32,7 @@ import io.opentracing.mock.MockTracer;
 import io.opentracing.mock.MockTracer.Propagator;
 import io.opentracing.tag.Tags;
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 public class CamelOpenTracingTestSupport extends CamelTestSupport {
@@ -58,6 +59,7 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
         OpenTracingTracer ottracer = new OpenTracingTracer();
         ottracer.setTracer(tracer);
         ottracer.setExcludePatterns(getExcludePatterns());
+        ottracer.setTracingStrategy(getTracingStrategy());
 
         ottracer.init(context);
 
@@ -89,26 +91,49 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
             assertEquals("Incorrect number of spans after sorting", testdata.length, spans.size());
         }
 
+        spans.stream().forEach(mockSpan -> {
+            System.out.println("Span: " + mockSpan);
+            System.out.println("\tComponent: " + mockSpan.tags().get(Tags.COMPONENT.getKey()));
+            System.out.println("\tTags: " + mockSpan.tags());
+            System.out.println("\tLogs: ");
+            for (final MockSpan.LogEntry logEntry : mockSpan.logEntries())
+                System.out.println("\t" + logEntry.fields());
+        });
+
         for (int i = 0; i < testdata.length; i++) {
             verifySpan(i, testdata, spans);
         }
     }
 
     protected MockSpan findSpan(SpanTestData testdata, List<MockSpan> spans) {
-        return spans.stream().filter(s -> s.operationName().equals(testdata.getOperation())
-                && s.tags().get("camel.uri").equals(testdata.getUri())
-                && s.tags().get(Tags.SPAN_KIND.getKey()).equals(testdata.getKind())).findFirst().orElse(null);
+        return spans.stream().filter(s -> {
+            boolean matched = s.operationName().equals(testdata.getOperation());
+
+            if (s.tags().containsKey("camel-uri")) {
+              matched = matched && s.tags().get("camel.uri").equals(testdata.getUri());
+            }
+
+            if (s.tags().containsKey(Tags.SPAN_KIND.getKey())) {
+                matched = matched && s.tags().get(Tags.SPAN_KIND.getKey()).equals(testdata.getKind());
+            }
+
+            return matched;
+        }).findFirst().orElse(null);
     }
 
     protected void verifySpan(int index, SpanTestData[] testdata, List<MockSpan> spans) {
         MockSpan span = spans.get(index);
         SpanTestData td = testdata[index];
 
+
         String component = (String) span.tags().get(Tags.COMPONENT.getKey());
         assertNotNull(component);
-        assertEquals(td.getLabel(),
-            SpanDecorator.CAMEL_COMPONENT + URI.create(td.getUri()).getScheme(),
-            component);
+
+        if (td.getUri() != null) {
+            assertEquals(td.getLabel(),
+                SpanDecorator.CAMEL_COMPONENT + URI.create(td.getUri()).getScheme(),
+                component);
+        }
         assertEquals(td.getLabel(), td.getUri(), span.tags().get("camel.uri"));
 
         // If span associated with TestSEDASpanDecorator, check that pre/post tags have been defined
@@ -172,4 +197,7 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
         }
     }
 
+    protected InterceptStrategy getTracingStrategy() {
+        return new NoopTracingStrategy();
+    }
 }

@@ -44,7 +44,7 @@ public class SpringOpenTracingSimpleRouteTest extends CamelSpringTestSupport {
 
         MockTracer tracer = (MockTracer) context().getRegistry().lookupByName("mockTracer");
 
-        // Four spans per invocation, one for client, two for dude route (server and client to), one for car route
-        assertEquals(20, tracer.finishedSpans().size());
+        // Two spans per invocation, one for server dude route, one for car route
+        assertEquals(10, tracer.finishedSpans().size());
     }
 }
