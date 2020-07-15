@@ -19,17 +19,20 @@ package org.apache.camel.routepolicy.quartz;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.TestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.Scheduler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Tests a Quartz based cluster setup of two Camel Apps being triggered through {@link CronScheduledRoutePolicy}.
  */
-public class SpringQuartzTwoAppsClusteredFailoverTest extends TestSupport {
+public class SpringQuartzTwoAppsClusteredFailoverTest {
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Test
     public void testQuartzPersistentStoreClusteredApp() throws Exception {

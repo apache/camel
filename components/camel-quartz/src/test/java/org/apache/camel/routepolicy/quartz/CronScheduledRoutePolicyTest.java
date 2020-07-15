@@ -28,8 +28,10 @@ import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.quartz.QuartzComponent;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CronScheduledRoutePolicyTest extends CamelTestSupport {
 
@@ -240,8 +242,8 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         Thread.sleep(5000);
 
         assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Stopped);
-        assertTrue("Should have called onStart", myPolicy.isStart());
-        assertTrue("Should have called onStop", myPolicy.isStop());
+        assertTrue(myPolicy.isStart(), "Should have called onStart");
+        assertTrue(myPolicy.isStop(), "Should have called onStop");
     }
 
     @Test
@@ -267,7 +269,7 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         // there is a ticket to improve this
         Consumer consumer = context.getRoute("test").getConsumer();
         SuspendableService ss = (SuspendableService) consumer;
-        assertTrue("Consumer should be suspended", ss.isSuspended());
+        assertTrue(ss.isSuspended(), "Consumer should be suspended");
     }
 
     @Test
