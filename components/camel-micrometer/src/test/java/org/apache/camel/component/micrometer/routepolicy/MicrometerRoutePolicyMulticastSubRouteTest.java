@@ -22,9 +22,13 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.micrometer.MicrometerConstants.*;
+import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * CAMEL-9226 - check metrics are counted correctly in multicast sub-routes
@@ -54,16 +58,16 @@ public class MicrometerRoutePolicyMulticastSubRouteTest extends AbstractMicromet
             switch (meterName) {
                 case DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME:
                     Timer timer = (Timer) meter;
-                    assertEquals("Timer " + timer.getId() + " should have count of " + count, count, timer.count());
+                    assertEquals(count, timer.count(), "Timer " + timer.getId() + " should have count of " + count);
                     break;
                 case DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME: {
                     Counter counter = (Counter) meter;
-                    assertEquals("Counter " + counter.getId() + " should have count of " + count, count, counter.count(), 0.01D);
+                    assertEquals(count, counter.count(), 0.01D, "Counter " + counter.getId() + " should have count of " + count);
                     break;
                 }
                 case DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME: {
                     Counter counter = (Counter) meter;
-                    assertEquals("Counter " + counter.getId() + " should have count of " + 0, 0, counter.count(), 0.01D);
+                    assertEquals(0, counter.count(), 0.01D, "Counter " + counter.getId() + " should have count of " + 0);
                     break;
                 }
                 default: {
