@@ -8450,7 +8450,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path resourceUri
      */
-    public static org.apache.camel.builder.endpoint.dsl.JsonataEndpointBuilderFactory.JsonataEndpointBuilder jsonata(
+    static org.apache.camel.builder.endpoint.dsl.JsonataEndpointBuilderFactory.JsonataEndpointBuilder jsonata(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.JsonataEndpointBuilderFactory.endpointBuilder("jsonata", path);
     }
@@ -8475,7 +8475,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path resourceUri
      */
-    public static org.apache.camel.builder.endpoint.dsl.JsonataEndpointBuilderFactory.JsonataEndpointBuilder jsonata(
+    static org.apache.camel.builder.endpoint.dsl.JsonataEndpointBuilderFactory.JsonataEndpointBuilder jsonata(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.JsonataEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -15430,7 +15430,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path serverUrls/path
      */
-    static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
+    public static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder("zookeeper", path);
     }
@@ -15454,7 +15454,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path serverUrls/path
      */
-    static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
+    public static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder(componentName, path);
