@@ -303,12 +303,13 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     @Override
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
         log.debug("Deleting file: {}", name);
-
+        
         boolean result;
         String target = name;
         String currentDir = null;
 
         try {
+            reconnectIfNecessary(null);
             if (endpoint.getConfiguration().isStepwise()) {
                 // remember current directory
                 currentDir = getCurrentDirectory();
@@ -343,6 +344,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         log.debug("Renaming file: {} to: {}", from, to);
         try {
+            reconnectIfNecessary(null);
             return client.rename(from, to);
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
@@ -985,6 +987,21 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     public FTPClient getClient() {
         return client;
+    }
+    
+    private void reconnectIfNecessary(Exchange exchange) throws GenericFileOperationFailedException {
+        if (isConnected()) {
+            log.trace("sendNoOp to check if connection should be reconnected");
+            try {
+                client.sendNoOp();
+            } catch (IOException e) {
+                log.trace("NoOp to server failed, try to reconnect");
+                connect(endpoint.getConfiguration(), exchange);
+            }
+        } else {
+            log.trace("Client is not connected, try to reconnect");
+            connect(endpoint.getConfiguration(), exchange);
+        }
     }
 
 }
