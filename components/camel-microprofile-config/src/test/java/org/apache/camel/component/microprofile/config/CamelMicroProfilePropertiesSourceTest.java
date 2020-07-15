@@ -26,11 +26,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.assertj.core.api.Assertions;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
 
@@ -54,6 +55,7 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
     }
 
     @Override
+    @AfterEach
     public void tearDown() throws Exception {
         ConfigProviderResolver.instance().releaseConfig(config);
         super.tearDown();
