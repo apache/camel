@@ -19,9 +19,13 @@ package org.apache.camel.component.micrometer.routepolicy;
 import io.micrometer.core.instrument.Counter;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.micrometer.MicrometerConstants.*;
+import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MicrometerRoutePolicyExchangeStatusTest extends AbstractMicrometerRoutePolicyTest {
 
