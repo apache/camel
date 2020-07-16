@@ -102,20 +102,6 @@ public interface WeatherComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * To use an existing configured http client (for example with http
-         * proxy).
-         * 
-         * The option is a:
-         * <code>org.apache.http.impl.client.CloseableHttpClient</code> type.
-         * 
-         * Group: advanced
-         */
-        default WeatherComponentBuilder httpClient(
-                org.apache.http.impl.client.CloseableHttpClient httpClient) {
-            doSetProperty("httpClient", httpClient);
-            return this;
-        }
     }
 
     class WeatherComponentBuilderImpl
@@ -136,7 +122,6 @@ public interface WeatherComponentBuilderFactory {
             case "bridgeErrorHandler": ((WeatherComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((WeatherComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((WeatherComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "httpClient": ((WeatherComponent) component).setHttpClient((org.apache.http.impl.client.CloseableHttpClient) value); return true;
             default: return false;
             }
         }

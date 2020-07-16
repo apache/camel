@@ -14,3 +14,9 @@ and use the existing bean (for singleton scope) instead of creating a new instan
 === Camel Karaf
 
 The following features has been removed due they become not compatible with OSGi: `camel-couchbase`.
+
+=== camel-weather
+
+The option `httpClient` is now a query parameter.
+
+A new parameter `geoLocationProvider` was introduced to allow the use of a custom `GeolocationProvider` implementation.

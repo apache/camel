@@ -48,7 +48,7 @@ public class WeatherConsumer extends ScheduledPollConsumer {
     @Override
     protected int poll() throws Exception {
         LOG.debug("Going to execute the Weather query {}", query);
-        HttpClient httpClient = ((WeatherComponent) getEndpoint().getComponent()).getHttpClient();
+        HttpClient httpClient = getEndpoint().getConfiguration().getHttpClient();
         HttpGet getMethod = new HttpGet(query);
         try {
             HttpResponse response = httpClient.execute(getMethod);
