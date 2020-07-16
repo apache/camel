@@ -162,8 +162,7 @@ public interface WeatherEndpointBuilderFactory {
             return this;
         }
         /**
-         * The API to be use (current, forecast/3 hour, forecast daily,
-         * station).
+         * The API to use (current, forecast/3 hour, forecast daily, station).
          * 
          * The option is a:
          * <code>org.apache.camel.component.weather.WeatherApi</code> type.
@@ -175,8 +174,7 @@ public interface WeatherEndpointBuilderFactory {
             return this;
         }
         /**
-         * The API to be use (current, forecast/3 hour, forecast daily,
-         * station).
+         * The API to use (current, forecast/3 hour, forecast daily, station).
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.WeatherApi</code> type.
@@ -933,6 +931,66 @@ public interface WeatherEndpointBuilderFactory {
             return this;
         }
         /**
+         * A custum geolocation provider to determine the longitude and latitude
+         * to use when no location information is set. The default implementaion
+         * uses the ipstack API and requires geolocationAccessKey and
+         * geolocationRequestHostIP.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.weather.geolocation.GeoLocationProvider</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedWeatherEndpointConsumerBuilder geoLocationProvider(
+                Object geoLocationProvider) {
+            doSetProperty("geoLocationProvider", geoLocationProvider);
+            return this;
+        }
+        /**
+         * A custum geolocation provider to determine the longitude and latitude
+         * to use when no location information is set. The default implementaion
+         * uses the ipstack API and requires geolocationAccessKey and
+         * geolocationRequestHostIP.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.weather.geolocation.GeoLocationProvider</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedWeatherEndpointConsumerBuilder geoLocationProvider(
+                String geoLocationProvider) {
+            doSetProperty("geoLocationProvider", geoLocationProvider);
+            return this;
+        }
+        /**
+         * To use an existing configured http client (for example with http
+         * proxy).
+         * 
+         * The option is a:
+         * <code>org.apache.http.impl.client.CloseableHttpClient</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedWeatherEndpointConsumerBuilder httpClient(
+                Object httpClient) {
+            doSetProperty("httpClient", httpClient);
+            return this;
+        }
+        /**
+         * To use an existing configured http client (for example with http
+         * proxy).
+         * 
+         * The option will be converted to a
+         * <code>org.apache.http.impl.client.CloseableHttpClient</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedWeatherEndpointConsumerBuilder httpClient(
+                String httpClient) {
+            doSetProperty("httpClient", httpClient);
+            return this;
+        }
+        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -1086,8 +1144,7 @@ public interface WeatherEndpointBuilderFactory {
             return this;
         }
         /**
-         * The API to be use (current, forecast/3 hour, forecast daily,
-         * station).
+         * The API to use (current, forecast/3 hour, forecast daily, station).
          * 
          * The option is a:
          * <code>org.apache.camel.component.weather.WeatherApi</code> type.
@@ -1099,8 +1156,7 @@ public interface WeatherEndpointBuilderFactory {
             return this;
         }
         /**
-         * The API to be use (current, forecast/3 hour, forecast daily,
-         * station).
+         * The API to use (current, forecast/3 hour, forecast daily, station).
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.WeatherApi</code> type.
@@ -1371,6 +1427,66 @@ public interface WeatherEndpointBuilderFactory {
             return this;
         }
         /**
+         * A custum geolocation provider to determine the longitude and latitude
+         * to use when no location information is set. The default implementaion
+         * uses the ipstack API and requires geolocationAccessKey and
+         * geolocationRequestHostIP.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.weather.geolocation.GeoLocationProvider</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedWeatherEndpointProducerBuilder geoLocationProvider(
+                Object geoLocationProvider) {
+            doSetProperty("geoLocationProvider", geoLocationProvider);
+            return this;
+        }
+        /**
+         * A custum geolocation provider to determine the longitude and latitude
+         * to use when no location information is set. The default implementaion
+         * uses the ipstack API and requires geolocationAccessKey and
+         * geolocationRequestHostIP.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.weather.geolocation.GeoLocationProvider</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedWeatherEndpointProducerBuilder geoLocationProvider(
+                String geoLocationProvider) {
+            doSetProperty("geoLocationProvider", geoLocationProvider);
+            return this;
+        }
+        /**
+         * To use an existing configured http client (for example with http
+         * proxy).
+         * 
+         * The option is a:
+         * <code>org.apache.http.impl.client.CloseableHttpClient</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedWeatherEndpointProducerBuilder httpClient(
+                Object httpClient) {
+            doSetProperty("httpClient", httpClient);
+            return this;
+        }
+        /**
+         * To use an existing configured http client (for example with http
+         * proxy).
+         * 
+         * The option will be converted to a
+         * <code>org.apache.http.impl.client.CloseableHttpClient</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedWeatherEndpointProducerBuilder httpClient(
+                String httpClient) {
+            doSetProperty("httpClient", httpClient);
+            return this;
+        }
+        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -1525,8 +1641,7 @@ public interface WeatherEndpointBuilderFactory {
             return this;
         }
         /**
-         * The API to be use (current, forecast/3 hour, forecast daily,
-         * station).
+         * The API to use (current, forecast/3 hour, forecast daily, station).
          * 
          * The option is a:
          * <code>org.apache.camel.component.weather.WeatherApi</code> type.
@@ -1538,8 +1653,7 @@ public interface WeatherEndpointBuilderFactory {
             return this;
         }
         /**
-         * The API to be use (current, forecast/3 hour, forecast daily,
-         * station).
+         * The API to use (current, forecast/3 hour, forecast daily, station).
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.WeatherApi</code> type.
@@ -1766,6 +1880,64 @@ public interface WeatherEndpointBuilderFactory {
         default AdvancedWeatherEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * A custum geolocation provider to determine the longitude and latitude
+         * to use when no location information is set. The default implementaion
+         * uses the ipstack API and requires geolocationAccessKey and
+         * geolocationRequestHostIP.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.weather.geolocation.GeoLocationProvider</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedWeatherEndpointBuilder geoLocationProvider(
+                Object geoLocationProvider) {
+            doSetProperty("geoLocationProvider", geoLocationProvider);
+            return this;
+        }
+        /**
+         * A custum geolocation provider to determine the longitude and latitude
+         * to use when no location information is set. The default implementaion
+         * uses the ipstack API and requires geolocationAccessKey and
+         * geolocationRequestHostIP.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.weather.geolocation.GeoLocationProvider</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedWeatherEndpointBuilder geoLocationProvider(
+                String geoLocationProvider) {
+            doSetProperty("geoLocationProvider", geoLocationProvider);
+            return this;
+        }
+        /**
+         * To use an existing configured http client (for example with http
+         * proxy).
+         * 
+         * The option is a:
+         * <code>org.apache.http.impl.client.CloseableHttpClient</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedWeatherEndpointBuilder httpClient(Object httpClient) {
+            doSetProperty("httpClient", httpClient);
+            return this;
+        }
+        /**
+         * To use an existing configured http client (for example with http
+         * proxy).
+         * 
+         * The option will be converted to a
+         * <code>org.apache.http.impl.client.CloseableHttpClient</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedWeatherEndpointBuilder httpClient(String httpClient) {
+            doSetProperty("httpClient", httpClient);
             return this;
         }
         /**

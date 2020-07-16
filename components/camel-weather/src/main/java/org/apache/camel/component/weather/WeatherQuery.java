@@ -17,7 +17,6 @@
 package org.apache.camel.component.weather;
 
 import org.apache.camel.component.weather.geolocation.GeoLocation;
-import org.apache.camel.component.weather.geolocation.GeoLocationProvider;
 
 import static org.apache.camel.component.weather.WeatherMode.JSON;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
@@ -28,7 +27,6 @@ import static org.apache.camel.util.ObjectHelper.isEmpty;
  */
 public class WeatherQuery {
     private final WeatherConfiguration weatherConfiguration;
-    private GeoLocationProvider geoLocationProvider;
 
     public WeatherQuery(WeatherConfiguration weatherConfiguration) {
         this.weatherConfiguration = weatherConfiguration;
@@ -147,10 +145,7 @@ public class WeatherQuery {
     }
 
     GeoLocation getCurrentGeoLocation() throws Exception {
-        return geoLocationProvider.getCurrentGeoLocation();
+        return weatherConfiguration.getGeoLocationProvider().getCurrentGeoLocation();
     }
 
-    void setGeoLocationProvider(GeoLocationProvider geoLocationProvider) {
-        this.geoLocationProvider = geoLocationProvider;
-    }
 }

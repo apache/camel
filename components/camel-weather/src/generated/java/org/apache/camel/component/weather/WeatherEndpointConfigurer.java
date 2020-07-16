@@ -36,6 +36,8 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "geolocationprovider":
+        case "geoLocationProvider": target.getConfiguration().setGeoLocationProvider(property(camelContext, org.apache.camel.component.weather.geolocation.GeoLocationProvider.class, value)); return true;
         case "geolocationaccesskey":
         case "geolocationAccessKey": target.getConfiguration().setGeolocationAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "geolocationrequesthostip":
@@ -43,6 +45,8 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "headername":
         case "headerName": target.getConfiguration().setHeaderName(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpclient":
+        case "httpClient": target.getConfiguration().setHttpClient(property(camelContext, org.apache.http.impl.client.CloseableHttpClient.class, value)); return true;
         case "ids": target.getConfiguration().setIds(property(camelContext, java.lang.String.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
@@ -100,10 +104,12 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         answer.put("delay", long.class);
         answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        answer.put("geoLocationProvider", org.apache.camel.component.weather.geolocation.GeoLocationProvider.class);
         answer.put("geolocationAccessKey", java.lang.String.class);
         answer.put("geolocationRequestHostIP", java.lang.String.class);
         answer.put("greedy", boolean.class);
         answer.put("headerName", java.lang.String.class);
+        answer.put("httpClient", org.apache.http.impl.client.CloseableHttpClient.class);
         answer.put("ids", java.lang.String.class);
         answer.put("initialDelay", long.class);
         answer.put("language", org.apache.camel.component.weather.WeatherLanguage.class);
@@ -154,6 +160,8 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "geolocationprovider":
+        case "geoLocationProvider": return target.getConfiguration().getGeoLocationProvider();
         case "geolocationaccesskey":
         case "geolocationAccessKey": return target.getConfiguration().getGeolocationAccessKey();
         case "geolocationrequesthostip":
@@ -161,6 +169,8 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "greedy": return target.isGreedy();
         case "headername":
         case "headerName": return target.getConfiguration().getHeaderName();
+        case "httpclient":
+        case "httpClient": return target.getConfiguration().getHttpClient();
         case "ids": return target.getConfiguration().getIds();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();

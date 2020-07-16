@@ -18,7 +18,7 @@ package org.apache.camel.component.weather.geolocation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.camel.component.weather.WeatherComponent;
+import org.apache.camel.component.weather.WeatherConfiguration;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
@@ -30,23 +30,23 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 
 public class FreeGeoIpGeoLocationProvider implements GeoLocationProvider {
 
-    private final WeatherComponent component;
+    private final WeatherConfiguration configuration;
 
-    public FreeGeoIpGeoLocationProvider(WeatherComponent component, String accessKey) {
-        this.component = component;
+    public FreeGeoIpGeoLocationProvider(WeatherConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     @Override
     public GeoLocation getCurrentGeoLocation() throws Exception {
-        HttpClient httpClient = component.getHttpClient();
-        if (isEmpty(component.getGeolocationAccessKey())) {
+        HttpClient httpClient = configuration.getHttpClient();
+        if (isEmpty(configuration.getGeolocationAccessKey())) {
             throw new IllegalStateException("The geolocation service requires a mandatory geolocationAccessKey");
         }
-        if (isEmpty(component.getGeolocationRequestHostIP())) {
+        if (isEmpty(configuration.getGeolocationRequestHostIP())) {
             throw new IllegalStateException("The geolocation service requires a mandatory geolocationRequestHostIP");
         }
 
-        String url = String.format("http://api.ipstack.com/%s?access_key=%s&legacy=1&output=json", component.getGeolocationRequestHostIP(), component.getGeolocationAccessKey());
+        String url = String.format("http://api.ipstack.com/%s?access_key=%s&legacy=1&output=json", configuration.getGeolocationRequestHostIP(), configuration.getGeolocationAccessKey());
         HttpGet getMethod = new HttpGet(url);
         try {
             HttpResponse response = httpClient.execute(getMethod);

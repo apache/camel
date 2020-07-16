@@ -48,10 +48,10 @@ public class WeatherProducer extends DefaultProducer {
         String q = query;
         String location = exchange.getIn().getHeader(WeatherConstants.WEATHER_LOCATION, String.class);
         if (location != null) {
-            q = getEndpoint().getConfiguration().getQuery(location);
+            q = getEndpoint().getWeatherQuery().getQuery(location);
         }
 
-        HttpClient httpClient = ((WeatherComponent) getEndpoint().getComponent()).getHttpClient();
+        HttpClient httpClient = getEndpoint().getConfiguration().getHttpClient();
         HttpGet method = new HttpGet(q);
         try {
             LOG.debug("Going to execute the Weather query {}", q);
