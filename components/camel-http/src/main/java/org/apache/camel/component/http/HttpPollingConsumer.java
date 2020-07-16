@@ -102,7 +102,7 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
             for (Header header : headers) {
                 String name = header.getName();
                 // mapping the content-type
-                if (name.toLowerCase().equals("content-type")) {
+                if (name.equalsIgnoreCase("content-type")) {
                     name = Exchange.CONTENT_TYPE;
                 }
                 String value = header.getValue();

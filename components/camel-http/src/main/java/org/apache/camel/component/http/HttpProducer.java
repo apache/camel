@@ -263,7 +263,7 @@ public class HttpProducer extends DefaultProducer {
             String name = header.getName();
             String value = header.getValue();
             m.computeIfAbsent(name, k -> new ArrayList<>()).add(value);
-            if (name.toLowerCase().equals("content-type")) {
+            if (name.equalsIgnoreCase("content-type")) {
                 name = Exchange.CONTENT_TYPE;
                 exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
             }
