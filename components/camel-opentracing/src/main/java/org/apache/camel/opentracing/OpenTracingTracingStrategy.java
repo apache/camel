@@ -54,8 +54,12 @@ public class OpenTracingTracingStrategy implements InterceptStrategy {
                 return;
             }
 
-            final Span processorSpan = tracer.buildSpan(getOperationName(processorDefinition)).asChildOf(span).start();
-            Tags.COMPONENT.set(processorSpan, getComponentName(processorDefinition));
+            final Span processorSpan = tracer.buildSpan(getOperationName(processorDefinition))
+                    .asChildOf(span)
+                    .withTag(Tags.COMPONENT, getComponentName(processorDefinition))
+                    .start();
+
+            ActiveSpanManager.activate(exchange, processorSpan);
 
             try (final Scope inScope = tracer.activateSpan(processorSpan)) {
                 target.process(exchange);
@@ -63,6 +67,7 @@ public class OpenTracingTracingStrategy implements InterceptStrategy {
                 processorSpan.log(errorLogs(ex));
                 throw ex;
             } finally {
+                ActiveSpanManager.deactivate(exchange);
                 processorSpan.finish();
             }
         });

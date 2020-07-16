@@ -79,19 +79,8 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
     }
 
     protected void verify(boolean async) {
-        assertEquals("Incorrect number of spans", testdata.length, tracer.finishedSpans().size());
-
-        verifySameTrace();
-
         List<MockSpan> spans = tracer.finishedSpans();
-        if (async) {
-            final List<MockSpan> unsortedSpans = spans;
-            spans = Arrays.asList(testdata).stream()
-                    .map(td -> findSpan(td, unsortedSpans)).distinct().collect(Collectors.toList());
-            assertEquals("Incorrect number of spans after sorting", testdata.length, spans.size());
-        }
-
-        spans.stream().forEach(mockSpan -> {
+        spans.forEach(mockSpan -> {
             System.out.println("Span: " + mockSpan);
             System.out.println("\tComponent: " + mockSpan.tags().get(Tags.COMPONENT.getKey()));
             System.out.println("\tTags: " + mockSpan.tags());
@@ -100,6 +89,17 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
                 System.out.println("\t" + logEntry.fields());
             }
         });
+
+        assertEquals("Incorrect number of spans", testdata.length, spans.size());
+
+        verifySameTrace();
+
+        if (async) {
+            final List<MockSpan> unsortedSpans = spans;
+            spans = Arrays.stream(testdata)
+                    .map(td -> findSpan(td, unsortedSpans)).distinct().collect(Collectors.toList());
+            assertEquals("Incorrect number of spans after sorting", testdata.length, spans.size());
+        }
 
         for (int i = 0; i < testdata.length; i++) {
             verifySpan(i, testdata, spans);
@@ -155,7 +155,7 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
         }
 
         if (!td.getLogMessages().isEmpty()) {
-            assertEquals("Number of log messages", td.getLogMessages().size(), span.logEntries().size());
+            assertEquals(td.getLabel(), td.getLogMessages().size(), span.logEntries().size());
             for (int i = 0; i < td.getLogMessages().size(); i++) {
                 assertEquals(td.getLogMessages().get(i), span.logEntries().get(i).fields().get("message"));
             }
