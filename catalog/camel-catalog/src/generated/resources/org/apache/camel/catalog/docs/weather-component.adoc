@@ -42,7 +42,7 @@ weather://<unused name>[?options]
 
 == REMARK
 
-Since the 9th of October, an Api Key is required to access the
+Since 9 October 2015, an Api Key is required to access the
 openweather service. This key is passed as parameter to the URI
 definition of the weather endpoint using the appid param !
 
@@ -56,7 +56,7 @@ from where you're using the API now on.
 
 
 // component options: START
-The Weather component supports 4 options, which are listed below.
+The Weather component supports 3 options, which are listed below.
 
 
 
@@ -66,7 +66,6 @@ The Weather component supports 4 options, which are listed below.
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *httpClient* (advanced) | To use an existing configured http client (for example with http proxy) |  | CloseableHttpClient
 |===
 // component options: END
 
@@ -91,7 +90,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (40 parameters):
+=== Query Parameters (42 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -103,7 +102,7 @@ with the following path and query parameters:
 | *mode* (common) | The output format of the weather data. The value can be one of: HTML, JSON, XML | JSON | WeatherMode
 | *period* (common) | If null, the current weather will be returned, else use values of 5, 7, 14 days. Only the numeric value for the forecast period is actually parsed, so spelling, capitalisation of the time period is up to you (its ignored) |  | String
 | *units* (common) | The units for temperature measurement. The value can be one of: IMPERIAL, METRIC |  | WeatherUnits
-| *weatherApi* (common) | The API to be use (current, forecast/3 hour, forecast daily, station). The value can be one of: Current, Station, Hourly, Daily |  | WeatherApi
+| *weatherApi* (common) | The API to use (current, forecast/3 hour, forecast daily, station). The value can be one of: Current, Station, Hourly, Daily |  | WeatherApi
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
@@ -111,6 +110,8 @@ with the following path and query parameters:
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *geoLocationProvider* (advanced) | A custum geolocation provider to determine the longitude and latitude to use when no location information is set. The default implementaion uses the ipstack API and requires geolocationAccessKey and geolocationRequestHostIP |  | GeoLocationProvider
+| *httpClient* (advanced) | To use an existing configured http client (for example with http proxy) |  | CloseableHttpClient
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *cnt* (filter) | Number of results to be found |  | Integer
 | *ids* (filter) | List of id's of city/stations. You can separate multiple ids by comma. |  | String
