@@ -45,12 +45,12 @@ public class MinioComponentIntegrationTest extends CamelTestSupport {
 
         Exchange exchange1 = template.send("direct:start", ExchangePattern.InOnly, exchange -> {
             exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest1.txt");
-            exchange.getIn().setBody("This is my bucket content1.");
+            exchange.getIn().setBody("This is my bucket content.");
         });
 
         Exchange exchange2 = template.send("direct:start", ExchangePattern.InOnly, exchange -> {
             exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest2.txt");
-            exchange.getIn().setBody("This is my bucket content2.");
+            exchange.getIn().setBody("This is my bucket content.");
         });
 
         assertMockEndpointsSatisfied();
@@ -67,7 +67,7 @@ public class MinioComponentIntegrationTest extends CamelTestSupport {
         result.expectedMessageCount(1);
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, exchange1 -> {
-            exchange1.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest");
+            exchange1.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest3.txt");
             exchange1.getIn().setBody("This is my bucket content.");
         });
 

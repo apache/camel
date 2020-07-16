@@ -46,7 +46,7 @@ public class MinioComponentVerifierExtensionTest extends CamelTestSupport {
         parameters.put("secretKey", "l");
         parameters.put("accessKey", "k");
         parameters.put("region", "l");
-        parameters.put("bucketNameOrArn", "bucket1");
+        parameters.put("bucketName", "bucket1");
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
@@ -62,7 +62,7 @@ public class MinioComponentVerifierExtensionTest extends CamelTestSupport {
         parameters.put("secretKey", "l");
         parameters.put("accessKey", "k");
         parameters.put("region", "US_EAST_1");
-        parameters.put("bucketNameOrArn", "test12");
+        parameters.put("bucketName", "test12");
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
@@ -78,7 +78,7 @@ public class MinioComponentVerifierExtensionTest extends CamelTestSupport {
         parameters.put("secretKey", "l");
         parameters.put("accessKey", "k");
         parameters.put("region", "l");
-        parameters.put("bucketNameOrArn", "test12");
+        parameters.put("bucketName", "test12");
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
