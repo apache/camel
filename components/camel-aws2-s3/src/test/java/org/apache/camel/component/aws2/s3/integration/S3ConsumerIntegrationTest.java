@@ -88,7 +88,7 @@ public class S3ConsumerIntegrationTest extends CamelTestSupport {
 
                 from("direct:putObject").startupOrder(1).to(awsEndpoint).to("mock:result");
 
-                from("aws2-s3://mycamel?moveAfterRead=true&destinationBucket=camel-kafka-connector").startupOrder(2).log("${body}");
+                from("aws2-s3://mycamel?moveAfterRead=true&destinationBucket=camel-kafka-connector&autoCreateBucket=false").startupOrder(2).log("${body}");
 
             }
         };
