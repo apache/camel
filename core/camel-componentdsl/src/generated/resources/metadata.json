@@ -4870,7 +4870,7 @@
     "version": "3.5.0-SNAPSHOT",
     "scheme": "minio",
     "extendsScheme": "",
-    "syntax": "minio:bucketName",
+    "syntax": "minio:\/\/bucketName",
     "async": false,
     "consumerOnly": false,
     "producerOnly": false,

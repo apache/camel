@@ -87,7 +87,7 @@ public interface MinioComponentBuilderFactory {
             return this;
         }
         /**
-         * (Optional) Set custom HTTP client for authenticated access.
+         * Set custom HTTP client for authenticated access.
          * 
          * The option is a: <code>okhttp3.OkHttpClient</code> type.
          * 
@@ -122,7 +122,7 @@ public interface MinioComponentBuilderFactory {
             return this;
         }
         /**
-         * (Optional) Set when creating new bucket.
+         * Set when creating new bucket.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -157,8 +157,8 @@ public interface MinioComponentBuilderFactory {
             return this;
         }
         /**
-         * (Optional) TCP/IP port number. 80 and 443 are used as defaults for
-         * HTTP and HTTPS.
+         * TCP/IP port number. 80 and 443 are used as defaults for HTTP and
+         * HTTPS.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -169,9 +169,9 @@ public interface MinioComponentBuilderFactory {
             return this;
         }
         /**
-         * (Optional) The region in which Minio client needs to work. When using
-         * this parameter, the configuration will expect the lowercase name of
-         * the region (for example ap-east-1) You'll need to use the name
+         * The region in which Minio client needs to work. When using this
+         * parameter, the configuration will expect the lowercase name of the
+         * region (for example ap-east-1). You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -183,8 +183,7 @@ public interface MinioComponentBuilderFactory {
             return this;
         }
         /**
-         * (Optional) Flag to indicate to use secure connection to minio service
-         * or not.
+         * Flag to indicate to use secure connection to minio service or not.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -196,7 +195,7 @@ public interface MinioComponentBuilderFactory {
             return this;
         }
         /**
-         * (Optional) Server-side encryption.
+         * Server-side encryption.
          * 
          * The option is a: <code>io.minio.ServerSideEncryption</code> type.
          * 
@@ -208,8 +207,7 @@ public interface MinioComponentBuilderFactory {
             return this;
         }
         /**
-         * (Optional) Server-side encryption for source object while copy/move
-         * objects.
+         * Server-side encryption for source object while copy/move objects.
          * 
          * The option is a:
          * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
@@ -258,14 +256,14 @@ public interface MinioComponentBuilderFactory {
             return this;
         }
         /**
-         * (Optional) Delete objects from Minio after they have been retrieved.
-         * The delete is only performed if the Exchange is committed. If a
-         * rollback occurs, the object is not deleted. If this option is false,
-         * then the same objects will be retrieve over and over again on the
-         * polls. Therefore you need to use the Idempotent Consumer EIP in the
-         * route to filter out duplicates. You can filter using the
-         * MinioConstants#BUCKET_NAME and MinioConstants#OBJECT_NAME headers, or
-         * only the MinioConstants#OBJECT_NAME header.
+         * Delete objects from Minio after they have been retrieved. The delete
+         * is only performed if the Exchange is committed. If a rollback occurs,
+         * the object is not deleted. If this option is false, then the same
+         * objects will be retrieve over and over again on the polls. Therefore
+         * you need to use the Idempotent Consumer EIP in the route to filter
+         * out duplicates. You can filter using the MinioConstants#BUCKET_NAME
+         * and MinioConstants#OBJECT_NAME headers, or only the
+         * MinioConstants#OBJECT_NAME header.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -301,7 +299,7 @@ public interface MinioComponentBuilderFactory {
             return this;
         }
         /**
-         * (Optional) Source object name.
+         * Source object name.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -371,7 +369,7 @@ public interface MinioComponentBuilderFactory {
             return this;
         }
         /**
-         * (Optional) Number of bytes of object data from offset.
+         * Number of bytes of object data from offset.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -442,7 +440,7 @@ public interface MinioComponentBuilderFactory {
             return this;
         }
         /**
-         * (Optional) Start byte position of object data.
+         * Start byte position of object data.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -453,7 +451,7 @@ public interface MinioComponentBuilderFactory {
             return this;
         }
         /**
-         * (Optional) Object name starts with prefix.
+         * Object name starts with prefix.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -464,7 +462,7 @@ public interface MinioComponentBuilderFactory {
             return this;
         }
         /**
-         * (Optional) List recursively than directory structure emulation.
+         * List recursively than directory structure emulation.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -499,7 +497,7 @@ public interface MinioComponentBuilderFactory {
             return this;
         }
         /**
-         * (Optional) when true, version 1 of REST API is used.
+         * when true, version 1 of REST API is used.
          * 
          * The option is a: <code>boolean</code> type.
          * 
