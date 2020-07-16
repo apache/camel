@@ -191,11 +191,11 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
         for (String name : request.headers().names()) {
             // mapping the content-type
-            if (name.toLowerCase(Locale.US).equals("content-type")) {
+            if (name.equalsIgnoreCase("content-type")) {
                 name = Exchange.CONTENT_TYPE;
             }
 
-            if (name.toLowerCase(Locale.US).equals("authorization")) {
+            if (name.equalsIgnoreCase("authorization")) {
                 String value = request.headers().get(name);
                 // store a special header that this request was authenticated using HTTP Basic
                 if (value != null && value.trim().startsWith("Basic")) {
@@ -350,7 +350,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
         for (String name : response.headers().names()) {
             // mapping the content-type
-            if (name.toLowerCase().equals("content-type")) {
+            if (name.equalsIgnoreCase("content-type")) {
                 name = Exchange.CONTENT_TYPE;
             }
             // add the headers one by one, and use the header filter strategy

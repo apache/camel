@@ -98,7 +98,7 @@ public class ConnectorConfigField {
 
     private boolean isMillSecondsInTheFieldName(final String name) {
         final String[] parts = name.split("\\.");
-        return parts.length > 0 && parts[parts.length - 1].toLowerCase().equals("ms");
+        return parts.length > 0 && parts[parts.length - 1].equalsIgnoreCase("ms");
     }
 
     private String getSetterMethodName(final String name) {
