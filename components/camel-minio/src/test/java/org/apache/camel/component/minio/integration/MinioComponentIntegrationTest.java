@@ -44,13 +44,13 @@ public class MinioComponentIntegrationTest extends CamelTestSupport {
         result.expectedMessageCount(2);
 
         Exchange exchange1 = template.send("direct:start", ExchangePattern.InOnly, exchange -> {
-            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest1");
-            exchange.getIn().setBody("This is my bucket content.");
+            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest1.txt");
+            exchange.getIn().setBody("This is my bucket content1.");
         });
 
         Exchange exchange2 = template.send("direct:start", ExchangePattern.InOnly, exchange -> {
-            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest2");
-            exchange.getIn().setBody("This is my bucket content.");
+            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest2.txt");
+            exchange.getIn().setBody("This is my bucket content2.");
         });
 
         assertMockEndpointsSatisfied();
@@ -106,7 +106,7 @@ public class MinioComponentIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() {
                 String minioEndpointUri =
-                        "minio://mycamelbucket?accessKey=Q3AM3UQ867SPQQA43P2F&secretKey=zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG&region=us-west-1&autoCreateBucket=true&endpoint=https://play.min.io";
+                        "minio://mycamelbucket?accessKey=Q3AM3UQ867SPQQA43P2F&secretKey=zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG&region=us-west-1&autoCreateBucket=false&endpoint=https://play.min.io";
 
                 from("direct:start").to(minioEndpointUri);
 

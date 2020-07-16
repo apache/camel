@@ -48,11 +48,6 @@ public class MinioConsumerIntegrationTest extends CamelTestSupport {
         result.expectedMessageCount(3);
 
         template.send("direct:putObject", exchange -> {
-            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "test.txt");
-            exchange.getIn().setBody("Test");
-        });
-
-        template.send("direct:putObject", exchange -> {
             exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "test1.txt");
             exchange.getIn().setBody("Test1");
         });
@@ -60,6 +55,11 @@ public class MinioConsumerIntegrationTest extends CamelTestSupport {
         template.send("direct:putObject", exchange -> {
             exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "test2.txt");
             exchange.getIn().setBody("Test2");
+        });
+
+        template.send("direct:putObject", exchange -> {
+            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "test3.txt");
+            exchange.getIn().setBody("Test3");
         });
 
         Thread.sleep(10000);
@@ -75,7 +75,8 @@ public class MinioConsumerIntegrationTest extends CamelTestSupport {
 
                 from("direct:putObject").startupOrder(1).to(minioEndpoint).to("mock:result");
 
-                from("minio://mycamel?moveAfterRead=true&destinationBucket=camel-kafka-connector").startupOrder(2).log("${body}");
+                // TODO: Check why this is not working
+                from("minio://mycamel?moveAfterRead=true&destinationBucketName=camel-kafka-connector").startupOrder(2).log("${body}");
 
             }
         };
