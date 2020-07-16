@@ -32,7 +32,6 @@ public class ABCRouteTest extends CamelOpenTracingTestSupport {
         new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
             .setParentId(3).addLogMessage("routing at a").addLogMessage("End of routing"),
         new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
-            .setKind(Tags.SPAN_KIND_SERVER)
     };
 
     public ABCRouteTest() {

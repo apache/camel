@@ -28,7 +28,6 @@ public class TwoServiceWithExcludeTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
         new SpanTestData().setLabel("ServiceA server").setUri("direct://ServiceA").setOperation("ServiceA")
-            .setKind(Tags.SPAN_KIND_SERVER)
     };
 
     public TwoServiceWithExcludeTest() {

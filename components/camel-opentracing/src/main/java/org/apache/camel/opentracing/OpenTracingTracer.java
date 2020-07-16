@@ -360,8 +360,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                     .asChildOf(parent)
                     .start();
 
-                // TODO: 7/16/20 this should also check if the endpoint is out-of-process inbound
-                if (parent == null) {
+                if (parent == null && !(sd instanceof AbstractInternalSpanDecorator)) {
                     span.setTag(Tags.SPAN_KIND.getKey(), sd.getReceiverSpanKind());
                 }
 

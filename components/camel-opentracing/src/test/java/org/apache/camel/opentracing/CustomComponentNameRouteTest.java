@@ -31,7 +31,6 @@ public class CustomComponentNameRouteTest extends CamelOpenTracingTestSupport {
         new SpanTestData().setLabel("myseda:a server").setUri("myseda://a").setOperation("a")
             .setParentId(3).addLogMessage("routing at a").addLogMessage("End of routing"),
         new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
-            .setKind(Tags.SPAN_KIND_SERVER)
     };
 
     public CustomComponentNameRouteTest() {

@@ -34,7 +34,6 @@ public class EIPTracingActiveSpanTest extends CamelOpenTracingTestSupport {
         new SpanTestData().setLabel("process server").setOperation("direct-processor")
             .setParentId(2),
         new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
-            .setKind(Tags.SPAN_KIND_SERVER)
     };
 
     public EIPTracingActiveSpanTest() {
