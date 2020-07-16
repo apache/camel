@@ -22,13 +22,14 @@ import java.util.List;
 import java.util.Scanner;
 
 import org.apache.camel.component.weather.geolocation.FreeGeoIpGeoLocationProvider;
+import org.apache.camel.component.weather.geolocation.GeoLocationProvider;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ObjectHelper;
-import org.apache.http.conn.HttpClientConnectionManager;
-
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
 import static org.apache.camel.component.weather.WeatherLanguage.en;
 import static org.apache.camel.component.weather.WeatherMode.JSON;
@@ -36,9 +37,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 
 @UriParams
 public class WeatherConfiguration {
-
-    private final WeatherComponent component;
-    private final WeatherQuery weatherQuery;
 
     @UriPath(description = "The name value is not used.")
     @Metadata(required = true)
@@ -82,14 +80,15 @@ public class WeatherConfiguration {
     @UriParam(label = "security")
     @Metadata(required = true)
     private String geolocationRequestHostIP;
+    @UriParam(label = "advanced")
+    private CloseableHttpClient httpClient = HttpClients.createDefault();
+    @UriParam(label = "advanced")
+    private GeoLocationProvider geoLocationProvider = new FreeGeoIpGeoLocationProvider(this);
+    
+    public WeatherConfiguration() {
 
-    public WeatherConfiguration(WeatherComponent component) {
-        this.component = notNull(component, "component");
-        weatherQuery = new WeatherQuery(this);
-        FreeGeoIpGeoLocationProvider geoLocationProvider = new FreeGeoIpGeoLocationProvider(component, geolocationAccessKey);
-        weatherQuery.setGeoLocationProvider(geoLocationProvider);
     }
-
+    
     public String getPeriod() {
         return period;
     }
@@ -208,14 +207,6 @@ public class WeatherConfiguration {
         return appid;
     }
 
-    String getQuery() throws Exception {
-        return weatherQuery.getQuery();
-    }
-
-    String getQuery(String location) throws Exception {
-        return weatherQuery.getQuery(location);
-    }
-
     public WeatherLanguage getLanguage() {
         return language;
     }
@@ -312,7 +303,7 @@ public class WeatherConfiguration {
     }
 
     /**
-     * The API to be use (current, forecast/3 hour, forecast daily, station)
+     * The API to use (current, forecast/3 hour, forecast daily, station)
      */
     public void setWeatherApi(WeatherApi weatherApi) {
         this.weatherApi = weatherApi;
@@ -339,5 +330,31 @@ public class WeatherConfiguration {
      */
     public void setGeolocationRequestHostIP(String geolocationRequestHostIP) {
         this.geolocationRequestHostIP = geolocationRequestHostIP;
+    }
+
+    public CloseableHttpClient getHttpClient() {
+        return httpClient;
+    }
+
+    /**
+     * To use an existing configured http client (for example with http proxy)
+     */
+    public void setHttpClient(CloseableHttpClient httpClient) {
+        this.httpClient = httpClient;
+    }
+
+    public GeoLocationProvider getGeoLocationProvider() {
+        return geoLocationProvider;
+    }
+
+    /**
+     * A custum geolocation provider to determine the longitude and latitude
+     * to use when no location information is set.
+     * 
+     * The default implementaion uses the ipstack API and requires
+     * geolocationAccessKey and geolocationRequestHostIP
+     */
+    public void setGeoLocationProvider(GeoLocationProvider geoLocationProvider) {
+        this.geoLocationProvider = geoLocationProvider;
     }
 }

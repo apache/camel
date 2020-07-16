@@ -23,8 +23,6 @@ public class WeatherComponentConfigurer extends PropertyConfigurerSupport implem
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "httpclient":
-        case "httpClient": target.setHttpClient(property(camelContext, org.apache.http.impl.client.CloseableHttpClient.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -36,7 +34,6 @@ public class WeatherComponentConfigurer extends PropertyConfigurerSupport implem
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("httpClient", org.apache.http.impl.client.CloseableHttpClient.class);
         answer.put("lazyStartProducer", boolean.class);
         return answer;
     }
@@ -49,8 +46,6 @@ public class WeatherComponentConfigurer extends PropertyConfigurerSupport implem
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "httpclient":
-        case "httpClient": return target.getHttpClient();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         default: return null;

@@ -14589,7 +14589,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path name
      */
-    public static org.apache.camel.builder.endpoint.dsl.WeatherEndpointBuilderFactory.WeatherEndpointBuilder weather(
+    static org.apache.camel.builder.endpoint.dsl.WeatherEndpointBuilderFactory.WeatherEndpointBuilder weather(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.WeatherEndpointBuilderFactory.endpointBuilder("weather", path);
     }
@@ -14610,7 +14610,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path name
      */
-    public static org.apache.camel.builder.endpoint.dsl.WeatherEndpointBuilderFactory.WeatherEndpointBuilder weather(
+    static org.apache.camel.builder.endpoint.dsl.WeatherEndpointBuilderFactory.WeatherEndpointBuilder weather(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.WeatherEndpointBuilderFactory.endpointBuilder(componentName, path);
