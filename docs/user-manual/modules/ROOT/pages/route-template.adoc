@@ -138,6 +138,34 @@ Or with the fluent builder:
 
 The route templates can be dumped as XML from the `ManagedCamelContextMBean` MBean via the `dumpRouteTemplatesAsXml` operation.
 
+== Creating routes from properties file
+
+When using `camel-main` you can specify the parameters for route templates in `application.properties` file.
+
+For example given the route template below (from a `RouteBuilder` class):
+
+[source,java]
+----
+routeTemplate("mytemplate")
+    .templateParameter("input")
+    .templateParameter("result")
+    .from("direct:{{input}}")
+        .to("mock:{{result}}");
+----
+
+Then we can create two routes from this template by configuring the values in the `application.properties` file:
+
+[source,properties]
+----
+camel.route-template[one].template-id=mytemplate
+camel.route-template[one].input=foo
+camel.route-template[one].result=cheese
+
+camel.route-template[two].template-id=mytemplate
+camel.route-template[two].input=bar
+camel.route-template[two].result=cheese
+----
+
 == See Also
 
 See the example https://github.com/apache/camel-examples/tree/master/examples/camel-example-routetemplate[camel-example-routetemplate].

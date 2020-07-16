@@ -832,10 +832,10 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(10);
                 validateOptionAndValue(key, option, value);
                 lraProperties.put(optionKey(option), value);
-            } else if (key.startsWith("camel.routetemplate")) {
+            } else if (key.startsWith("camel.route-template")) {
                 // grab the value
                 String value = prop.getProperty(key);
-                String option = key.substring(19);
+                String option = key.substring(20);
                 validateOptionAndValue(key, option, value);
                 routeTemplateProperties.put(optionKey(option), value);
             } else if (key.startsWith("camel.beans.")) {
@@ -1053,7 +1053,7 @@ public abstract class BaseMainSupport extends BaseService {
         // lets sort by keys
         Map<String, Object> sorted = new TreeMap<>(routeTemplateProperties);
         sorted.forEach((k, v) -> {
-            autoConfiguredProperties.put("camel.routetemplate" + k, v.toString());
+            autoConfiguredProperties.put("camel.route-template" + k, v.toString());
         });
         routeTemplateProperties.clear();
 

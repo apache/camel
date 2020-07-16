@@ -34,6 +34,8 @@ public class MainRouteTemplateTest {
             @Override
             public void configure() throws Exception {
                 routeTemplate("mytemplate")
+                    .templateParameter("input")
+                    .templateParameter("result")
                     .from("direct:{{input}}")
                         .to("mock:{{result}}");
             }
