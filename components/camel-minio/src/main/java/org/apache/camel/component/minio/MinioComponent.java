@@ -39,11 +39,13 @@ public class MinioComponent extends DefaultComponent {
     private MinioConfiguration configuration = new MinioConfiguration();
 
     public MinioComponent() {
-        super();
+        this(null);
     }
 
     public MinioComponent(CamelContext context) {
         super(context);
+        registerExtension(new MinioComponentVerifierExtension());
+
     }
 
     @Override
@@ -86,5 +88,4 @@ public class MinioComponent extends DefaultComponent {
             LOG.debug("MinioClient instance is already set at endpoint level: skipping the check in the registry");
         }
     }
-
 }

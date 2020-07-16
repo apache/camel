@@ -45,29 +45,24 @@ public class GetMinioClient implements MinioCamelInternalClient {
     @Override
     public MinioClient getMinioClient() {
         if (configuration.getEndpoint() != null) {
-            try {
-                MinioClient.Builder minioClientRequest = MinioClient.builder();
+            MinioClient.Builder minioClientRequest = MinioClient.builder();
 
-                if (configuration.getProxyPort() != null) {
-                    minioClientRequest.endpoint(configuration.getEndpoint(), configuration.getProxyPort(), configuration.isSecure());
-                } else {
-                    minioClientRequest.endpoint(configuration.getEndpoint());
-                }
-                if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
-                    minioClientRequest.credentials(configuration.getAccessKey(), configuration.getSecretKey());
-                }
-                if (configuration.getRegion() != null) {
-                    minioClientRequest.region(configuration.getRegion());
-                }
-                if (configuration.getCustomHttpClient() != null) {
-                    minioClientRequest.httpClient(configuration.getCustomHttpClient());
-                }
-                return minioClientRequest.build();
-
-            } catch (Throwable e) {
-                LOG.warn("Error Creating an Minio client, due {}", e.getMessage());
-                throw e;
+            if (configuration.getProxyPort() != null) {
+                minioClientRequest.endpoint(configuration.getEndpoint(), configuration.getProxyPort(), configuration.isSecure());
+            } else {
+                minioClientRequest.endpoint(configuration.getEndpoint());
             }
+            if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
+                minioClientRequest.credentials(configuration.getAccessKey(), configuration.getSecretKey());
+            }
+            if (configuration.getRegion() != null) {
+                minioClientRequest.region(configuration.getRegion());
+            }
+            if (configuration.getCustomHttpClient() != null) {
+                minioClientRequest.httpClient(configuration.getCustomHttpClient());
+            }
+            return minioClientRequest.build();
+
         } else {
             throw new IllegalArgumentException("Endpoint must be specified");
         }

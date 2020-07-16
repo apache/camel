@@ -19,14 +19,12 @@ package org.apache.camel.component.minio;
 import java.io.InputStream;
 import java.util.*;
 
-import io.minio.BucketExistsArgs;
 import io.minio.CopyObjectArgs;
 import io.minio.CopySource;
 import io.minio.GetObjectArgs;
 import io.minio.ListObjectsArgs;
 import io.minio.MinioClient;
 import io.minio.RemoveObjectArgs;
-import io.minio.errors.InvalidBucketNameException;
 import io.minio.errors.MinioException;
 import io.minio.messages.Contents;
 import io.minio.messages.ListBucketResultV2;
@@ -65,92 +63,68 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         String bucketName = getConfiguration().getBucketName();
         String objectName = getConfiguration().getObjectName();
         MinioClient minioClient = getMinioClient();
-        Queue<Exchange> exchanges = null;
-
-        if (bucketExists(minioClient, bucketName)) {
-            LOG.trace("Bucket {} exists", bucketName);
-        } else {
-            throw new InvalidBucketNameException("Bucket {} does not exists", bucketName);
-        }
+        Queue<Exchange> exchanges;
 
         if (objectName != null) {
             LOG.trace("Getting object in bucket {} with object name {}...", bucketName, objectName);
 
-            try {
-                InputStream minioObject = getObject(bucketName, minioClient, objectName);
-                if (minioObject != null) {
-                    exchanges = createExchanges(minioObject, objectName);
-                }
+            InputStream minioObject = getObject(bucketName, minioClient, objectName);
+            exchanges = createExchanges(minioObject, objectName);
 
-            } catch (Throwable e) {
-                LOG.warn("Failed to create exchanges in bucket {} with object name {}, Error message {}", bucketName, objectName, e.getMessage());
-                throw e;
-
-            }
         } else {
 
-            try {
-                LOG.trace("Queueing objects in bucket [{}]...", bucketName);
+            LOG.trace("Queueing objects in bucket [{}]...", bucketName);
 
-                ListObjectsArgs.Builder listObjectRequest = ListObjectsArgs.builder()
-                        .bucket(bucketName)
-                        .includeUserMetadata(getConfiguration().isIncludeUserMetadata())
-                        .includeVersions(getConfiguration().isIncludeVersions())
-                        .recursive(getConfiguration().isRecursive())
-                        .useApiVersion1(getConfiguration().isUseVersion1());
+            ListObjectsArgs.Builder listObjectRequest = ListObjectsArgs.builder()
+                    .bucket(bucketName)
+                    .includeUserMetadata(getConfiguration().isIncludeUserMetadata())
+                    .includeVersions(getConfiguration().isIncludeVersions())
+                    .recursive(getConfiguration().isRecursive())
+                    .useApiVersion1(getConfiguration().isUseVersion1());
 
-                if (getConfiguration().getDelimiter() != null) {
-                    listObjectRequest.delimiter(getConfiguration().getDelimiter());
-                }
-
-                if (maxMessagesPerPoll > 0) {
-                    listObjectRequest.maxKeys(maxMessagesPerPoll);
-                }
-
-                if (getConfiguration().getPrefix() != null) {
-                    listObjectRequest.prefix(getConfiguration().getPrefix());
-                }
-
-                if (getConfiguration().getStartAfter() != null) {
-                    listObjectRequest.startAfter(getConfiguration().getStartAfter());
-                }
-
-                // if there was a marker from previous poll then use that to
-                // continue from where we left last time
-                if (continuationToken != null) {
-                    LOG.trace("Resuming from marker: {}", continuationToken);
-                    listObjectRequest.continuationToken(continuationToken);
-                }
-
-                // TODO: Check for validity of the statement
-                ListBucketResultV2 listObjects = (ListBucketResultV2) getMinioClient().listObjects(listObjectRequest.build());
-
-                if (listObjects.isTruncated()) {
-                    continuationToken = listObjects.nextContinuationToken();
-                    LOG.trace("Returned list is truncated, so setting next marker: {}", continuationToken);
-                } else {
-                    // no more data so clear marker
-                    continuationToken = null;
-                }
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Found {} objects in bucket [{}]...", listObjects.contents().size(), bucketName);
-                }
-
-                exchanges = createExchanges(listObjects.contents());
-            } catch (Throwable e) {
-                LOG.warn("Failed to create exchanges in bucket {} with object list, Error message {}", bucketName, e.getMessage());
-                throw e;
+            if (getConfiguration().getDelimiter() != null) {
+                listObjectRequest.delimiter(getConfiguration().getDelimiter());
             }
-        }
 
-        if (CastUtils.cast(exchanges) != null) {
-            return processBatch(CastUtils.cast(exchanges));
-        } else {
-            throw new IllegalAccessException("Cannot process null exchanges");
+            if (maxMessagesPerPoll > 0) {
+                listObjectRequest.maxKeys(maxMessagesPerPoll);
+            }
+
+            if (getConfiguration().getPrefix() != null) {
+                listObjectRequest.prefix(getConfiguration().getPrefix());
+            }
+
+            if (getConfiguration().getStartAfter() != null) {
+                listObjectRequest.startAfter(getConfiguration().getStartAfter());
+            }
+
+            // if there was a marker from previous poll then use that to
+            // continue from where we left last time
+            if (continuationToken != null) {
+                LOG.trace("Resuming from marker: {}", continuationToken);
+                listObjectRequest.continuationToken(continuationToken);
+            }
+
+            // TODO: Check for validity of the statement
+            ListBucketResultV2 listObjects = (ListBucketResultV2) getMinioClient().listObjects(listObjectRequest.build());
+
+            if (listObjects.isTruncated()) {
+                continuationToken = listObjects.nextContinuationToken();
+                LOG.trace("Returned list is truncated, so setting next marker: {}", continuationToken);
+            } else {
+                // no more data so clear marker
+                continuationToken = null;
+            }
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Found {} objects in bucket [{}]...", listObjects.contents().size(), bucketName);
+            }
+
+            exchanges = createExchanges(listObjects.contents());
         }
+        return processBatch(CastUtils.cast(exchanges));
     }
 
-    protected Queue<Exchange> createExchanges(InputStream objectStream, String objectName) {
+    protected Queue<Exchange> createExchanges(InputStream objectStream, String objectName) throws Exception {
         Queue<Exchange> answer = new LinkedList<>();
         Exchange exchange = getEndpoint().createExchange(objectStream, objectName);
         answer.add(exchange);
@@ -204,50 +178,35 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         return answer;
     }
 
-    private boolean bucketExists(MinioClient minioClient, String bucketName) throws Exception {
-        try {
-            return minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
-
-        } catch (Throwable e) {
-            LOG.warn("Error checking bucket, due: {}", e.getMessage());
-            throw e;
-        }
-    }
-
     private InputStream getObject(String bucketName, MinioClient minioClient, String objectName) throws Exception {
-        try {
-            GetObjectArgs.Builder getObjectRequest = GetObjectArgs.builder().bucket(bucketName).object(objectName);
+        GetObjectArgs.Builder getObjectRequest = GetObjectArgs.builder().bucket(bucketName).object(objectName);
 
-            if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
-                getObjectRequest.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
-            }
-            if (getConfiguration().getOffset() != 0) {
-                getObjectRequest.offset(getConfiguration().getOffset());
-            }
-            if (getConfiguration().getLength() != 0) {
-                getObjectRequest.length(getConfiguration().getLength());
-            }
-            if (getConfiguration().getVersionId() != null) {
-                getObjectRequest.versionId(getConfiguration().getVersionId());
-            }
-            if (getConfiguration().getMatchETag() != null) {
-                getObjectRequest.matchETag(getConfiguration().getMatchETag());
-            }
-            if (getConfiguration().getNotMatchETag() != null) {
-                getObjectRequest.notMatchETag(getConfiguration().getNotMatchETag());
-            }
-            if (getConfiguration().getModifiedSince() != null) {
-                getObjectRequest.modifiedSince(getConfiguration().getModifiedSince());
-            }
-            if (getConfiguration().getUnModifiedSince() != null) {
-                getObjectRequest.unmodifiedSince(getConfiguration().getUnModifiedSince());
-            }
-
-            return minioClient.getObject(getObjectRequest.build());
-        } catch (Throwable e) {
-            LOG.warn("Error getting object: {} in bucket: {}, due: {}", objectName, bucketName, e.getMessage());
-            throw e;
+        if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+            getObjectRequest.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
         }
+        if (getConfiguration().getOffset() != 0) {
+            getObjectRequest.offset(getConfiguration().getOffset());
+        }
+        if (getConfiguration().getLength() != 0) {
+            getObjectRequest.length(getConfiguration().getLength());
+        }
+        if (getConfiguration().getVersionId() != null) {
+            getObjectRequest.versionId(getConfiguration().getVersionId());
+        }
+        if (getConfiguration().getMatchETag() != null) {
+            getObjectRequest.matchETag(getConfiguration().getMatchETag());
+        }
+        if (getConfiguration().getNotMatchETag() != null) {
+            getObjectRequest.notMatchETag(getConfiguration().getNotMatchETag());
+        }
+        if (getConfiguration().getModifiedSince() != null) {
+            getObjectRequest.modifiedSince(getConfiguration().getModifiedSince());
+        }
+        if (getConfiguration().getUnModifiedSince() != null) {
+            getObjectRequest.unmodifiedSince(getConfiguration().getUnModifiedSince());
+        }
+
+        return minioClient.getObject(getObjectRequest.build());
     }
 
     @Override
@@ -297,12 +256,13 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         try {
             String srcBucketName = exchange.getIn().getHeader(MinioConstants.BUCKET_NAME, String.class);
             String srcObjectName = exchange.getIn().getHeader(MinioConstants.OBJECT_NAME, String.class);
-            if (getConfiguration().isMoveAfterRead()) {
-                copyObject(srcBucketName, srcObjectName);
-                LOG.trace("Copied object from bucket {} with objectName {} to bucket {}...",
-                        srcBucketName, srcObjectName, getConfiguration().getDestinationBucketName());
-            }
+
             if (getConfiguration().isDeleteAfterRead() || getConfiguration().isMoveAfterRead()) {
+                if (getConfiguration().isMoveAfterRead()) {
+                    copyObject(srcBucketName, srcObjectName);
+                    LOG.trace("Copied object from bucket {} with objectName {} to bucket {}...",
+                            srcBucketName, srcObjectName, getConfiguration().getDestinationBucketName());
+                }
 
                 LOG.trace("Deleting object from bucket {} with objectName {}...", srcBucketName, srcObjectName);
 

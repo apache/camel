@@ -228,6 +228,7 @@ public class MinioProducer extends DefaultProducer {
     private void deleteObject(MinioClient minioClient, Exchange exchange) throws Exception {
         final String bucketName = determineBucketName(exchange);
         final String sourceKey = determineObjectName(exchange);
+        final String versionId = determineVersionId(exchange);
         if (getConfiguration().isPojoRequest()) {
             RemoveObjectArgs.Builder payload = exchange.getIn().getMandatoryBody(RemoveObjectArgs.Builder.class);
             if (payload != null) {
@@ -238,8 +239,8 @@ public class MinioProducer extends DefaultProducer {
         } else {
             RemoveObjectArgs.Builder deleteObjectRequest = RemoveObjectArgs.builder().bucket(bucketName).object(sourceKey).bypassGovernanceMode(getConfiguration().isBypassGovernanceMode());
 
-            if (getConfiguration().getVersionId() != null) {
-                deleteObjectRequest.versionId(getConfiguration().getVersionId());
+            if (versionId != null) {
+                deleteObjectRequest.versionId(versionId);
             }
 
             minioClient.removeObject(deleteObjectRequest.build());
@@ -444,6 +445,15 @@ public class MinioProducer extends DefaultProducer {
         }
 
         return storageClass;
+    }
+
+    private String determineVersionId(final Exchange exchange) {
+        String versionId = exchange.getIn().getHeader(MinioConstants.VERSION_ID, String.class);
+        if (versionId == null) {
+            versionId = getConfiguration().getVersionId();
+        }
+
+        return versionId;
     }
 
     private ByteArrayOutputStream determineLengthInputStream(InputStream inputStream) throws IOException {

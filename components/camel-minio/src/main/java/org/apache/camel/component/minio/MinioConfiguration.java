@@ -129,7 +129,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * Endpoint can be an URL, domain name, IPv4 address or IPv6 address
+     * Endpoint can be an URL, domain name, IPv4 address or IPv6 address.
      */
     public void setEndpoint(String endpoint) {
         this.endpoint = endpoint;
@@ -140,7 +140,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * (Optional) TCP/IP port number. 80 and 443 are used as defaults for HTTP and HTTPS.
+     * TCP/IP port number. 80 and 443 are used as defaults for HTTP and HTTPS.
      */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
@@ -175,7 +175,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * (Optional) Flag to indicate to use secure connection to minio service or not.
+     * Flag to indicate to use secure connection to minio service or not.
      */
     public void setSecure(boolean secure) {
         this.secure = secure;
@@ -186,9 +186,9 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * (Optional) The region in which Minio client needs to work. When using this parameter,
+     * The region in which Minio client needs to work. When using this parameter,
      * the configuration will expect the lowercase name of the region (for
-     * example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
+     * example ap-east-1). You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
         this.region = region;
@@ -199,7 +199,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * (Optional) Set custom HTTP client for authenticated access.
+     * Set custom HTTP client for authenticated access.
      */
     public void setCustomHttpClient(OkHttpClient customHttpClient) {
         this.customHttpClient = customHttpClient;
@@ -233,7 +233,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * (Optional) Set when creating new bucket.
+     * Set when creating new bucket.
      */
     public void setObjectLock(boolean objectLock) {
         this.objectLock = objectLock;
@@ -244,7 +244,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * (Optional) Server-side encryption for source object while copy/move objects.
+     * Server-side encryption for source object while copy/move objects.
      */
     public void setServerSideEncryptionCustomerKey(ServerSideEncryptionCustomerKey serverSideEncryptionCustomerKey) {
         this.serverSideEncryptionCustomerKey = serverSideEncryptionCustomerKey;
@@ -255,7 +255,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * (Optional) Server-side encryption.
+     * Server-side encryption.
      */
     public void setServerSideEncryption(ServerSideEncryption serverSideEncryption) {
         this.serverSideEncryption = serverSideEncryption;
@@ -277,7 +277,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * To get the object from the bucket with the given object name
+     * To get the object from the bucket with the given object name.
      */
     public void setObjectName(String objectName) {
         this.objectName = objectName;
@@ -337,7 +337,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * (Optional) Object name starts with prefix.
+     * Object name starts with prefix.
      */
     public void setPrefix(String prefix) {
         this.prefix = prefix;
@@ -348,7 +348,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * (Optional) List recursively than directory structure emulation.
+     * List recursively than directory structure emulation.
      */
     public void setRecursive(boolean recursive) {
         this.recursive = recursive;
@@ -370,7 +370,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * (Optional) when true, version 1 of REST API is used.
+     * when true, version 1 of REST API is used.
      */
     public void setUseVersion1(boolean useVersion1) {
         this.useVersion1 = useVersion1;
@@ -381,7 +381,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * (Optional) Start byte position of object data.
+     * Start byte position of object data.
      */
     public void setOffset(long offset) {
         this.offset = offset;
@@ -392,7 +392,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * (Optional) Number of bytes of object data from offset.
+     * Number of bytes of object data from offset.
      */
     public void setLength(long length) {
         this.length = length;
@@ -458,7 +458,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * (Optional) Source object name.
+     * Source object name.
      */
     public void setDestinationObjectName(String destinationObjectName) {
         this.destinationObjectName = destinationObjectName;
@@ -469,7 +469,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * (Optional) Delete objects from Minio after they have been retrieved. The delete is only
+     * Delete objects from Minio after they have been retrieved. The delete is only
      * performed if the Exchange is committed. If a rollback occurs, the object
      * is not deleted.
      * <p/>
@@ -536,7 +536,7 @@ public class MinioConfiguration implements Cloneable {
 
     /**
      * Setting the key name for an element in the bucket through endpoint
-     * parameter
+     * parameter.
      */
     public void setKeyName(String keyName) {
         this.keyName = keyName;
@@ -547,7 +547,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * Delete file object after the Minio file has been uploaded
+     * Delete file object after the Minio file has been uploaded.
      */
     public void setDeleteAfterWrite(boolean deleteAfterWrite) {
         this.deleteAfterWrite = deleteAfterWrite;
@@ -592,7 +592,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * The operation to do in case the user don't want to do only an upload
+     * The operation to do in case the user don't want to do only an upload.
      */
     public void setOperation(MinioOperations operation) {
         this.operation = operation;
@@ -603,7 +603,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * If we want to use a POJO request as body or not
+     * If we want to use a POJO request as body or not.
      */
     public void setPojoRequest(boolean pojoRequest) {
         this.pojoRequest = pojoRequest;
@@ -614,7 +614,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * Set specific version_ID of a object when deleting the object
+     * Set specific version_ID of a object when deleting the object.
      */
     public void setVersionId(String versionId) {
         this.versionId = versionId;
@@ -625,7 +625,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * Set this flag if you want to bypassGovernanceMode when deleting a particular object
+     * Set this flag if you want to bypassGovernanceMode when deleting a particular object.
      */
     public void setBypassGovernanceMode(boolean bypassGovernanceMode) {
         this.bypassGovernanceMode = bypassGovernanceMode;

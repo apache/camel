@@ -51,14 +51,14 @@ import org.slf4j.LoggerFactory;
 /**
  * Store and retrie objects from Minio Storage Service using Minio SDK.
  */
-@UriEndpoint(firstVersion = "3.5.0", scheme = "minio", title = "Minio Storage Service", syntax = "minio:bucketName", category = {Category.CLOUD, Category.FILE})
+@UriEndpoint(firstVersion = "3.5.0", scheme = "minio", title = "Minio Storage Service", syntax = "minio://bucketName", category = {Category.CLOUD, Category.FILE})
 public class MinioEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioEndpoint.class);
 
     private MinioClient minioClient;
 
-    @UriPath(description = "Qualified url")
+    @UriPath(description = "Bucket name")
     @Metadata(required = true)
     private String bucketName; // to support component docs
     @UriParam
@@ -90,9 +90,9 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        minioClient = configuration.getMinioClient() != null
-                ? configuration.getMinioClient()
-                : MinioClientFactory.getClient(configuration).getMinioClient();
+        minioClient = getConfiguration().getMinioClient() != null
+                ? getConfiguration().getMinioClient()
+                : MinioClientFactory.getClient(getConfiguration()).getMinioClient();
 
         String objectName = getConfiguration().getObjectName();
 
@@ -116,14 +116,14 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
             }
         }
 
-        if (configuration.getPolicy() != null) {
+        if (getConfiguration().getPolicy() != null) {
             setBucketPolicy(bucketName);
         }
     }
 
     @Override
     public void doStop() throws Exception {
-        if (ObjectHelper.isEmpty(configuration.getMinioClient())) {
+        if (ObjectHelper.isEmpty(getConfiguration().getMinioClient())) {
             if (minioClient != null) {
                 minioClient = null;
             }
@@ -131,12 +131,12 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         super.doStop();
     }
 
-    public Exchange createExchange(InputStream minioObject, String objectName) {
+    public Exchange createExchange(InputStream minioObject, String objectName) throws Exception {
         return createExchange(getExchangePattern(), minioObject, objectName);
     }
 
     public Exchange createExchange(ExchangePattern pattern,
-                                   InputStream minioObject, String objectName) {
+                                   InputStream minioObject, String objectName) throws Exception {
         String bucketName = getConfiguration().getBucketName();
         LOG.trace("Getting object with objectName {} from bucket {}...", objectName, bucketName);
 
@@ -146,10 +146,10 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
 
         getObjectTags(objectName, bucketName, message);
 
-        if (configuration.isIncludeBody()) {
+        if (getConfiguration().isIncludeBody()) {
             try {
                 message.setBody(readInputStream(minioObject));
-                if (configuration.isAutocloseBody()) {
+                if (getConfiguration().isAutocloseBody()) {
                     exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                         @Override
                         public void onDone(Exchange exchange) {
@@ -224,61 +224,66 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
     }
 
     private boolean bucketExists(String bucketName) throws Exception {
-        try {
-            return minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
-
-        } catch (Throwable e) {
-            LOG.warn("Error checking bucket, due: {}", e.getMessage());
-            throw e;
-        }
+        return minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
     }
 
     private void makeBucket(String bucketName) throws Exception {
-        try {
-            MakeBucketArgs.Builder makeBucketRequest = MakeBucketArgs.builder().bucket(bucketName).objectLock(configuration.isObjectLock());
-            if (configuration.getRegion() != null) {
-                makeBucketRequest.region(configuration.getRegion());
-            }
-            minioClient.makeBucket(makeBucketRequest.build());
-
-        } catch (Throwable e) {
-            LOG.warn("Error making bucket, due: {}", e.getMessage());
-            throw e;
+        MakeBucketArgs.Builder makeBucketRequest = MakeBucketArgs.builder().bucket(bucketName).objectLock(getConfiguration().isObjectLock());
+        if (getConfiguration().getRegion() != null) {
+            makeBucketRequest.region(getConfiguration().getRegion());
         }
+        minioClient.makeBucket(makeBucketRequest.build());
     }
 
     private void setBucketPolicy(String bucketName) throws Exception {
-        try {
-            LOG.trace("Updating bucket {} with policy...", bucketName);
-            minioClient.setBucketPolicy(
-                    SetBucketPolicyArgs.builder().bucket(bucketName).config(configuration.getPolicy()).build());
-            LOG.trace("Bucket policy updated");
-        } catch (Throwable e) {
-            LOG.warn("Error updating policy, due {}", e.getMessage());
-            throw e;
-        }
+        LOG.trace("Updating bucket {} with policy...", bucketName);
+        minioClient.setBucketPolicy(
+                SetBucketPolicyArgs.builder().bucket(bucketName).config(getConfiguration().getPolicy()).build());
+        LOG.trace("Bucket policy updated");
     }
 
-    private void getObjectTags(String objectName, String bucketName, Message message) {
-        try {
-            ObjectStat stat = minioClient.statObject(
-                    StatObjectArgs.builder().bucket(bucketName).object(objectName).build());
+    private void getObjectTags(String objectName, String bucketName, Message message) throws Exception {
 
-            // set all stat as message headers
-            message.setHeader(MinioConstants.OBJECT_NAME, objectName);
-            message.setHeader(MinioConstants.BUCKET_NAME, bucketName);
-            message.setHeader(MinioConstants.E_TAG, stat.etag());
-            message.setHeader(MinioConstants.LAST_MODIFIED, stat.httpHeaders().get("last-modified"));
-            message.setHeader(MinioConstants.VERSION_ID, stat.httpHeaders().get("x-amz-version-id"));
-            message.setHeader(MinioConstants.CONTENT_TYPE, stat.contentType());
-            message.setHeader(MinioConstants.CONTENT_LENGTH, stat.length());
-            message.setHeader(MinioConstants.SERVER_SIDE_ENCRYPTION, stat.httpHeaders().get("x-amz-server-side-encryption"));
-            message.setHeader(MinioConstants.EXPIRATION_TIME, stat.httpHeaders().get("x-amz-expiration"));
-            message.setHeader(MinioConstants.REPLICATION_STATUS, stat.httpHeaders().get("x-amz-replication-status"));
-            message.setHeader(MinioConstants.STORAGE_CLASS, stat.httpHeaders().get("x-amz-storage-class"));
+        StatObjectArgs.Builder statObjectRequest = StatObjectArgs.builder().bucket(bucketName).object(objectName);
 
-        } catch (Exception e) {
-            LOG.warn("Error getting message headers, due {}", e.getMessage());
+        if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
+            statObjectRequest.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
         }
+        if (getConfiguration().getOffset() != 0) {
+            statObjectRequest.offset(getConfiguration().getOffset());
+        }
+        if (getConfiguration().getLength() != 0) {
+            statObjectRequest.length(getConfiguration().getLength());
+        }
+        if (getConfiguration().getVersionId() != null) {
+            statObjectRequest.versionId(getConfiguration().getVersionId());
+        }
+        if (getConfiguration().getMatchETag() != null) {
+            statObjectRequest.matchETag(getConfiguration().getMatchETag());
+        }
+        if (getConfiguration().getNotMatchETag() != null) {
+            statObjectRequest.notMatchETag(getConfiguration().getNotMatchETag());
+        }
+        if (getConfiguration().getModifiedSince() != null) {
+            statObjectRequest.modifiedSince(getConfiguration().getModifiedSince());
+        }
+        if (getConfiguration().getUnModifiedSince() != null) {
+            statObjectRequest.unmodifiedSince(getConfiguration().getUnModifiedSince());
+        }
+
+        ObjectStat stat = minioClient.statObject(statObjectRequest.build());
+
+        // set all stat as message headers
+        message.setHeader(MinioConstants.OBJECT_NAME, objectName);
+        message.setHeader(MinioConstants.BUCKET_NAME, bucketName);
+        message.setHeader(MinioConstants.E_TAG, stat.etag());
+        message.setHeader(MinioConstants.LAST_MODIFIED, stat.httpHeaders().get("last-modified"));
+        message.setHeader(MinioConstants.VERSION_ID, stat.httpHeaders().get("x-amz-version-id"));
+        message.setHeader(MinioConstants.CONTENT_TYPE, stat.contentType());
+        message.setHeader(MinioConstants.CONTENT_LENGTH, stat.length());
+        message.setHeader(MinioConstants.SERVER_SIDE_ENCRYPTION, stat.httpHeaders().get("x-amz-server-side-encryption"));
+        message.setHeader(MinioConstants.EXPIRATION_TIME, stat.httpHeaders().get("x-amz-expiration"));
+        message.setHeader(MinioConstants.REPLICATION_STATUS, stat.httpHeaders().get("x-amz-replication-status"));
+        message.setHeader(MinioConstants.STORAGE_CLASS, stat.httpHeaders().get("x-amz-storage-class"));
     }
 }
