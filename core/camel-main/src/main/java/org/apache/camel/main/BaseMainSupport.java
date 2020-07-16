@@ -22,7 +22,9 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -33,6 +35,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -42,6 +46,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.PropertyBindingException;
+import org.apache.camel.RouteTemplateParameterBuilder;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
@@ -776,6 +781,7 @@ public abstract class BaseMainSupport extends BaseService {
         Map<String, Object> threadPoolProperties = new LinkedHashMap<>();
         Map<String, Object> healthProperties = new LinkedHashMap<>();
         Map<String, Object> lraProperties = new LinkedHashMap<>();
+        Map<String, Object> routeTemplateProperties = new LinkedHashMap<>();
         Map<String, Object> beansProperties = new LinkedHashMap<>();
         for (String key : prop.stringPropertyNames()) {
             if (key.startsWith("camel.context.")) {
@@ -826,6 +832,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(10);
                 validateOptionAndValue(key, option, value);
                 lraProperties.put(optionKey(option), value);
+            } else if (key.startsWith("camel.routetemplate")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(19);
+                validateOptionAndValue(key, option, value);
+                routeTemplateProperties.put(optionKey(option), value);
             } else if (key.startsWith("camel.beans.")) {
                 // grab the value
                 String value = prop.getProperty(key);
@@ -904,6 +916,10 @@ public abstract class BaseMainSupport extends BaseService {
             LOG.debug("Auto-configuring HealthCheck from loaded properties: {}", healthProperties.size());
             setHealthCheckProperties(camelContext, healthProperties, mainConfigurationProperties.isAutoConfigurationFailFast(), autoConfiguredProperties);
         }
+        if (!routeTemplateProperties.isEmpty()) {
+            LOG.debug("Auto-configuring Route templates from loaded properties: {}", routeTemplateProperties.size());
+            setRouteTemplateProperties(camelContext, routeTemplateProperties, mainConfigurationProperties.isAutoConfigurationFailFast(), autoConfiguredProperties);
+        }
         if (!lraProperties.isEmpty()) {
             LOG.debug("Auto-configuring Saga LRA from loaded properties: {}", lraProperties.size());
             setLraCheckProperties(camelContext, lraProperties, mainConfigurationProperties.isAutoConfigurationFailFast(), autoConfiguredProperties);
@@ -948,6 +964,11 @@ public abstract class BaseMainSupport extends BaseService {
         if (!healthProperties.isEmpty()) {
             healthProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.health.{}={}", k, v);
+            });
+        }
+        if (!routeTemplateProperties.isEmpty()) {
+            routeTemplateProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto-configured: camel.routetemplate.{}={}", k, v);
             });
         }
         if (!lraProperties.isEmpty()) {
@@ -1016,6 +1037,43 @@ public abstract class BaseMainSupport extends BaseService {
             camelContext.getExecutorServiceManager().setDefaultThreadPoolProfile(dp);
         }
 
+    }
+
+    private void setRouteTemplateProperties(CamelContext camelContext, Map<String, Object> routeTemplateProperties,
+                                            boolean failIfNotSet, Map<String, String> autoConfiguredProperties) throws Exception {
+
+        Map<String, Map<String, String>> rtConfigs = new HashMap<>();
+        for (Map.Entry<String, Object> entry : routeTemplateProperties.entrySet()) {
+            String id = StringHelper.between(entry.getKey(), "[", "]");
+            String key = StringHelper.after(entry.getKey(), "].");
+            Map<String, String> map = rtConfigs.computeIfAbsent(id, k -> new HashMap<>());
+            map.put(key, entry.getValue().toString());
+        }
+
+        // lets sort by keys
+        Map<String, Object> sorted = new TreeMap<>(routeTemplateProperties);
+        sorted.forEach((k, v) -> {
+            autoConfiguredProperties.put("camel.routetemplate" + k, v.toString());
+        });
+        routeTemplateProperties.clear();
+
+        // create route templates
+        for (Map<String, String> map : rtConfigs.values()) {
+            String templateId = map.remove("templateId");
+            if (templateId == null) {
+                templateId = map.remove("template-id");
+            }
+            // need to add route templates after configure as the templates must be present first
+            final String id = templateId;
+            addMainListener(new MainListenerSupport() {
+                @Override
+                public void afterConfigure(BaseMainSupport main) {
+                    RouteTemplateParameterBuilder builder = camelContext.addRouteFromTemplate(id);
+                    map.forEach(builder::parameter);
+                    builder.build();
+                }
+            });
+        }
     }
 
     private void setHealthCheckProperties(CamelContext camelContext, Map<String, Object> healthCheckProperties,
