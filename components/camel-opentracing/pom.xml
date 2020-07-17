@@ -45,6 +45,12 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
         </dependency>
+        <!-- added to bypass LogProcessor -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-base</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- OpenTracing -->
         <dependency>

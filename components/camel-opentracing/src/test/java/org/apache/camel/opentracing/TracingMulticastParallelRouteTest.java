@@ -26,29 +26,29 @@ public class TracingMulticastParallelRouteTest extends CamelOpenTracingTestSuppo
 
     private static SpanTestData[] testdata = {
         new SpanTestData().setLabel("a: a-log-1").setOperation("a-log-1")
-            .setParentId(11).addLogMessage("routing at a"),
+            .setParentId(11),
         new SpanTestData().setLabel("b: b-log-3").setOperation("b-log-3")
-            .setParentId(7).addLogMessage("routing at b"),
+            .setParentId(7),
         new SpanTestData().setLabel("c: c-log-4").setOperation("c-log-4")
-            .setParentId(4).addLogMessage("routing at c"),
+            .setParentId(4),
         new SpanTestData().setLabel("c: c-delay-2").setOperation("c-delay-2")
             .setParentId(4),
         new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
-            .setParentId(5),
+            .setParentId(5).addLogMessage("routing at c"),
         new SpanTestData().setLabel("a:multicast: a-to-3").setOperation("a-to-3")
             .setParentId(9),
         new SpanTestData().setLabel("b: b-delay-1").setOperation("b-delay-1")
             .setParentId(7),
         new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
-            .setParentId(8),
+            .setParentId(8).addLogMessage("routing at b"),
         new SpanTestData().setLabel("a:multicast: a-to-2").setOperation("a-to-2")
             .setParentId(9),
         new SpanTestData().setLabel("a: multicast").setOperation("a-multicast-1")
             .setParentId(11),
         new SpanTestData().setLabel("a: a-log-2").setOperation("a-log-2")
-            .setParentId(11).addLogMessage("End of routing"),
+            .setParentId(11),
         new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
-            .setParentId(12),
+            .setParentId(12).addLogMessage("routing at a").addLogMessage("End of routing"),
         new SpanTestData().setLabel("direct:start server").setOperation("direct-to-1")
             .setParentId(13),
         new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")

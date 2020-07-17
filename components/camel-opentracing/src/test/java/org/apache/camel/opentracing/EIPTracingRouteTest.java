@@ -30,31 +30,31 @@ public class EIPTracingRouteTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
         new SpanTestData().setLabel("a-log-1 server").setOperation("a-log-1")
-            .setParentId(11).addLogMessage("routing at a"),
+            .setParentId(11),
         new SpanTestData().setLabel("b-log server").setOperation("b-log")
-            .setParentId(3).addLogMessage("routing at b"),
+            .setParentId(3),
         new SpanTestData().setLabel("b-delay server").setOperation("b-delay")
             .setParentId(3),
         new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
-            .setParentId(4),
+            .setParentId(4).addLogMessage("routing at b"),
         new SpanTestData().setLabel("a-to-1 server").setOperation("a-to-1")
             .setParentId(11),
         new SpanTestData().setLabel("a-delay server").setOperation("a-delay")
             .setParentId(11),
         new SpanTestData().setLabel("c-to server").setOperation("c-to")
-                .setParentId(8).addLogMessage("Exchange[ExchangePattern: InOut, BodyType: String, Body: Hello]"),
+            .setParentId(8).addLogMessage("Exchange[ExchangePattern: InOut, BodyType: String, Body: Hello]"),
         new SpanTestData().setLabel("c-delay server").setOperation("c-delay")
-                .setParentId(8),
+            .setParentId(8),
         new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
-                .setParentId(9),
+            .setParentId(9),
         new SpanTestData().setLabel("a-to-2 server").setOperation("a-to-2")
-                .setParentId(11),
+            .setParentId(11),
         new SpanTestData().setLabel("a-log-2 server").setOperation("a-log-2")
-                .setParentId(11).addLogMessage("End of routing"),
+            .setParentId(11),
         new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
-            .setParentId(12),
+            .setParentId(12).addLogMessage("routing at a").addLogMessage("End of routing"),
         new SpanTestData().setLabel("direct-to server").setOperation("direct-to")
-                .setParentId(13),
+            .setParentId(13),
         new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
     };
 
