@@ -11729,7 +11729,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path stream
      */
-    static org.apache.camel.builder.endpoint.dsl.ReactiveStreamsEndpointBuilderFactory.ReactiveStreamsEndpointBuilder reactiveStreams(
+    public static org.apache.camel.builder.endpoint.dsl.ReactiveStreamsEndpointBuilderFactory.ReactiveStreamsEndpointBuilder reactiveStreams(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ReactiveStreamsEndpointBuilderFactory.endpointBuilder("reactive-streams", path);
     }
@@ -11751,7 +11751,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path stream
      */
-    static org.apache.camel.builder.endpoint.dsl.ReactiveStreamsEndpointBuilderFactory.ReactiveStreamsEndpointBuilder reactiveStreams(
+    public static org.apache.camel.builder.endpoint.dsl.ReactiveStreamsEndpointBuilderFactory.ReactiveStreamsEndpointBuilder reactiveStreams(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ReactiveStreamsEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -14671,7 +14671,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path nodeAddress
      */
-    static org.apache.camel.builder.endpoint.dsl.Web3jEndpointBuilderFactory.Web3jEndpointBuilder web3j(
+    public static org.apache.camel.builder.endpoint.dsl.Web3jEndpointBuilderFactory.Web3jEndpointBuilder web3j(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Web3jEndpointBuilderFactory.endpointBuilder("web3j", path);
     }
@@ -14692,7 +14692,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path nodeAddress
      */
-    static org.apache.camel.builder.endpoint.dsl.Web3jEndpointBuilderFactory.Web3jEndpointBuilder web3j(
+    public static org.apache.camel.builder.endpoint.dsl.Web3jEndpointBuilderFactory.Web3jEndpointBuilder web3j(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Web3jEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -15471,7 +15471,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path serverUrls/path
      */
-    public static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
+    static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder("zookeeper", path);
     }
@@ -15495,7 +15495,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path serverUrls/path
      */
-    public static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
+    static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder(componentName, path);
