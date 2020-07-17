@@ -471,11 +471,17 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     protected void doInit() throws Exception {
         super.doInit();
 
-        RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), "netty-http");
+        try {
+            RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), "netty-http");
 
-        // configure additional options on netty-http configuration
-        if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
-            setProperties(this, config.getComponentProperties());
+            // configure additional options on netty-http configuration
+            if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
+                setProperties(this, config.getComponentProperties());
+            }
+        } catch (IllegalArgumentException e) {
+            // if there's a mismatch between the component and the rest-configuration,
+            // then getRestConfiguration throws IllegalArgumentException which can be
+            // safely ignored as it means there's no special conf for this componet.
         }
     }
 

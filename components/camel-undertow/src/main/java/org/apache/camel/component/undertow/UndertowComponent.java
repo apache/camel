@@ -343,11 +343,17 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
             initSecurityProvider();
         }
 
-        RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), getComponentName());
+        try {
+            RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), getComponentName());
 
-        // configure additional options on undertow configuration
-        if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
-            setProperties(this, config.getComponentProperties());
+            // configure additional options on undertow configuration
+            if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
+                setProperties(this, config.getComponentProperties());
+            }
+        } catch (IllegalArgumentException e) {
+            // if there's a mismatch between the component and the rest-configuration,
+            // then getRestConfiguration throws IllegalArgumentException which can be
+            // safely ignored as it means there's no special conf for this componet.
         }
     }
 
