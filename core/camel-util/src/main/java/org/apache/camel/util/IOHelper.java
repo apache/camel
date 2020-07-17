@@ -477,8 +477,8 @@ public final class IOHelper {
         for (String value : values) {
             value = value.trim();
             // Perform a case insensitive "startsWith" check that works for different locales
-            String pattern = "charset=";
-            if (value.regionMatches(true, 0, pattern, 0, pattern.length())) {
+            String prefix = "charset=";
+            if (value.regionMatches(true, 0, prefix, 0, prefix.length())) {
                 // Take the charset name
                 charset = value.substring(8);
             }
