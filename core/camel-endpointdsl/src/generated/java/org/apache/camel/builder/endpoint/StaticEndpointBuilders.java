@@ -11729,7 +11729,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path stream
      */
-    public static org.apache.camel.builder.endpoint.dsl.ReactiveStreamsEndpointBuilderFactory.ReactiveStreamsEndpointBuilder reactiveStreams(
+    static org.apache.camel.builder.endpoint.dsl.ReactiveStreamsEndpointBuilderFactory.ReactiveStreamsEndpointBuilder reactiveStreams(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ReactiveStreamsEndpointBuilderFactory.endpointBuilder("reactive-streams", path);
     }
@@ -11751,7 +11751,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path stream
      */
-    public static org.apache.camel.builder.endpoint.dsl.ReactiveStreamsEndpointBuilderFactory.ReactiveStreamsEndpointBuilder reactiveStreams(
+    static org.apache.camel.builder.endpoint.dsl.ReactiveStreamsEndpointBuilderFactory.ReactiveStreamsEndpointBuilder reactiveStreams(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ReactiveStreamsEndpointBuilderFactory.endpointBuilder(componentName, path);
