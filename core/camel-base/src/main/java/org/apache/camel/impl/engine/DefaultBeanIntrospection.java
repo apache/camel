@@ -96,8 +96,7 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
         }
 
         if (target != null) {
-            // use Object.toString as target logging
-            target = target.getClass().getName() + "@" + Integer.toHexString(target.hashCode());
+            target = target.toString();
         }
 
         String line;
