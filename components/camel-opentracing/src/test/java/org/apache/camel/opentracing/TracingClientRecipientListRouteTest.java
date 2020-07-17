@@ -80,6 +80,6 @@ public class TracingClientRecipientListRouteTest extends CamelOpenTracingTestSup
 
     @Override
     protected InterceptStrategy getTracingStrategy() {
-        return new OpenTracingTracingStrategy(getTracer());
+        return new OpenTracingTracingStrategy(ottracer);
     }
 }

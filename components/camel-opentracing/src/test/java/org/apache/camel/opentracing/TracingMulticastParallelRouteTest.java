@@ -94,6 +94,6 @@ public class TracingMulticastParallelRouteTest extends CamelOpenTracingTestSuppo
 
     @Override
     protected InterceptStrategy getTracingStrategy() {
-        return new OpenTracingTracingStrategy(getTracer());
+        return new OpenTracingTracingStrategy(ottracer);
     }
 }

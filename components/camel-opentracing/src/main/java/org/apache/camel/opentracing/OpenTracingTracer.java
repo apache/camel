@@ -81,7 +81,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
     private final OpenTracingLogListener logListener = new OpenTracingLogListener();
     private Tracer tracer;
     private CamelContext camelContext;
-    private Set<String> excludePatterns = new HashSet<>();
+    private Set<String> excludePatterns = new HashSet<>(0);
     private InterceptStrategy tracingStrategy;
     private boolean encoding;
 

@@ -55,7 +55,7 @@ public class EIPTracingActiveSpanTest extends CamelOpenTracingTestSupport {
 
     @Override
     protected InterceptStrategy getTracingStrategy() {
-        return new OpenTracingTracingStrategy(getTracer());
+        return new OpenTracingTracingStrategy(ottracer);
     }
 
     @Override

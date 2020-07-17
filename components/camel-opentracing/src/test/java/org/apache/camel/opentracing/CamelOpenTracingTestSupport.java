@@ -37,8 +37,8 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 
 public class CamelOpenTracingTestSupport extends CamelTestSupport {
 
+    protected OpenTracingTracer ottracer;
     private MockTracer tracer;
-
     private SpanTestData[] testdata;
 
     public CamelOpenTracingTestSupport(SpanTestData[] testdata) {
@@ -56,7 +56,7 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
 
         tracer = new MockTracer(Propagator.TEXT_MAP);
 
-        OpenTracingTracer ottracer = new OpenTracingTracer();
+        this.ottracer = new OpenTracingTracer();
         ottracer.setTracer(tracer);
         ottracer.setExcludePatterns(getExcludePatterns());
         ottracer.setTracingStrategy(getTracingStrategy());

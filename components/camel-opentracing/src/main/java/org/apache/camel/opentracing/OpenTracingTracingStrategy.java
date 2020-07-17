@@ -21,13 +21,13 @@ import java.util.Map;
 
 import io.opentracing.Scope;
 import io.opentracing.Span;
-import io.opentracing.Tracer;
 import io.opentracing.tag.Tags;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +36,9 @@ public class OpenTracingTracingStrategy implements InterceptStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenTracingTracingStrategy.class);
     private static final String UNNAMED = "unnamed";
-    private final Tracer tracer;
+    private final OpenTracingTracer tracer;
 
-    public OpenTracingTracingStrategy(Tracer tracer) {
+    public OpenTracingTracingStrategy(OpenTracingTracer tracer) {
         this.tracer = tracer;
     }
 
@@ -46,22 +46,21 @@ public class OpenTracingTracingStrategy implements InterceptStrategy {
     public Processor wrapProcessorInInterceptors(CamelContext camelContext,
                                                  NamedNode processorDefinition, Processor target, Processor nextTarget)
             throws Exception {
-
         return new DelegateAsyncProcessor((Exchange exchange) -> {
             Span span = ActiveSpanManager.getSpan(exchange);
-            if (span == null) {
+            if (span == null || !shouldTrace(processorDefinition, target)) {
                 target.process(exchange);
                 return;
             }
 
-            final Span processorSpan = tracer.buildSpan(getOperationName(processorDefinition))
+            final Span processorSpan = tracer.getTracer().buildSpan(getOperationName(processorDefinition))
                     .asChildOf(span)
                     .withTag(Tags.COMPONENT, getComponentName(processorDefinition))
                     .start();
 
             ActiveSpanManager.activate(exchange, processorSpan);
 
-            try (final Scope inScope = tracer.activateSpan(processorSpan)) {
+            try (final Scope inScope = tracer.getTracer().activateSpan(processorSpan)) {
                 target.process(exchange);
             } catch (Exception ex) {
                 processorSpan.log(errorLogs(ex));
@@ -87,5 +86,19 @@ public class OpenTracingTracingStrategy implements InterceptStrategy {
         errorLogs.put("event", Tags.ERROR.getKey());
         errorLogs.put("error.object", t);
         return errorLogs;
+    }
+
+    // Adapted from org.apache.camel.impl.engine.DefaultTracer.shouldTrace
+    // org.apache.camel.impl.engine.DefaultTracer.shouldTracePattern
+    private boolean shouldTrace(NamedNode definition, Processor target) {
+        for (String pattern : tracer.getExcludePatterns()) {
+            // use matchPattern method from endpoint helper that has a good matcher we use in Camel
+            if (PatternHelper.matchPattern(definition.getId(), pattern)
+                    || PatternHelper.matchPattern(target.getClass().getName(), pattern)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
