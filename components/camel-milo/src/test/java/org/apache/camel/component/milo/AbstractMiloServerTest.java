@@ -24,10 +24,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.milo.server.MiloServerComponent;
 import org.apache.camel.component.mock.AssertionClause;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
-import org.junit.Assume;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public abstract class AbstractMiloServerTest extends CamelTestSupport {
 
@@ -35,7 +40,7 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
 
     @Override
     protected void doPreSetup() throws Exception {
-        Assume.assumeTrue("Requires java 9+", isJavaVersionSatisfied(9));
+        assumeTrue(isJavaVersionSatisfied(9), "Requires java 9+");
         super.doPreSetup();
         this.serverPort = AvailablePortFinder.getNextAvailable();
     }

@@ -16,27 +16,30 @@
  */
 package org.apache.camel.component.milo.converter;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConverterTest extends CamelTestSupport {
 
     @Test
     public void testDataValueToVariant() {
         final Variant value = testConvertDataValue("Foo", Variant.class);
-        Assert.assertNotNull(value);
-        Assert.assertEquals("Foo", value.getValue());
+        assertNotNull(value);
+        assertEquals("Foo", value.getValue());
     }
 
     @Test
     public void testVariantToDataValue() {
         final DataValue value = testConvert(new Variant("Foo"), DataValue.class);
-        Assert.assertNotNull(value);
-        Assert.assertEquals("Foo", value.getValue().getValue());
-        Assert.assertTrue(value.getStatusCode().isGood());
+        assertNotNull(value);
+        assertEquals("Foo", value.getValue().getValue());
+        assertTrue(value.getStatusCode().isGood());
     }
 
     private <T> T testConvert(final Object value, final Class<T> clazz) {
