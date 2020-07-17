@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.tracing.SpanWrap;
+import org.apache.camel.tracing.SpanAdapter;
 
 public class KafkaSpanDecorator extends AbstractMessagingSpanDecorator {
 
@@ -59,7 +59,7 @@ public class KafkaSpanDecorator extends AbstractMessagingSpanDecorator {
     }
 
     @Override
-    public void pre(SpanWrap span, Exchange exchange, Endpoint endpoint) {
+    public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
 
         String partition = getValue(exchange, PARTITION, Integer.class);

@@ -16,9 +16,6 @@
  */
 package org.apache.camel.tracing;
 
-/**
- * @author rvargasp
- */
 public enum SpanKind {
     SPAN_KIND_CLIENT,
     SPAN_KIND_SERVER,

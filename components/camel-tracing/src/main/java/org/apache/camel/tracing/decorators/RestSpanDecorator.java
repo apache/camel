@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.tracing.SpanWrap;
+import org.apache.camel.tracing.SpanAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +48,7 @@ public class RestSpanDecorator extends AbstractHttpSpanDecorator {
     }
 
     @Override
-    public void pre(SpanWrap span, Exchange exchange, Endpoint endpoint) {
+    public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
 
         getParameters(getPath(endpoint.getEndpointUri())).forEach(param -> {

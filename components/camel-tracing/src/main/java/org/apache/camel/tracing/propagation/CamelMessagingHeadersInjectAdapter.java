@@ -18,9 +18,9 @@ package org.apache.camel.tracing.propagation;
 
 import java.util.Map;
 
-import org.apache.camel.tracing.HeadersInjectAdapter;
+import org.apache.camel.tracing.InjectAdapter;
 
-public final class CamelMessagingHeadersInjectAdapter implements HeadersInjectAdapter {
+public final class CamelMessagingHeadersInjectAdapter implements InjectAdapter {
 
     // As per the JMS specs, header names must be valid Java identifier part
     // characters.

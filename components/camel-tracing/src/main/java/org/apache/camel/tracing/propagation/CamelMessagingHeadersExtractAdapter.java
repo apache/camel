@@ -21,9 +21,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.camel.tracing.HeadersExtractAdapter;
+import org.apache.camel.tracing.ExtractAdapter;
 
-public final class CamelMessagingHeadersExtractAdapter implements HeadersExtractAdapter {
+public final class CamelMessagingHeadersExtractAdapter implements ExtractAdapter {
 
     private final Map<String, String> map = new HashMap<>();
     private final boolean jmsEncoding;

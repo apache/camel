@@ -29,17 +29,34 @@
   </parent>
 
   <properties>
-    <firstVersion>2.9.0</firstVersion>
+    <firstVersion>3.5.0</firstVersion>
   </properties>
 
   <artifactId>camel-tracing</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: Common Tracing</name>
   <description>Distributed tracing common interfaces</description>
+
   <dependencies>
+
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-support</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test-spring-junit5</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

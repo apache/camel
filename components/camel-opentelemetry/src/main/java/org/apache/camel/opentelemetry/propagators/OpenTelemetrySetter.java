@@ -19,13 +19,10 @@ package org.apache.camel.opentelemetry.propagators;
 import javax.annotation.Nullable;
 
 import io.opentelemetry.context.propagation.HttpTextFormat;
-import org.apache.camel.tracing.HeadersInjectAdapter;
+import org.apache.camel.tracing.InjectAdapter;
 
-/**
- * @author rvargasp
- */
-public class OpenTelemetrySetter implements HttpTextFormat.Setter<HeadersInjectAdapter> {
-    @Override public void set(@Nullable HeadersInjectAdapter adapter, String key, String value) {
+public class OpenTelemetrySetter implements HttpTextFormat.Setter<InjectAdapter> {
+    @Override public void set(@Nullable InjectAdapter adapter, String key, String value) {
         adapter.put(key, value);
     }
 }

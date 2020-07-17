@@ -16,9 +16,14 @@
  */
 package org.apache.camel.tracing;
 
-/**
- * @author rvargasp
- */
-public interface HeadersInjectAdapter {
-    void put(String key, String value);
+public enum Tag {
+    COMPONENT,
+    HTTP_STATUS,
+    HTTP_METHOD,
+    HTTP_URL,
+    MESSAGE_BUS_DESTINATION,
+    DB_TYPE,
+    DB_INSTANCE,
+    DB_STATEMENT,
+    ERROR
 }

@@ -16,23 +16,10 @@
  */
 package org.apache.camel.tracing;
 
+import java.util.Iterator;
 import java.util.Map;
 
-/**
- * @author rvargasp
- */
-public interface SpanWrap {
-    void setComponent(String component);
-    void setHttpStatus(Integer status);
-    void setHttpMethod(String method);
-    void setHttpURL(String url);
-    void setMessageBusDestination(String dest);
-    void setError(boolean error);
-    void setDBType(String type);
-    void setDBInstance(String type);
-    void setDBStatement(String type);
-    void setTag(String key, String value);
-    void setTag(String key, Number value);
-    void setTag(String key, Boolean value);
-    void log(Map<String, String> log);
+public interface ExtractAdapter {
+    Iterator<Map.Entry<String, String>> iterator();
+    Object get(String key);
 }

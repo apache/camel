@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.opentracing;
+package org.apache.camel.tracing;
 
-import io.opentracing.Span;
 import org.apache.camel.Exchange;
 
 /**
@@ -37,7 +36,7 @@ public final class ActiveSpanManager {
      * @param exchange The exchange
      * @return The current active span, or null if none exists
      */
-    public static Span getSpan(Exchange exchange) {
+    public static SpanAdapter getSpan(Exchange exchange) {
         Holder holder = (Holder) exchange.getProperty(ACTIVE_SPAN_PROPERTY);
         if (holder != null) {
             return holder.getSpan();
@@ -51,9 +50,9 @@ public final class ActiveSpanManager {
      * onto a stack.
      *
      * @param exchange The exchange
-     * @param span     The span
+     * @param span The span
      */
-    public static void activate(Exchange exchange, Span span) {
+    public static void activate(Exchange exchange, SpanAdapter span) {
         exchange.setProperty(ACTIVE_SPAN_PROPERTY,
                 new Holder((Holder) exchange.getProperty(ACTIVE_SPAN_PROPERTY), span));
     }
@@ -78,12 +77,13 @@ public final class ActiveSpanManager {
      * the parent holder. This will be used to maintain a stack for spans, built
      * up during the execution of a series of chained camel exchanges, and then
      * unwound when the responses are processed.
+     *
      */
     public static class Holder {
         private Holder parent;
-        private Span span;
+        private SpanAdapter span;
 
-        public Holder(Holder parent, Span span) {
+        public Holder(Holder parent, SpanAdapter span) {
             this.parent = parent;
             this.span = span;
         }
@@ -92,7 +92,7 @@ public final class ActiveSpanManager {
             return parent;
         }
 
-        public Span getSpan() {
+        public SpanAdapter getSpan() {
             return span;
         }
     }

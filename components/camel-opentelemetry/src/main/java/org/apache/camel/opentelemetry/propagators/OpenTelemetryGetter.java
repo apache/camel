@@ -19,14 +19,11 @@ package org.apache.camel.opentelemetry.propagators;
 import javax.annotation.Nullable;
 
 import io.opentelemetry.context.propagation.HttpTextFormat;
-import org.apache.camel.tracing.HeadersExtractAdapter;
+import org.apache.camel.tracing.ExtractAdapter;
 
-/**
- * @author rvargasp
- */
-public class OpenTelemetryGetter implements HttpTextFormat.Getter<HeadersExtractAdapter> {
+public class OpenTelemetryGetter implements HttpTextFormat.Getter<ExtractAdapter> {
 
-    @Nullable @Override public String get(HeadersExtractAdapter adapter, String key) {
+    @Nullable @Override public String get(ExtractAdapter adapter, String key) {
         return (String) adapter.get(key);
     }
 }

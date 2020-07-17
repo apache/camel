@@ -18,9 +18,9 @@ package org.apache.camel.tracing.propagation;
 
 import java.util.Map;
 
-import org.apache.camel.tracing.HeadersInjectAdapter;
+import org.apache.camel.tracing.InjectAdapter;
 
-public final class CamelHeadersInjectAdapter implements HeadersInjectAdapter {
+public final class CamelHeadersInjectAdapter implements InjectAdapter {
     private final Map<String, Object> map;
 
     public CamelHeadersInjectAdapter(final Map<String, Object> map) {

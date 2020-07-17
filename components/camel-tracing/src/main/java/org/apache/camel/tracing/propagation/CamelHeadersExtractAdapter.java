@@ -20,9 +20,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.camel.tracing.HeadersExtractAdapter;
+import org.apache.camel.tracing.ExtractAdapter;
 
-public final class CamelHeadersExtractAdapter implements HeadersExtractAdapter {
+public final class CamelHeadersExtractAdapter implements ExtractAdapter {
     private final Map<String, String> map = new HashMap<>();
 
     public CamelHeadersExtractAdapter(final Map<String, Object> map) {

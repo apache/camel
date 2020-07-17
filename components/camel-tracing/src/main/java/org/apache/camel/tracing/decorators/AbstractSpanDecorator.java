@@ -16,17 +16,15 @@
  */
 package org.apache.camel.tracing.decorators;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.tracing.HeadersExtractAdapter;
-import org.apache.camel.tracing.HeadersInjectAdapter;
+import org.apache.camel.tracing.ExtractAdapter;
+import org.apache.camel.tracing.InjectAdapter;
+import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.SpanDecorator;
 import org.apache.camel.tracing.SpanKind;
-import org.apache.camel.tracing.SpanWrap;
 import org.apache.camel.tracing.propagation.CamelHeadersExtractAdapter;
 import org.apache.camel.tracing.propagation.CamelHeadersInjectAdapter;
 import org.apache.camel.util.StringHelper;
@@ -97,7 +95,7 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
     }
 
     @Override
-    public void pre(SpanWrap span, Exchange exchange, Endpoint endpoint) {
+    public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         String scheme = getComponentName(endpoint);
         span.setComponent(CAMEL_COMPONENT + scheme);
 
@@ -108,7 +106,7 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
     }
 
     @Override
-    public void post(SpanWrap span, Exchange exchange, Endpoint endpoint) {
+    public void post(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         if (exchange.isFailed()) {
             span.setError(true);
             if (exchange.getException() != null) {
@@ -132,13 +130,13 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
     }
 
     @Override
-    public HeadersExtractAdapter getExtractAdapter(final Map<String, Object> map, boolean encoding) {
+    public ExtractAdapter getExtractAdapter(final Map<String, Object> map, boolean encoding) {
         // no encoding supported per default
         return new CamelHeadersExtractAdapter(map);
     }
 
     @Override
-    public HeadersInjectAdapter getInjectAdapter(final Map<String, Object> map, boolean encoding) {
+    public InjectAdapter getInjectAdapter(final Map<String, Object> map, boolean encoding) {
         // no encoding supported per default
         return new CamelHeadersInjectAdapter(map);
     }

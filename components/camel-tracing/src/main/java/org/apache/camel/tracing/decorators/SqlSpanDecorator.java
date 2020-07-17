@@ -18,7 +18,8 @@ package org.apache.camel.tracing.decorators;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.tracing.SpanWrap;
+import org.apache.camel.tracing.SpanAdapter;
+import org.apache.camel.tracing.Tag;
 
 public class SqlSpanDecorator extends AbstractSpanDecorator {
 
@@ -35,13 +36,13 @@ public class SqlSpanDecorator extends AbstractSpanDecorator {
     }
 
     @Override
-    public void pre(SpanWrap span, Exchange exchange, Endpoint endpoint) {
+    public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
-        span.setDBType("sql");
+        span.setTag(Tag.DB_TYPE, "sql");
 
         Object sqlquery = exchange.getIn().getHeader(CAMEL_SQL_QUERY);
         if (sqlquery instanceof String) {
-            span.setDBStatement((String) sqlquery);
+            span.setTag(Tag.DB_STATEMENT, (String) sqlquery);
         }
     }
 

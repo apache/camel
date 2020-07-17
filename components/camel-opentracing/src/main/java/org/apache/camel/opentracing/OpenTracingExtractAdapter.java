@@ -19,15 +19,12 @@ package org.apache.camel.opentracing;
 import java.util.*;
 
 import io.opentracing.propagation.TextMap;
-import org.apache.camel.tracing.HeadersExtractAdapter;
+import org.apache.camel.tracing.ExtractAdapter;
 
-/**
- * @author rvargasp
- */
 public class OpenTracingExtractAdapter implements TextMap {
-    HeadersExtractAdapter adapter;
+    ExtractAdapter adapter;
 
-    OpenTracingExtractAdapter(HeadersExtractAdapter adapter) {
+    OpenTracingExtractAdapter(ExtractAdapter adapter) {
         this.adapter = adapter;
     }
 

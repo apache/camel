@@ -20,7 +20,8 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.tracing.SpanWrap;
+import org.apache.camel.tracing.SpanAdapter;
+import org.apache.camel.tracing.Tag;
 
 public class MongoDBSpanDecorator extends AbstractSpanDecorator {
 
@@ -45,19 +46,16 @@ public class MongoDBSpanDecorator extends AbstractSpanDecorator {
     }
 
     @Override
-    public void pre(SpanWrap span, Exchange exchange, Endpoint endpoint) {
+    public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
 
-        // span.setTag(Tags.DB_TYPE.getKey(), getComponent());
-        span.setDBType(getComponent());
+        span.setTag(Tag.DB_TYPE, getComponent());
         Map<String, String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
         String database = queryParameters.get("database");
         if (database != null) {
-            span.setDBInstance(database);
-            //span.setTag(Tags.DB_INSTANCE.getKey(), database);
+            span.setTag(Tag.DB_INSTANCE, database);
         }
-        span.setDBStatement(queryParameters.toString());
-        //span.setTag(Tags.DB_STATEMENT.getKey(), queryParameters.toString());
+        span.setTag(Tag.DB_STATEMENT, queryParameters.toString());
     }
 
 }

@@ -16,61 +16,56 @@
  */
 package org.apache.camel.opentelemetry;
 
-import java.util.*;
+import java.util.EnumMap;
+import java.util.Map;
 
 import io.opentelemetry.common.AttributeValue;
 import io.opentelemetry.common.Attributes;
-import io.opentelemetry.trace.Span;
 import io.opentelemetry.trace.attributes.SemanticAttributes;
-import org.apache.camel.tracing.SpanWrap;
+import org.apache.camel.tracing.SpanAdapter;
+import org.apache.camel.tracing.Tag;
 
-/**
- * @author rvargasp
- */
-public class OpenTelemetrySpanWrapper implements SpanWrap {
+public class OpenTelemetrySpanAdapter implements SpanAdapter {
     private static final String DEFAULT_EVENT_NAME = "log";
 
-    Span span;
+    private static EnumMap<Tag, String> tagMap = new EnumMap<>(Tag.class);
 
-    OpenTelemetrySpanWrapper(Span span) {
+    static {
+        tagMap.put(Tag.COMPONENT, "component");
+        tagMap.put(Tag.DB_TYPE, SemanticAttributes.DB_TYPE.key());
+        tagMap.put(Tag.DB_STATEMENT, SemanticAttributes.DB_STATEMENT.key());
+        tagMap.put(Tag.DB_INSTANCE, SemanticAttributes.DB_INSTANCE.key());
+        tagMap.put(Tag.HTTP_METHOD, SemanticAttributes.HTTP_METHOD.key());
+        tagMap.put(Tag.HTTP_STATUS, SemanticAttributes.HTTP_STATUS_CODE.key());
+        tagMap.put(Tag.HTTP_URL, SemanticAttributes.HTTP_URL.key());
+        tagMap.put(Tag.MESSAGE_BUS_DESTINATION, "message_bus.destination");
+    }
+
+
+    io.opentelemetry.trace.Span span;
+
+    OpenTelemetrySpanAdapter(io.opentelemetry.trace.Span span) {
         this.span = span;
+    }
+
+    io.opentelemetry.trace.Span getOpenTelemetrySpan() {
+        return this.span;
     }
 
     @Override public void setComponent(String component) {
         this.span.setAttribute("component", component);
     }
 
-    @Override public void setHttpStatus(Integer status) {
-        this.span.setAttribute(SemanticAttributes.HTTP_STATUS_CODE.key(), status.longValue());
-    }
-
-    @Override public void setHttpMethod(String method) {
-        this.span.setAttribute(SemanticAttributes.HTTP_METHOD.key(), method);
-
-    }
-
-    @Override public void setHttpURL(String url) {
-        this.span.setAttribute(SemanticAttributes.HTTP_URL.key(), url);
-    }
-
-    @Override public void setMessageBusDestination(String dest) {
-        this.span.setAttribute("message.destination", dest);
-    }
-
     @Override public void setError(boolean error) {
         this.span.setAttribute("error", error);
     }
 
-    @Override public void setDBType(String type) {
-        this.span.setAttribute(SemanticAttributes.DB_TYPE.key(), type);
+    @Override public void setTag(Tag key, String value) {
+        this.span.setAttribute(tagMap.get(key), value);
     }
 
-    @Override public void setDBInstance(String instance) {
-        this.span.setAttribute(SemanticAttributes.DB_INSTANCE.key(), instance);
-    }
-
-    @Override public void setDBStatement(String statement) {
-        this.span.setAttribute(SemanticAttributes.DB_STATEMENT.key(), statement);
+    @Override public void setTag(Tag key, Number value) {
+        this.span.setAttribute(tagMap.get(key), value.intValue());
     }
 
     @Override public void setTag(String key, String value) {
@@ -89,6 +84,7 @@ public class OpenTelemetrySpanWrapper implements SpanWrap {
         span.addEvent(getEventNameFromFields(fields), convertToAttributes(fields));
 
     }
+
     String getEventNameFromFields(Map<String, ?> fields) {
         Object eventValue = fields == null ? null : fields.get("event");
         if (eventValue != null) {
@@ -97,6 +93,7 @@ public class OpenTelemetrySpanWrapper implements SpanWrap {
 
         return DEFAULT_EVENT_NAME;
     }
+
     Attributes convertToAttributes(Map<String, ?> fields) {
         Attributes.Builder attributesBuilder = Attributes.newBuilder();
 
@@ -107,14 +104,12 @@ public class OpenTelemetrySpanWrapper implements SpanWrap {
                 continue;
             }
             if (value instanceof Byte
-                    || value instanceof Short
-                    || value instanceof Integer
-                    || value instanceof Long) {
-                attributesBuilder.setAttribute(
-                        key, AttributeValue.longAttributeValue(((Number) value).longValue()));
+                || value instanceof Short
+                || value instanceof Integer
+                || value instanceof Long) {
+                attributesBuilder.setAttribute(key, AttributeValue.longAttributeValue(((Number) value).longValue()));
             } else if (value instanceof Float || value instanceof Double) {
-                attributesBuilder.setAttribute(
-                        key, AttributeValue.doubleAttributeValue(((Number) value).doubleValue()));
+                attributesBuilder.setAttribute(key, AttributeValue.doubleAttributeValue(((Number) value).doubleValue()));
             } else if (value instanceof Boolean) {
                 attributesBuilder.setAttribute(key, AttributeValue.booleanAttributeValue((Boolean) value));
             } else {

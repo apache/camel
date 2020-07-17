@@ -16,14 +16,15 @@
  */
 package org.apache.camel.tracing.decorators;
 
-import java.util.Map;
+import java.util.*;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.tracing.HeadersExtractAdapter;
-import org.apache.camel.tracing.HeadersInjectAdapter;
+import org.apache.camel.tracing.ExtractAdapter;
+import org.apache.camel.tracing.InjectAdapter;
+import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.SpanKind;
-import org.apache.camel.tracing.SpanWrap;
+import org.apache.camel.tracing.Tag;
 import org.apache.camel.tracing.propagation.CamelMessagingHeadersExtractAdapter;
 import org.apache.camel.tracing.propagation.CamelMessagingHeadersInjectAdapter;
 
@@ -38,10 +39,9 @@ public abstract class AbstractMessagingSpanDecorator extends AbstractSpanDecorat
     }
 
     @Override
-    public void pre(SpanWrap span, Exchange exchange, Endpoint endpoint) {
+    public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
-        span.setMessageBusDestination(getDestination(exchange, endpoint));
-        //span.setTag(Tags.MESSAGE_BUS_DESTINATION.getKey(), getDestination(exchange, endpoint));
+        span.setTag(Tag.MESSAGE_BUS_DESTINATION, getDestination(exchange, endpoint));
 
         String messageId = getMessageId(exchange);
         if (messageId != null) {
@@ -81,12 +81,12 @@ public abstract class AbstractMessagingSpanDecorator extends AbstractSpanDecorat
     }
 
     @Override
-    public HeadersExtractAdapter getExtractAdapter(final Map<String, Object> map, final boolean jmsEncoding) {
+    public ExtractAdapter getExtractAdapter(final Map<String, Object> map, final boolean jmsEncoding) {
         return new CamelMessagingHeadersExtractAdapter(map, jmsEncoding);
     }
 
     @Override
-    public HeadersInjectAdapter getInjectAdapter(final Map<String, Object> map, final boolean jmsEncoding) {
+    public InjectAdapter getInjectAdapter(final Map<String, Object> map, final boolean jmsEncoding) {
         return new CamelMessagingHeadersInjectAdapter(map, jmsEncoding);
     }
 }

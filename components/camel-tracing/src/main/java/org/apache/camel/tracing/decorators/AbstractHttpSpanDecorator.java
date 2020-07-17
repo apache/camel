@@ -19,24 +19,19 @@ package org.apache.camel.tracing.decorators;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.tracing.SpanWrap;
+import org.apache.camel.tracing.SpanAdapter;
+import org.apache.camel.tracing.Tag;
 
 public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
 
     public static final String POST_METHOD = "POST";
     public static final String GET_METHOD = "GET";
 
-    @Override
-    public String getOperationName(Exchange exchange, Endpoint endpoint) {
-        // Based on HTTP component documentation:
-        return getHttpMethod(exchange, endpoint);
-    }
-
     public static String getHttpMethod(Exchange exchange, Endpoint endpoint) {
         // 1. Use method provided in header.
         Object method = exchange.getIn().getHeader(Exchange.HTTP_METHOD);
         if (method instanceof String) {
-            return (String)method;
+            return (String) method;
         }
 
         // 2. GET if query string is provided in header.
@@ -59,14 +54,20 @@ public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
     }
 
     @Override
-    public void pre(SpanWrap span, Exchange exchange, Endpoint endpoint) {
+    public String getOperationName(Exchange exchange, Endpoint endpoint) {
+        // Based on HTTP component documentation:
+        return getHttpMethod(exchange, endpoint);
+    }
+
+    @Override
+    public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
 
         String httpUrl = getHttpURL(exchange, endpoint);
         if (httpUrl != null) {
-            span.setHttpURL(httpUrl);
+            span.setTag(Tag.HTTP_URL, httpUrl);
         }
-        span.setHttpMethod(getHttpMethod(exchange, endpoint));
+        span.setTag(Tag.HTTP_METHOD, getHttpMethod(exchange, endpoint));
     }
 
     protected String getHttpURL(Exchange exchange, Endpoint endpoint) {
@@ -89,14 +90,14 @@ public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
     }
 
     @Override
-    public void post(SpanWrap span, Exchange exchange, Endpoint endpoint) {
+    public void post(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         super.post(span, exchange, endpoint);
 
         Message message = exchange.getMessage();
         if (message != null) {
             Integer responseCode = message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
             if (responseCode != null) {
-                span.setHttpStatus(responseCode);
+                span.setTag(Tag.HTTP_STATUS, responseCode);
             }
         }
     }

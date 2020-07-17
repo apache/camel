@@ -1345,6 +1345,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-opentelemetry</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-opentracing</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1736,11 +1741,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-telegram</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-telemetry</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

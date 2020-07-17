@@ -14,10 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.opentracing;
+package org.apache.camel.tracing;
 
-import io.opentracing.Span;
-import io.opentracing.mock.MockTracer;
 import org.apache.camel.Exchange;
 import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
@@ -26,8 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ActiveSpanManagerTest extends ExchangeTestSupport {
-
-    private MockTracer tracer = new MockTracer();
 
     @Test
     public void testNoSpan() {
@@ -38,7 +34,7 @@ public class ActiveSpanManagerTest extends ExchangeTestSupport {
     @Test
     public void testCurrentSpan() {
         Exchange exchange = createExchange();
-        Span span = tracer.buildSpan("test").start();
+        SpanAdapter span = MockSpanAdapter.buildSpan("test");
         ActiveSpanManager.activate(exchange, span);
         assertEquals(span, ActiveSpanManager.getSpan(exchange));
         
@@ -49,9 +45,9 @@ public class ActiveSpanManagerTest extends ExchangeTestSupport {
     @Test
     public void testCreateChild() {
         Exchange exchange = createExchange();
-        Span parent = tracer.buildSpan("parent").start();
+        SpanAdapter parent = MockSpanAdapter.buildSpan("parent");
         ActiveSpanManager.activate(exchange, parent);
-        Span child = tracer.buildSpan("child").start();
+        SpanAdapter child = MockSpanAdapter.buildSpan("child");
         ActiveSpanManager.activate(exchange, child);
 
         assertEquals(child, ActiveSpanManager.getSpan(exchange));
@@ -63,7 +59,7 @@ public class ActiveSpanManagerTest extends ExchangeTestSupport {
     @Test
     public void testIsolatedConcurrentExchanges() {
         Exchange exchange = createExchange();
-        Span parent = tracer.buildSpan("parent").start();
+        SpanAdapter parent = MockSpanAdapter.buildSpan("parent");
         ActiveSpanManager.activate(exchange, parent);
 
         Exchange path1 = exchange.copy();
@@ -73,10 +69,10 @@ public class ActiveSpanManagerTest extends ExchangeTestSupport {
         assertEquals(parent, ActiveSpanManager.getSpan(path1));
         assertEquals(parent, ActiveSpanManager.getSpan(path2));
 
-        Span child1 = tracer.buildSpan("child1").start();
+        SpanAdapter child1 = MockSpanAdapter.buildSpan("child1");
         ActiveSpanManager.activate(path1, child1);
 
-        Span child2 = tracer.buildSpan("child2").start();
+        SpanAdapter child2 = MockSpanAdapter.buildSpan("child2");
         ActiveSpanManager.activate(path2, child2);
 
         ActiveSpanManager.deactivate(path2);

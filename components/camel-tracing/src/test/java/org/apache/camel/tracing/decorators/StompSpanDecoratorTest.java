@@ -14,15 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tracing;
+package org.apache.camel.tracing.decorators;
 
-import java.util.Iterator;
-import java.util.Map;
+import org.apache.camel.Endpoint;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-/**
- * @author rvargasp
- */
-public interface HeadersExtractAdapter {
-    Iterator<Map.Entry<String, String>> iterator();
-    Object get(String key);
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class StompSpanDecoratorTest {
+
+    @Test
+    public void testGetDestination() {
+        Endpoint endpoint = Mockito.mock(Endpoint.class);
+
+        Mockito.when(endpoint.getEndpointUri()).thenReturn("stomp:queue:test");
+
+        StompSpanDecorator decorator = new StompSpanDecorator();
+
+        assertEquals("test", decorator.getDestination(null, endpoint));
+    }
+
 }

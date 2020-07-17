@@ -20,7 +20,8 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.tracing.SpanWrap;
+import org.apache.camel.tracing.SpanAdapter;
+import org.apache.camel.tracing.Tag;
 
 public class ElasticsearchSpanDecorator extends AbstractSpanDecorator {
 
@@ -46,15 +47,13 @@ public class ElasticsearchSpanDecorator extends AbstractSpanDecorator {
     }
 
     @Override
-    public void pre(SpanWrap span, Exchange exchange, Endpoint endpoint) {
+    public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
-        span.setDBType(ELASTICSEARCH_DB_TYPE);
-        // span.setTag(Tags.DB_TYPE.getKey(), ELASTICSEARCH_DB_TYPE);
+        span.setTag(Tag.DB_TYPE, ELASTICSEARCH_DB_TYPE);
 
         Map<String, String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
         if (queryParameters.containsKey("indexName")) {
-            span.setDBInstance(queryParameters.get("indexName"));
-            // span.setTag(Tags.DB_INSTANCE.getKey(), queryParameters.get("indexName"));
+            span.setTag(Tag.DB_INSTANCE, queryParameters.get("indexName"));
         }
 
         String cluster = stripSchemeAndOptions(endpoint);

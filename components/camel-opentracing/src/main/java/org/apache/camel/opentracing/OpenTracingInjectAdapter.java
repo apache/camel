@@ -19,15 +19,12 @@ package org.apache.camel.opentracing;
 import java.util.*;
 
 import io.opentracing.propagation.TextMap;
-import org.apache.camel.tracing.HeadersInjectAdapter;
+import org.apache.camel.tracing.InjectAdapter;
 
-/**
- * @author rvargasp
- */
 public class OpenTracingInjectAdapter implements TextMap {
-    private final HeadersInjectAdapter adapter;
+    private final InjectAdapter adapter;
 
-    OpenTracingInjectAdapter(final HeadersInjectAdapter adapter) {
+    OpenTracingInjectAdapter(final InjectAdapter adapter) {
         this.adapter = adapter;
     }
 

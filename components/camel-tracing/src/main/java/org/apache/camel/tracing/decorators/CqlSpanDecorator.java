@@ -21,7 +21,8 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.tracing.SpanWrap;
+import org.apache.camel.tracing.SpanAdapter;
+import org.apache.camel.tracing.Tag;
 
 public class CqlSpanDecorator extends AbstractSpanDecorator {
 
@@ -40,24 +41,22 @@ public class CqlSpanDecorator extends AbstractSpanDecorator {
     }
 
     @Override
-    public void pre(SpanWrap span, Exchange exchange, Endpoint endpoint) {
+    public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
-        span.setDBType(CASSANDRA_DB_TYPE);
-        //span.setTag(Tags.DB_TYPE.getKey(), CASSANDRA_DB_TYPE);
-
+        span.setTag(Tag.DB_TYPE, CASSANDRA_DB_TYPE);
         URI uri = URI.create(endpoint.getEndpointUri());
         if (uri.getPath() != null && uri.getPath().length() > 0) {
             // Strip leading '/' from path
-            span.setDBType(uri.getPath().substring(1));
+            span.setTag(Tag.DB_INSTANCE, uri.getPath().substring(1));
         }
 
         Object cql = exchange.getIn().getHeader(CAMEL_CQL_QUERY);
         if (cql != null) {
-            span.setDBStatement(cql.toString());
+            span.setTag(Tag.DB_STATEMENT, cql.toString());
         } else {
             Map<String, String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
             if (queryParameters.containsKey("cql")) {
-                span.setDBStatement(queryParameters.get("cql"));
+                span.setTag(Tag.DB_STATEMENT, queryParameters.get("cql"));
             }
         }
     }
