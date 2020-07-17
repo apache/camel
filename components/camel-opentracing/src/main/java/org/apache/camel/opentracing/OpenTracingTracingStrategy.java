@@ -74,7 +74,7 @@ public class OpenTracingTracingStrategy implements InterceptStrategy {
     }
     
     private static String getComponentName(NamedNode processorDefinition) {
-        return processorDefinition.getShortName();
+        return SpanDecorator.CAMEL_COMPONENT + processorDefinition.getShortName();
     }
 
     private static String getOperationName(NamedNode processorDefinition) {
