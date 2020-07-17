@@ -55,7 +55,6 @@ For more information see [How does the website work](https://camel.apache.org/ma
 Please raise a new issue in our [issue tracker](https://issues.apache.org/jira/browse/CAMEL)
 If you can create a JUnit test case then your issue is more likely to be resolved quicker.
 e.g. take a look at some of the existing [unit tests cases](https://svn.apache.org/repos/asf/camel/trunk/camel-core/src/test/java/)
-Then we can add your issue to Subversion and then we'll know when its really fixed and we can ensure that the problem stays fixed in future releases.
 
 
 ## Working on the code
@@ -135,7 +134,7 @@ We gladly accept patches if you can find ways to improve, tune or fix Camel in s
 
 We recommend using github PRs instead of manual patch files. Especially for bigger patches.
 
-Most IDEs can create nice patches now very easily. e.g. in Eclipse just right click on a file/directory and select Team -> Create Patch. Then just save the patch as a file and then submit it. (You may have to click on Team -> Share... first to enable the Subversion options).
+Most IDEs can create nice patches now very easily. e.g. in Eclipse just right click on a file/directory and select Team -> Create Patch. Then just save the patch as a file and attach it to the corresponding issue on our https://issues.apache.org/jira/browse/CAMEL[JIRA issue tracker].
 If you're a command line person try the following to create the patch
 
     diff -u Main.java.orig Main.java >> patchfile.txt
@@ -164,11 +163,3 @@ Before you can raise an issue in the [issue tracker](https://issues.apache.org/j
 Once you've got involved as above, we may well invite you to be a committer. See [How do I become a committer](http://camel.apache.org/how-do-i-become-a-committer.html) for more details.
 
 The first step is contributing to the project; if you want to take that a step forward and become a fellow committer on the project then see the [Committer Guide](https://camel.apache.org/manual/latest/faq/how-do-i-become-a-committer.html)
-
-
-## More resources
-
-Git is not a brand new technology and therefore Camel is not the only ASF project thinking about using it. So here are some more resources you mind find useful:
-- [https://gitbox.apache.org/repos/asf/camel.git](https://gitbox.apache.org/repos/asf/camel.git): Apache Camel GitBox repository
-- [http://wiki.apache.org/general/GitAtApache](http://wiki.apache.org/general/GitAtApache): Some basic notes about git@asf
-- [http://git.apache.org/](http://git.apache.org/): List of git-mirrors at ASF
