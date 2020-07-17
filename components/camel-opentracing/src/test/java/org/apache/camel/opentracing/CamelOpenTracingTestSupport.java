@@ -32,7 +32,11 @@ import io.opentracing.mock.MockTracer;
 import io.opentracing.mock.MockTracer.Propagator;
 import io.opentracing.tag.Tags;
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelOpenTracingTestSupport extends CamelTestSupport {
 
@@ -77,7 +81,7 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
     }
 
     protected void verify(boolean async) {
-        assertEquals("Incorrect number of spans", testdata.length, tracer.finishedSpans().size());
+        assertEquals(testdata.length, tracer.finishedSpans().size(), "Incorrect number of spans");
 
         verifySameTrace();
 
@@ -86,7 +90,7 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
             final List<MockSpan> unsortedSpans = spans;
             spans = Arrays.asList(testdata).stream()
                     .map(td -> findSpan(td, unsortedSpans)).distinct().collect(Collectors.toList());
-            assertEquals("Incorrect number of spans after sorting", testdata.length, spans.size());
+            assertEquals(testdata.length, spans.size(), "Incorrect number of spans after sorting");
         }
 
         for (int i = 0; i < testdata.length; i++) {
@@ -106,10 +110,8 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
 
         String component = (String) span.tags().get(Tags.COMPONENT.getKey());
         assertNotNull(component);
-        assertEquals(td.getLabel(),
-            SpanDecorator.CAMEL_COMPONENT + URI.create(td.getUri()).getScheme(),
-            component);
-        assertEquals(td.getLabel(), td.getUri(), span.tags().get("camel.uri"));
+        assertEquals(SpanDecorator.CAMEL_COMPONENT + URI.create(td.getUri()).getScheme(), component, td.getLabel());
+        assertEquals(td.getUri(), span.tags().get("camel.uri"), td.getLabel());
 
         // If span associated with TestSEDASpanDecorator, check that pre/post tags have been defined
         if ("camel-seda".equals(component)) {
@@ -117,19 +119,16 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
             assertTrue(span.tags().containsKey("post"));
         }
 
-        assertEquals(td.getLabel(), td.getOperation(), span.operationName());
+        assertEquals(td.getOperation(), span.operationName(), td.getLabel());
 
-        assertEquals(td.getLabel(), td.getKind(),
-                span.tags().get(Tags.SPAN_KIND.getKey()));
+        assertEquals(td.getKind(), span.tags().get(Tags.SPAN_KIND.getKey()), td.getLabel());
 
         if (td.getParentId() != -1) {
-            assertEquals(td.getLabel(),
-                spans.get(td.getParentId()).context().spanId(),
-                span.parentId());
+            assertEquals(spans.get(td.getParentId()).context().spanId(), span.parentId(), td.getLabel());
         }
 
         if (!td.getLogMessages().isEmpty()) {
-            assertEquals("Number of log messages", td.getLogMessages().size(), span.logEntries().size());
+            assertEquals(td.getLogMessages().size(), span.logEntries().size(), "Number of log messages");
             for (int i = 0; i < td.getLogMessages().size(); i++) {
                 assertEquals(td.getLogMessages().get(i), span.logEntries().get(i).fields().get("message"));
             }

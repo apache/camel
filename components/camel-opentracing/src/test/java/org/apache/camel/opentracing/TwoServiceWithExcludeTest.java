@@ -22,7 +22,7 @@ import java.util.Set;
 import io.opentracing.tag.Tags;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TwoServiceWithExcludeTest extends CamelOpenTracingTestSupport {
 
