@@ -285,7 +285,8 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
             is = this.getClass().getClassLoader().getResourceAsStream(specificationUri);
         }
 
-        if (specificationUri.toLowerCase().endsWith(".yaml")) {
+        String suffix = ".yaml";
+        if (specificationUri.regionMatches(true, specificationUri.length() - suffix.length(), suffix, 0, suffix.length())) {
             Yaml loader = new Yaml();
             Map map = loader.load(is);
             JsonNode node = mapper.convertValue(map, JsonNode.class);
