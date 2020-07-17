@@ -54,7 +54,7 @@ The ArangoDb component supports 2 options, which are listed below.
 The ArangoDb endpoint is configured using URI syntax:
 
 ----
-arangodb:name
+arangodb:database
 ----
 
 with the following path and query parameters:
