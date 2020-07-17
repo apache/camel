@@ -31,7 +31,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Perform operations on ArangoDb documents, collections and graphs.
  */
-@UriEndpoint(firstVersion = "3.5.0-SNAPSHOT", scheme = "arangodb", title = "ArangoDb", syntax = "arangodb:name", category = {Category.DATABASE, Category.NOSQL}, producerOnly = true)
+@UriEndpoint(firstVersion = "3.5.0-SNAPSHOT", scheme = "arangodb", title = "ArangoDb", syntax = "arangodb:database", category = {Category.DATABASE, Category.NOSQL}, producerOnly = true)
 public class ArangoDbEndpoint extends DefaultEndpoint {
     private ArangoDB arango;
 

@@ -14,7 +14,7 @@
     "version": "3.5.0-SNAPSHOT",
     "scheme": "arangodb",
     "extendsScheme": "",
-    "syntax": "arangodb:name",
+    "syntax": "arangodb:database",
     "async": false,
     "consumerOnly": false,
     "producerOnly": true,
