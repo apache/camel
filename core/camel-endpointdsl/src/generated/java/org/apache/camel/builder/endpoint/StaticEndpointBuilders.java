@@ -3840,7 +3840,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path beanId:address
      */
-    public static org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.CxfEndpointBuilder cxf(
+    static org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.CxfEndpointBuilder cxf(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.endpointBuilder("cxf", path);
     }
@@ -3865,7 +3865,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path beanId:address
      */
-    public static org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.CxfEndpointBuilder cxf(
+    static org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.CxfEndpointBuilder cxf(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -15471,7 +15471,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path serverUrls/path
      */
-    static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
+    public static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder("zookeeper", path);
     }
@@ -15495,7 +15495,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path serverUrls/path
      */
-    static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
+    public static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder(componentName, path);
