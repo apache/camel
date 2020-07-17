@@ -22,7 +22,9 @@ import io.opentracing.tag.Tags;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RouteConcurrentTest extends CamelOpenTracingTestSupport {
 

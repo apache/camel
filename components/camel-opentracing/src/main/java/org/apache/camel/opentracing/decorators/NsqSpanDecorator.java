@@ -36,7 +36,6 @@ public class NsqSpanDecorator extends AbstractMessagingSpanDecorator {
         return "org.apache.camel.component.nsq.NsqComponent";
     }
 
-
     @Override
     public String getDestination(Exchange exchange, Endpoint endpoint) {
         String topic = (String)exchange.getIn().getHeader(NSQ_TOPIC);
