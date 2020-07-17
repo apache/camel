@@ -97,10 +97,11 @@ public class OpenTracingTracingStrategy implements InterceptStrategy {
     }
 
     private static Map<String, Object> errorLogs(final Throwable t) {
-        final Map<String, Object> errorLogs = new HashMap<>(2);
-        errorLogs.put("event", Tags.ERROR.getKey());
-        errorLogs.put("error.object", t);
-        return errorLogs;
+        final Map<String, Object> logEvent = new HashMap<>(3);
+        logEvent.put("event", Tags.ERROR.getKey());
+        logEvent.put("error.kind", "Exception");
+        logEvent.put("message", t.getMessage());
+        return logEvent;
     }
 
     // Adapted from org.apache.camel.impl.engine.DefaultTracer.shouldTrace
