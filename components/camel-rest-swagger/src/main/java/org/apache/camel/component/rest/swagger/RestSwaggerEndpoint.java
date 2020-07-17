@@ -431,7 +431,9 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         }
 
         final String specificationScheme = specificationUri.getScheme();
-        if (specificationUri.isAbsolute() && specificationScheme.toLowerCase().startsWith(Scheme.HTTP.toValue())) {
+        // Perform a case insensitive "startsWith" check that works for different locales
+        String pattern = Scheme.HTTP.toValue();
+        if (specificationUri.isAbsolute() && specificationScheme.regionMatches(true, 0, pattern, 0, pattern.length())) {
             try {
                 return new URI(specificationUri.getScheme(), specificationUri.getUserInfo(), specificationUri.getHost(),
                     specificationUri.getPort(), null, null, null).toString();

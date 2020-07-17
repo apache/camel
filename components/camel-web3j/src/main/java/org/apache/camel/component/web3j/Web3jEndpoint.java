@@ -100,7 +100,7 @@ public class Web3jEndpoint extends DefaultEndpoint {
             web3jService = new HttpService();
         } else if (clientAddress.startsWith("http")) {
             web3jService = new HttpService(clientAddress);
-        } else if (System.getProperty("os.name").toLowerCase().startsWith("win")) {
+        } else if (System.getProperty("os.name").regionMatches(true, 0, "win", 0, "win".length())) {
             web3jService = new WindowsIpcService(clientAddress);
         } else {
             web3jService = new UnixIpcService(clientAddress);
