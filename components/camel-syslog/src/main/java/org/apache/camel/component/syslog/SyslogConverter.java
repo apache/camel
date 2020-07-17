@@ -18,6 +18,7 @@ package org.apache.camel.component.syslog;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -135,7 +136,7 @@ public final class SyslogConverter {
     public static SyslogMessage parseMessage(byte[] bytes) {
         ByteBuffer byteBuffer = ByteBuffer.allocate(bytes.length);
         byteBuffer.put(bytes);
-        byteBuffer.rewind();
+        ((Buffer) byteBuffer).rewind();
 
         Character charFound = (char) byteBuffer.get();
 
