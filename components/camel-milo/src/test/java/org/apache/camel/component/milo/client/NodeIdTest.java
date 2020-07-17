@@ -21,12 +21,15 @@ import java.io.Serializable;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.milo.AbstractMiloServerTest;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.net.UrlEscapers.urlFormParameterEscaper;
 import static org.apache.camel.component.milo.server.MiloServerComponent.DEFAULT_NAMESPACE_URI;
 import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.uint;
 import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.ushort;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Testing different ways to specify node IDs
@@ -62,10 +65,11 @@ public class NodeIdTest extends AbstractMiloServerTest {
         testUri("milo-client://user:password@localhost:12345?node=RAW(nsu=http://foo.bar;s=foo/bar)", "http://foo.bar", "foo/bar");
     }
 
-    @Test(expected = ResolveEndpointFailedException.class)
+    @Test
     public void testMixed() {
         // This must fail since "node" is incomplete
-        testUri("milo-client:tcp://foo:bar@localhost:@@port@@?node=foo&namespaceUri=" + DEFAULT_NAMESPACE_URI, null, null);
+        assertThrows(ResolveEndpointFailedException.class,
+            () -> testUri("milo-client:tcp://foo:bar@localhost:@@port@@?node=foo&namespaceUri=" + DEFAULT_NAMESPACE_URI, null, null));
     }
 
     private void testUri(final String uri, final Serializable namespace, final Serializable partialNodeId) {

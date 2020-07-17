@@ -40,12 +40,13 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.MessageSecurityMode;
 import org.eclipse.milo.opcua.stack.core.types.structured.UserTokenPolicy;
 import org.eclipse.milo.opcua.stack.server.EndpointConfiguration;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.milo.NodeIds.nodeValue;
 import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit tests for calling from the client side
@@ -81,7 +82,7 @@ public class CallClientTest extends AbstractMiloServerTest {
         return false;
     }
 
-    @Before
+    @BeforeEach
     public void start() throws Exception {
         final OpcUaServerConfigBuilder cfg = OpcUaServerConfig.builder();
 
@@ -162,8 +163,8 @@ public class CallClientTest extends AbstractMiloServerTest {
         doCall(this.producer1, "bar");
 
         // assert
-        Assert.assertNotNull(this.callMethod);
-        Assert.assertArrayEquals(new Object[] {"out-foo", "out-bar"}, this.callMethod.getCalls().toArray());
+        assertNotNull(this.callMethod);
+        assertArrayEquals(new Object[] {"out-foo", "out-bar"}, this.callMethod.getCalls().toArray());
     }
 
     private static void doCall(final ProducerTemplate producerTemplate, final Object input) {

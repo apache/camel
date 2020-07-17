@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.milo.server;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test setting security policies
