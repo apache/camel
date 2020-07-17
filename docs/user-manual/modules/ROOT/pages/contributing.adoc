@@ -199,12 +199,3 @@ Before you can raise an issue in the https://issues.apache.org/jira/browse/CAMEL
 Once you've got involved as above, we may well invite you to be a committer. See http://camel.apache.org/how-do-i-become-a-committer.html[How do I become a committer] for more details.
 
 The first step is contributing to the project; if you want to take that a step forward and become a fellow committer on the project then see the http://activemq.apache.org/becoming-a-committer.html[Committer Guide]
-
-[#more-resources]
-== More resources
-
-Git is not a brand new technology and therefore Camel is not the only ASF project thinking about using it. So here are some more resources you mind find useful:
-
-* https://gitbox.apache.org/repos/asf/camel.git: Apache Camel GitBox repository
-* http://wiki.apache.org/general/GitAtApache: Some basic notes about git@asf
-* http://git.apache.org/: List of git-mirrors at ASF
