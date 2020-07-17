@@ -22,9 +22,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos;
 import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ProtobufMarshalAndUnmarshalSpringTest extends CamelSpringTestSupport {
 
@@ -59,7 +63,7 @@ public class ProtobufMarshalAndUnmarshalSpringTest extends CamelSpringTestSuppor
             });
             fail("Expect the exception here");
         } catch (Exception ex) {
-            assertTrue("Expect FailedToCreateRouteException", ex instanceof FailedToCreateRouteException);
+            assertTrue(ex instanceof FailedToCreateRouteException, "Expect FailedToCreateRouteException");
         }
     }
 
