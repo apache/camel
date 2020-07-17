@@ -459,10 +459,10 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 LOG.error("Channel did not block");
             } else {
                 cast(buffer).flip();
-                out.write(buffer.array(), buffer.arrayOffset() + buffer.position(), buffer.arrayOffset() + buffer.limit());
+                out.write(buffer.array(), buffer.arrayOffset() + cast(buffer).position(), buffer.arrayOffset() + cast(buffer).limit());
                 // to be compatible with java 8
                 Buffer buf = buffer;
-                buf.clear();
+                cast(buf).clear();
             }
         }
     }
