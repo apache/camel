@@ -18,7 +18,6 @@ package org.apache.camel.component.syslog;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -30,6 +29,8 @@ import javax.xml.bind.DatatypeConverter;
 import org.apache.camel.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.util.BufferCaster.cast;
 
 @Converter(generateLoader = true)
 public final class SyslogConverter {
@@ -136,7 +137,7 @@ public final class SyslogConverter {
     public static SyslogMessage parseMessage(byte[] bytes) {
         ByteBuffer byteBuffer = ByteBuffer.allocate(bytes.length);
         byteBuffer.put(bytes);
-        ((Buffer) byteBuffer).rewind();
+        cast(byteBuffer).rewind();
 
         Character charFound = (char) byteBuffer.get();
 
