@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.camel.test.testcontainers.ContainerAwareTestSupport;
-import org.apache.camel.test.testcontainers.Wait;
+import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
+import org.apache.camel.test.testcontainers.junit5.Wait;
 import org.testcontainers.containers.FixedHostPortGenericContainer;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
