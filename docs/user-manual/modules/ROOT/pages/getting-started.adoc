@@ -49,7 +49,7 @@ directly as a pdf (about 20 pages) and introduces you to Camel. We have
 been told by experience Camel end users they wished this chapter was
 available to them when they started learning Camel.
 
-* http://java.dzone.com/articles/open-source-integration-apache[Open
+* https://dzone.com/articles/open-source-integration-apache[Open
 Source Integration with Apache Camel and How Fuse IDE Can Help] by
 Jonathan Anstey. Updated article of the
 http://architects.dzone.com/articles/apache-camel-integration[Apache
