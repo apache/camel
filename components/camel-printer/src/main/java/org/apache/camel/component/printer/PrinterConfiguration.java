@@ -187,7 +187,7 @@ public class PrinterConfiguration {
         if (size == null) {
             // default to NA letter if no size configured
             answer = MediaSizeName.NA_LETTER;
-        } else if (size.toLowerCase().startsWith("iso")) {
+        } else if (size.regionMatches(true, 0, "iso", 0, "iso".length())) {
             answer = mediaSizeAssigner.selectMediaSizeNameISO(size);
         } else if (size.startsWith("jis")) {
             answer = mediaSizeAssigner.selectMediaSizeNameJIS(size);

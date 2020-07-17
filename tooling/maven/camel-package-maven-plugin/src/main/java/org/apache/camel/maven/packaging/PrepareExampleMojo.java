@@ -128,7 +128,7 @@ public class PrepareExampleMojo extends AbstractMojo {
                         }
 
                         // readme files is either readme.md or readme.adoc
-                        String[] readmes = new File(file, ".").list((folder, fileName) -> fileName.toLowerCase().startsWith("readme"));
+                        String[] readmes = new File(file, ".").list((folder, fileName) -> fileName.regionMatches(true, 0, "readme", 0, "readme".length()));
                         if (readmes != null && readmes.length == 1) {
                             model.setReadmeFileName(readmes[0]);
                         }
