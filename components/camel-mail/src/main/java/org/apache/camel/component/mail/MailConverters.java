@@ -94,8 +94,8 @@ public final class MailConverters {
                 content = part.getContent();
             }
             // Perform a case insensitive "startsWith" check that works for different locales
-            String pattern = "text";
-            if (part.getContentType().regionMatches(true, 0, pattern, 0, pattern.length())) {
+            String prefix = "text";
+            if (part.getContentType().regionMatches(true, 0, prefix, 0, prefix.length())) {
                 return part.getContent().toString();
             }
         }

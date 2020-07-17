@@ -189,8 +189,8 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
             String headerName = entry.getKey();
             Object headerValue = entry.getValue();
             // Perform a case insensitive "startsWith" check that works for different locales
-            String pattern = "camel";
-            if (!headerName.regionMatches(true, 0, pattern, 0, pattern.length())
+            String prefix = "camel";
+            if (!headerName.regionMatches(true, 0, prefix, 0, prefix.length())
                 && !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue, exchange)) {
                 if (headerValue != null) {
                     frame.addHeader(new AsciiBuffer(headerName), StompFrame.encodeHeader(headerValue.toString()));

@@ -50,8 +50,8 @@ public enum EndpointMappingType {
         if (uri != null) {
             for (EndpointMappingType type : EndpointMappingType.values()) {
                 // Perform a case insensitive "startsWith" check that works for different locales
-                String pattern = type.getPrefix();
-                if (uri.regionMatches(true, 0, pattern, 0, pattern.length())) {
+                String prefix = type.getPrefix();
+                if (uri.regionMatches(true, 0, prefix, 0, prefix.length())) {
                     return type;
                 }
             }
