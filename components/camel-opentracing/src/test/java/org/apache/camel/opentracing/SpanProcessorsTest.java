@@ -20,9 +20,10 @@ import io.opentracing.tag.Tags;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.language.simple.SimpleLanguage.simple;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpanProcessorsTest extends CamelOpenTracingTestSupport {
 
@@ -60,7 +61,7 @@ public class SpanProcessorsTest extends CamelOpenTracingTestSupport {
             });
 
         verify();
-        assertEquals("request-header-value", result.getMessage().getHeader("baggage-header", String.class));
+        assertEquals(result.getMessage().getHeader("baggage-header", String.class), "request-header-value");
     }
 
     @Override
