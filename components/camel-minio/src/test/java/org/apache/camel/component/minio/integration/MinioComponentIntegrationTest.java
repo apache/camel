@@ -44,12 +44,12 @@ public class MinioComponentIntegrationTest extends CamelTestSupport {
         result.expectedMessageCount(2);
 
         Exchange exchange1 = template.send("direct:start", ExchangePattern.InOnly, exchange -> {
-            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest1.txt");
+            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest");
             exchange.getIn().setBody("This is my bucket content.");
         });
 
         Exchange exchange2 = template.send("direct:start", ExchangePattern.InOnly, exchange -> {
-            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest2.txt");
+            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest");
             exchange.getIn().setBody("This is my bucket content.");
         });
 
@@ -67,7 +67,7 @@ public class MinioComponentIntegrationTest extends CamelTestSupport {
         result.expectedMessageCount(1);
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, exchange1 -> {
-            exchange1.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest3.txt");
+            exchange1.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest");
             exchange1.getIn().setBody("This is my bucket content.");
         });
 
@@ -80,17 +80,13 @@ public class MinioComponentIntegrationTest extends CamelTestSupport {
 
     private void assertResultExchange(Exchange resultExchange) {
         assertEquals("This is my bucket content.", resultExchange.getIn().getBody(String.class));
-        assertEquals("mycamelbucket", resultExchange.getIn().getHeader(MinioConstants.BUCKET_NAME));
         assertTrue(resultExchange.getIn().getHeader(MinioConstants.OBJECT_NAME, String.class).startsWith("CamelUnitTest"));
-        assertNull(resultExchange.getIn().getHeader(MinioConstants.VERSION_ID)); // not
-        // enabled
-        // on
-        // this
-        // bucket
-        assertNotNull(resultExchange.getIn().getHeader(MinioConstants.LAST_MODIFIED));
-        assertEquals("application/octet-stream", resultExchange.getIn().getHeader(MinioConstants.CONTENT_TYPE));
+        assertNull(resultExchange.getIn().getHeader(MinioConstants.BUCKET_NAME));
+        assertNull(resultExchange.getIn().getHeader(MinioConstants.VERSION_ID)); // not enabled on this bucket
+        assertNull(resultExchange.getIn().getHeader(MinioConstants.LAST_MODIFIED));
+        assertNull(resultExchange.getIn().getHeader(MinioConstants.CONTENT_TYPE));
         assertNull(resultExchange.getIn().getHeader(MinioConstants.CONTENT_ENCODING));
-        assertEquals(26L, resultExchange.getIn().getHeader(MinioConstants.CONTENT_LENGTH));
+        assertNull(resultExchange.getIn().getHeader(MinioConstants.CONTENT_LENGTH));
         assertNull(resultExchange.getIn().getHeader(MinioConstants.CONTENT_DISPOSITION));
         assertNull(resultExchange.getIn().getHeader(MinioConstants.CONTENT_MD5));
         assertNull(resultExchange.getIn().getHeader(MinioConstants.CACHE_CONTROL));
@@ -106,11 +102,10 @@ public class MinioComponentIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() {
                 String minioEndpointUri =
-                        "minio://mycamelbucket?accessKey=Q3AM3UQ867SPQQA43P2F&secretKey=zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG&region=us-west-1&autoCreateBucket=false&endpoint=https://play.min.io";
+                        "minio://mycamelbucket?accessKey=Q3AM3UQ867SPQQA43P2F&secretKey=RAW(zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG)&region=us-west-1&autoCreateBucket=true&endpoint=https://play.min.io";
 
-                from("direct:start").to(minioEndpointUri);
+                from("direct:start").to(minioEndpointUri).to("mock:result");
 
-                from(minioEndpointUri).to("mock:result");
             }
         };
     }

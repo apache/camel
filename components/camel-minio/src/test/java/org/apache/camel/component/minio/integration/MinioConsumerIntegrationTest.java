@@ -62,7 +62,6 @@ public class MinioConsumerIntegrationTest extends CamelTestSupport {
             exchange.getIn().setBody("Test3");
         });
 
-        Thread.sleep(10000);
         assertMockEndpointsSatisfied();
     }
 

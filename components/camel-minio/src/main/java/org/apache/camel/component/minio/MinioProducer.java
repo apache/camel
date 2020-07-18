@@ -151,8 +151,11 @@ public class MinioProducer extends DefaultProducer {
                     .stream(inputStream, inputStream.available(), -1)
                     .bucket(bucketName)
                     .object(objectName)
-                    .extraHeaders(extraHeaders)
                     .userMetadata(objectMetadata);
+
+            if (!extraHeaders.isEmpty()) {
+                putObjectRequest.extraHeaders(extraHeaders);
+            }
 
             LOG.trace("Put object from exchange...");
 
@@ -203,18 +206,23 @@ public class MinioProducer extends DefaultProducer {
             final String bucketName = determineBucketName(exchange);
             final String sourceKey = determineObjectName(exchange);
             final String destinationKey = exchange.getIn().getHeader(MinioConstants.DESTINATION_OBJECT_NAME, String.class);
-            final String bucketNameDestination = exchange.getIn().getHeader(MinioConstants.DESTINATION_BUCKET_NAME, String.class);
+            final String destinationBucketName = exchange.getIn().getHeader(MinioConstants.DESTINATION_BUCKET_NAME, String.class);
 
-            if (ObjectHelper.isEmpty(bucketNameDestination)) {
+            if (ObjectHelper.isEmpty(destinationBucketName)) {
                 throw new IllegalArgumentException("Bucket Name Destination must be specified for copyObject Operation");
             }
             if (ObjectHelper.isEmpty(destinationKey)) {
                 throw new IllegalArgumentException("Destination Key must be specified for copyObject Operation");
             }
 
-            CopySource.Builder copySourceBuilder = CopySource.builder().bucket(bucketName).object(sourceKey);
+            CopySource.Builder copySourceBuilder = CopySource.builder()
+                    .bucket(bucketName)
+                    .object(sourceKey);
 
-            CopyObjectArgs.Builder copyObjectRequest = CopyObjectArgs.builder().bucket(bucketNameDestination).object(destinationKey).source(copySourceBuilder.build());
+            CopyObjectArgs.Builder copyObjectRequest = CopyObjectArgs.builder()
+                    .bucket(destinationBucketName)
+                    .object(destinationKey)
+                    .source(copySourceBuilder.build());
 
             ObjectWriteResponse copyObjectResult = minioClient.copyObject(copyObjectRequest.build());
 
@@ -237,13 +245,11 @@ public class MinioProducer extends DefaultProducer {
                 message.setBody(true);
             }
         } else {
-            RemoveObjectArgs.Builder deleteObjectRequest = RemoveObjectArgs.builder().bucket(bucketName).object(sourceKey).bypassGovernanceMode(getConfiguration().isBypassGovernanceMode());
 
-            if (versionId != null) {
-                deleteObjectRequest.versionId(versionId);
-            }
+            minioClient.removeObject(RemoveObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(sourceKey).build());
 
-            minioClient.removeObject(deleteObjectRequest.build());
             Message message = getMessageForResponse(exchange);
             message.setBody(true);
         }
@@ -281,8 +287,7 @@ public class MinioProducer extends DefaultProducer {
             }
         } else {
 
-            RemoveBucketArgs.Builder deleteBucketRequest = RemoveBucketArgs.builder().bucket(bucketName);
-            minioClient.removeBucket(deleteBucketRequest.build());
+            minioClient.removeBucket(RemoveBucketArgs.builder().bucket(bucketName).build());
             Message message = getMessageForResponse(exchange);
             message.setBody("ok");
         }
@@ -300,13 +305,11 @@ public class MinioProducer extends DefaultProducer {
         } else {
             final String bucketName = determineBucketName(exchange);
             final String sourceKey = determineObjectName(exchange);
-            GetObjectArgs.Builder getObjectRequest = GetObjectArgs.builder().bucket(bucketName).object(sourceKey);
 
-            if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
-                getObjectRequest.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
-            }
-
-            InputStream respond = minioClient.getObject(getObjectRequest.build());
+            InputStream respond = minioClient.getObject(GetObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(sourceKey)
+                    .build());
 
             Message message = getMessageForResponse(exchange);
             message.setBody(respond);
@@ -314,10 +317,6 @@ public class MinioProducer extends DefaultProducer {
     }
 
     private void getPartialObject(MinioClient minioClient, Exchange exchange) throws Exception {
-        final String bucketName = determineBucketName(exchange);
-        final String sourceKey = determineObjectName(exchange);
-        final String offset = exchange.getIn().getHeader(MinioConstants.OFFSET, String.class);
-        final String length = exchange.getIn().getHeader(MinioConstants.LENGTH, String.class);
 
         if (getConfiguration().isPojoRequest()) {
             GetObjectArgs.Builder payload = exchange.getIn().getMandatoryBody(GetObjectArgs.Builder.class);
@@ -327,14 +326,21 @@ public class MinioProducer extends DefaultProducer {
                 message.setBody(respond);
             }
         } else {
+            final String bucketName = determineBucketName(exchange);
+            final String sourceKey = determineObjectName(exchange);
+            final String offset = exchange.getIn().getHeader(MinioConstants.OFFSET, String.class);
+            final String length = exchange.getIn().getHeader(MinioConstants.LENGTH, String.class);
 
             if (ObjectHelper.isEmpty(offset) || ObjectHelper.isEmpty(length)) {
                 throw new IllegalArgumentException("A Offset and length header must be configured to perform a partial get operation.");
             }
 
-            GetObjectArgs.Builder getPartialRequest = GetObjectArgs.builder().bucket(bucketName).object(sourceKey)
-                    .offset(Long.parseLong(offset)).length(Long.parseLong(length));
-            InputStream respond = minioClient.getObject(getPartialRequest.build());
+            InputStream respond = minioClient.getObject(GetObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(sourceKey)
+                    .offset(Long.parseLong(offset))
+                    .length(Long.parseLong(length))
+                    .build());
 
             Message message = getMessageForResponse(exchange);
             message.setBody(respond);
@@ -342,7 +348,6 @@ public class MinioProducer extends DefaultProducer {
     }
 
     private void listObjects(MinioClient minioClient, Exchange exchange) throws InvalidPayloadException {
-        final String bucketName = determineBucketName(exchange);
 
         if (getConfiguration().isPojoRequest()) {
             ListObjectsArgs.Builder payload = exchange.getIn().getMandatoryBody(ListObjectsArgs.Builder.class);
@@ -352,8 +357,12 @@ public class MinioProducer extends DefaultProducer {
                 message.setBody(objectList);
             }
         } else {
+            final String bucketName = determineBucketName(exchange);
 
-            Iterable<Result<Item>> objectList = minioClient.listObjects(ListObjectsArgs.builder().bucket(bucketName).recursive(getConfiguration().isRecursive()).build());
+            Iterable<Result<Item>> objectList = minioClient.listObjects(ListObjectsArgs.builder()
+                    .bucket(bucketName)
+                    .recursive(getConfiguration().isRecursive())
+                    .build());
 
             Message message = getMessageForResponse(exchange);
             message.setBody(objectList);
@@ -482,5 +491,4 @@ public class MinioProducer extends DefaultProducer {
     public MinioEndpoint getEndpoint() {
         return (MinioEndpoint) super.getEndpoint();
     }
-
 }

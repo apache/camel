@@ -51,7 +51,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Store and retrie objects from Minio Storage Service using Minio SDK.
  */
-@UriEndpoint(firstVersion = "3.5.0", scheme = "minio", title = "Minio Storage Service", syntax = "minio://bucketName", category = {Category.CLOUD, Category.FILE})
+@UriEndpoint(firstVersion = "3.5.0", scheme = "minio", title = "Minio Storage Service", syntax = "minio://bucketName",
+        category = {Category.CLOUD, Category.FILE})
+
 public class MinioEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioEndpoint.class);
@@ -137,14 +139,13 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
 
     public Exchange createExchange(ExchangePattern pattern,
                                    InputStream minioObject, String objectName) throws Exception {
-        String bucketName = getConfiguration().getBucketName();
-        LOG.trace("Getting object with objectName {} from bucket {}...", objectName, bucketName);
+        LOG.trace("Getting object with objectName {} from bucket {}...", objectName, getConfiguration().getBucketName());
 
         Exchange exchange = super.createExchange(pattern);
         Message message = exchange.getIn();
         LOG.trace("Got object!");
 
-        getObjectTags(objectName, bucketName, message);
+        getObjectStat(objectName, message);
 
         if (getConfiguration().isIncludeBody()) {
             try {
@@ -242,8 +243,9 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         LOG.trace("Bucket policy updated");
     }
 
-    private void getObjectTags(String objectName, String bucketName, Message message) throws Exception {
+    private void getObjectStat(String objectName, Message message) throws Exception {
 
+        String bucketName = getConfiguration().getBucketName();
         StatObjectArgs.Builder statObjectRequest = StatObjectArgs.builder().bucket(bucketName).object(objectName);
 
         if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
@@ -274,13 +276,16 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         ObjectStat stat = minioClient.statObject(statObjectRequest.build());
 
         // set all stat as message headers
-        message.setHeader(MinioConstants.OBJECT_NAME, objectName);
-        message.setHeader(MinioConstants.BUCKET_NAME, bucketName);
+        message.setHeader(MinioConstants.OBJECT_NAME, stat.name());
+        message.setHeader(MinioConstants.BUCKET_NAME, stat.bucketName());
         message.setHeader(MinioConstants.E_TAG, stat.etag());
         message.setHeader(MinioConstants.LAST_MODIFIED, stat.httpHeaders().get("last-modified"));
         message.setHeader(MinioConstants.VERSION_ID, stat.httpHeaders().get("x-amz-version-id"));
         message.setHeader(MinioConstants.CONTENT_TYPE, stat.contentType());
         message.setHeader(MinioConstants.CONTENT_LENGTH, stat.length());
+        message.setHeader(MinioConstants.CONTENT_ENCODING, stat.httpHeaders().get("content-encoding"));
+        message.setHeader(MinioConstants.CONTENT_DISPOSITION, stat.httpHeaders().get("content-disposition"));
+        message.setHeader(MinioConstants.CACHE_CONTROL, stat.httpHeaders().get("cache-control"));
         message.setHeader(MinioConstants.SERVER_SIDE_ENCRYPTION, stat.httpHeaders().get("x-amz-server-side-encryption"));
         message.setHeader(MinioConstants.EXPIRATION_TIME, stat.httpHeaders().get("x-amz-expiration"));
         message.setHeader(MinioConstants.REPLICATION_STATUS, stat.httpHeaders().get("x-amz-replication-status"));

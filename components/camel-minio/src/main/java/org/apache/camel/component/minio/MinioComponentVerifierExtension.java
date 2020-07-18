@@ -64,7 +64,7 @@ public class MinioComponentVerifierExtension extends DefaultComponentVerifierExt
             MinioClient.Builder clientBuilderRequest = MinioClient.builder();
 
             if (configuration.getEndpoint() == null) {
-                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service is not supported in this region");
+                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service endpoint has not defined");
                 return builder.error(errorBuilder.build()).build();
             }
 
@@ -72,10 +72,6 @@ public class MinioComponentVerifierExtension extends DefaultComponentVerifierExt
                 clientBuilderRequest.endpoint(configuration.getEndpoint(), configuration.getProxyPort(), configuration.isSecure());
             } else {
                 clientBuilderRequest.endpoint(configuration.getEndpoint());
-            }
-
-            if (configuration.getEndpoint() != null) {
-                clientBuilderRequest.region(configuration.getRegion());
             }
 
             if (configuration.getRegion() != null) {

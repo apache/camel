@@ -109,8 +109,9 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
             ListBucketResultV2 listObjects = (ListBucketResultV2) getMinioClient().listObjects(listObjectRequest.build());
 
             if (listObjects.isTruncated()) {
-                continuationToken = listObjects.nextContinuationToken();
                 LOG.trace("Returned list is truncated, so setting next marker: {}", continuationToken);
+                continuationToken = listObjects.nextContinuationToken();
+
             } else {
                 // no more data so clear marker
                 continuationToken = null;
@@ -136,28 +137,22 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Received {} messages in this poll", minioObjectSummaries.size());
         }
-
+        String bucketName = getConfiguration().getBucketName();
         Collection<InputStream> minioObjects = new ArrayList<>();
         Queue<Exchange> answer = new LinkedList<>();
         try {
-            GetObjectArgs.Builder minioObjectRequest = GetObjectArgs.builder().bucket(getConfiguration().getBucketName());
             if (getConfiguration().isIncludeFolders()) {
                 for (Contents minioObjectSummary : minioObjectSummaries) {
-                    InputStream minioObject = getMinioClient().getObject(minioObjectRequest
-                            .object(minioObjectSummary.objectName())
-                            .build());
+                    InputStream minioObject = getObject(bucketName, getMinioClient(), minioObjectSummary.objectName());
                     minioObjects.add(minioObject);
                     Exchange exchange = getEndpoint().createExchange(minioObject, minioObjectSummary.objectName());
                     answer.add(exchange);
-
                 }
             } else {
                 for (Contents minioObjectSummary : minioObjectSummaries) {
                     // ignore if directory
                     if (!minioObjectSummary.isDir()) {
-                        InputStream minioObject = getMinioClient().getObject(minioObjectRequest
-                                .object(minioObjectSummary.objectName())
-                                .build());
+                        InputStream minioObject = getObject(bucketName, getMinioClient(), minioObjectSummary.objectName());
                         minioObjects.add(minioObject);
                         Exchange exchange = getEndpoint().createExchange(minioObject, minioObjectSummary.objectName());
                         answer.add(exchange);
@@ -305,34 +300,34 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
             LOG.trace("Copying object from bucket {} with objectName {} to bucket {}...",
                     srcBucketName, srcObjectName, destinationBucketName);
 
-            CopySource.Builder copySource = CopySource.builder().bucket(srcBucketName).object(srcObjectName);
+            CopySource.Builder copySourceBuilder = CopySource.builder().bucket(srcBucketName).object(srcObjectName);
             if (getConfiguration().getServerSideEncryptionCustomerKey() != null) {
-                copySource.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
+                copySourceBuilder.ssec(getConfiguration().getServerSideEncryptionCustomerKey());
             }
             if (getConfiguration().getOffset() != 0) {
-                copySource.offset(getConfiguration().getOffset());
+                copySourceBuilder.offset(getConfiguration().getOffset());
             }
             if (getConfiguration().getLength() != 0) {
-                copySource.length(getConfiguration().getLength());
+                copySourceBuilder.length(getConfiguration().getLength());
             }
             if (getConfiguration().getVersionId() != null) {
-                copySource.versionId(getConfiguration().getVersionId());
+                copySourceBuilder.versionId(getConfiguration().getVersionId());
             }
             if (getConfiguration().getMatchETag() != null) {
-                copySource.matchETag(getConfiguration().getMatchETag());
+                copySourceBuilder.matchETag(getConfiguration().getMatchETag());
             }
             if (getConfiguration().getNotMatchETag() != null) {
-                copySource.notMatchETag(getConfiguration().getNotMatchETag());
+                copySourceBuilder.notMatchETag(getConfiguration().getNotMatchETag());
             }
             if (getConfiguration().getModifiedSince() != null) {
-                copySource.modifiedSince(getConfiguration().getModifiedSince());
+                copySourceBuilder.modifiedSince(getConfiguration().getModifiedSince());
             }
             if (getConfiguration().getUnModifiedSince() != null) {
-                copySource.unmodifiedSince(getConfiguration().getUnModifiedSince());
+                copySourceBuilder.unmodifiedSince(getConfiguration().getUnModifiedSince());
             }
 
             CopyObjectArgs.Builder copyObjectRequest = CopyObjectArgs.builder()
-                    .source(copySource.build())
+                    .source(copySourceBuilder.build())
                     .bucket(getConfiguration().getDestinationBucketName())
                     .object(destinationObjectName);
 

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.minio;
 
+import java.util.Map;
 import java.util.Set;
 
 import io.minio.MinioClient;
@@ -49,7 +50,7 @@ public class MinioComponent extends DefaultComponent {
     }
 
     @Override
-    protected MinioEndpoint createEndpoint(String uri, String remaining, java.util.Map<String, Object> parameters) throws Exception {
+    protected MinioEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Bucket name must be specified.");
         }
