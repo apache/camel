@@ -417,10 +417,6 @@ public class BeanInfo {
         boolean hasCustomAnnotation = false;
         boolean hasHandlerAnnotation = org.apache.camel.util.ObjectHelper.hasAnnotation(method.getAnnotations(), Handler.class);
 
-        if (!hasHandlerAnnotation) {
-
-        }
-
         int size = parameterTypes.length;
         if (LOG.isTraceEnabled()) {
             LOG.trace("Creating MethodInfo for class: {} method: {} having {} parameters", clazz, method, size);
