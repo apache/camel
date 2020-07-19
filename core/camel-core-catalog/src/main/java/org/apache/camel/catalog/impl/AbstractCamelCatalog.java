@@ -62,6 +62,7 @@ public abstract class AbstractCamelCatalog {
     // CHECKSTYLE:OFF
 
     private static final Pattern SYNTAX_PATTERN = Pattern.compile("([\\w.]+)");
+    private static final Pattern ENV_OR_SYS_PATTERN = Pattern.compile("\\{\\{(env|sys):\\w+\\}\\}");
     private static final Pattern SYNTAX_DASH_PATTERN = Pattern.compile("([\\w.-]+)");
     private static final Pattern COMPONENT_SYNTAX_PARSER = Pattern.compile("([^\\w-]*)([\\w-]+)");
 
@@ -445,6 +446,10 @@ public abstract class AbstractCamelCatalog {
         uri = CatalogHelper.after(uri, ":");
         String uriPath = URISupport.stripQuery(uri);
 
+        // the uri path may use {{env:xxx}} or {{sys:xxx}} placeholders so ignore those
+        Matcher matcher = ENV_OR_SYS_PATTERN.matcher(uriPath);
+        uriPath = matcher.replaceAll("");
+
         // strip user info from uri path
         if (!userInfoOptions.isEmpty()) {
             int idx = uriPath.indexOf('@');
@@ -459,7 +464,7 @@ public abstract class AbstractCamelCatalog {
         }
 
         // parse the syntax and find the names of each option
-        Matcher matcher = SYNTAX_PATTERN.matcher(syntax);
+        matcher = SYNTAX_PATTERN.matcher(syntax);
         List<String> word = new ArrayList<>();
         while (matcher.find()) {
             String s = matcher.group(1);
