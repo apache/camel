@@ -11,6 +11,34 @@
 
 *{component-header}*
 
+The Minio component supports storing and retrieving objects from/to
+https://min.io/[Minio] service.
+
+Prerequisites
+
+You must have valid credentials for authorized access to the buckets/folders. More information is available at
+https://min.io/[Minio].
+
+== URI Format
+
+[source,java]
+------------------------------
+minio://bucketName[?options]
+------------------------------
+
+The bucket will be created if it doesn't already exist. +
+You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+For example in order to read file `hello.txt` from bucket `helloBucket`, use the following snippet:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("minio://helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&prefix=hello.txt")
+  .to("file:/var/downloaded");
+--------------------------------------------------------------------------------
+
+== URI Options
 
 // component options: START
 The Minio Storage Service component supports 45 options, which are listed below.
@@ -160,3 +188,318 @@ with the following path and query parameters:
 | *secretKey* (security) | Amazon AWS Access Key Id or Minio Secret Key. If not set camel will connect to service for anonymous access. |  | String
 |===
 // endpoint options: END
+
+Required Minio component options
+
+You have to provide the minioClient in the
+Registry or your accessKey and secretKey to access
+the https://min.io/[Minio].
+
+== Batch Consumer
+
+This component implements the Batch Consumer.
+
+This allows you for instance to know how many messages exists in this
+batch and for instance let the Aggregator
+aggregate this number of messages.
+
+== Usage
+
+=== Message headers evaluated by the Minio producer
+
+[width="100%",cols="10%,10%,80%",options="header"]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelMinioBucketName` |`String` |The bucket Name which this object will be stored or which will be used for the current operation
+
+|`CamelMinioDestinationBucketName` |`String` |The bucket Destination Name which will be used for the current operation
+
+|`CamelMinioContentLength` |`Long` |The content length of this object.
+
+|`CamelMinioContentType` |`String` |The content type of this object.
+
+|`CamelMinioContentControl` |`String` |The content control of this object.
+
+|`CamelMinioContentDisposition` |`String` |The content disposition of this object.
+
+|`CamelMinioContentEncoding` |`String` |The content encoding of this object.
+
+|`CamelMinioContentMD5` |`String` |The md5 checksum of this object.
+
+|`CamelMinioDestinationObjectName` |`String` |The Destination key which will be used for the current operation
+
+|`CamelMinioObjectName` |`String` |The key under which this object will be stored or which will be used for the current operation
+
+|`CamelMinioLastModified` |`java.util.Date` |The last modified timestamp of this object.
+
+|`CamelMinioOperation` |`String` |The operation to perform. Permitted values are copyObject, deleteObject, deleteObjects, listBuckets, deleteBucket, downloadLink, listObjects
+
+|`CamelMinioStorageClass` |`String` |The storage class of this object.
+
+|`CamelMinioCannedAcl` |`String` |The canned acl that will be applied to the object. see
+`com.amazonaws.services.s3.model.CannedAccessControlList` for allowed
+values.
+
+//|`CamelMinioHeaders` |`Map<String,String>` |Support to get or set custom objectMetadata headers.
+
+|`CamelMinioServerSideEncryption` |String |Sets the server-side encryption algorithm when encrypting
+the object using Minio-managed keys. For example use AES256.
+
+|`CamelMinioVersionId` |`String` |The version Id of the object to be stored or returned from the current operation
+|=======================================================================
+
+=== Message headers set by the Minio producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+|`CamelMinioETag` |`String` |The ETag value for the newly uploaded object.
+
+|`CamelMinioVersionId` |`String` |The *optional* version ID of the newly uploaded object.
+
+//|`CamelMinioDownloadLinkExpiration` | `String` | The expiration (millis) of URL download link. The link will be stored into *CamelMinioDownloadLink* response header.
+
+|=======================================================================
+
+=== Message headers set by the Minio consumer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelMinioObjectName` |`String` |The key under which this object is stored.
+
+|`CamelMinioBucketName` |`String` |The name of the bucket in which this object is contained.
+
+|`CamelMinioETag` |`String` |The hex encoded 128-bit MD5 digest of the associated object according to
+RFC 1864. This data is used as an integrity check to verify that the
+data received by the caller is the same data that was sent by Minio
+
+|`CamelMinioLastModified` |`Date` |The value of the Last-Modified header, indicating the date and time at
+which Minio last recorded a modification to the associated object.
+
+|`CamelMinioVersionId` |`String` |The version ID of the associated Minio object if available. Version
+IDs are only assigned to objects when an object is uploaded to an Minio bucket that has object versioning enabled.
+
+|`CamelMinioContentType` |`String` |The Content-Type HTTP header, which indicates the type of content stored
+in the associated object. The value of this header is a standard MIME
+type.
+
+|`CamelMinioContentMD5` |`String` |The base64 encoded 128-bit MD5 digest of the associated object (content
+- not including headers) according to RFC 1864. This data is used as a
+message integrity check to verify that the data received by Minio is
+the same data that the caller sent.
+
+|`CamelMinioContentLength` |`Long` |The Content-Length HTTP header indicating the size of the associated
+object in bytes.
+
+|`CamelMinioContentEncoding` |`String` |The *optional* Content-Encoding HTTP header specifying what content
+encodings have been applied to the object and what decoding mechanisms
+must be applied in order to obtain the media-type referenced by the
+Content-Type field.
+
+|`CamelMinioContentDisposition` |`String` |The *optional* Content-Disposition HTTP header, which specifies
+presentational information such as the recommended filename for the
+object to be saved as.
+
+|`CamelMinioContentControl` |`String` |The *optional* Cache-Control HTTP header which allows the user to
+specify caching behavior along the HTTP request/reply chain.
+
+|`CamelMinioServerSideEncryption` |String |The server-side encryption algorithm when encrypting the
+object using Minio-managed keys.
+|=======================================================================
+
+=== Minio Producer operations
+
+Camel-Minio component provides the following operation on the producer side:
+
+- copyObject
+- deleteObject
+- deleteObjects
+- listBuckets
+- deleteBucket
+- listObjects
+- getObject (this will return a MinioObject instance)
+- getObjectRange (this will return a MinioObject instance)
+
+=== Advanced Minio configuration
+
+If your Camel Application is running behind a firewall or if you need to
+have more control over the `MinioClient` instance configuration, you can
+create your own instance and refer to it in your Camel minio component configuration:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("minio://MyBucket?minioClient=#client&delay=5000&maxMessagesPerPoll=5")
+.to("mock:result");
+--------------------------------------------------------------------------------
+
+=== Minio Producer Operation examples
+
+- CopyObject: this operation copy an object from one bucket to a different one
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(MinioConstants.DESTINATION_BUCKET_NAME, "camelDestinationBucket");
+          exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "camelKey");
+          exchange.getIn().setHeader(MinioConstants.DESTINATION_OBJECT_NAME, "camelDestinationKey");
+      }
+  })
+  .to("minio://mycamelbucket?minioClient=#minioClient&operation=copyObject")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will copy the object with the name expressed in the header camelDestinationKey to the camelDestinationBucket bucket, from the bucket mycamelbucket.
+
+- DeleteObject: this operation deletes an object from a bucket
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "camelKey");
+      }
+  })
+  .to("minio://mycamelbucket?minioClient=#minioClient&operation=deleteObject")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will delete the object camelKey from the bucket mycamelbucket.
+
+- ListBuckets: this operation list the buckets for this account in this region
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start")
+  .to("minio://mycamelbucket?minioClient=#minioClient&operation=listBuckets")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will list the buckets for this account
+
+- DeleteBucket: this operation delete the bucket specified as URI parameter or header
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start")
+  .to("minio://mycamelbucket?minioClient=#minioClient&operation=deleteBucket")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will delete the bucket mycamelbucket
+
+- ListObjects: this operation list object in a specific bucket
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start")
+  .to("minio://mycamelbucket?minioClient=#minioClient&operation=listObjects")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will list the objects in the mycamelbucket bucket
+
+- GetObject: this operation get a single object in a specific bucket
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "camelKey");
+      }
+  })
+  .to("minio://mycamelbucket?minioClient=#minioClient&operation=getObject")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will return an MinioObject instance related to the camelKey object in mycamelbucket bucket.
+
+- GetObjectRange: this operation get a single object range in a specific bucket
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "camelKey");
+          exchange.getIn().setHeader(MinioConstants.OFFSET, "0");
+          exchange.getIn().setHeader(MinioConstants.LENGTH, "9");
+      }
+  })
+  .to("minio://mycamelbucket?minioClient=#minioClient&operation=getObjectRange")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will return an MinioObject instance related to the camelKey object in mycamelbucket bucket, containing a the bytes from 0 to 9.
+
+== Bucket Autocreation
+
+With the option `autoCreateBucket` users are able to avoid the autocreation of an Minio Bucket in case it doesn't exist. The default for this option is `true`.
+If set to false any operation on a not-existent bucket in Minio won't be successful, and an error will be returned.
+
+== Automatic detection of Minio client in registry
+
+The component is capable of detecting the presence of an Minio bean into the registry.
+If it's the only instance of that type it will be used as client, and you won't have to define it as uri parameter, like the example above.
+This may be really useful for smarter configuration of the endpoint.
+
+== Moving stuff between a bucket and another bucket
+
+Some users like to consume stuff from a bucket and move the content in a different one without using the copyObject feature of this component.
+If this is case for you, don't forget to remove the bucketName header from the incoming exchange of the consumer, otherwise the file will always be overwritten on the same
+original bucket.
+
+== MoveAfterRead consumer option
+
+In addition to deleteAfterRead it has been added another option, moveAfterRead. With this option enabled the consumed object will be moved to a target destinationBucket instead of being only deleted.
+This will require specifying the destinationBucket option. As example:
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("minio://mycamelbucket?minioClient=#minioClient&moveAfterRead=true&destinationBucketName=myothercamelbucket")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+In this case the objects consumed will be moved to myothercamelbucket bucket and deleted from the original one (because of deleteAfterRead set to true as default).
+
+== Using a POJO as body
+
+Sometimes build an Minio Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
+In Minio there are multiple operations you can submit, as an example for List brokers request, you can do something like:
+
+------------------------------------------------------------------------------------------------------
+from("direct:minio")
+     .setBody(ListObjectsArgs.builder()
+                    .bucket(bucketName)
+                    .recursive(getConfiguration().isRecursive())))
+     .to("minio://test?minioClient=#minioClient&operation=listObjects&pojoRequest=true")
+------------------------------------------------------------------------------------------------------
+
+In this way you'll pass the request directly without the need of passing headers and options specifically related to this operation.
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-minio</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version\}` must be replaced by the actual version of Camel.

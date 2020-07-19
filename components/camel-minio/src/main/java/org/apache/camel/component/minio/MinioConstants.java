@@ -22,7 +22,7 @@ package org.apache.camel.component.minio;
 public interface MinioConstants {
 
     String BUCKET_NAME = "CamelMinioBucketName";
-    String DESTINATION_BUCKET_NAME = "CamelMinioBucketDestinationName";
+    String DESTINATION_BUCKET_NAME = "CamelMinioDestinationBucketName";
     String CACHE_CONTROL = "CamelMinioContentControl";
     String CONTENT_DISPOSITION = "CamelMinioContentDisposition";
     String CONTENT_ENCODING = "CamelMinioContentEncoding";
@@ -31,7 +31,7 @@ public interface MinioConstants {
     String CONTENT_TYPE = "CamelMinioContentType";
     String E_TAG = "CamelMinioETag";
     String OBJECT_NAME = "CamelMinioObjectName";
-    String DESTINATION_OBJECT_NAME = "CamelMinioDestinationKey";
+    String DESTINATION_OBJECT_NAME = "CamelMinioDestinationObjectName";
     String LAST_MODIFIED = "CamelMinioLastModified";
     String STORAGE_CLASS = "CamelMinioStorageClass";
     String VERSION_ID = "CamelMinioVersionId";
