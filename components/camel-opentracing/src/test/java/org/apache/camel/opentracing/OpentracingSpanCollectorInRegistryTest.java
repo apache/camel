@@ -22,6 +22,7 @@ import io.opentracing.util.GlobalTracerTestUtil;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -33,10 +34,9 @@ public class OpentracingSpanCollectorInRegistryTest extends CamelTestSupport {
     @BindToRegistry("tracer")
     private NoopTracer c = NoopTracerFactory.create();
 
-    @Override
+    @BeforeAll
     public void setUp() throws Exception {
         GlobalTracerTestUtil.resetGlobalTracer();
-        super.setUp();
     }
 
     @Override

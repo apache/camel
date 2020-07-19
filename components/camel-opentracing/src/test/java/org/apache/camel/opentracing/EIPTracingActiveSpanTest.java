@@ -24,7 +24,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.InterceptStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class EIPTracingActiveSpanTest extends CamelOpenTracingTestSupport {
 
@@ -40,10 +41,9 @@ public class EIPTracingActiveSpanTest extends CamelOpenTracingTestSupport {
         super(testdata);
     }
 
-    @Override
+    @BeforeAll
     public void setUp() throws Exception {
         GlobalTracerTestUtil.resetGlobalTracer();
-        super.setUp();
     }
 
     @Test
