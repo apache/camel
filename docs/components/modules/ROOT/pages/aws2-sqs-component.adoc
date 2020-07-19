@@ -336,7 +336,19 @@ You can set a `SendMessageBatchRequest` or an `Iterable`
 
 ------------------------------------------------------------------------------------------------------
 from("direct:start")
-  .setHeader(SqsConstants.SQS_OPERATION, constant("sendBatchMessage")).to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1");
+  .setHeader(SqsConstants.SQS_OPERATION, constant("sendBatchMessage"))
+  .process(new Processor() {
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          Collection c = new ArrayList<Integer>();
+          c.add("team1");
+          c.add("team2");
+          c.add("team3");
+          c.add("team4");
+          exchange.getIn().setBody(c);					
+      }
+  })
+  .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1");
 ------------------------------------------------------------------------------------------------------
 
 As result you'll get an exchange containing a `SendMessageBatchResult` instance, that you can examinate to check what messages were successfull and what not.

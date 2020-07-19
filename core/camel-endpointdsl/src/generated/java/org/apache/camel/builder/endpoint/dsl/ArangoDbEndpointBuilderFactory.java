@@ -259,12 +259,12 @@ public interface ArangoDbEndpointBuilderFactory {
          * Since: 3.5.0-SNAPSHOT
          * Maven coordinates: org.apache.camel:camel-arangodb
          * 
-         * Syntax: <code>arangodb:name</code>
+         * Syntax: <code>arangodb:database</code>
          * 
          * Path parameter: database (required)
          * database name
          * 
-         * @param path name
+         * @param path database
          */
         default ArangoDbEndpointBuilder arangodb(String path) {
             return ArangoDbEndpointBuilderFactory.endpointBuilder("arangodb", path);
@@ -277,14 +277,14 @@ public interface ArangoDbEndpointBuilderFactory {
          * Since: 3.5.0-SNAPSHOT
          * Maven coordinates: org.apache.camel:camel-arangodb
          * 
-         * Syntax: <code>arangodb:name</code>
+         * Syntax: <code>arangodb:database</code>
          * 
          * Path parameter: database (required)
          * database name
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path name
+         * @param path database
          */
         default ArangoDbEndpointBuilder arangodb(
                 String componentName,

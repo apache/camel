@@ -260,12 +260,12 @@ public class StaticEndpointBuilders {
      * Since: 3.5.0-SNAPSHOT
      * Maven coordinates: org.apache.camel:camel-arangodb
      * 
-     * Syntax: <code>arangodb:name</code>
+     * Syntax: <code>arangodb:database</code>
      * 
      * Path parameter: database (required)
      * database name
      * 
-     * @param path name
+     * @param path database
      */
     public static org.apache.camel.builder.endpoint.dsl.ArangoDbEndpointBuilderFactory.ArangoDbEndpointBuilder arangodb(
             String path) {
@@ -279,14 +279,14 @@ public class StaticEndpointBuilders {
      * Since: 3.5.0-SNAPSHOT
      * Maven coordinates: org.apache.camel:camel-arangodb
      * 
-     * Syntax: <code>arangodb:name</code>
+     * Syntax: <code>arangodb:database</code>
      * 
      * Path parameter: database (required)
      * database name
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path name
+     * @param path database
      */
     public static org.apache.camel.builder.endpoint.dsl.ArangoDbEndpointBuilderFactory.ArangoDbEndpointBuilder arangodb(
             String componentName,
@@ -5173,7 +5173,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path path
      */
-    static org.apache.camel.builder.endpoint.dsl.FileWatchEndpointBuilderFactory.FileWatchEndpointBuilder fileWatch(
+    public static org.apache.camel.builder.endpoint.dsl.FileWatchEndpointBuilderFactory.FileWatchEndpointBuilder fileWatch(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.FileWatchEndpointBuilderFactory.endpointBuilder("file-watch", path);
     }
@@ -5195,7 +5195,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path path
      */
-    static org.apache.camel.builder.endpoint.dsl.FileWatchEndpointBuilderFactory.FileWatchEndpointBuilder fileWatch(
+    public static org.apache.camel.builder.endpoint.dsl.FileWatchEndpointBuilderFactory.FileWatchEndpointBuilder fileWatch(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.FileWatchEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -14347,7 +14347,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path httpURI
      */
-    public static org.apache.camel.builder.endpoint.dsl.UndertowEndpointBuilderFactory.UndertowEndpointBuilder undertow(
+    static org.apache.camel.builder.endpoint.dsl.UndertowEndpointBuilderFactory.UndertowEndpointBuilder undertow(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.UndertowEndpointBuilderFactory.endpointBuilder("undertow", path);
     }
@@ -14369,7 +14369,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path httpURI
      */
-    public static org.apache.camel.builder.endpoint.dsl.UndertowEndpointBuilderFactory.UndertowEndpointBuilder undertow(
+    static org.apache.camel.builder.endpoint.dsl.UndertowEndpointBuilderFactory.UndertowEndpointBuilder undertow(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.UndertowEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -20,7 +20,7 @@ import io.opentracing.tag.Tags;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.InterceptStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ABCRouteTest extends CamelOpenTracingTestSupport {
 

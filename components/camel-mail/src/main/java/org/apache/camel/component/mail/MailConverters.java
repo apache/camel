@@ -93,7 +93,9 @@ public final class MailConverters {
                 part = ((MimeMultipart)content).getBodyPart(0);
                 content = part.getContent();
             }
-            if (part.getContentType().toLowerCase().startsWith("text")) {
+            // Perform a case insensitive "startsWith" check that works for different locales
+            String prefix = "text";
+            if (part.getContentType().regionMatches(true, 0, prefix, 0, prefix.length())) {
                 return part.getContent().toString();
             }
         }

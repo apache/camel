@@ -24,14 +24,16 @@ import com.pubnub.api.models.consumer.presence.PNSetStateResult;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.pubnub.PubNubConstants;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.pubnub.example.PubNubExampleConstants.PUBNUB_PUBLISH_KEY;
 import static org.apache.camel.component.pubnub.example.PubNubExampleConstants.PUBNUB_SUBSCRIBE_KEY;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Ignore("Integration test that requires a pub/sub key to run")
+@Disabled("Integration test that requires a pub/sub key to run")
 public class PubNubStateExample extends CamelTestSupport {
 
     @Test

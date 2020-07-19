@@ -502,7 +502,9 @@ public class MailBinding {
                         }
                     }
 
-                    if (attachmentFilename.toLowerCase().startsWith("cid:")) {
+                    // Perform a case insensitive "startsWith" check that works for different locales
+                    String pattern = "cid";
+                    if (attachmentFilename.regionMatches(true, 0, pattern, 0, pattern.length())) {
                         // add a Content-ID header to the attachment
                         // must use angle brackets according to RFC: http://www.ietf.org/rfc/rfc2392.txt
                         messageBodyPart.addHeader("Content-ID", "<" + attachmentFilename.substring(4) + ">");
@@ -639,7 +641,9 @@ public class MailBinding {
                         part = ((MimeMultipart)content).getBodyPart(0);
                         content = part.getContent();
                     }
-                    if (part.getContentType().toLowerCase().startsWith("text")) {
+                    // Perform a case insensitive "startsWith" check that works for different locales
+                    String prefix = "text";
+                    if (part.getContentType().regionMatches(true, 0, prefix, 0, prefix.length())) {
                         answer.put(Exchange.CONTENT_TYPE, part.getContentType());
                         break;
                     }

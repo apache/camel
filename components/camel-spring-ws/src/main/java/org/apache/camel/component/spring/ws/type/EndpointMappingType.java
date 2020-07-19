@@ -49,7 +49,9 @@ public enum EndpointMappingType {
     public static EndpointMappingType getTypeFromUriPrefix(String uri) {
         if (uri != null) {
             for (EndpointMappingType type : EndpointMappingType.values()) {
-                if (uri.toLowerCase().startsWith(type.getPrefix())) {
+                // Perform a case insensitive "startsWith" check that works for different locales
+                String prefix = type.getPrefix();
+                if (uri.regionMatches(true, 0, prefix, 0, prefix.length())) {
                     return type;
                 }
             }

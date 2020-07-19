@@ -550,7 +550,9 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         }
 
         final String specificationScheme = specificationUri.getScheme();
-        if (specificationUri.isAbsolute() && specificationScheme.toLowerCase().startsWith("http")) {
+        // Perform a case insensitive "startsWith" check that works for different locales
+        String prefix = "http";
+        if (specificationUri.isAbsolute() && specificationScheme.regionMatches(true, 0, prefix, 0, prefix.length())) {
             try {
                 return new URI(specificationUri.getScheme(), specificationUri.getUserInfo(), specificationUri.getHost(),
                     specificationUri.getPort(), null, null, null).toString();

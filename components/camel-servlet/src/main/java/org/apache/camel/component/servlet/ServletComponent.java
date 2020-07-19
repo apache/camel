@@ -327,11 +327,17 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
     protected void doStart() throws Exception {
         super.doStart();
 
-        RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), "servlet");
+        try {
+            RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), "servlet");
 
-        // configure additional options on jetty configuration
-        if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
-            setProperties(this, config.getComponentProperties());
+            // configure additional options on jetty configuration
+            if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
+                setProperties(this, config.getComponentProperties());
+            }
+        } catch (IllegalArgumentException e) {
+            // if there's a mismatch between the component and the rest-configuration,
+            // then getRestConfiguration throws IllegalArgumentException which can be
+            // safely ignored as it means there's no special conf for this componet.
         }
     }
 }

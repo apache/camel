@@ -28,12 +28,14 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@Disabled
 public class InstallOpenTracingTracerRuleTest extends CamelTestSupport {
 
     @BindToRegistry("tracer")
@@ -45,7 +47,7 @@ public class InstallOpenTracingTracerRuleTest extends CamelTestSupport {
     @Produce("direct:start")
     protected ProducerTemplate template;
 
-    @Before
+    @BeforeEach
     public void init() {
         tracer.reset();
     }

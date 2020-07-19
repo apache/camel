@@ -46,12 +46,12 @@
         <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>
+            <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-testcontainers</artifactId>
+            <artifactId>camel-testcontainers-junit5</artifactId>
             <scope>test</scope>
         </dependency>
         <!-- logging -->

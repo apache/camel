@@ -19,7 +19,7 @@ package org.apache.camel.opentracing;
 import io.opentracing.tag.Tags;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MulticastRouteTest extends CamelOpenTracingTestSupport {
 

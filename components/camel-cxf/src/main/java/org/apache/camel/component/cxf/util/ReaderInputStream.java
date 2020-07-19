@@ -26,6 +26,8 @@ import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
 
+import static org.apache.camel.util.BufferCaster.cast;
+
 /**
  * {@link InputStream} implementation that reads a character stream from a {@link Reader}
  * and transforms it to a byte stream using a specified charset encoding. The stream
@@ -119,9 +121,9 @@ public class ReaderInputStream extends InputStream {
         this.reader = reader;
         this.encoder = encoder;
         this.encoderIn = CharBuffer.allocate(bufferSize);
-        this.encoderIn.flip();
+        cast(this.encoderIn).flip();
         this.encoderOut = ByteBuffer.allocate(128);
-        this.encoderOut.flip();
+        cast(this.encoderOut).flip();
     }
 
     /**
@@ -191,7 +193,7 @@ public class ReaderInputStream extends InputStream {
     private void fillBuffer() throws IOException {
         if (!endOfInput && (lastCoderResult == null || lastCoderResult.isUnderflow())) {
             encoderIn.compact();
-            int position = encoderIn.position();
+            int position = cast(encoderIn).position();
             // We don't use Reader#read(CharBuffer) here because it is more efficient
             // to write directly to the underlying char array (the default implementation
             // copies data to a temporary char array).
@@ -199,13 +201,13 @@ public class ReaderInputStream extends InputStream {
             if (c == -1) {
                 endOfInput = true;
             } else {
-                encoderIn.position(position + c);
+                cast(encoderIn).position(position + c);
             }
-            encoderIn.flip();
+            cast(encoderIn).flip();
         }
         encoderOut.compact();
         lastCoderResult = encoder.encode(encoderIn, encoderOut, endOfInput);
-        encoderOut.flip();
+        cast(encoderOut).flip();
     }
     
     /**
