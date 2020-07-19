@@ -371,11 +371,6 @@ from("direct:nativeQuery")
 If you use the native query option without specifying `resultClass`, you will receive an object array in
 the message body.
 
-== Example
-
-See http://camel.apache.org/tracer-example.html[Tracer Example] for an example using
-xref:jpa-component.adoc[JPA] to store traced messages into a database.
-
 == Using the JPA-Based Idempotent Repository
 
 The Idempotent Consumer from the http://camel.apache.org/enterprise-integration-patterns.html[EIP patterns] is used to filter out duplicate messages. A JPA-based idempotent repository is provided.
@@ -444,7 +439,6 @@ argument to the JVM:
 
 [source,java]
 -------------------------------------------------------------------------------------------
-
 -javaagent:<path_to_your_local_m2_cache>/org/apache/openjpa/openjpa/2.2.1/openjpa-2.2.1.jar
 -------------------------------------------------------------------------------------------
 
