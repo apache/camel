@@ -18,7 +18,6 @@ to/from Camel.
 
 See the http://opentracing.io/[OpenTracing] website for a list of supported tracers.
 
-
 == Configuration
 
 The configuration properties for the OpenTracing tracer are:
@@ -34,7 +33,6 @@ uses the rules from Intercept.
 Dashes need for instances to be encoded for JMS property keys.
 
 |=======================================================================
-
 
 There are three ways in which an OpenTracing tracer can be configured to provide distributed tracing for a Camel application:
 
@@ -75,7 +73,6 @@ the main class with `@CamelOpenTracing`.
 The `Tracer` will be implicitly obtained from the camel context's `Registry`, or the `ServiceLoader`, unless
 a `Tracer` bean has been defined by the application.
 
-
 == Java Agent
 
 The third approach is to use a Java Agent to automatically configure the OpenTracing support.
@@ -94,7 +91,6 @@ The OpenTracing Java Agent is associated with the following dependency:
 
 IMPORTANT: It is necessary to use an OpenTracing compliant tracer that is
 compatible with OpenTracing Java API version 0.31 or higher.
-
 
 The `Tracer` used will be implicitly loaded from the camel context `Registry` or using the `ServiceLoader`.
 
