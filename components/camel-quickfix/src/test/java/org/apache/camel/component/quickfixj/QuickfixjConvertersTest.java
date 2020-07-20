@@ -24,10 +24,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.quickfixj.converter.QuickfixjConverters;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import quickfix.Acceptor;
 import quickfix.DataDictionary;
 import quickfix.Initiator;
@@ -43,6 +43,8 @@ import quickfix.mina.ProtocolFactory;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class QuickfixjConvertersTest extends CamelTestSupport {
     private File settingsFile;
@@ -53,7 +55,7 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
     private QuickfixjEngine quickfixjEngine;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -71,7 +73,7 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         Thread.currentThread().setContextClassLoader(contextClassLoader);
 
