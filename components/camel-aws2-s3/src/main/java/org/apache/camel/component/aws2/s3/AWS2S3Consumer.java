@@ -42,6 +42,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest.Builder;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
@@ -129,8 +130,20 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
         Queue<Exchange> answer = new LinkedList<>();
         try {
             for (S3Object s3ObjectSummary : s3ObjectSummaries) {
-                ResponseInputStream<GetObjectResponse> s3Object = getAmazonS3Client()
-                    .getObject(GetObjectRequest.builder().bucket(getConfiguration().getBucketName()).key(s3ObjectSummary.key()).build(), ResponseTransformer.toInputStream());
+            	Builder getRequest = GetObjectRequest.builder().bucket(getConfiguration().getBucketName()).key(s3ObjectSummary.key());
+                if (getConfiguration().isUseCustomerKey()) {
+                    if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyId())) {
+                    	getRequest.sseCustomerKey(getConfiguration().getCustomerKeyId());
+                    }
+                    if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyMD5())) {
+                    	getRequest.sseCustomerKeyMD5(getConfiguration().getCustomerKeyMD5());
+                    }
+                    if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerAlgorithm())) {
+                    	getRequest.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
+                    }
+                }
+            	ResponseInputStream<GetObjectResponse> s3Object = getAmazonS3Client()
+                    .getObject(getRequest.build(), ResponseTransformer.toInputStream());
 
                 if (includeS3Object(s3Object)) {
                     s3Objects.add(s3Object);
