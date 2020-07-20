@@ -34,10 +34,11 @@ import io.apicurio.datamodels.openapi.v2.models.Oas20SecurityScheme;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.spi.RestConfiguration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -47,7 +48,7 @@ public class RestOpenApiEndpointTest {
 
     URI endpointUri = URI.create("endpoint.json");
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldComplainForUnknownOperations() throws Exception {
         final CamelContext camelContext = mock(CamelContext.class);
         when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
@@ -57,7 +58,8 @@ public class RestOpenApiEndpointTest {
         final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint("rest-openapi:unknown", "unknown", component,
             Collections.emptyMap());
 
-        endpoint.createProducer();
+        assertThrows(IllegalArgumentException.class,
+            () -> endpoint.createProducer());
     }
 
     @Test
@@ -374,12 +376,13 @@ public class RestOpenApiEndpointTest {
         assertThat(RestOpenApiEndpoint.pickBestScheme(null, null)).isNull();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldRaiseExceptionsForMissingSpecifications() throws IOException {
         final CamelContext camelContext = mock(CamelContext.class);
         when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
 
-        RestOpenApiEndpoint.loadSpecificationFrom(camelContext, URI.create("non-existant.json"));
+        assertThrows(IllegalArgumentException.class,
+            () -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, URI.create("non-existant.json")));
     }
 
     @Test
