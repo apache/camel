@@ -46,7 +46,7 @@ public class IAM2Configuration implements Cloneable {
     private String proxyHost;
     @UriParam
     private Integer proxyPort;
-    @UriParam
+    @UriParam(defaultValue = "aws-global")
     private String region = Region.AWS_GLOBAL.id();
     @UriParam(defaultValue = "false")
     private boolean pojoRequest;
