@@ -19,11 +19,7 @@ package org.apache.camel.component.aws.s3;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class S3ComponentClientRegistryTest extends CamelTestSupport {
 
@@ -51,5 +47,16 @@ public class S3ComponentClientRegistryTest extends CamelTestSupport {
         S3Component component = context.getComponent("aws-s3", S3Component.class);
         assertThrows(IllegalArgumentException.class,
             () -> component.createEndpoint("aws-s3://MyBucket"));
+    }
+
+    @Test
+    public void createEndpointWithCredentialsAndClientExistInRegistry() throws Exception {
+        AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
+        context.getRegistry().bind("amazonS3Client", clientMock);
+        S3Component component = context.getComponent("aws-s3", S3Component.class);
+        S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)");
+
+        assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
+        assertNotSame(clientMock, endpoint.getConfiguration().getAmazonS3Client());
     }
 }
