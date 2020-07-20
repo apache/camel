@@ -18,12 +18,18 @@ package org.apache.camel.component.rss;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Ignore("Must be online")
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@Disabled("Must be online")
 public class RssUriEncodingIssueTest extends CamelTestSupport {
+
+    protected Logger log = LoggerFactory.getLogger(getClass());
 
     @Test
     public void testUriIssue() throws Exception {

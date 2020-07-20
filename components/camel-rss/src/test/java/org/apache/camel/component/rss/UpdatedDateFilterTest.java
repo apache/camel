@@ -21,18 +21,18 @@ import java.util.Date;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndEntryImpl;
 import com.rometools.rome.feed.synd.SyndFeedImpl;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UpdatedDateFilterTest {
 
     private UpdatedDateFilter fixture;
     private Date now;
 
-    @Before
+    @BeforeEach
     public void setup() {
         now = new Date();
         fixture = new UpdatedDateFilter(now);
