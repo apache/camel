@@ -128,8 +128,6 @@ public interface AggregationStrategy {
      * @param timeout   the timeout value in millis, may be <tt>-1</tt> if not possible to determine the timeout
      */
     default void timeout(Exchange exchange, int index, int total, long timeout) {
-        // log a WARN we timed out since it will not be aggregated and the Exchange will be lost
-        LoggerFactory.getLogger(getClass()).warn("Parallel processing timed out after {} millis for number {}. This task will be cancelled and will not be aggregated.", timeout, index);
     }
 
     /**
