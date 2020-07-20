@@ -22,10 +22,11 @@ import io.reactivex.Flowable;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RxJavaStreamsServiceSubscriberTest extends RxJavaStreamsServiceTestSupport {
 
@@ -101,7 +102,7 @@ public class RxJavaStreamsServiceSubscriberTest extends RxJavaStreamsServiceTest
         endpoint.expectedMessageCount(1000);
         endpoint.assertIsSatisfied();
 
-        Assert.assertEquals(
+        assertEquals(
             1,
             endpoint.getExchanges().stream()
                 .map(x -> x.getIn().getHeader("thread", String.class))
@@ -114,7 +115,7 @@ public class RxJavaStreamsServiceSubscriberTest extends RxJavaStreamsServiceTest
 
         endpoint.getExchanges().stream()
             .map(x -> x.getIn().getBody(Long.class))
-            .forEach(n -> Assert.assertEquals(num.getAndIncrement(), n.longValue()));
+            .forEach(n -> assertEquals(num.getAndIncrement(), n.longValue()));
     }
 
     @Test
@@ -139,7 +140,7 @@ public class RxJavaStreamsServiceSubscriberTest extends RxJavaStreamsServiceTest
         endpoint.expectedMessageCount(1000);
         endpoint.assertIsSatisfied();
 
-        Assert.assertEquals(
+        assertEquals(
             3,
             endpoint.getExchanges().stream()
                 .map(x -> x.getIn().getHeader("thread", String.class))
