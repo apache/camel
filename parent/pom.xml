@@ -156,7 +156,7 @@
         <dozer-version>6.5.0</dozer-version>
         <drools-version>7.40.0.Final</drools-version>
         <dropbox-version>3.1.4</dropbox-version>
-        <debezium-version>1.2.0.Final</debezium-version>
+        <debezium-version>1.2.1.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.16</debezium-mysql-connector-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
         <ehcache3-version>3.8.1</ehcache3-version>
