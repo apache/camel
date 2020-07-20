@@ -32,6 +32,7 @@ import io.opentracing.mock.MockTracer;
 import io.opentracing.mock.MockTracer.Propagator;
 import io.opentracing.tag.Tags;
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.test.junit5.CamelTestSupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,8 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelOpenTracingTestSupport extends CamelTestSupport {
 
+    protected OpenTracingTracer ottracer;
     private MockTracer tracer;
-
     private SpanTestData[] testdata;
 
     public CamelOpenTracingTestSupport(SpanTestData[] testdata) {
@@ -59,9 +60,10 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
 
         tracer = new MockTracer(Propagator.TEXT_MAP);
 
-        OpenTracingTracer ottracer = new OpenTracingTracer();
+        this.ottracer = new OpenTracingTracer();
         ottracer.setTracer(tracer);
         ottracer.setExcludePatterns(getExcludePatterns());
+        ottracer.setTracingStrategy(getTracingStrategy());
 
         ottracer.init(context);
 
@@ -81,14 +83,24 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
     }
 
     protected void verify(boolean async) {
+        List<MockSpan> spans = tracer.finishedSpans();
+        spans.forEach(mockSpan -> {
+            System.out.println("Span: " + mockSpan);
+            System.out.println("\tComponent: " + mockSpan.tags().get(Tags.COMPONENT.getKey()));
+            System.out.println("\tTags: " + mockSpan.tags());
+            System.out.println("\tLogs: ");
+            for (final MockSpan.LogEntry logEntry : mockSpan.logEntries()) {
+                System.out.println("\t" + logEntry.fields());
+            }
+        });
+
         assertEquals(testdata.length, tracer.finishedSpans().size(), "Incorrect number of spans");
 
         verifySameTrace();
 
-        List<MockSpan> spans = tracer.finishedSpans();
         if (async) {
             final List<MockSpan> unsortedSpans = spans;
-            spans = Arrays.asList(testdata).stream()
+            spans = Arrays.stream(testdata)
                     .map(td -> findSpan(td, unsortedSpans)).distinct().collect(Collectors.toList());
             assertEquals(testdata.length, spans.size(), "Incorrect number of spans after sorting");
         }
@@ -99,18 +111,32 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
     }
 
     protected MockSpan findSpan(SpanTestData testdata, List<MockSpan> spans) {
-        return spans.stream().filter(s -> s.operationName().equals(testdata.getOperation())
-                && s.tags().get("camel.uri").equals(testdata.getUri())
-                && s.tags().get(Tags.SPAN_KIND.getKey()).equals(testdata.getKind())).findFirst().orElse(null);
+        return spans.stream().filter(s -> {
+            boolean matched = s.operationName().equals(testdata.getOperation());
+
+            if (s.tags().containsKey("camel-uri")) {
+                matched = matched && s.tags().get("camel.uri").equals(testdata.getUri());
+            }
+
+            if (s.tags().containsKey(Tags.SPAN_KIND.getKey())) {
+                matched = matched && s.tags().get(Tags.SPAN_KIND.getKey()).equals(testdata.getKind());
+            }
+
+            return matched;
+        }).findFirst().orElse(null);
     }
 
     protected void verifySpan(int index, SpanTestData[] testdata, List<MockSpan> spans) {
         MockSpan span = spans.get(index);
         SpanTestData td = testdata[index];
 
+
         String component = (String) span.tags().get(Tags.COMPONENT.getKey());
         assertNotNull(component);
-        assertEquals(SpanDecorator.CAMEL_COMPONENT + URI.create(td.getUri()).getScheme(), component, td.getLabel());
+
+        if (td.getUri() != null) {
+            assertEquals(SpanDecorator.CAMEL_COMPONENT + URI.create(td.getUri()).getScheme(), component, td.getLabel());
+        }
         assertEquals(td.getUri(), span.tags().get("camel.uri"), td.getLabel());
 
         // If span associated with TestSEDASpanDecorator, check that pre/post tags have been defined
@@ -128,7 +154,7 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
         }
 
         if (!td.getLogMessages().isEmpty()) {
-            assertEquals(td.getLogMessages().size(), span.logEntries().size(), "Number of log messages");
+            assertEquals(td.getLogMessages().size(), span.logEntries().size(), td.getLabel());
             for (int i = 0; i < td.getLogMessages().size(); i++) {
                 assertEquals(td.getLogMessages().get(i), span.logEntries().get(i).fields().get("message"));
             }
@@ -171,4 +197,7 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
         }
     }
 
+    protected InterceptStrategy getTracingStrategy() {
+        return new NoopTracingStrategy();
+    }
 }
