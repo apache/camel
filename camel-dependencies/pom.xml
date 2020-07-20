@@ -359,7 +359,7 @@
     <jsch-version>0.1.55</jsch-version>
     <jsendnsca-version>2.1.1</jsendnsca-version>
     <jslt-version>0.1.10</jslt-version>
-    <jsmpp-version>2.3.9</jsmpp-version>
+    <jsmpp-version>2.3.10</jsmpp-version>
     <json-accessors-smart-version>1.2</json-accessors-smart-version>
     <json-api>1.0</json-api>
     <json-path-version>2.4.0</json-path-version>
