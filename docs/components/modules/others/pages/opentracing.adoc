@@ -85,7 +85,7 @@ The OpenTracing Java Agent is associated with the following dependency:
 ---------------------------------------------------------------------------------------------------------
     <dependency>
       <groupId>io.opentracing.contrib</groupId>
-      <artifactId>opentracing-agent</artifactId>
+      <artifactId>opentracing-specialagent</artifactId>
     </dependency>
 ---------------------------------------------------------------------------------------------------------
 
