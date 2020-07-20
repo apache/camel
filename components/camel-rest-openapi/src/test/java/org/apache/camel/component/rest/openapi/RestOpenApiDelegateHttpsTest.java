@@ -20,10 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.PropertyBindingSupport;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
-@RunWith(Parameterized.class)
 public class RestOpenApiDelegateHttpsTest extends HttpsTest {
 
     @Override
