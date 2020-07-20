@@ -79,11 +79,11 @@ public class AWS2S3Configuration implements Cloneable {
     private String awsKMSKeyId;
     @UriParam(label = "producer,advanced", defaultValue = "false")
     private boolean useCustomerKey;
-    @UriParam(label = "producer,advanced")
+    @UriParam(label = "common,advanced")
     private String customerKeyId;
-    @UriParam(label = "producer,advanced")
+    @UriParam(label = "common,advanced")
     private String customerKeyMD5;
-    @UriParam(label = "producer,advanced")
+    @UriParam(label = "common,advanced")
     private String customerAlgorithm;
     @UriParam(defaultValue = "false")
     private boolean useIAMCredentials;
