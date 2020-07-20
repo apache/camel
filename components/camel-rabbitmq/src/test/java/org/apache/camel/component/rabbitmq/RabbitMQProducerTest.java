@@ -30,8 +30,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultMessage;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -46,7 +46,7 @@ public class RabbitMQProducerTest {
     private Message message = new DefaultMessage(new DefaultCamelContext());
     private Connection conn = Mockito.mock(Connection.class);
 
-    @Before
+    @BeforeEach
     public void before() throws IOException, TimeoutException {
         RabbitMQMessageConverter converter = new RabbitMQMessageConverter();
         converter.setAllowCustomHeaders(true);

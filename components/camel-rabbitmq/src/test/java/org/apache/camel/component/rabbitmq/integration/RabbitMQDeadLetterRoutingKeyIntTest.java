@@ -31,12 +31,13 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.test.junit5.TestSupport.assertListSize;
 import static org.junit.Assert.assertEquals;
 
 public class RabbitMQDeadLetterRoutingKeyIntTest extends AbstractRabbitMQIntTest {
@@ -74,14 +75,14 @@ public class RabbitMQDeadLetterRoutingKeyIntTest extends AbstractRabbitMQIntTest
         };
     }
 
-    @Before
+    @BeforeEach
     public void setUpRabbitMQ() throws Exception {
         connection = connection();
         channel = connection.createChannel();
         deadLetterChannel = connection.createChannel();
     }
 
-    @After
+    @AfterEach
     public void tearDownRabbitMQ() throws Exception {
         channel.abort();
         deadLetterChannel.abort();
