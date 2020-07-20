@@ -29,8 +29,11 @@ import com.rabbitmq.client.Envelope;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertListSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Integration test to check if requested direct reply messages are received
@@ -50,7 +53,7 @@ public class RabbitMQConsumerIntTestReplyTo extends AbstractRabbitMQIntTest {
 
     private Connection connection;
 
-    @Before
+    @BeforeEach
     public void setUpRabbitMQ() throws Exception {
         connection = connection();
         channel = connection.createChannel();

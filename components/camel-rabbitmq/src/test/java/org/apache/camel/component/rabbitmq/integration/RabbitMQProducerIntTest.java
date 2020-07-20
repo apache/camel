@@ -34,11 +34,17 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rabbitmq.RabbitMQConstants;
 import org.apache.camel.support.ObjectHelper;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.assertListSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQProducerIntTest.class);
@@ -105,7 +111,7 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
         };
     }
 
-    @Before
+    @BeforeEach
     public void setUpRabbitMQ() throws Exception {
         connection = connection();
         channel = connection.createChannel();
@@ -113,7 +119,7 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
         channel.queueBind("sammyq", EXCHANGE, ROUTE);
     }
 
-    @After
+    @AfterEach
     public void tearDownRabbitMQ() throws Exception {
         channel.abort();
         connection.abort();
@@ -221,7 +227,7 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
         for (Map.Entry<String, Object> headers : expectedHeaders.entrySet()) {
             Object receivedValue = receivedHeaders.get(headers.getKey());
             Object expectedValue = headers.getValue();
-            assertTrue("Header key " + headers.getKey() + " not found", receivedHeaders.containsKey(headers.getKey()));
+            assertTrue(receivedHeaders.containsKey(headers.getKey()), "Header key " + headers.getKey() + " not found");
             assertEquals(0, ObjectHelper.compare(receivedValue == null ? "" : receivedValue.toString(), expectedValue == null ? "" : expectedValue.toString()));
         }
 
@@ -257,9 +263,10 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
         assertThatBodiesReceivedIn(received, "publisher ack message");
     }
 
-    @Test(expected = RuntimeCamelException.class)
+    @Test
     public void shouldFailIfMessageIsMarkedAsMandatoryAndGuaranteedDeliveryIsActiveButNoQueueIsBound() {
-        templateWithGuranteedDeliveryAndBadRoute.sendBody("publish with ack and return message");
+        assertThrows(RuntimeCamelException.class,
+            () -> templateWithGuranteedDeliveryAndBadRoute.sendBody("publish with ack and return message"));
     }
 
     @Test

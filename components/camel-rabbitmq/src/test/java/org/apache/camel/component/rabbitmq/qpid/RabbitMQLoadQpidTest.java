@@ -17,8 +17,8 @@
 package org.apache.camel.component.rabbitmq.qpid;
 
 import org.apache.camel.component.rabbitmq.integration.RabbitMQLoadIntTest;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 public class RabbitMQLoadQpidTest extends RabbitMQLoadIntTest {
     @Override
@@ -26,12 +26,12 @@ public class RabbitMQLoadQpidTest extends RabbitMQLoadIntTest {
         return false;
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startBroker() throws Exception {
         systemLauncher.startup(createQpidSystemConfig());
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopBroker() {
         systemLauncher.shutdown();
     }
