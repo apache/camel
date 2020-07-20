@@ -40,10 +40,12 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.opentracing.decorators.AbstractInternalSpanDecorator;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.spi.CamelLogger;
+import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
@@ -79,7 +81,8 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
     private final OpenTracingLogListener logListener = new OpenTracingLogListener();
     private Tracer tracer;
     private CamelContext camelContext;
-    private Set<String> excludePatterns = new HashSet<>();
+    private Set<String> excludePatterns = new HashSet<>(0);
+    private InterceptStrategy tracingStrategy;
     private boolean encoding;
 
     static {
@@ -137,6 +140,25 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
         this.camelContext = camelContext;
     }
 
+    /**
+     * Returns the currently used tracing strategy which is responsible for tracking invoked EIP or
+     * beans.
+     *
+     * @return The currently used tracing strategy
+     */
+    public InterceptStrategy getTracingStrategy() {
+        return tracingStrategy;
+    }
+
+    /**
+     * Specifies the instance responsible for tracking invoked EIP and beans with OpenTracing.
+     *
+     * @param tracingStrategy The instance which tracks invoked EIP and beans
+     */
+    public void setTracingStrategy(InterceptStrategy tracingStrategy) {
+        this.tracingStrategy = tracingStrategy;
+    }
+
     public Set<String> getExcludePatterns() {
         return excludePatterns;
     }
@@ -181,6 +203,10 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
         }
         camelContext.adapt(ExtendedCamelContext.class).addLogListener(logListener);
 
+        if (tracingStrategy != null) {
+            camelContext.adapt(ExtendedCamelContext.class).addInterceptStrategy(tracingStrategy);
+        }
+
         if (tracer == null) {
             Set<Tracer> tracers = camelContext.getRegistry().findByType(Tracer.class);
             if (tracers.size() == 1) {
@@ -198,6 +224,14 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
         }
 
         ServiceHelper.startService(eventNotifier);
+
+        if (tracer != null) {
+            try { // Take care NOT to import GlobalTracer as it is an optional dependency and may not be on the classpath.
+                io.opentracing.util.GlobalTracer.registerIfAbsent(tracer);
+            } catch (NoClassDefFoundError globalTracerNotInClasspath) {
+                LOG.trace("GlobalTracer is not found on the classpath.");
+            }
+        }
     }
 
     @Override
@@ -255,7 +289,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 if (event instanceof ExchangeSendingEvent) {
                     ExchangeSendingEvent ese = (ExchangeSendingEvent)event;
                     SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
-                    if (!sd.newSpan() || isExcluded(ese.getExchange(), ese.getEndpoint())) {
+                    if (sd instanceof AbstractInternalSpanDecorator || !sd.newSpan() || isExcluded(ese.getExchange(), ese.getEndpoint())) {
                         return;
                     }
                     Span parent = ActiveSpanManager.getSpan(ese.getExchange());
@@ -277,7 +311,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 } else if (event instanceof ExchangeSentEvent) {
                     ExchangeSentEvent ese = (ExchangeSentEvent)event;
                     SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
-                    if (!sd.newSpan() || isExcluded(ese.getExchange(), ese.getEndpoint())) {
+                    if (sd instanceof AbstractInternalSpanDecorator || !sd.newSpan() || isExcluded(ese.getExchange(), ese.getEndpoint())) {
                         return;
                     }
                     Span span = ActiveSpanManager.getSpan(ese.getExchange());
@@ -321,9 +355,15 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                     return;
                 }
                 SpanDecorator sd = getSpanDecorator(route.getEndpoint());
+                Span parent = ActiveSpanManager.getSpan(exchange);
                 Span span = tracer.buildSpan(sd.getOperationName(exchange, route.getEndpoint()))
-                    .asChildOf(tracer.extract(Format.Builtin.TEXT_MAP, sd.getExtractAdapter(exchange.getIn().getHeaders(), encoding)))
-                    .withTag(Tags.SPAN_KIND.getKey(), sd.getReceiverSpanKind()).start();
+                    .asChildOf(parent)
+                    .start();
+
+                if (parent == null && !(sd instanceof AbstractInternalSpanDecorator)) {
+                    span.setTag(Tags.SPAN_KIND.getKey(), sd.getReceiverSpanKind());
+                }
+
                 sd.pre(span, exchange, route.getEndpoint());
                 ActiveSpanManager.activate(exchange, span);
                 if (LOG.isTraceEnabled()) {
