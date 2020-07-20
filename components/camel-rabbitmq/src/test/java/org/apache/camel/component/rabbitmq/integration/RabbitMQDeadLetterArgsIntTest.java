@@ -32,7 +32,7 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class RabbitMQDeadLetterArgsIntTest extends AbstractRabbitMQIntTest {
     private static final String LOCAL_RABBITMQ_PARAMS = "hostname=localhost&portNumber=5672&username=cameltest&password=cameltest";

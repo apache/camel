@@ -18,7 +18,7 @@ package org.apache.camel.component.rabbitmq.integration;
 
 import java.util.Arrays;
 
-import org.apache.camel.test.testcontainers.Wait;
+import org.apache.camel.test.testcontainers.junit5.Wait;
 import org.testcontainers.containers.GenericContainer;
 
 public class DockerTestUtils {

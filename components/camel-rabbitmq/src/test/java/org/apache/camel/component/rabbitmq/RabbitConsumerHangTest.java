@@ -18,7 +18,8 @@ package org.apache.camel.component.rabbitmq;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.fail;
@@ -30,7 +31,7 @@ public class RabbitConsumerHangTest {
     private Connection conn = Mockito.mock(Connection.class);
     private Channel channel = Mockito.mock(Channel.class);
 
-    @Test(timeout = 5000)
+    @Test @Timeout(5)
     public void testHandleDeliveryShouldNotHangForeverIfChanelWasClosed() throws Exception {
         Mockito.when(consumer.getEndpoint()).thenReturn(endpoint);
         Mockito.when(consumer.getConnection()).thenReturn(conn);

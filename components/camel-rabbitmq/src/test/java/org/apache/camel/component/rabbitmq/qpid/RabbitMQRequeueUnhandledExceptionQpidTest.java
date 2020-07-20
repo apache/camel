@@ -17,8 +17,8 @@
 package org.apache.camel.component.rabbitmq.qpid;
 
 import org.apache.camel.component.rabbitmq.integration.RabbitMQRequeueUnhandledExceptionIntTest;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 public class RabbitMQRequeueUnhandledExceptionQpidTest extends RabbitMQRequeueUnhandledExceptionIntTest {
     @Override
@@ -26,12 +26,12 @@ public class RabbitMQRequeueUnhandledExceptionQpidTest extends RabbitMQRequeueUn
         return false;
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startBroker() throws Exception {
         systemLauncher.startup(createQpidSystemConfig());
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopBroker() {
         systemLauncher.shutdown();
     }

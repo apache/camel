@@ -25,12 +25,17 @@ import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import org.apache.camel.test.testcontainers.ContainerAwareTestSupport;
+import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
 import org.apache.qpid.server.SystemLauncher;
 import org.apache.qpid.server.model.ConfiguredObject;
 import org.apache.qpid.server.model.SystemConfig;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractRabbitMQIntTest extends ContainerAwareTestSupport {
     protected static final String INITIAL_CONFIGURATION = "qpid-test-initial-config.json";
     protected static SystemLauncher systemLauncher = new SystemLauncher();
@@ -38,16 +43,14 @@ public abstract class AbstractRabbitMQIntTest extends ContainerAwareTestSupport 
     // Container starts once per test class
     private static GenericContainer container;
 
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
+    protected Logger log = LoggerFactory.getLogger(getClass());
 
     protected boolean isStartDocker() {
         return true;
     }
 
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
     }

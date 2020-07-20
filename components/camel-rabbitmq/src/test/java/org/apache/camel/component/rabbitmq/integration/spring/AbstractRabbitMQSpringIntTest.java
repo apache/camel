@@ -19,12 +19,14 @@ package org.apache.camel.component.rabbitmq.integration.spring;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.apache.camel.test.testcontainers.Containers;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.testcontainers.junit5.Containers;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testcontainers.containers.GenericContainer;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractRabbitMQSpringIntTest extends CamelSpringTestSupport {
 
     // Container starts once per test class
@@ -33,11 +35,6 @@ public abstract class AbstractRabbitMQSpringIntTest extends CamelSpringTestSuppo
     protected List<GenericContainer<?>> containers = new CopyOnWriteArrayList();
 
     protected abstract String getConfigLocation();
-
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {

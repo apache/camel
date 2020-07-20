@@ -28,12 +28,14 @@ import com.rabbitmq.client.Envelope;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.rabbitmq.RabbitMQConstants;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test RabbitMQ component with Spring DSL
@@ -86,12 +88,12 @@ public class RabbitMQSpringIntTest extends AbstractRabbitMQSpringIntTest {
         return channel;
     }
 
-    @Before
+    @BeforeEach
     public void bindQueueExchange() throws IOException, TimeoutException {
         openChannel();
     }
 
-    @After
+    @AfterEach
     public void closeConnection() throws TimeoutException {
         if (isChannelOpened()) {
             try {

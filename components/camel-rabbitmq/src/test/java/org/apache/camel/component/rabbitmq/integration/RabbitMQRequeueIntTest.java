@@ -24,10 +24,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rabbitmq.RabbitMQConstants;
 import org.awaitility.Awaitility;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Integration test to confirm REQUEUE header causes message to be re-queued
@@ -55,6 +58,7 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
     private com.rabbitmq.client.Channel deadLetterChannel;
 
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -64,6 +68,7 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
     }
 
     @Override
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
 
