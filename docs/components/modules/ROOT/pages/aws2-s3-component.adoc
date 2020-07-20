@@ -68,6 +68,9 @@ The AWS 2 S3 Storage Service component supports 39 options, which are listed bel
 | *trustAllCertificates* (common) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
 | *uriEndpointOverride* (common) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
 | *useIAMCredentials* (common) | Set whether the S3 client should expect to load credentials on an EC2 instance or to expect static credentials to be passed in. | false | boolean
+| *customerAlgorithm* (common) | Define the customer algorithm to use in case CustomerKey is enabled |  | String
+| *customerKeyId* (common) | Define the id of Customer key to use in case CustomerKey is enabled |  | String
+| *customerKeyMD5* (common) | Define the MD5 of Customer key to use in case CustomerKey is enabled |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *deleteAfterRead* (consumer) | Delete objects from S3 after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs, the object is not deleted. If this option is false, then the same objects will be retrieve over and over again on the polls. Therefore you need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the AWS2S3Constants#BUCKET_NAME and AWS2S3Constants#KEY headers, or only the AWS2S3Constants#KEY header. | true | boolean
 | *delimiter* (consumer) | The delimiter which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in. |  | String
@@ -86,9 +89,6 @@ The AWS 2 S3 Storage Service component supports 39 options, which are listed bel
 | *partSize* (producer) | Setup the partSize which is used in multi part upload, the default size is 25M. | 26214400 | long
 | *storageClass* (producer) | The storage class to set in the com.amazonaws.services.s3.model.PutObjectRequest request. |  | String
 | *awsKMSKeyId* (producer) | Define the id of KMS key to use in case KMS is enabled |  | String
-| *customerAlgorithm* (producer) | Define the customer algorithm to use in case CustomerKey is enabled |  | String
-| *customerKeyId* (producer) | Define the id of Customer key to use in case CustomerKey is enabled |  | String
-| *customerKeyMD5* (producer) | Define the MD5 of Customer key to use in case CustomerKey is enabled |  | String
 | *useAwsKMS* (producer) | Define if KMS must be used or not | false | boolean
 | *useCustomerKey* (producer) | Define if Customer Key must be used or not | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
@@ -144,6 +144,9 @@ with the following path and query parameters:
 | *trustAllCertificates* (common) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
 | *uriEndpointOverride* (common) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
 | *useIAMCredentials* (common) | Set whether the S3 client should expect to load credentials on an EC2 instance or to expect static credentials to be passed in. | false | boolean
+| *customerAlgorithm* (common) | Define the customer algorithm to use in case CustomerKey is enabled |  | String
+| *customerKeyId* (common) | Define the id of Customer key to use in case CustomerKey is enabled |  | String
+| *customerKeyMD5* (common) | Define the MD5 of Customer key to use in case CustomerKey is enabled |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *deleteAfterRead* (consumer) | Delete objects from S3 after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs, the object is not deleted. If this option is false, then the same objects will be retrieve over and over again on the polls. Therefore you need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the AWS2S3Constants#BUCKET_NAME and AWS2S3Constants#KEY headers, or only the AWS2S3Constants#KEY header. | true | boolean
 | *delimiter* (consumer) | The delimiter which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in. |  | String
@@ -168,9 +171,6 @@ with the following path and query parameters:
 | *partSize* (producer) | Setup the partSize which is used in multi part upload, the default size is 25M. | 26214400 | long
 | *storageClass* (producer) | The storage class to set in the com.amazonaws.services.s3.model.PutObjectRequest request. |  | String
 | *awsKMSKeyId* (producer) | Define the id of KMS key to use in case KMS is enabled |  | String
-| *customerAlgorithm* (producer) | Define the customer algorithm to use in case CustomerKey is enabled |  | String
-| *customerKeyId* (producer) | Define the id of Customer key to use in case CustomerKey is enabled |  | String
-| *customerKeyMD5* (producer) | Define the MD5 of Customer key to use in case CustomerKey is enabled |  | String
 | *useAwsKMS* (producer) | Define if KMS must be used or not | false | boolean
 | *useCustomerKey* (producer) | Define if Customer Key must be used or not | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
