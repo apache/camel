@@ -29,21 +29,18 @@ import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.WireMockServer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.RestEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
@@ -54,25 +51,45 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@RunWith(Parameterized.class)
 public class RestSwaggerComponentTest extends CamelTestSupport {
-
-    @ClassRule
-    public static WireMockRule petstore = new WireMockRule(wireMockConfig().dynamicPort());
 
     static final Object NO_BODY = null;
 
-    @Parameter
+    private static WireMockServer petstore = new WireMockServer(wireMockConfig().dynamicPort());
+
     public String componentName;
 
-    @Before
+    @BeforeAll
+    public static void startWireMockServer() {
+        petstore.start();
+    }
+
+    @AfterAll
+    public static void stopWireMockServer() {
+        petstore.stop();
+    }
+
+    @Override
+    public void setUp() throws Exception {
+    }
+
+    @BeforeEach
     public void resetWireMock() {
         petstore.resetRequests();
     }
 
-    @Test
-    public void shouldBeAddingPets() {
+    public void doSetUp(String componentName) throws Exception {
+        this.componentName = componentName;
+        super.setUp();
+    }
+
+    @ParameterizedTest @MethodSource("knownProducers")
+    public void shouldBeAddingPets(String componentName) throws Exception {
+        doSetUp(componentName);
+
         final Pet pet = new Pet();
         pet.name = "Jean-Luc Picard";
 
@@ -87,8 +104,10 @@ public class RestSwaggerComponentTest extends CamelTestSupport {
                 .withHeader("Content-Type", equalTo("application/xml")));
     }
 
-    @Test
-    public void shouldBeGettingPetsById() {
+    @ParameterizedTest @MethodSource("knownProducers")
+    public void shouldBeGettingPetsById(String componentName) throws Exception {
+        doSetUp(componentName);
+
         final Pet pet = template.requestBodyAndHeader("direct:getPetById", NO_BODY, "petId", 14, Pet.class);
 
         assertNotNull(pet);
@@ -100,8 +119,10 @@ public class RestSwaggerComponentTest extends CamelTestSupport {
             equalTo("application/xml, application/json")));
     }
 
-    @Test
-    public void shouldBeGettingPetsByIdSpecifiedInEndpointParameters() {
+    @ParameterizedTest @MethodSource("knownProducers")
+    public void shouldBeGettingPetsByIdSpecifiedInEndpointParameters(String componentName) throws Exception {
+        doSetUp(componentName);
+
         final Pet pet = template.requestBody("direct:getPetByIdWithEndpointParams", NO_BODY, Pet.class);
 
         assertNotNull(pet);
@@ -113,8 +134,10 @@ public class RestSwaggerComponentTest extends CamelTestSupport {
             equalTo("application/xml, application/json")));
     }
 
-    @Test
-    public void shouldBeGettingPetsByIdWithApiKeysInHeader() {
+    @ParameterizedTest @MethodSource("knownProducers")
+    public void shouldBeGettingPetsByIdWithApiKeysInHeader(String componentName) throws Exception {
+        doSetUp(componentName);
+
         final Map<String, Object> headers = new HashMap<>();
         headers.put("petId", 14);
         headers.put("api_key", "dolphins");
@@ -130,8 +153,10 @@ public class RestSwaggerComponentTest extends CamelTestSupport {
                 .withHeader("api_key", equalTo("dolphins")));
     }
 
-    @Test
-    public void shouldBeGettingPetsByIdWithApiKeysInQueryParameter() {
+    @ParameterizedTest @MethodSource("knownProducers")
+    public void shouldBeGettingPetsByIdWithApiKeysInQueryParameter(String componentName) throws Exception {
+        doSetUp(componentName);
+
         final Map<String, Object> headers = new HashMap<>();
         headers.put("petId", 14);
         headers.put("api_key", "dolphins");
@@ -146,8 +171,10 @@ public class RestSwaggerComponentTest extends CamelTestSupport {
             equalTo("application/xml, application/json")));
     }
 
-    @Test
-    public void shouldBeGettingPetsByStatus() {
+    @ParameterizedTest @MethodSource("knownProducers")
+    public void shouldBeGettingPetsByStatus(String componentName) throws Exception {
+        doSetUp(componentName);
+
         final Pets pets = template.requestBodyAndHeader("direct:findPetsByStatus", NO_BODY, "status", "available",
             Pets.class);
 
@@ -202,12 +229,11 @@ public class RestSwaggerComponentTest extends CamelTestSupport {
         };
     }
 
-    @Parameters(name = "component = {0}")
     public static Iterable<String> knownProducers() {
         return Arrays.asList(RestEndpoint.DEFAULT_REST_PRODUCER_COMPONENTS);
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setupStubs() throws IOException, URISyntaxException {
         petstore.stubFor(get(urlEqualTo("/swagger.json")).willReturn(aResponse().withBody(
             Files.readAllBytes(Paths.get(RestSwaggerComponentTest.class.getResource("/swagger.json").toURI())))));
