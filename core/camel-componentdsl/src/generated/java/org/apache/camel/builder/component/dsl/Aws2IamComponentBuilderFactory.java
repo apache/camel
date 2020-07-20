@@ -163,6 +163,7 @@ public interface Aws2IamComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: aws-global
          * Group: producer
          */
         default Aws2IamComponentBuilder region(java.lang.String region) {

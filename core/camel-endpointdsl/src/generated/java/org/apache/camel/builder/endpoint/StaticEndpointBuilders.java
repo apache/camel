@@ -1127,7 +1127,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path label
      */
-    public static org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.IAM2EndpointBuilder aws2Iam(
+    static org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.IAM2EndpointBuilder aws2Iam(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.endpointBuilder("aws2-iam", path);
     }
@@ -1148,7 +1148,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path label
      */
-    public static org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.IAM2EndpointBuilder aws2Iam(
+    static org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.IAM2EndpointBuilder aws2Iam(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -14536,7 +14536,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path host:port/path
      */
-    static org.apache.camel.builder.endpoint.dsl.VertxWebsocketEndpointBuilderFactory.VertxWebsocketEndpointBuilder vertxWebsocket(
+    public static org.apache.camel.builder.endpoint.dsl.VertxWebsocketEndpointBuilderFactory.VertxWebsocketEndpointBuilder vertxWebsocket(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.VertxWebsocketEndpointBuilderFactory.endpointBuilder("vertx-websocket", path);
     }
@@ -14569,7 +14569,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path host:port/path
      */
-    static org.apache.camel.builder.endpoint.dsl.VertxWebsocketEndpointBuilderFactory.VertxWebsocketEndpointBuilder vertxWebsocket(
+    public static org.apache.camel.builder.endpoint.dsl.VertxWebsocketEndpointBuilderFactory.VertxWebsocketEndpointBuilder vertxWebsocket(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.VertxWebsocketEndpointBuilderFactory.endpointBuilder(componentName, path);
