@@ -34,10 +34,11 @@ import io.swagger.models.parameters.QueryParameter;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.spi.RestConfiguration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -47,7 +48,7 @@ public class RestSwaggerEndpointTest {
 
     URI endpointUri = URI.create("endpoint.json");
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldComplainForUnknownOperations() throws Exception {
         final CamelContext camelContext = mock(CamelContext.class);
         when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
@@ -57,7 +58,8 @@ public class RestSwaggerEndpointTest {
         final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint("rest-swagger:unknown", "unknown", component,
             Collections.emptyMap());
 
-        endpoint.createProducer();
+        assertThrows(IllegalArgumentException.class,
+            () -> endpoint.createProducer());
     }
 
     @Test
@@ -351,12 +353,13 @@ public class RestSwaggerEndpointTest {
         assertThat(RestSwaggerEndpoint.pickBestScheme("file", null)).isNull();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldRaiseExceptionsForMissingSpecifications() throws IOException {
         final CamelContext camelContext = mock(CamelContext.class);
         when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
 
-        RestSwaggerEndpoint.loadSpecificationFrom(camelContext, URI.create("non-existant.json"), null);
+        assertThrows(IllegalArgumentException.class,
+            () -> RestSwaggerEndpoint.loadSpecificationFrom(camelContext, URI.create("non-existant.json"), null));
     }
 
     @Test

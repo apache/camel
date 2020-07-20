@@ -32,8 +32,8 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.common.HttpsSettings;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.io.Resources;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
@@ -43,16 +43,14 @@ import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.support.jsse.CipherSuitesParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.security.CertificateUtils;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.runners.Parameterized.Parameters;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -61,28 +59,47 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@RunWith(Parameterized.class)
 public abstract class HttpsTest extends CamelTestSupport {
 
-    @ClassRule
-    public static WireMockRule petstore = new WireMockRule(
+    protected static WireMockServer petstore = new WireMockServer(
         wireMockConfig().httpServerFactory(new Jetty94ServerFactory()).containerThreads(13).dynamicPort()
             .dynamicHttpsPort().keystorePath(Resources.getResource("localhost.p12").toString()).keystoreType("PKCS12")
             .keystorePassword("changeit"));
 
     static final Object NO_BODY = null;
 
-    @Parameter
     public String componentName;
 
-    @Before
+    @BeforeAll
+    public static void startWireMockServer() {
+        petstore.start();
+    }
+
+    @AfterAll
+    public static void stopWireMockServer() {
+        petstore.stop();
+    }
+
+    @Override
+    public void setUp() throws Exception {
+    }
+
+    @BeforeEach
     public void resetWireMock() {
         petstore.resetRequests();
     }
 
-    @Test
-    public void shouldBeConfiguredForHttps() throws Exception {
+    public void doSetUp(String componentName) throws Exception {
+        this.componentName = componentName;
+        super.setUp();
+    }
+
+    @ParameterizedTest @MethodSource("knownProducers")
+    public void shouldBeConfiguredForHttps(String componentName) throws Exception {
+        doSetUp(componentName);
         final Pet pet = template.requestBodyAndHeader("direct:getPetById", NO_BODY, "petId", 14, Pet.class);
 
         assertNotNull(pet);
@@ -95,8 +112,9 @@ public abstract class HttpsTest extends CamelTestSupport {
     }
 
 
-    @Test
-    public void swaggerJsonOverHttps() throws Exception {
+    @ParameterizedTest @MethodSource("knownProducers")
+    public void swaggerJsonOverHttps(String componentName) throws Exception {
+        doSetUp(componentName);
         final Pet pet = template.requestBodyAndHeader("direct:httpsJsonGetPetById", NO_BODY, "petId", 14, Pet.class);
 
         assertNotNull(pet);
@@ -146,7 +164,7 @@ public abstract class HttpsTest extends CamelTestSupport {
         return producers;
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setupStubs() throws IOException, URISyntaxException {
         petstore.stubFor(get(urlEqualTo("/swagger.json")).willReturn(aResponse().withBody(
             Files.readAllBytes(Paths.get(RestSwaggerGlobalHttpsTest.class.getResource("/swagger.json").toURI())))));
