@@ -220,6 +220,7 @@ public interface IAM2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: aws-global
          * Group: producer
          */
         default IAM2EndpointBuilder region(String region) {
