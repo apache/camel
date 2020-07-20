@@ -22,6 +22,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import software.amazon.awssdk.core.Protocol;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.iam.IamClient;
 
 @UriParams
@@ -46,7 +47,7 @@ public class IAM2Configuration implements Cloneable {
     @UriParam
     private Integer proxyPort;
     @UriParam
-    private String region;
+    private String region = Region.AWS_GLOBAL.id();
     @UriParam(defaultValue = "false")
     private boolean pojoRequest;
     @UriParam(defaultValue = "false")
