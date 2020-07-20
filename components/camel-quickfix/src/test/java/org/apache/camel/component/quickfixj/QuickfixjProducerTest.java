@@ -24,8 +24,8 @@ import javax.management.JMException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import quickfix.ConfigError;
@@ -52,7 +52,7 @@ public class QuickfixjProducerTest {
     private Message inboundFixMessage;
     private QuickfixjEngine quickfixjEngine;
 
-    @Before
+    @BeforeEach
     public void setUp() throws ConfigError, FieldConvertError, IOException, JMException {
         mockExchange = Mockito.mock(Exchange.class);
         mockEndpoint = Mockito.mock(QuickfixjEndpoint.class);

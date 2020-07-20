@@ -18,9 +18,9 @@ package org.apache.camel.component.quickfixj;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 import quickfix.FixVersions;
@@ -34,7 +34,7 @@ import quickfix.field.TargetCompID;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-@Ignore("Fails on CI server sometimes")
+@Disabled("Fails on CI server sometimes")
 public class QuickfixjLazyProducerTest {
     private Exchange mockExchange;
     private QuickfixjEndpoint endpoint;
@@ -44,7 +44,7 @@ public class QuickfixjLazyProducerTest {
     private Message inboundFixMessage;
     private QuickfixjEngine quickfixjEngine;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         mockExchange = Mockito.mock(Exchange.class);
         mockCamelMessage = Mockito.mock(org.apache.camel.Message.class);
