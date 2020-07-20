@@ -22,7 +22,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+
 import brave.Span;
+import brave.Span.Kind;
 import brave.Tracing;
 import brave.context.slf4j.MDCScopeDecorator;
 import brave.propagation.B3Propagation;
@@ -39,7 +41,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Message;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
@@ -126,10 +127,10 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     private static final Logger LOG = LoggerFactory.getLogger(ZipkinTracer.class);
     private static final String ZIPKIN_COLLECTOR_HTTP_SERVICE = "zipkin-collector-http";
     private static final String ZIPKIN_COLLECTOR_THRIFT_SERVICE = "zipkin-collector-thrift";
-    private static final Getter<Message, String> GETTER = (message, key) -> message.getHeader(key, String.class);
-    private static final Setter<Message, String> SETTER = (message, key, value) -> message.setHeader(key, value);
-    private static final Extractor<Message> EXTRACTOR = B3Propagation.B3_STRING.extractor(GETTER);
-    private static final Injector<Message> INJECTOR = B3Propagation.B3_STRING.injector(SETTER);
+    private static final Getter<CamelRequest, String> GETTER = (cr, key) -> cr.getHeader(key);
+    private static final Setter<CamelRequest, String> SETTER = (cr, key, value) -> cr.setHeader(key, value);
+    private static final Extractor<CamelRequest> EXTRACTOR = B3Propagation.B3_STRING.extractor(GETTER);
+    private static final Injector<CamelRequest> INJECTOR = B3Propagation.B3_STRING.injector(SETTER);
 
     private final ZipkinEventNotifier eventNotifier = new ZipkinEventNotifier();
     private final Map<String, Tracing> braves = new HashMap<>();
@@ -146,9 +147,23 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     private Set<String> excludePatterns = new HashSet<>();
     private boolean includeMessageBody;
     private boolean includeMessageBodyStreams;
+    private final Map<String, Span.Kind> producerComponentToSpanKind = new HashMap<>();
+    private final Map<String, Span.Kind> consumerComponentToSpanKind = new HashMap<>();
 
     public ZipkinTracer() {
+        producerComponentToSpanKind.put("jms", Span.Kind.PRODUCER);
+        producerComponentToSpanKind.put("sjms", Span.Kind.PRODUCER);
+        producerComponentToSpanKind.put("activemq", Span.Kind.PRODUCER);
+        producerComponentToSpanKind.put("kafka", Span.Kind.PRODUCER);
+        producerComponentToSpanKind.put("amqp", Span.Kind.PRODUCER);
+
+        consumerComponentToSpanKind.put("jms", Span.Kind.CONSUMER);
+        consumerComponentToSpanKind.put("sjms", Span.Kind.CONSUMER);
+        consumerComponentToSpanKind.put("activemq", Span.Kind.CONSUMER);
+        consumerComponentToSpanKind.put("kafka", Span.Kind.CONSUMER);
+        consumerComponentToSpanKind.put("amqp", Span.Kind.CONSUMER);
     }
+
 
     @Override
     public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode route) {
@@ -601,10 +616,12 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         } else {
             span = brave.tracer().nextSpan();
         }
-        span.kind(Span.Kind.CLIENT).start();
+        Span.Kind spanKind = getProducerComponentSpanKind(event.getEndpoint());
+        span.kind(spanKind).start();
 
         ZipkinClientRequestAdapter parser = new ZipkinClientRequestAdapter(this, event.getEndpoint());
-        INJECTOR.inject(span.context(), event.getExchange().getIn());
+        CamelRequest request = new CamelRequest(event.getExchange().getIn(), spanKind);
+        INJECTOR.inject(span.context(), request);
         parser.onRequest(event.getExchange(), span.customizer());
 
         // store span after request
@@ -625,6 +642,17 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
                 LOG.debug(String.format("clientRequest [service=%s, traceId=%20s, spanId=%20s]", serviceName, traceId, spanId));
             }
         }
+    }
+
+
+    //protected for testing
+    protected Kind getProducerComponentSpanKind(Endpoint endpoint) {
+        return producerComponentToSpanKind.getOrDefault(getComponentName(endpoint), Span.Kind.CLIENT);
+    }
+
+    //protected for testing
+    protected void addProducerComponentSpanKind(String component, Span.Kind kind) {
+        producerComponentToSpanKind.putIfAbsent(component, kind);
     }
 
     private void clientResponse(Tracing brave, String serviceName, ExchangeSentEvent event) {
@@ -666,14 +694,16 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             exchange.setProperty(ZipkinState.KEY, state);
         }
         Span span = null;
-        TraceContextOrSamplingFlags sampleFlag = EXTRACTOR.extract(exchange.getIn());
+        Span.Kind spanKind = getConsumerComponentSpanKind(exchange.getFromEndpoint());
+        CamelRequest cr = new CamelRequest(exchange.getIn(), spanKind);
+        TraceContextOrSamplingFlags sampleFlag = EXTRACTOR.extract(cr);
         if (ObjectHelper.isEmpty(sampleFlag)) {
             span = brave.tracer().nextSpan();
-            INJECTOR.inject(span.context(), exchange.getIn());
+            INJECTOR.inject(span.context(), cr);
         } else {
             span = brave.tracer().nextSpan(sampleFlag);
         }
-        span.kind(Span.Kind.SERVER).start();
+        span.kind(spanKind).start();
         ZipkinServerRequestAdapter parser = new ZipkinServerRequestAdapter(this, exchange);
         parser.onRequest(exchange, span.customizer());
 
@@ -697,6 +727,12 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         }
 
         return span;
+    }
+
+
+    //protected for testing
+    protected Kind getConsumerComponentSpanKind(Endpoint endpoint) {
+        return consumerComponentToSpanKind.getOrDefault(getComponentName(endpoint), Span.Kind.SERVER);
     }
 
     private void serverResponse(Tracing brave, String serviceName, Exchange exchange) {
@@ -728,6 +764,17 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
                 }
             }
         }
+    }
+
+    private String getComponentName(Endpoint endpoint) {
+        String uri = endpoint.getEndpointBaseUri();
+        if (uri != null) {
+            String uriParts[] = uri.split(":");
+            if (uriParts != null && uriParts.length > 0) {
+                return uriParts[0].toLowerCase();
+            }
+        }
+        return null;
     }
 
     private final class ZipkinEventNotifier extends EventNotifierSupport {
