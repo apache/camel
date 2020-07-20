@@ -1027,6 +1027,42 @@ public interface AWS2S3EndpointBuilderFactory {
             return (AWS2S3EndpointConsumerBuilder) this;
         }
         /**
+         * Define the customer algorithm to use in case CustomerKey is enabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common (advanced)
+         */
+        default AdvancedAWS2S3EndpointConsumerBuilder customerAlgorithm(
+                String customerAlgorithm) {
+            doSetProperty("customerAlgorithm", customerAlgorithm);
+            return this;
+        }
+        /**
+         * Define the id of Customer key to use in case CustomerKey is enabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common (advanced)
+         */
+        default AdvancedAWS2S3EndpointConsumerBuilder customerKeyId(
+                String customerKeyId) {
+            doSetProperty("customerKeyId", customerKeyId);
+            return this;
+        }
+        /**
+         * Define the MD5 of Customer key to use in case CustomerKey is enabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common (advanced)
+         */
+        default AdvancedAWS2S3EndpointConsumerBuilder customerKeyMD5(
+                String customerKeyMD5) {
+            doSetProperty("customerKeyMD5", customerKeyMD5);
+            return this;
+        }
+        /**
          * If this option is true and includeBody is true, then the
          * S3Object.close() method will be called on exchange completion. This
          * option is strongly related to includeBody option. In case of setting
@@ -1687,23 +1723,11 @@ public interface AWS2S3EndpointBuilderFactory {
             return (AWS2S3EndpointProducerBuilder) this;
         }
         /**
-         * Define the id of KMS key to use in case KMS is enabled.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer (advanced)
-         */
-        default AdvancedAWS2S3EndpointProducerBuilder awsKMSKeyId(
-                String awsKMSKeyId) {
-            doSetProperty("awsKMSKeyId", awsKMSKeyId);
-            return this;
-        }
-        /**
          * Define the customer algorithm to use in case CustomerKey is enabled.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer (advanced)
+         * Group: common (advanced)
          */
         default AdvancedAWS2S3EndpointProducerBuilder customerAlgorithm(
                 String customerAlgorithm) {
@@ -1715,7 +1739,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer (advanced)
+         * Group: common (advanced)
          */
         default AdvancedAWS2S3EndpointProducerBuilder customerKeyId(
                 String customerKeyId) {
@@ -1727,11 +1751,23 @@ public interface AWS2S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer (advanced)
+         * Group: common (advanced)
          */
         default AdvancedAWS2S3EndpointProducerBuilder customerKeyMD5(
                 String customerKeyMD5) {
             doSetProperty("customerKeyMD5", customerKeyMD5);
+            return this;
+        }
+        /**
+         * Define the id of KMS key to use in case KMS is enabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default AdvancedAWS2S3EndpointProducerBuilder awsKMSKeyId(
+                String awsKMSKeyId) {
+            doSetProperty("awsKMSKeyId", awsKMSKeyId);
             return this;
         }
         /**
@@ -2138,6 +2174,41 @@ public interface AWS2S3EndpointBuilderFactory {
                 AdvancedAWS2S3EndpointProducerBuilder {
         default AWS2S3EndpointBuilder basic() {
             return (AWS2S3EndpointBuilder) this;
+        }
+        /**
+         * Define the customer algorithm to use in case CustomerKey is enabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common (advanced)
+         */
+        default AdvancedAWS2S3EndpointBuilder customerAlgorithm(
+                String customerAlgorithm) {
+            doSetProperty("customerAlgorithm", customerAlgorithm);
+            return this;
+        }
+        /**
+         * Define the id of Customer key to use in case CustomerKey is enabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common (advanced)
+         */
+        default AdvancedAWS2S3EndpointBuilder customerKeyId(String customerKeyId) {
+            doSetProperty("customerKeyId", customerKeyId);
+            return this;
+        }
+        /**
+         * Define the MD5 of Customer key to use in case CustomerKey is enabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common (advanced)
+         */
+        default AdvancedAWS2S3EndpointBuilder customerKeyMD5(
+                String customerKeyMD5) {
+            doSetProperty("customerKeyMD5", customerKeyMD5);
+            return this;
         }
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
