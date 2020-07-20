@@ -218,6 +218,42 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
+         * Define the customer algorithm to use in case CustomerKey is enabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common (advanced)
+         */
+        default Aws2S3ComponentBuilder customerAlgorithm(
+                java.lang.String customerAlgorithm) {
+            doSetProperty("customerAlgorithm", customerAlgorithm);
+            return this;
+        }
+        /**
+         * Define the id of Customer key to use in case CustomerKey is enabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common (advanced)
+         */
+        default Aws2S3ComponentBuilder customerKeyId(
+                java.lang.String customerKeyId) {
+            doSetProperty("customerKeyId", customerKeyId);
+            return this;
+        }
+        /**
+         * Define the MD5 of Customer key to use in case CustomerKey is enabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common (advanced)
+         */
+        default Aws2S3ComponentBuilder customerKeyMD5(
+                java.lang.String customerKeyMD5) {
+            doSetProperty("customerKeyMD5", customerKeyMD5);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -480,42 +516,6 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
-         * Define the customer algorithm to use in case CustomerKey is enabled.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer (advanced)
-         */
-        default Aws2S3ComponentBuilder customerAlgorithm(
-                java.lang.String customerAlgorithm) {
-            doSetProperty("customerAlgorithm", customerAlgorithm);
-            return this;
-        }
-        /**
-         * Define the id of Customer key to use in case CustomerKey is enabled.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer (advanced)
-         */
-        default Aws2S3ComponentBuilder customerKeyId(
-                java.lang.String customerKeyId) {
-            doSetProperty("customerKeyId", customerKeyId);
-            return this;
-        }
-        /**
-         * Define the MD5 of Customer key to use in case CustomerKey is enabled.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer (advanced)
-         */
-        default Aws2S3ComponentBuilder customerKeyMD5(
-                java.lang.String customerKeyMD5) {
-            doSetProperty("customerKeyMD5", customerKeyMD5);
-            return this;
-        }
-        /**
          * Define if KMS must be used or not.
          * 
          * The option is a: <code>boolean</code> type.
@@ -612,6 +612,9 @@ public interface Aws2S3ComponentBuilderFactory {
             case "trustAllCertificates": getOrCreateConfiguration((AWS2S3Component) component).setTrustAllCertificates((boolean) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((AWS2S3Component) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "useIAMCredentials": getOrCreateConfiguration((AWS2S3Component) component).setUseIAMCredentials((boolean) value); return true;
+            case "customerAlgorithm": getOrCreateConfiguration((AWS2S3Component) component).setCustomerAlgorithm((java.lang.String) value); return true;
+            case "customerKeyId": getOrCreateConfiguration((AWS2S3Component) component).setCustomerKeyId((java.lang.String) value); return true;
+            case "customerKeyMD5": getOrCreateConfiguration((AWS2S3Component) component).setCustomerKeyMD5((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((AWS2S3Component) component).setBridgeErrorHandler((boolean) value); return true;
             case "deleteAfterRead": getOrCreateConfiguration((AWS2S3Component) component).setDeleteAfterRead((boolean) value); return true;
             case "delimiter": getOrCreateConfiguration((AWS2S3Component) component).setDelimiter((java.lang.String) value); return true;
@@ -630,9 +633,6 @@ public interface Aws2S3ComponentBuilderFactory {
             case "partSize": getOrCreateConfiguration((AWS2S3Component) component).setPartSize((long) value); return true;
             case "storageClass": getOrCreateConfiguration((AWS2S3Component) component).setStorageClass((java.lang.String) value); return true;
             case "awsKMSKeyId": getOrCreateConfiguration((AWS2S3Component) component).setAwsKMSKeyId((java.lang.String) value); return true;
-            case "customerAlgorithm": getOrCreateConfiguration((AWS2S3Component) component).setCustomerAlgorithm((java.lang.String) value); return true;
-            case "customerKeyId": getOrCreateConfiguration((AWS2S3Component) component).setCustomerKeyId((java.lang.String) value); return true;
-            case "customerKeyMD5": getOrCreateConfiguration((AWS2S3Component) component).setCustomerKeyMD5((java.lang.String) value); return true;
             case "useAwsKMS": getOrCreateConfiguration((AWS2S3Component) component).setUseAwsKMS((boolean) value); return true;
             case "useCustomerKey": getOrCreateConfiguration((AWS2S3Component) component).setUseCustomerKey((boolean) value); return true;
             case "basicPropertyBinding": ((AWS2S3Component) component).setBasicPropertyBinding((boolean) value); return true;
