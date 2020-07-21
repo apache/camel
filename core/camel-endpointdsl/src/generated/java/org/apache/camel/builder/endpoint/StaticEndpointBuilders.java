@@ -1004,7 +1004,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path label
      */
-    static org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.AWS2EC2EndpointBuilder aws2Ec2(
+    public static org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.AWS2EC2EndpointBuilder aws2Ec2(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.endpointBuilder("aws2-ec2", path);
     }
@@ -1025,7 +1025,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path label
      */
-    static org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.AWS2EC2EndpointBuilder aws2Ec2(
+    public static org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.AWS2EC2EndpointBuilder aws2Ec2(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -1791,7 +1791,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path label
      */
-    public static org.apache.camel.builder.endpoint.dsl.ECSEndpointBuilderFactory.ECSEndpointBuilder awsEcs(
+    static org.apache.camel.builder.endpoint.dsl.ECSEndpointBuilderFactory.ECSEndpointBuilder awsEcs(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ECSEndpointBuilderFactory.endpointBuilder("aws-ecs", path);
     }
@@ -1812,7 +1812,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path label
      */
-    public static org.apache.camel.builder.endpoint.dsl.ECSEndpointBuilderFactory.ECSEndpointBuilder awsEcs(
+    static org.apache.camel.builder.endpoint.dsl.ECSEndpointBuilderFactory.ECSEndpointBuilder awsEcs(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ECSEndpointBuilderFactory.endpointBuilder(componentName, path);
