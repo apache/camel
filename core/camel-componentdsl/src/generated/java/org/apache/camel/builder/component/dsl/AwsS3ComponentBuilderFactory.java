@@ -72,6 +72,21 @@ public interface AwsS3ComponentBuilderFactory {
             return this;
         }
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default AwsS3ComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * The component configuration.
          * 
          * The option is a:
@@ -578,6 +593,7 @@ public interface AwsS3ComponentBuilderFactory {
             switch (name) {
             case "amazonS3Client": getOrCreateConfiguration((S3Component) component).setAmazonS3Client((com.amazonaws.services.s3.AmazonS3) value); return true;
             case "autoCreateBucket": getOrCreateConfiguration((S3Component) component).setAutoCreateBucket((boolean) value); return true;
+            case "autoDiscoverClient": getOrCreateConfiguration((S3Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((S3Component) component).setConfiguration((org.apache.camel.component.aws.s3.S3Configuration) value); return true;
             case "endpointConfiguration": getOrCreateConfiguration((S3Component) component).setEndpointConfiguration((com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration) value); return true;
             case "pathStyleAccess": getOrCreateConfiguration((S3Component) component).setPathStyleAccess((boolean) value); return true;
