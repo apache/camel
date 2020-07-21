@@ -34,7 +34,6 @@ We also participate in Google Summer of Code and Outreachy programs, for informa
 * <<submitting-patches,Submitting patches>>
 * <<using-the-issue-tracker,Using the issue tracker>>
 * <<becoming-a-committer,Becoming a committer>>
-* <<more-resources,More resources>>
 
 [#getting-in-touch]
 == Getting in touch
