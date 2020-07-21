@@ -47,6 +47,21 @@ public interface AwsEc2ComponentBuilderFactory {
      */
     interface AwsEc2ComponentBuilder extends ComponentBuilder<EC2Component> {
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default AwsEc2ComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -219,6 +234,7 @@ public interface AwsEc2ComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "autoDiscoverClient": getOrCreateConfiguration((EC2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((EC2Component) component).setAccessKey((java.lang.String) value); return true;
             case "amazonEc2Client": getOrCreateConfiguration((EC2Component) component).setAmazonEc2Client((com.amazonaws.services.ec2.AmazonEC2) value); return true;
             case "configuration": ((EC2Component) component).setConfiguration((org.apache.camel.component.aws.ec2.EC2Configuration) value); return true;
