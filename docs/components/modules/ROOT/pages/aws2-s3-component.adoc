@@ -48,7 +48,7 @@ from("aws2-s3://helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&pref
 
 
 // component options: START
-The AWS 2 S3 Storage Service component supports 39 options, which are listed below.
+The AWS 2 S3 Storage Service component supports 40 options, which are listed below.
 
 
 
@@ -57,6 +57,7 @@ The AWS 2 S3 Storage Service component supports 39 options, which are listed bel
 | Name | Description | Default | Type
 | *amazonS3Client* (common) | Reference to a com.amazonaws.services.s3.AmazonS3 in the registry. |  | S3Client
 | *autoCreateBucket* (common) | Setting the autocreation of the bucket | true | boolean
+| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *configuration* (common) | The component configuration |  | AWS2S3Configuration
 | *overrideEndpoint* (common) | Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option | false | boolean
 | *pojoRequest* (common) | If we want to use a POJO request as body or not | false | boolean
@@ -126,7 +127,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (59 parameters):
+=== Query Parameters (60 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -134,6 +135,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *amazonS3Client* (common) | Reference to a com.amazonaws.services.s3.AmazonS3 in the registry. |  | S3Client
 | *autoCreateBucket* (common) | Setting the autocreation of the bucket | true | boolean
+| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *overrideEndpoint* (common) | Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option | false | boolean
 | *pojoRequest* (common) | If we want to use a POJO request as body or not | false | boolean
 | *policy* (common) | The policy for this queue to set in the com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method. |  | String
