@@ -1668,7 +1668,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path tableName
      */
-    static org.apache.camel.builder.endpoint.dsl.DdbEndpointBuilderFactory.DdbEndpointBuilder awsDdb(
+    public static org.apache.camel.builder.endpoint.dsl.DdbEndpointBuilderFactory.DdbEndpointBuilder awsDdb(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.DdbEndpointBuilderFactory.endpointBuilder("aws-ddb", path);
     }
@@ -1689,7 +1689,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path tableName
      */
-    static org.apache.camel.builder.endpoint.dsl.DdbEndpointBuilderFactory.DdbEndpointBuilder awsDdb(
+    public static org.apache.camel.builder.endpoint.dsl.DdbEndpointBuilderFactory.DdbEndpointBuilder awsDdb(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.DdbEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -2435,7 +2435,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.TranslateEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Azure Storage Blob Service (Legacy) (camel-azure)
+     * Azure Storage Blob Service (Deprecated) (camel-azure)
      * Store and retrieve blobs from Azure Storage Blob Service.
      * 
      * Category: cloud,file
@@ -2449,12 +2449,13 @@ public class StaticEndpointBuilders {
      * 
      * @param path containerOrBlobUri
      */
-    public static org.apache.camel.builder.endpoint.dsl.BlobServiceEndpointBuilderFactory.BlobServiceEndpointBuilder azureBlob(
+    @Deprecated
+    static org.apache.camel.builder.endpoint.dsl.BlobServiceEndpointBuilderFactory.BlobServiceEndpointBuilder azureBlob(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.BlobServiceEndpointBuilderFactory.endpointBuilder("azure-blob", path);
     }
     /**
-     * Azure Storage Blob Service (Legacy) (camel-azure)
+     * Azure Storage Blob Service (Deprecated) (camel-azure)
      * Store and retrieve blobs from Azure Storage Blob Service.
      * 
      * Category: cloud,file
@@ -2470,13 +2471,14 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path containerOrBlobUri
      */
-    public static org.apache.camel.builder.endpoint.dsl.BlobServiceEndpointBuilderFactory.BlobServiceEndpointBuilder azureBlob(
+    @Deprecated
+    static org.apache.camel.builder.endpoint.dsl.BlobServiceEndpointBuilderFactory.BlobServiceEndpointBuilder azureBlob(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.BlobServiceEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Azure Storage Queue Service (Legacy) (camel-azure)
+     * Azure Storage Queue Service (Deprecated) (camel-azure)
      * Store and retrieve messages from Azure Storage Queue Service.
      * 
      * Category: cloud,messaging
@@ -2490,12 +2492,13 @@ public class StaticEndpointBuilders {
      * 
      * @param path containerAndQueueUri
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.QueueServiceEndpointBuilderFactory.QueueServiceEndpointBuilder azureQueue(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.QueueServiceEndpointBuilderFactory.endpointBuilder("azure-queue", path);
     }
     /**
-     * Azure Storage Queue Service (Legacy) (camel-azure)
+     * Azure Storage Queue Service (Deprecated) (camel-azure)
      * Store and retrieve messages from Azure Storage Queue Service.
      * 
      * Category: cloud,messaging
@@ -2511,6 +2514,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path containerAndQueueUri
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.QueueServiceEndpointBuilderFactory.QueueServiceEndpointBuilder azureQueue(
             String componentName,
             String path) {

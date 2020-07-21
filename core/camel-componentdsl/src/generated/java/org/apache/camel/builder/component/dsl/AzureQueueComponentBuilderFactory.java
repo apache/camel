@@ -31,19 +31,20 @@ import org.apache.camel.component.azure.queue.QueueServiceComponent;
 public interface AzureQueueComponentBuilderFactory {
 
     /**
-     * Azure Storage Queue Service (Legacy) (camel-azure)
+     * Azure Storage Queue Service (Deprecated) (camel-azure)
      * Store and retrieve messages from Azure Storage Queue Service.
      * 
      * Category: cloud,messaging
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-azure
      */
+    @Deprecated
     static AzureQueueComponentBuilder azureQueue() {
         return new AzureQueueComponentBuilderImpl();
     }
 
     /**
-     * Builder for the Azure Storage Queue Service (Legacy) component.
+     * Builder for the Azure Storage Queue Service (Deprecated) component.
      */
     interface AzureQueueComponentBuilder
             extends

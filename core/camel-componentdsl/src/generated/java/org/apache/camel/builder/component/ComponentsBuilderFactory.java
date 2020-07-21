@@ -673,24 +673,26 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2TranslateComponentBuilderFactory.aws2Translate();
     }
     /**
-     * Azure Storage Blob Service (Legacy) (camel-azure)
+     * Azure Storage Blob Service (Deprecated) (camel-azure)
      * Store and retrieve blobs from Azure Storage Blob Service.
      * 
      * Category: cloud,file
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-azure
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AzureBlobComponentBuilderFactory.AzureBlobComponentBuilder azureBlob() {
         return org.apache.camel.builder.component.dsl.AzureBlobComponentBuilderFactory.azureBlob();
     }
     /**
-     * Azure Storage Queue Service (Legacy) (camel-azure)
+     * Azure Storage Queue Service (Deprecated) (camel-azure)
      * Store and retrieve messages from Azure Storage Queue Service.
      * 
      * Category: cloud,messaging
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-azure
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AzureQueueComponentBuilderFactory.AzureQueueComponentBuilder azureQueue() {
         return org.apache.camel.builder.component.dsl.AzureQueueComponentBuilderFactory.azureQueue();
     }

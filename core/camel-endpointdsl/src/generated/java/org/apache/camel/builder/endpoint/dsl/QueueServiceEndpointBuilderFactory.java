@@ -34,7 +34,7 @@ public interface QueueServiceEndpointBuilderFactory {
 
     /**
      * Builder for endpoint consumers for the Azure Storage Queue Service
-     * (Legacy) component.
+     * (Deprecated) component.
      */
     public interface QueueServiceEndpointConsumerBuilder
             extends
@@ -186,7 +186,7 @@ public interface QueueServiceEndpointBuilderFactory {
 
     /**
      * Advanced builder for endpoint consumers for the Azure Storage Queue
-     * Service (Legacy) component.
+     * Service (Deprecated) component.
      */
     public interface AdvancedQueueServiceEndpointConsumerBuilder
             extends
@@ -311,7 +311,7 @@ public interface QueueServiceEndpointBuilderFactory {
 
     /**
      * Builder for endpoint producers for the Azure Storage Queue Service
-     * (Legacy) component.
+     * (Deprecated) component.
      */
     public interface QueueServiceEndpointProducerBuilder
             extends
@@ -554,7 +554,7 @@ public interface QueueServiceEndpointBuilderFactory {
 
     /**
      * Advanced builder for endpoint producers for the Azure Storage Queue
-     * Service (Legacy) component.
+     * Service (Deprecated) component.
      */
     public interface AdvancedQueueServiceEndpointProducerBuilder
             extends
@@ -621,7 +621,7 @@ public interface QueueServiceEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the Azure Storage Queue Service (Legacy)
+     * Builder for endpoint for the Azure Storage Queue Service (Deprecated)
      * component.
      */
     public interface QueueServiceEndpointBuilder
@@ -735,7 +735,7 @@ public interface QueueServiceEndpointBuilderFactory {
 
     /**
      * Advanced builder for endpoint for the Azure Storage Queue Service
-     * (Legacy) component.
+     * (Deprecated) component.
      */
     public interface AdvancedQueueServiceEndpointBuilder
             extends
@@ -819,7 +819,7 @@ public interface QueueServiceEndpointBuilderFactory {
 
     public interface QueueServiceBuilders {
         /**
-         * Azure Storage Queue Service (Legacy) (camel-azure)
+         * Azure Storage Queue Service (Deprecated) (camel-azure)
          * Store and retrieve messages from Azure Storage Queue Service.
          * 
          * Category: cloud,messaging
@@ -833,11 +833,12 @@ public interface QueueServiceEndpointBuilderFactory {
          * 
          * @param path containerAndQueueUri
          */
+        @Deprecated
         default QueueServiceEndpointBuilder azureQueue(String path) {
             return QueueServiceEndpointBuilderFactory.endpointBuilder("azure-queue", path);
         }
         /**
-         * Azure Storage Queue Service (Legacy) (camel-azure)
+         * Azure Storage Queue Service (Deprecated) (camel-azure)
          * Store and retrieve messages from Azure Storage Queue Service.
          * 
          * Category: cloud,messaging
@@ -853,12 +854,14 @@ public interface QueueServiceEndpointBuilderFactory {
          * instead of the default name
          * @param path containerAndQueueUri
          */
+        @Deprecated
         default QueueServiceEndpointBuilder azureQueue(
                 String componentName,
                 String path) {
             return QueueServiceEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static QueueServiceEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
