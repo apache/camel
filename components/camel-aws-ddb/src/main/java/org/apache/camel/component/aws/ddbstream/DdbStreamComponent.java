@@ -52,7 +52,9 @@ public class DdbStreamComponent extends DefaultComponent {
         configuration.setTableName(remaining);
         DdbStreamEndpoint endpoint = new DdbStreamEndpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration);
+        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration);
+        }
         if (configuration.getAmazonDynamoDbStreamsClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonDDBStreamsClient or accessKey and secretKey must be specified");
         }
