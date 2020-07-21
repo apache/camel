@@ -21,8 +21,9 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.spi.UriPath;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class SalesforceEndpointTest {
 
@@ -36,9 +37,10 @@ public class SalesforceEndpointTest {
         String[] operationNamesInEnum = Arrays.stream(OperationName.values()).map(OperationName::value).toArray(length -> new String[length]);
         Arrays.sort(operationNamesInEnum);
 
-        Assert.assertArrayEquals("All operation values, the String value returned from OperationName::value, must be defined in the @UriPath "
+        assertArrayEquals(operationNamesInEnum, operationNamesInAnnotation,
+                "All operation values, the String value returned from OperationName::value, must be defined in the @UriPath "
                                  + "enum parameter of the operationName field in SalesforceEndpoint, set the enums parameter to:\n"
-                                 + Arrays.stream(operationNamesInEnum).collect(Collectors.joining(",")), operationNamesInEnum, operationNamesInAnnotation);
+                                 + Arrays.stream(operationNamesInEnum).collect(Collectors.joining(",")));
     }
 
 }

@@ -19,11 +19,11 @@ package org.apache.camel.component.salesforce.internal;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.dto.LoginToken;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class LoginTokenTest {
 
@@ -47,10 +47,10 @@ public class LoginTokenTest {
 
         // assert ObjectMapper deserialized the SF OAuth response and returned a
         // valid token back
-        assertNotNull("An invalid token was returned", token);
+        assertNotNull(token, "An invalid token was returned");
         // assert No exception was thrown during the JSON deserialization
         // process
-        assertNull("Exception was thrown during JSON deserialisation", e);
+        assertNull(e, "Exception was thrown during JSON deserialisation");
         // assert one of the token fields
         assertEquals("false", token.getIsReadOnly());
 

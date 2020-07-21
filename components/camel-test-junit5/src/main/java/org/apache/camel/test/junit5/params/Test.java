@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.salesforce;
+package org.apache.camel.test.junit5.params;
 
-import org.junit.jupiter.api.Tag;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-/**
- * JUnit group tag interface for tests that need to be run standalone, i.e. not
- * in parallel with other tests.
- */
-@Tag("standalone")
-public @interface Standalone {
-    // tag interface
+import org.junit.jupiter.api.TestTemplate;
+
+@Retention(RetentionPolicy.RUNTIME)
+@TestTemplate
+public @interface Test {
 }

@@ -34,25 +34,23 @@ import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient.ResponseCallback;
+import org.apache.camel.test.junit5.params.Parameter;
+import org.apache.camel.test.junit5.params.Parameterized;
+import org.apache.camel.test.junit5.params.Parameters;
+import org.apache.camel.test.junit5.params.Test;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.stubbing.Answer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 
-@RunWith(Parameterized.class)
+@Parameterized
 public class CamelSalesforceMojoOutputTest {
     private static final String TEST_CALCULATED_FORMULA_FILE = "complex_calculated_formula.json";
     private static final String TEST_CASE_FILE = "case.json";
@@ -72,12 +70,8 @@ public class CamelSalesforceMojoOutputTest {
     @Parameter(2)
     public Set<String> sources;
 
-    @Rule
-    public TemporaryFolder temp = new TemporaryFolder();
-
     @Test
-    public void testProcessDescription() throws Exception {
-        final File pkgDir = temp.newFolder();
+    public void testProcessDescription(@TempDir File pkgDir) throws Exception {
         final GenerateMojo.GeneratorUtility utility = mojo.new GeneratorUtility();
 
         final RestClient client = mockRestClient();
@@ -96,7 +90,7 @@ public class CamelSalesforceMojoOutputTest {
 
             final String expectedContent = IOUtils.toString(CamelSalesforceMojoOutputTest.class.getResource("/generated/" + expected), StandardCharsets.UTF_8);
 
-            Assert.assertEquals("Generated source file in " + source + " must be equal to the one present in test/resources/" + expected, expectedContent, generatedContent);
+            assertEquals(expectedContent, generatedContent, "Generated source file in " + source + " must be equal to the one present in test/resources/" + expected);
         }
     }
 

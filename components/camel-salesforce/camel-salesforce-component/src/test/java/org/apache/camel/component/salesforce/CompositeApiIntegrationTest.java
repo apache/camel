@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.googlecode.junittoolbox.ParallelParameterized;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
@@ -35,14 +34,15 @@ import org.apache.camel.component.salesforce.api.dto.composite.SObjectCompositeR
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectCompositeResult;
 import org.apache.camel.component.salesforce.api.utils.Version;
 import org.apache.camel.component.salesforce.dto.generated.Account;
+import org.apache.camel.test.junit5.params.Parameter;
+import org.apache.camel.test.junit5.params.Parameterized;
+import org.apache.camel.test.junit5.params.Parameters;
+import org.apache.camel.test.junit5.params.Test;
 import org.assertj.core.api.Assertions;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
-@RunWith(ParallelParameterized.class)
+@Parameterized
 public class CompositeApiIntegrationTest extends AbstractSalesforceTestBase {
 
     public static class Accounts extends AbstractQueryRecordsBase {
@@ -61,18 +61,17 @@ public class CompositeApiIntegrationTest extends AbstractSalesforceTestBase {
 
     private static final Set<String> VERSIONS = new HashSet<>(Arrays.asList("38.0", "41.0"));
 
+    @Parameter
+    private String format;
+
+    @Parameter(1)
+    private String version;
+
     private String accountId;
 
-    private final String compositeUri;
+    private String compositeUri;
 
-    private final String version;
-
-    public CompositeApiIntegrationTest(final String format, final String version) {
-        this.version = version;
-        compositeUri = "salesforce:composite?format=" + format;
-    }
-
-    @After
+    @AfterEach
     public void removeRecords() {
         try {
             template.sendBody("salesforce:deleteSObject?sObjectName=Account&sObjectId=" + accountId, null);
@@ -83,8 +82,10 @@ public class CompositeApiIntegrationTest extends AbstractSalesforceTestBase {
         template.request("direct:deleteBatchAccounts", null);
     }
 
-    @Before
+    @BeforeEach
     public void setupRecords() {
+        compositeUri = "salesforce:composite?format=" + format;
+
         final Account account = new Account();
         account.setName("Composite API Batch");
 

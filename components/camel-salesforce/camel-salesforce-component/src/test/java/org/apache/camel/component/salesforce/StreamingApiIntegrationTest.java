@@ -24,7 +24,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.apache.camel.component.salesforce.internal.dto.QueryRecordsPushTopic;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
 
@@ -48,7 +53,7 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
         merchandise.setPrice__c(9.99);
         merchandise.setTotal_Inventory__c(1000.0);
         CreateSObjectResult result = template().requestBody("direct:upsertSObject", merchandise, CreateSObjectResult.class);
-        assertTrue("Merchandise test record not created", result == null || result.getSuccess());
+        assertTrue(result == null || result.getSuccess(), "Merchandise test record not created");
 
         try {
             // wait for Salesforce notification
@@ -56,20 +61,20 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
             final Message in = mock.getExchanges().get(0).getIn();
             merchandise = in.getMandatoryBody(Merchandise__c.class);
 
-            assertNotNull("Missing event body", merchandise);
+            assertNotNull(merchandise, "Missing event body");
             log.info("Merchandise notification: {}", merchandise);
-            assertNotNull("Missing field Id", merchandise.getId());
-            assertNotNull("Missing field Name", merchandise.getName());
+            assertNotNull(merchandise.getId(), "Missing field Id");
+            assertNotNull(merchandise.getName(), "Missing field Name");
 
             // validate dynamic message headers
-            assertNotNull("Missing header CamelSalesforceClientId", in.getHeader("CamelSalesforceClientId"));
-            assertNotNull("Missing header CamelSalesforceEventType", in.getHeader("CamelSalesforceEventType"));
-            assertNotNull("Missing header CamelSalesforceCreatedDate", in.getHeader("CamelSalesforceCreatedDate"));
+            assertNotNull(in.getHeader("CamelSalesforceClientId"), "Missing header CamelSalesforceClientId");
+            assertNotNull(in.getHeader("CamelSalesforceEventType"), "Missing header CamelSalesforceEventType");
+            assertNotNull(in.getHeader("CamelSalesforceCreatedDate"), "Missing header CamelSalesforceCreatedDate");
 
             // validate raw payload message
             rawPayloadMock.assertIsSatisfied();
             final Message inRaw = rawPayloadMock.getExchanges().get(0).getIn();
-            assertTrue("Expected String message body for Raw Payload", inRaw.getBody() instanceof String);
+            assertTrue(inRaw.getBody() instanceof String, "Expected String message body for Raw Payload");
 
         } finally {
             // remove the test record
@@ -78,7 +83,7 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
             // remove the test topic
             // find it using SOQL first
             QueryRecordsPushTopic records = template().requestBody("direct:query", null, QueryRecordsPushTopic.class);
-            assertEquals("Test topic not found", 1, records.getTotalSize());
+            assertEquals(1, records.getTotalSize(), "Test topic not found");
             assertNull(template().requestBody("direct:deleteSObject", records.getRecords().get(0)));
 
         }

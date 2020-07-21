@@ -27,10 +27,10 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.http.HttpStatus;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -58,7 +58,7 @@ public class SalesforceSessionTest {
 
         final String jwtAssertion = session.generateJwtAssertion();
 
-        Assert.assertNotNull(jwtAssertion);
+        assertNotNull(jwtAssertion);
     }
 
     @Test

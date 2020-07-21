@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SalesforceHeadersIntegrationTest extends AbstractSalesforceTestBase {
 

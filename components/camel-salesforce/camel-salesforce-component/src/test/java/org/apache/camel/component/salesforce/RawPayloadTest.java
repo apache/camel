@@ -29,19 +29,20 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit5.params.Parameter;
+import org.apache.camel.test.junit5.params.Parameterized;
+import org.apache.camel.test.junit5.params.Parameters;
+import org.apache.camel.test.junit5.params.Test;
 import org.eclipse.jetty.http.HttpHeader;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
-@Category(Standalone.class)
-@RunWith(Parameterized.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@Standalone
+@Parameterized
 public class RawPayloadTest extends AbstractSalesforceTestBase {
 
     @Parameter
@@ -82,7 +83,7 @@ public class RawPayloadTest extends AbstractSalesforceTestBase {
         context().addComponent("salesforce", component);
     }
 
-    @AfterClass
+    @AfterAll
     public static void shutDownServer() throws IOException {
         // shutdown mock server
         if (server != null) {
@@ -90,7 +91,7 @@ public class RawPayloadTest extends AbstractSalesforceTestBase {
         }
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startServer() throws IOException {
 
         // create mock server
@@ -113,7 +114,7 @@ public class RawPayloadTest extends AbstractSalesforceTestBase {
         loginUrl = server.url("");
     }
 
-    @Before
+    @BeforeEach
     public void setupRequestResponse() {
         if (!format.equals(lastFormat)) {
             // expected response and test request
@@ -137,8 +138,8 @@ public class RawPayloadTest extends AbstractSalesforceTestBase {
     @Test
     public void testRestApi() throws Exception {
         final String responseBody = template().requestBodyAndHeaders(endpointUri, requestBody, headers, String.class);
-        assertNotNull("Null response for endpoint " + endpointUri, responseBody);
-        assertEquals("Unexpected response for endpoint " + endpointUri, expectedResponse, responseBody);
+        assertNotNull(responseBody, "Null response for endpoint " + endpointUri);
+        assertEquals(expectedResponse, responseBody, "Unexpected response for endpoint " + endpointUri);
     }
 
     @Override

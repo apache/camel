@@ -25,12 +25,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 import org.apache.camel.component.salesforce.api.dto.RecentItem;
 import org.apache.camel.component.salesforce.dto.generated.Account;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-@Category(Standalone.class)
+import static org.apache.camel.test.junit5.TestSupport.assertListSize;
+
+@Standalone
 public class RecentIntegrationTest extends AbstractSalesforceTestBase {
 
     public static class Accounts extends AbstractQueryRecordsBase {
@@ -49,12 +50,12 @@ public class RecentIntegrationTest extends AbstractSalesforceTestBase {
 
     private static final Object NOT_USED = null;
 
-    @After
+    @AfterEach
     public void deleteRecords() {
         template.sendBody("direct:delete-recent", NOT_USED);
     }
 
-    @Before
+    @BeforeEach
     public void setupTenRecentItems() {
         final List<Account> accounts = IntStream.range(0, 10).mapToObj(RecentIntegrationTest::account).collect(Collectors.toList());
 
