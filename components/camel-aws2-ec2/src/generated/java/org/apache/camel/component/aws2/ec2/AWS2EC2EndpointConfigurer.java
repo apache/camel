@@ -23,6 +23,8 @@ public class AWS2EC2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonec2client":
         case "amazonEc2Client": target.getConfiguration().setAmazonEc2Client(property(camelContext, software.amazon.awssdk.services.ec2.Ec2Client.class, value)); return true;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -51,6 +53,7 @@ public class AWS2EC2EndpointConfigurer extends PropertyConfigurerSupport impleme
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("accessKey", java.lang.String.class);
         answer.put("amazonEc2Client", software.amazon.awssdk.services.ec2.Ec2Client.class);
+        answer.put("autoDiscoverClient", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("operation", org.apache.camel.component.aws2.ec2.AWS2EC2Operations.class);
@@ -73,6 +76,8 @@ public class AWS2EC2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazonec2client":
         case "amazonEc2Client": return target.getConfiguration().getAmazonEc2Client();
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
