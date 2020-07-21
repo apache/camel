@@ -60,6 +60,21 @@ public interface Aws2CwComponentBuilderFactory {
             return this;
         }
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default Aws2CwComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * The component configuration.
          * 
          * The option is a:
@@ -263,6 +278,7 @@ public interface Aws2CwComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "amazonCwClient": getOrCreateConfiguration((Cw2Component) component).setAmazonCwClient((software.amazon.awssdk.services.cloudwatch.CloudWatchClient) value); return true;
+            case "autoDiscoverClient": getOrCreateConfiguration((Cw2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((Cw2Component) component).setConfiguration((org.apache.camel.component.aws2.cw.Cw2Configuration) value); return true;
             case "lazyStartProducer": ((Cw2Component) component).setLazyStartProducer((boolean) value); return true;
             case "name": getOrCreateConfiguration((Cw2Component) component).setName((java.lang.String) value); return true;
