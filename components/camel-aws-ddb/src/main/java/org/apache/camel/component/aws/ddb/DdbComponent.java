@@ -52,7 +52,9 @@ public class DdbComponent extends DefaultComponent {
         configuration.setTableName(remaining);
         DdbEndpoint endpoint = new DdbEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration);
+        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration);
+        }
         if (configuration.getAmazonDDBClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonDDBClient or accessKey and secretKey must be specified");
         }

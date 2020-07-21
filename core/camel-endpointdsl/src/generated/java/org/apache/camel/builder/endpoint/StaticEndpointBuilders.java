@@ -877,7 +877,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path namespace
      */
-    static org.apache.camel.builder.endpoint.dsl.Cw2EndpointBuilderFactory.Cw2EndpointBuilder aws2Cw(
+    public static org.apache.camel.builder.endpoint.dsl.Cw2EndpointBuilderFactory.Cw2EndpointBuilder aws2Cw(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Cw2EndpointBuilderFactory.endpointBuilder("aws2-cw", path);
     }
@@ -898,7 +898,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path namespace
      */
-    static org.apache.camel.builder.endpoint.dsl.Cw2EndpointBuilderFactory.Cw2EndpointBuilder aws2Cw(
+    public static org.apache.camel.builder.endpoint.dsl.Cw2EndpointBuilderFactory.Cw2EndpointBuilder aws2Cw(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Cw2EndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -1668,7 +1668,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path tableName
      */
-    public static org.apache.camel.builder.endpoint.dsl.DdbEndpointBuilderFactory.DdbEndpointBuilder awsDdb(
+    static org.apache.camel.builder.endpoint.dsl.DdbEndpointBuilderFactory.DdbEndpointBuilder awsDdb(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.DdbEndpointBuilderFactory.endpointBuilder("aws-ddb", path);
     }
@@ -1689,7 +1689,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path tableName
      */
-    public static org.apache.camel.builder.endpoint.dsl.DdbEndpointBuilderFactory.DdbEndpointBuilder awsDdb(
+    static org.apache.camel.builder.endpoint.dsl.DdbEndpointBuilderFactory.DdbEndpointBuilder awsDdb(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.DdbEndpointBuilderFactory.endpointBuilder(componentName, path);
