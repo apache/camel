@@ -35,7 +35,7 @@ public interface BlobServiceEndpointBuilderFactory {
 
     /**
      * Builder for endpoint consumers for the Azure Storage Blob Service
-     * (Legacy) component.
+     * (Deprecated) component.
      */
     public interface BlobServiceEndpointConsumerBuilder
             extends
@@ -350,7 +350,7 @@ public interface BlobServiceEndpointBuilderFactory {
 
     /**
      * Advanced builder for endpoint consumers for the Azure Storage Blob
-     * Service (Legacy) component.
+     * Service (Deprecated) component.
      */
     public interface AdvancedBlobServiceEndpointConsumerBuilder
             extends
@@ -475,7 +475,7 @@ public interface BlobServiceEndpointBuilderFactory {
 
     /**
      * Builder for endpoint producers for the Azure Storage Blob Service
-     * (Legacy) component.
+     * (Deprecated) component.
      */
     public interface BlobServiceEndpointProducerBuilder
             extends
@@ -935,7 +935,7 @@ public interface BlobServiceEndpointBuilderFactory {
 
     /**
      * Advanced builder for endpoint producers for the Azure Storage Blob
-     * Service (Legacy) component.
+     * Service (Deprecated) component.
      */
     public interface AdvancedBlobServiceEndpointProducerBuilder
             extends
@@ -1002,7 +1002,7 @@ public interface BlobServiceEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the Azure Storage Blob Service (Legacy)
+     * Builder for endpoint for the Azure Storage Blob Service (Deprecated)
      * component.
      */
     public interface BlobServiceEndpointBuilder
@@ -1274,8 +1274,8 @@ public interface BlobServiceEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Azure Storage Blob Service (Legacy)
-     * component.
+     * Advanced builder for endpoint for the Azure Storage Blob Service
+     * (Deprecated) component.
      */
     public interface AdvancedBlobServiceEndpointBuilder
             extends
@@ -1376,7 +1376,7 @@ public interface BlobServiceEndpointBuilderFactory {
 
     public interface BlobServiceBuilders {
         /**
-         * Azure Storage Blob Service (Legacy) (camel-azure)
+         * Azure Storage Blob Service (Deprecated) (camel-azure)
          * Store and retrieve blobs from Azure Storage Blob Service.
          * 
          * Category: cloud,file
@@ -1390,11 +1390,12 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * @param path containerOrBlobUri
          */
+        @Deprecated
         default BlobServiceEndpointBuilder azureBlob(String path) {
             return BlobServiceEndpointBuilderFactory.endpointBuilder("azure-blob", path);
         }
         /**
-         * Azure Storage Blob Service (Legacy) (camel-azure)
+         * Azure Storage Blob Service (Deprecated) (camel-azure)
          * Store and retrieve blobs from Azure Storage Blob Service.
          * 
          * Category: cloud,file
@@ -1410,12 +1411,14 @@ public interface BlobServiceEndpointBuilderFactory {
          * instead of the default name
          * @param path containerOrBlobUri
          */
+        @Deprecated
         default BlobServiceEndpointBuilder azureBlob(
                 String componentName,
                 String path) {
             return BlobServiceEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static BlobServiceEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

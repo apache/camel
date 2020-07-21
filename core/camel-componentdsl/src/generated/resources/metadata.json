@@ -1223,9 +1223,9 @@
   "AzureBlobComponentBuilderFactory": {
     "kind": "component",
     "name": "azure-blob",
-    "title": "Azure Storage Blob Service (Legacy)",
+    "title": "Azure Storage Blob Service (Deprecated)",
     "description": "Store and retrieve blobs from Azure Storage Blob Service.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.19.0",
     "label": "cloud,file",
     "javaType": "org.apache.camel.component.azure.blob.BlobServiceComponent",
@@ -1244,9 +1244,9 @@
   "AzureQueueComponentBuilderFactory": {
     "kind": "component",
     "name": "azure-queue",
-    "title": "Azure Storage Queue Service (Legacy)",
+    "title": "Azure Storage Queue Service (Deprecated)",
     "description": "Store and retrieve messages from Azure Storage Queue Service.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.19.0",
     "label": "cloud,messaging",
     "javaType": "org.apache.camel.component.azure.queue.QueueServiceComponent",
