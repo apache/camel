@@ -19,9 +19,13 @@ package org.apache.camel.component.salesforce;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
 import org.apache.camel.component.salesforce.dto.generated.Account;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test support for Salesforce compound data types. This test requires a custom
@@ -70,7 +74,7 @@ public class CompoundTypesIntegrationTest extends AbstractSalesforceTestBase {
 
         CreateSObjectResult result = template().requestBody("direct:createSObject" + suffix, account, CreateSObjectResult.class);
         assertNotNull(result);
-        assertTrue("Create success", result.getSuccess());
+        assertTrue(result.getSuccess(), "Create success");
         LOG.debug("Create: " + result);
 
         try {
@@ -78,9 +82,9 @@ public class CompoundTypesIntegrationTest extends AbstractSalesforceTestBase {
             // get account with compound fields
             account = template().requestBody("direct:getSObject" + suffix, result.getId(), Account.class);
             assertNotNull(account);
-            assertNotNull("Billing Address", account.getBillingAddress());
-            assertNotNull("Shipping Address", account.getShippingAddress());
-            assertNotNull("Shipping Location", account.getShippingAddress());
+            assertNotNull(account.getBillingAddress(), "Billing Address");
+            assertNotNull(account.getShippingAddress(), "Shipping Address");
+            assertNotNull(account.getShippingAddress(), "Shipping Location");
 
             LOG.debug("Retrieved fields billing address: {}, shipping location: {}", account.getBillingAddress(), account.getShipping_Location__c());
 

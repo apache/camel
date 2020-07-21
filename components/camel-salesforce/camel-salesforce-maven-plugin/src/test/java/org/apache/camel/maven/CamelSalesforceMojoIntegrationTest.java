@@ -31,7 +31,7 @@ import com.google.testing.compile.Compiler;
 import com.google.testing.compile.JavaFileObjects;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 
 import static org.apache.camel.maven.AbstractSalesforceMojoIntegrationTest.setup;

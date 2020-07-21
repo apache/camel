@@ -18,7 +18,7 @@ package org.apache.camel.component.salesforce.api.utils;
 
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
 import org.apache.camel.component.salesforce.dto.generated.Account;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

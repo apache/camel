@@ -24,9 +24,9 @@ import com.thoughtworks.xstream.XStream;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.Action;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ApprovalRequestsTest {
 
@@ -82,7 +82,7 @@ public class ApprovalRequestsTest {
 
         final String serialized = mapper.writerFor(ApprovalRequests.class).writeValueAsString(requests);
 
-        assertEquals("Approval requests should serialize as JSON", json, serialized);
+        assertEquals(json, serialized, "Approval requests should serialize as JSON");
     }
 
     @Test
@@ -112,6 +112,6 @@ public class ApprovalRequestsTest {
 
         final String serialized = xStream.toXML(requests);
 
-        assertEquals("Approval requests should serialize as XML", xml, serialized);
+        assertEquals(xml, serialized, "Approval requests should serialize as XML");
     }
 }

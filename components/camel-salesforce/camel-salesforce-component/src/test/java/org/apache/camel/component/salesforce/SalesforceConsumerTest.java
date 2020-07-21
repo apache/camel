@@ -32,11 +32,11 @@ import org.apache.camel.spi.ClassResolver;
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.common.HashMapMessage;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -47,7 +47,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class SalesforceConsumerTest {
 
     public static class AccountUpdates {
@@ -96,7 +96,7 @@ public class SalesforceConsumerTest {
     @Mock
     private Map<String, Object> mockChangeEventMap;
 
-    @Before
+    @BeforeEach
     public void setupMocks() {
         when(endpoint.getConfiguration()).thenReturn(configuration);
         when(endpoint.createExchange()).thenReturn(exchange);

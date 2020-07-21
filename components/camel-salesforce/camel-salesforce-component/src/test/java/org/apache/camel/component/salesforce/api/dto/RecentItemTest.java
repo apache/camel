@@ -21,13 +21,12 @@ import java.io.IOException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class RecentItemTest {
 
     @Test
@@ -48,15 +47,15 @@ public class RecentItemTest {
 
         final RecentItem recentItem = (RecentItem)read;
 
-        assertEquals("RecentItem.Id should be deserialized", recentItem.getId(), "a06U000000CelH0IAJ");
+        assertEquals("a06U000000CelH0IAJ", recentItem.getId(), "RecentItem.Id should be deserialized");
 
-        assertEquals("RecentItem.Name should be deserialized", recentItem.getName(), "Acme");
+        assertEquals("Acme", recentItem.getName(), "RecentItem.Name should be deserialized");
 
-        assertNotNull("RecentItem.attributes should be deserialized", recentItem.getAttributes());
+        assertNotNull(recentItem.getAttributes(), "RecentItem.attributes should be deserialized");
 
-        assertEquals("RecentItem.attributes.type should be deserialized", recentItem.getAttributes().getType(), "Account");
+        assertEquals("Account", recentItem.getAttributes().getType(), "RecentItem.attributes.type should be deserialized");
 
-        assertEquals("RecentItem.attributes.url should be deserialized", recentItem.getAttributes().getUrl(), "/services/data/v28.0/sobjects/Account/a06U000000CelH0IAJ");
+        assertEquals("/services/data/v28.0/sobjects/Account/a06U000000CelH0IAJ", recentItem.getAttributes().getUrl(), "RecentItem.attributes.url should be deserialized");
 
     }
 }

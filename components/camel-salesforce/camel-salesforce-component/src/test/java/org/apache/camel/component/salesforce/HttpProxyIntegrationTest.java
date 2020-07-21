@@ -29,27 +29,28 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.dto.Version;
 import org.apache.camel.component.salesforce.api.dto.Versions;
+import org.apache.camel.test.junit5.params.Parameter;
+import org.apache.camel.test.junit5.params.Parameterized;
+import org.apache.camel.test.junit5.params.Parameters;
+import org.apache.camel.test.junit5.params.Test;
 import org.eclipse.jetty.proxy.ConnectHandler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.B64Code;
 import org.eclipse.jetty.util.StringUtil;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.BeforeAll;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.eclipse.jetty.http.HttpHeader.PROXY_AUTHENTICATE;
 import static org.eclipse.jetty.http.HttpHeader.PROXY_AUTHORIZATION;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test HTTP proxy configuration for Salesforce component.
  */
-@RunWith(Parameterized.class)
+@Parameterized
 public class HttpProxyIntegrationTest extends AbstractSalesforceTestBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpProxyIntegrationTest.class);
@@ -63,8 +64,8 @@ public class HttpProxyIntegrationTest extends AbstractSalesforceTestBase {
 
     private static final AtomicBoolean WENT_THROUGH_PROXY = new AtomicBoolean();
 
-    @Parameter(0)
-    public Consumer<SalesforceComponent> configurationMethod;
+    @Parameter
+    private Consumer<SalesforceComponent> configurationMethod;
 
     @Parameters
     public static Iterable<Consumer<SalesforceComponent>> methods() {
@@ -76,7 +77,7 @@ public class HttpProxyIntegrationTest extends AbstractSalesforceTestBase {
         doTestGetVersions("");
         doTestGetVersions("Xml");
 
-        assertTrue("Should have gone through the test proxy", WENT_THROUGH_PROXY.get());
+        assertTrue(WENT_THROUGH_PROXY.get(), "Should have gone through the test proxy");
     }
 
     @SuppressWarnings("unchecked")
@@ -94,7 +95,7 @@ public class HttpProxyIntegrationTest extends AbstractSalesforceTestBase {
         LOG.debug("Versions: {}", versions);
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setupServer() throws Exception {
         // start a local HTTP proxy using Jetty server
         server = new Server();

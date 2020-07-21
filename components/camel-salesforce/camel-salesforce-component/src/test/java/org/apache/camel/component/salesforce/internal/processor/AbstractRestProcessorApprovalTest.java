@@ -37,10 +37,10 @@ import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -141,8 +141,8 @@ public class AbstractRestProcessorApprovalTest {
             sendBodyAndHeader(Collections.EMPTY_LIST, null);
             fail("SalesforceException should be thrown");
         } catch (final SalesforceException e) {
-            assertEquals("Exception should be about not giving a body or a header", "Missing approval parameter in header or ApprovalRequest or List of ApprovalRequests body",
-                         e.getMessage());
+            assertEquals("Missing approval parameter in header or ApprovalRequest or List of ApprovalRequests body",
+                         e.getMessage(), "Exception should be about not giving a body or a header");
         }
     }
 
@@ -152,8 +152,8 @@ public class AbstractRestProcessorApprovalTest {
             sendBodyAndHeader(null, null);
             fail("SalesforceException should be thrown");
         } catch (final SalesforceException e) {
-            assertEquals("Exception should be about not giving a body or a header", "Missing approval parameter in header or ApprovalRequest or List of ApprovalRequests body",
-                         e.getMessage());
+            assertEquals("Missing approval parameter in header or ApprovalRequest or List of ApprovalRequests body",
+                         e.getMessage(), "Exception should be about not giving a body or a header");
         }
     }
 
