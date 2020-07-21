@@ -14514,6 +14514,47 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.VertxEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Vert.x HTTP Client (camel-vertx-http)
+     * Camel HTTP client support with Vert.x
+     * 
+     * Category: http
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-vertx-http
+     * 
+     * Syntax: <code>vertx-http:httpUri</code>
+     * 
+     * Path parameter: httpUri (required)
+     * The HTTP URI to connect to
+     * 
+     * @param path httpUri
+     */
+    static org.apache.camel.builder.endpoint.dsl.VertxHttpEndpointBuilderFactory.VertxHttpEndpointBuilder vertxHttp(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.VertxHttpEndpointBuilderFactory.endpointBuilder("vertx-http", path);
+    }
+    /**
+     * Vert.x HTTP Client (camel-vertx-http)
+     * Camel HTTP client support with Vert.x
+     * 
+     * Category: http
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-vertx-http
+     * 
+     * Syntax: <code>vertx-http:httpUri</code>
+     * 
+     * Path parameter: httpUri (required)
+     * The HTTP URI to connect to
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path httpUri
+     */
+    static org.apache.camel.builder.endpoint.dsl.VertxHttpEndpointBuilderFactory.VertxHttpEndpointBuilder vertxHttp(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.VertxHttpEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Vert.x WebSocket (camel-vertx-websocket)
      * Camel WebSocket support with Vert.x
      * 

@@ -3755,6 +3755,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.VertxComponentBuilderFactory.vertx();
     }
     /**
+     * Vert.x HTTP Client (camel-vertx-http)
+     * Camel HTTP client support with Vert.x
+     * 
+     * Category: http
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-vertx-http
+     */
+    static org.apache.camel.builder.component.dsl.VertxHttpComponentBuilderFactory.VertxHttpComponentBuilder vertxHttp() {
+        return org.apache.camel.builder.component.dsl.VertxHttpComponentBuilderFactory.vertxHttp();
+    }
+    /**
      * Vert.x WebSocket (camel-vertx-websocket)
      * Camel WebSocket support with Vert.x
      * 
