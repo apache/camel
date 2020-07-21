@@ -126,7 +126,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
         String data = exchangeFormatter.format(exchange);
         sb.append(data);
         String out = sb.toString();
-        LOG.info(out);
+        dumpTrace(out);
     }
 
     @Override
