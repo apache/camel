@@ -35,27 +35,20 @@ import org.apache.camel.util.ObjectHelper;
 public class ArangoDbEndpoint extends DefaultEndpoint {
     private ArangoDB arango;
 
-    @UriPath
+    @UriPath(description = "database name")
     @Metadata(required = true)
     private String database;
+
     @UriParam
-    private String host;
-    @UriParam
-    private int port;
-    @UriParam(label = "security", secret = true)
-    private String user;
-    @UriParam(label = "security", secret = true)
-    private String password;
-    @UriParam
-    private String collection;
-    @UriParam
-    private ArangoDbOperation operation;
+    private ArangoDbConfiguration configuration;
+
 
     public ArangoDbEndpoint() {
     }
 
-    public ArangoDbEndpoint(String uri, ArangoDbComponent component) {
+    public ArangoDbEndpoint(String uri, ArangoDbComponent component, ArangoDbConfiguration configuration) {
         super(uri, component);
+        this.configuration = configuration;
     }
 
     public Producer createProducer() {
@@ -66,19 +59,6 @@ public class ArangoDbEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("You cannot receive messages at this endpoint: " + getEndpointUri());
     }
 
-    public String getDatabase() {
-        return database;
-    }
-
-    /**
-     * database name
-     *
-     * @param database
-     */
-    public void setDatabase(String database) {
-        this.database = database;
-    }
-
     public ArangoDB getArango() {
         return arango;
     }
@@ -87,83 +67,12 @@ public class ArangoDbEndpoint extends DefaultEndpoint {
         this.arango = arango;
     }
 
-    public String getHost() {
-        return host;
+    public ArangoDbConfiguration getConfiguration() {
+        return configuration;
     }
 
-    /**
-     * host if host and/or port different from default
-     *
-     * @param host
-     */
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    /**
-     * port if  host and/or port different from default
-     *
-     * @param port
-     */
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    /**
-     * user if user and/or password different from default
-     *
-     * @param user
-     */
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * password if user and/or password different from default
-     *
-     * @param password
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-
-    public String getCollection() {
-        return collection;
-    }
-
-    /**
-     * collection in the database
-     *
-     * @param collection
-     */
-    public void setCollection(String collection) {
-        this.collection = collection;
-    }
-
-    public ArangoDbOperation getOperation() {
-        return operation;
-    }
-
-    /**
-     * operation to perform
-     *
-     * @param operation
-     */
-    public void setOperation(ArangoDbOperation operation) {
-        this.operation = operation;
+    public void setConfiguration(ArangoDbConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     @Override
@@ -174,12 +83,12 @@ public class ArangoDbEndpoint extends DefaultEndpoint {
 
             final ArangoDB.Builder builder = new ArangoDB.Builder();
 
-            if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
-                builder.host(host, port);
+            if (ObjectHelper.isNotEmpty(configuration.getHost()) && ObjectHelper.isNotEmpty(configuration.getPort())) {
+                builder.host(configuration.getHost(), configuration.getPort());
             }
 
-            if (ObjectHelper.isNotEmpty(user) && ObjectHelper.isNotEmpty(password)) {
-                builder.user(user).password(password);
+            if (ObjectHelper.isNotEmpty(configuration.getUser()) && ObjectHelper.isNotEmpty(configuration.getPassword())) {
+                builder.user(configuration.getUser()).password(configuration.getPassword());
             }
 
             arango = builder.build();
