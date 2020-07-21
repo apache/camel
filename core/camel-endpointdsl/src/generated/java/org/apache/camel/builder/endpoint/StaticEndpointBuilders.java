@@ -12827,7 +12827,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path destinationType:destinationName
      */
-    static org.apache.camel.builder.endpoint.dsl.Sjms2EndpointBuilderFactory.Sjms2EndpointBuilder sjms2(
+    public static org.apache.camel.builder.endpoint.dsl.Sjms2EndpointBuilderFactory.Sjms2EndpointBuilder sjms2(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Sjms2EndpointBuilderFactory.endpointBuilder("sjms2", path);
     }
@@ -12855,7 +12855,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path destinationType:destinationName
      */
-    static org.apache.camel.builder.endpoint.dsl.Sjms2EndpointBuilderFactory.Sjms2EndpointBuilder sjms2(
+    public static org.apache.camel.builder.endpoint.dsl.Sjms2EndpointBuilderFactory.Sjms2EndpointBuilder sjms2(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Sjms2EndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -15471,7 +15471,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path serverUrls/path
      */
-    public static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
+    static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder("zookeeper", path);
     }
@@ -15495,7 +15495,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path serverUrls/path
      */
-    public static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
+    static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder(componentName, path);
