@@ -2160,7 +2160,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path //bucketNameOrArn
      */
-    public static org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.S3EndpointBuilder awsS3(
+    static org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.S3EndpointBuilder awsS3(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.endpointBuilder("aws-s3", path);
     }
@@ -2181,7 +2181,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path //bucketNameOrArn
      */
-    public static org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.S3EndpointBuilder awsS3(
+    static org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.S3EndpointBuilder awsS3(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -15471,7 +15471,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path serverUrls/path
      */
-    static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
+    public static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder("zookeeper", path);
     }
@@ -15495,7 +15495,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path serverUrls/path
      */
-    static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
+    public static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -34,6 +34,8 @@ public class S3ComponentConfigurer extends PropertyConfigurerSupport implements 
         case "amazonS3Client": getOrCreateConfiguration(target).setAmazonS3Client(property(camelContext, com.amazonaws.services.s3.AmazonS3.class, value)); return true;
         case "autocreatebucket":
         case "autoCreateBucket": getOrCreateConfiguration(target).setAutoCreateBucket(property(camelContext, boolean.class, value)); return true;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "autoclosebody":
         case "autocloseBody": getOrCreateConfiguration(target).setAutocloseBody(property(camelContext, boolean.class, value)); return true;
         case "awskmskeyid":
@@ -107,6 +109,7 @@ public class S3ComponentConfigurer extends PropertyConfigurerSupport implements 
         answer.put("accessKey", java.lang.String.class);
         answer.put("amazonS3Client", com.amazonaws.services.s3.AmazonS3.class);
         answer.put("autoCreateBucket", boolean.class);
+        answer.put("autoDiscoverClient", boolean.class);
         answer.put("autocloseBody", boolean.class);
         answer.put("awsKMSKeyId", java.lang.String.class);
         answer.put("basicPropertyBinding", boolean.class);
@@ -156,6 +159,8 @@ public class S3ComponentConfigurer extends PropertyConfigurerSupport implements 
         case "amazonS3Client": return getOrCreateConfiguration(target).getAmazonS3Client();
         case "autocreatebucket":
         case "autoCreateBucket": return getOrCreateConfiguration(target).isAutoCreateBucket();
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
         case "autoclosebody":
         case "autocloseBody": return getOrCreateConfiguration(target).isAutocloseBody();
         case "awskmskeyid":

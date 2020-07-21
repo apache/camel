@@ -98,6 +98,8 @@ public class S3Configuration implements Cloneable {
     private boolean useIAMCredentials;
     @UriParam(label = "producer")
     private String keyName;
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean autoDiscoverClient = true;
 
     public long getPartSize() {
         return partSize;
@@ -518,7 +520,18 @@ public class S3Configuration implements Cloneable {
         this.keyName = keyName;
     }
 
-    public boolean hasProxyConfiguration() {
+    public boolean isAutoDiscoverClient() {
+		return autoDiscoverClient;
+	}
+
+    /**
+     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking.
+     */
+	public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+		this.autoDiscoverClient = autoDiscoverClient;
+	}
+
+	public boolean hasProxyConfiguration() {
         return ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort());
     }
 
