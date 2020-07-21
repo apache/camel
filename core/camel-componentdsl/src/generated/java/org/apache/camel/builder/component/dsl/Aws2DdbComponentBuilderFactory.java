@@ -62,6 +62,21 @@ public interface Aws2DdbComponentBuilderFactory {
             return this;
         }
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default Aws2DdbComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * The component configuration.
          * 
          * The option is a:
@@ -297,6 +312,7 @@ public interface Aws2DdbComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "amazonDDBClient": getOrCreateConfiguration((Ddb2Component) component).setAmazonDDBClient((software.amazon.awssdk.services.dynamodb.DynamoDbClient) value); return true;
+            case "autoDiscoverClient": getOrCreateConfiguration((Ddb2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((Ddb2Component) component).setConfiguration((org.apache.camel.component.aws2.ddb.Ddb2Configuration) value); return true;
             case "consistentRead": getOrCreateConfiguration((Ddb2Component) component).setConsistentRead((boolean) value); return true;
             case "keyAttributeName": getOrCreateConfiguration((Ddb2Component) component).setKeyAttributeName((java.lang.String) value); return true;
