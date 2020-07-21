@@ -7,7 +7,7 @@
 [![Twitter](https://img.shields.io/twitter/follow/ApacheCamel.svg?label=Follow&style=social)](https://twitter.com/ApacheCamel)
  
 
-[Apache Camel](http://camel.apache.org/) is a powerful open source integration framework based on known
+[Apache Camel](http://camel.apache.org/) is a powerful open-source integration framework based on known
 Enterprise Integration Patterns with powerful bean integration.
 
 ### Introduction
@@ -16,25 +16,25 @@ Camel lets you create the Enterprise Integration Patterns to implement routing
 and mediation rules in either a Java based Domain Specific Language (or Fluent API),
 via Spring or Blueprint based Xml Configuration files, or via the Scala DSL.
 This means you get smart completion of routing rules in your IDE whether
-in your Java, Scala or XML editor.
+in your Java, Scala, or XML editor.
 
 Apache Camel uses URIs so that it can easily work directly with any kind of
 transport or messaging model such as HTTP, ActiveMQ, JMS, JBI, SCA, MINA
 or CXF together with working with pluggable Data Format options.
-Apache Camel is a small library which has minimal dependencies for easy embedding
+Apache Camel is a small library that has minimal dependencies for easy embedding
 in any Java application. Apache Camel lets you work with the same API regardless
-which kind of transport used, so learn the API once and you will be able to
-interact with all the Components that is provided out-of-the-box.
+of which kind of transport used, so learn the API once and you will be able to
+interact with all the Components that are provided out-of-the-box.
 
-Apache Camel has powerful Bean Binding and integrated seamless with
-popular frameworks such as Spring, CDI and Blueprint.
+Apache Camel has powerful Bean Binding and integrated seamlessly with
+popular frameworks such as Spring, CDI, and Blueprint.
 
 Apache Camel has extensive testing support allowing you to easily
 unit test your routes.
 
 ## Components
 
-Apache Camel comes with a lot of artifacts with components, data formats, languages and various other kinds.
+Apache Camel comes with a lot of artifacts with components, data formats, languages, and various other kinds.
 The up to date list is available online at the Camel website:
 
 * Components: <https://camel.apache.org/components/latest/>
@@ -45,7 +45,7 @@ The up to date list is available online at the Camel website:
 ## Examples
 
 Apache Camel comes with many examples.
-The up to date list is available online at github:
+The up to date list is available online at GitHub:
 
 * Examples: <https://github.com/apache/camel/tree/master/examples#examples>
 
@@ -72,7 +72,7 @@ We welcome contributions of all kinds, for details of how you can help
 <https://github.com/apache/camel/blob/master/CONTRIBUTING.md>
 
 Please refer to the website for details of finding the issue tracker, 
-email lists, github, chat
+email lists, GitHub, chat
   
 Website: <http://camel.apache.org/>
 
