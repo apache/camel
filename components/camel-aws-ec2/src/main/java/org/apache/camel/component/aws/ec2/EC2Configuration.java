@@ -46,6 +46,8 @@ public class EC2Configuration implements Cloneable {
     private Integer proxyPort;
     @UriParam
     private String region;
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean autoDiscoverClient = true;
     
     public AmazonEC2 getAmazonEc2Client() {
         return amazonEc2Client;
@@ -138,6 +140,19 @@ public class EC2Configuration implements Cloneable {
      */
     public void setRegion(String region) {
         this.region = region;
+    }
+    
+    public boolean isAutoDiscoverClient() {
+        return autoDiscoverClient;
+    }
+
+    /**
+     * Setting the autoDiscoverClient mechanism, if true, the component will
+     * look for a client instance in the registry automatically otherwise it
+     * will skip that checking.
+     */
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
     }
     
     // *************************************************
