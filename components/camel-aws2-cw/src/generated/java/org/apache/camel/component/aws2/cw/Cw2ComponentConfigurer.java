@@ -30,6 +30,8 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazoncwclient":
         case "amazonCwClient": getOrCreateConfiguration(target).setAmazonCwClient(property(camelContext, software.amazon.awssdk.services.cloudwatch.CloudWatchClient.class, value)); return true;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.cw.Cw2Configuration.class, value)); return true;
@@ -59,6 +61,7 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("accessKey", java.lang.String.class);
         answer.put("amazonCwClient", software.amazon.awssdk.services.cloudwatch.CloudWatchClient.class);
+        answer.put("autoDiscoverClient", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("configuration", org.apache.camel.component.aws2.cw.Cw2Configuration.class);
         answer.put("lazyStartProducer", boolean.class);
@@ -83,6 +86,8 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazoncwclient":
         case "amazonCwClient": return getOrCreateConfiguration(target).getAmazonCwClient();
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "configuration": return target.getConfiguration();
