@@ -61,6 +61,9 @@ public class Ddb2StreamConfiguration implements Cloneable {
     private Integer proxyPort;
     @UriParam(defaultValue = "false", description = "If we want to trust all certificates in case of overriding the endpoint")
     private boolean trustAllCertificates;
+    @UriParam(label = "common", defaultValue = "true", description = "Setting the autoDiscoverClient mechanism, if true, the component will "  
+            + " look for a client instance in the registry automatically otherwise it will skip that checking")
+    private boolean autoDiscoverClient = true;
 
     public DynamoDbStreamsClient getAmazonDynamoDbStreamsClient() {
         return amazonDynamoDbStreamsClient;
@@ -156,6 +159,14 @@ public class Ddb2StreamConfiguration implements Cloneable {
 
     public void setTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
+    }
+    
+    public boolean isAutoDiscoverClient() {
+        return autoDiscoverClient;
+    }
+
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
     }
 
     // *************************************************

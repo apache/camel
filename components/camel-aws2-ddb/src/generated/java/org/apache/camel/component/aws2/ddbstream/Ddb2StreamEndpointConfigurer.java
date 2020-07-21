@@ -23,6 +23,8 @@ public class Ddb2StreamEndpointConfigurer extends PropertyConfigurerSupport impl
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazondynamodbstreamsclient":
         case "amazonDynamoDbStreamsClient": target.getConfiguration().setAmazonDynamoDbStreamsClient(property(camelContext, software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient.class, value)); return true;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
         case "backoffidlethreshold":
@@ -87,6 +89,7 @@ public class Ddb2StreamEndpointConfigurer extends PropertyConfigurerSupport impl
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("accessKey", java.lang.String.class);
         answer.put("amazonDynamoDbStreamsClient", software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient.class);
+        answer.put("autoDiscoverClient", boolean.class);
         answer.put("backoffErrorThreshold", int.class);
         answer.put("backoffIdleThreshold", int.class);
         answer.put("backoffMultiplier", int.class);
@@ -128,6 +131,8 @@ public class Ddb2StreamEndpointConfigurer extends PropertyConfigurerSupport impl
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazondynamodbstreamsclient":
         case "amazonDynamoDbStreamsClient": return target.getConfiguration().getAmazonDynamoDbStreamsClient();
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":
