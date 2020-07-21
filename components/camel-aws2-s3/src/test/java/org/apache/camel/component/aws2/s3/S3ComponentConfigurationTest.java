@@ -19,7 +19,11 @@ package org.apache.camel.component.aws2.s3;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import software.amazon.awssdk.services.s3.S3Client;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class S3ComponentConfigurationTest extends CamelTestSupport {
@@ -31,5 +35,27 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
             .createEndpoint("aws2-s3://TestDomain?accessKey=xxx&secretKey=yyy&region=us-west-1&overrideEndpoint=true&uriEndpointOverride=http://localhost:4572");
         assertTrue(endpoint.getConfiguration().isOverrideEndpoint());
         assertEquals(endpoint.getConfiguration().getUriEndpointOverride(), "http://localhost:4572");
+    }
+    
+    @Test
+    public void createEndpointWithCredentialsAndClientExistInRegistry() throws Exception {
+    	S3Client client = S3Client.builder().build();
+        context.getRegistry().bind("amazonS3Client", client);
+        AWS2S3Component component = context.getComponent("aws2-s3", AWS2S3Component.class);
+        AWS2S3Endpoint endpoint = (AWS2S3Endpoint)component.createEndpoint("aws2-s3://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)&autoDiscoverClient=false");
+
+        assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
+        assertNotSame(client, endpoint.getConfiguration().getAmazonS3Client());
+    }
+    
+    @Test
+    public void createEndpointWithCredentialsAndClientExistInRegistryWithAutodiscover() throws Exception {
+    	S3Client client = S3Client.builder().build();
+        context.getRegistry().bind("amazonS3Client", client);
+        AWS2S3Component component = context.getComponent("aws2-s3", AWS2S3Component.class);
+        AWS2S3Endpoint endpoint = (AWS2S3Endpoint)component.createEndpoint("aws2-s3://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)");
+
+        assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
+        assertSame(client, endpoint.getConfiguration().getAmazonS3Client());
     }
 }

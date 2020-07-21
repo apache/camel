@@ -25,6 +25,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "amazonS3Client": target.getConfiguration().setAmazonS3Client(property(camelContext, software.amazon.awssdk.services.s3.S3Client.class, value)); return true;
         case "autocreatebucket":
         case "autoCreateBucket": target.getConfiguration().setAutoCreateBucket(property(camelContext, boolean.class, value)); return true;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "autoclosebody":
         case "autocloseBody": target.getConfiguration().setAutocloseBody(property(camelContext, boolean.class, value)); return true;
         case "awskmskeyid":
@@ -138,6 +140,7 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         answer.put("accessKey", java.lang.String.class);
         answer.put("amazonS3Client", software.amazon.awssdk.services.s3.S3Client.class);
         answer.put("autoCreateBucket", boolean.class);
+        answer.put("autoDiscoverClient", boolean.class);
         answer.put("autocloseBody", boolean.class);
         answer.put("awsKMSKeyId", java.lang.String.class);
         answer.put("backoffErrorThreshold", int.class);
@@ -207,6 +210,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "amazonS3Client": return target.getConfiguration().getAmazonS3Client();
         case "autocreatebucket":
         case "autoCreateBucket": return target.getConfiguration().isAutoCreateBucket();
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "autoclosebody":
         case "autocloseBody": return target.getConfiguration().isAutocloseBody();
         case "awskmskeyid":
