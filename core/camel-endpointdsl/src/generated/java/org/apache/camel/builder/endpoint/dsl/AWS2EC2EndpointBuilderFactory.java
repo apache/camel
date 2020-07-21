@@ -38,6 +38,36 @@ public interface AWS2EC2EndpointBuilderFactory {
             return (AdvancedAWS2EC2EndpointBuilder) this;
         }
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default AWS2EC2EndpointBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default AWS2EC2EndpointBuilder autoDiscoverClient(
+                String autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.

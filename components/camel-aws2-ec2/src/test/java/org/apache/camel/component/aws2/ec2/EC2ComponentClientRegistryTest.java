@@ -20,6 +20,8 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class EC2ComponentClientRegistryTest extends CamelTestSupport {
@@ -42,5 +44,28 @@ public class EC2ComponentClientRegistryTest extends CamelTestSupport {
         assertThrows(IllegalArgumentException.class, () -> {
             component.createEndpoint("aws2-ec2://TestDomain");
         });
+    }
+    
+    @Test
+    public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
+
+        AmazonEC2ClientMock clientMock = new AmazonEC2ClientMock();
+        context.getRegistry().bind("amazonEc2Client", clientMock);
+        AWS2EC2Component component = context.getComponent("aws2-ec2", AWS2EC2Component.class);
+        AWS2EC2Endpoint endpoint = (AWS2EC2Endpoint)component.createEndpoint("aws2-ec2://TestDomain?accessKey=xxx&secretKey=yyyy&autoDiscoverClient=false");
+
+        assertNotSame(clientMock, endpoint.getConfiguration().getAmazonEc2Client());
+    }
+    
+    @Test
+    public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
+
+        AmazonEC2ClientMock clientMock = new AmazonEC2ClientMock();
+        context.getRegistry().bind("amazonEc2Client", clientMock);
+        AWS2EC2Component component = context.getComponent("aws2-ec2", AWS2EC2Component.class);
+        AWS2EC2Endpoint endpoint = (AWS2EC2Endpoint)component.createEndpoint("aws2-ec2://TestDomain?accessKey=xxx&secretKey=yyyy");
+
+        assertNotNull(endpoint.getConfiguration().getAmazonEc2Client());
+        assertSame(clientMock, endpoint.getConfiguration().getAmazonEc2Client());
     }
 }

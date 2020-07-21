@@ -56,7 +56,9 @@ public class AWS2EC2Component extends DefaultComponent {
         AWS2EC2Configuration configuration = this.configuration != null ? this.configuration.copy() : new AWS2EC2Configuration();
         AWS2EC2Endpoint endpoint = new AWS2EC2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration, endpoint);
+        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration, endpoint);
+        }
         if (configuration.getAmazonEc2Client() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonEC2Client or accessKey and secretKey must be specified");
         }
