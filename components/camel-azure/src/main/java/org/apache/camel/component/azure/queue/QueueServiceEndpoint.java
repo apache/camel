@@ -30,9 +30,10 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Store and retrieve messages from Azure Storage Queue Service.
  */
+@Deprecated
 @UriEndpoint(firstVersion = "2.19.0",
              scheme = "azure-queue",
-             title = "Azure Storage Queue Service (Legacy)",
+             title = "Azure Storage Queue Service (Deprecated)",
              syntax = "azure-blob:containerAndQueueUri",
              category = {Category.CLOUD, Category.MESSAGING})
 public class QueueServiceEndpoint extends DefaultEndpoint {

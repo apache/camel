@@ -30,9 +30,10 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Store and retrieve blobs from Azure Storage Blob Service.
  */
+@Deprecated
 @UriEndpoint(firstVersion = "2.19.0",
              scheme = "azure-blob",
-             title = "Azure Storage Blob Service (Legacy)",
+             title = "Azure Storage Blob Service (Deprecated)",
              syntax = "azure-blob:containerOrBlobUri",
              category = {Category.CLOUD, Category.FILE})
 public class BlobServiceEndpoint extends DefaultEndpoint {

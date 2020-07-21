@@ -31,19 +31,20 @@ import org.apache.camel.component.azure.blob.BlobServiceComponent;
 public interface AzureBlobComponentBuilderFactory {
 
     /**
-     * Azure Storage Blob Service (Legacy) (camel-azure)
+     * Azure Storage Blob Service (Deprecated) (camel-azure)
      * Store and retrieve blobs from Azure Storage Blob Service.
      * 
      * Category: cloud,file
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-azure
      */
+    @Deprecated
     static AzureBlobComponentBuilder azureBlob() {
         return new AzureBlobComponentBuilderImpl();
     }
 
     /**
-     * Builder for the Azure Storage Blob Service (Legacy) component.
+     * Builder for the Azure Storage Blob Service (Deprecated) component.
      */
     interface AzureBlobComponentBuilder
             extends
