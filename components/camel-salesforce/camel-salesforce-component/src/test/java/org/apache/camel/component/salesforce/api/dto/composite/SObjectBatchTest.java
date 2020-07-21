@@ -24,9 +24,9 @@ import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
 import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.apache.camel.component.salesforce.dto.generated.Account_IndustryEnum;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SObjectBatchTest {
 
@@ -91,7 +91,7 @@ public class SObjectBatchTest {
                             + "}";
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
         final String serialized = mapper.writerFor(SObjectBatch.class).writeValueAsString(batch);
-        assertEquals("Should serialize as expected by Salesforce", json, serialized);
+        assertEquals(json, serialized, "Should serialize as expected by Salesforce");
     }
 
     @Test
@@ -182,6 +182,6 @@ public class SObjectBatchTest {
 
         final String serialized = xStream.toXML(batch);
 
-        assertEquals("Should serialize as expected by Salesforce", xml, serialized);
+        assertEquals(xml, serialized, "Should serialize as expected by Salesforce");
     }
 }

@@ -31,20 +31,19 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.dto.Limits.Usage;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 public class LimitsTest {
 
     @Test
     public void shouldBeKnownIfDefined() {
-        assertFalse("Known usage must not declare itself as unknown", new Usage(1, 2).isUnknown());
+        assertFalse(new Usage(1, 2).isUnknown(), "Known usage must not declare itself as unknown");
     }
 
     @Test
@@ -58,9 +57,9 @@ public class LimitsTest {
         final Limits limits = (Limits)read;
 
         final Usage dailyApiRequests = limits.getDailyApiRequests();
-        assertFalse("Should have some usage present", dailyApiRequests.isUnknown());
-        assertFalse("Per application usage should be present", dailyApiRequests.getPerApplicationUsage().isEmpty());
-        assertNotNull("'Camel Salesman' application usage should be present", dailyApiRequests.forApplication("Camel Salesman"));
+        assertFalse(dailyApiRequests.isUnknown(), "Should have some usage present");
+        assertFalse(dailyApiRequests.getPerApplicationUsage().isEmpty(), "Per application usage should be present");
+        assertNotNull(dailyApiRequests.forApplication("Camel Salesman"), "'Camel Salesman' application usage should be present");
     }
 
     @Test
@@ -93,6 +92,6 @@ public class LimitsTest {
 
     @Test
     public void usageShouldBeUnknownIfUnknown() {
-        assertTrue("Unknown usage must declare itself as such", Usage.UNKNOWN.isUnknown());
+        assertTrue(Usage.UNKNOWN.isUnknown(), "Unknown usage must declare itself as such");
     }
 }

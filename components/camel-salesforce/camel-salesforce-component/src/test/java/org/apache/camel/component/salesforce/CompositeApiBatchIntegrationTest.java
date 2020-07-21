@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.googlecode.junittoolbox.ParallelParameterized;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
@@ -36,13 +35,19 @@ import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatchRespo
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatchResult;
 import org.apache.camel.component.salesforce.api.utils.Version;
 import org.apache.camel.component.salesforce.dto.generated.Account;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.junit5.params.Parameter;
+import org.apache.camel.test.junit5.params.Parameterized;
+import org.apache.camel.test.junit5.params.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(ParallelParameterized.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@Parameterized
 public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase {
 
     public static class Accounts extends AbstractQueryRecordsBase {
@@ -61,18 +66,19 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
 
     private static final Set<String> VERSIONS = new HashSet<>(Arrays.asList(SalesforceEndpointConfig.DEFAULT_VERSION, "34.0", "36.0", "37.0", "39.0"));
 
+    @Parameter
+    private final String version;
+
     private String accountId;
 
     private final String batchuri;
 
-    private final String version;
-
-    public CompositeApiBatchIntegrationTest(final String format, final String version) {
+    public CompositeApiBatchIntegrationTest(String format, String version) {
         this.version = version;
         batchuri = "salesforce:composite-batch?format=" + format;
     }
 
-    @After
+    @AfterEach
     public void removeRecords() {
         try {
             template.sendBody("salesforce:deleteSObject?sObjectName=Account&sObjectId=" + accountId, null);
@@ -83,7 +89,7 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
         template.request("direct:deleteBatchAccounts", null);
     }
 
-    @Before
+    @BeforeEach
     public void setupRecords() {
         final Account account = new Account();
         account.setName("Composite API Batch");
@@ -94,7 +100,7 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
     }
 
     @Test
-    public void shouldSubmitBatchUsingCompositeApi() {
+    public void shouldSubmitBatchUsingCompositeApi(String format, String version) {
         final SObjectBatch batch = new SObjectBatch(version);
 
         final Account updates = new Account();
@@ -111,7 +117,7 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
 
         final SObjectBatchResponse response = template.requestBody(batchuri, batch, SObjectBatchResponse.class);
 
-        assertNotNull("Response should be provided", response);
+        assertNotNull(response, "Response should be provided");
 
         assertFalse(response.hasErrors());
     }
@@ -384,9 +390,9 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
     SObjectBatchResponse testBatch(final SObjectBatch batch) {
         final SObjectBatchResponse response = template.requestBody(batchuri, batch, SObjectBatchResponse.class);
 
-        assertNotNull("Response should be provided", response);
+        assertNotNull(response, "Response should be provided");
 
-        assertFalse("Received errors in: " + response, response.hasErrors());
+        assertFalse(response.hasErrors(), "Received errors in: " + response);
 
         return response;
     }

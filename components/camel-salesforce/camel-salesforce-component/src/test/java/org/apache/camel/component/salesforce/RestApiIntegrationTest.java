@@ -51,23 +51,27 @@ import org.apache.camel.component.salesforce.dto.generated.QueryRecordsContact;
 import org.apache.camel.component.salesforce.dto.generated.QueryRecordsLine_Item__c;
 import org.apache.camel.component.salesforce.dto.generated.Task;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.test.junit5.params.Parameter;
+import org.apache.camel.test.junit5.params.Parameterized;
+import org.apache.camel.test.junit5.params.Test;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
-@Category(Standalone.class)
-@RunWith(Parameterized.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+@Standalone
+@Parameterized
 public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
     /**
@@ -116,13 +120,13 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     private static final AtomicInteger TEST_LINE_ITEM_ID = new AtomicInteger(1);
 
     @Parameter
-    public String format;
+    protected String format;
 
     private String merchandiseId;
     private String accountId;
     private String contactId;
 
-    @After
+    @AfterEach
     public void removeData() {
         template.request("salesforce:deleteSObject?sObjectName=Merchandise__c&sObjectId=" + merchandiseId, (Processor) e -> {
             // NOOP
@@ -132,7 +136,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         });
     }
 
-    @Before
+    @BeforeEach
     public void setupData() {
         final Merchandise__c merchandise = new Merchandise__c();
         merchandise.setName("Test Merchandise");
@@ -175,7 +179,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
-    public void testApexCall() throws Exception {
+    public void testApexCall(String format) throws Exception {
         // request merchandise with id in URI template
         Merchandise__c merchandise = template().requestBodyAndHeader("direct:apexCallGet", null, "id", merchandiseId, Merchandise__c.class);
         assertNotNull(merchandise);
@@ -197,7 +201,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
-    public void testCreateUpdateDelete() throws Exception {
+    public void testCreateUpdateDelete(String format) throws Exception {
         final Merchandise__c merchandise = new Merchandise__c();
         merchandise.setName("Wee Wee Wee Plane");
         merchandise.setDescription__c("Microlite plane");
@@ -205,7 +209,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         merchandise.setTotal_Inventory__c(50.0);
         final CreateSObjectResult result = template().requestBody("direct:createSObject", merchandise, CreateSObjectResult.class);
         assertNotNull(result);
-        assertTrue("Create success", result.getSuccess());
+        assertTrue(result.getSuccess(), "Create success");
 
         // test JSON update
         // make the plane cheaper
@@ -222,14 +226,14 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
-    public void testRelationshipCreateDelete() throws Exception {
+    public void testRelationshipCreateDelete(String format) throws Exception {
         final Account account = new Account();
         account.setName("Account 1");
         String accountExternalId = UUID.randomUUID().toString();
         account.setExternal_Id__c(accountExternalId);
         final CreateSObjectResult accountResult = template().requestBody("direct:createSObject", account, CreateSObjectResult.class);
         assertNotNull(accountResult);
-        assertTrue("Create success", accountResult.getSuccess());
+        assertTrue(accountResult.getSuccess(), "Create success");
 
         final Account accountRef = new Account();
         accountRef.setExternal_Id__c(accountExternalId);
@@ -238,7 +242,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         contact.setLastName("RelationshipTest");
         final CreateSObjectResult contactResult = template().requestBody("direct:createSObject", contact, CreateSObjectResult.class);
         assertNotNull(contactResult);
-        assertTrue("Create success", contactResult.getSuccess());
+        assertTrue(contactResult.getSuccess(), "Create success");
 
         // delete the Contact
         template().requestBodyAndHeader("direct:deleteSObject", contactResult.getId(), "sObjectName", "Contact");
@@ -248,13 +252,13 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
-    public void testFieldsToNull() throws Exception {
+    public void testFieldsToNull(String format) throws Exception {
         final Account account = new Account();
         account.setName("Account 1");
         account.setSite("test site");
         final CreateSObjectResult accountResult = template().requestBody("direct:createSObject", account, CreateSObjectResult.class);
         assertNotNull(accountResult);
-        assertTrue("Create success", accountResult.getSuccess());
+        assertTrue(accountResult.getSuccess(), "Create success");
 
         account.setId(accountResult.getId());
         account.setSite(null);
@@ -271,12 +275,12 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
-    public void testRelationshipUpdate() throws Exception {
+    public void testRelationshipUpdate(String format) throws Exception {
         final Contact contact = new Contact();
         contact.setLastName("RelationshipTest");
         final CreateSObjectResult contactResult = template().requestBody("direct:createSObject", contact, CreateSObjectResult.class);
         assertNotNull(contactResult);
-        assertTrue("Create success", contactResult.getSuccess());
+        assertTrue(contactResult.getSuccess(), "Create success");
 
         final Account account = new Account();
         account.setName("Account 1");
@@ -284,7 +288,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         account.setExternal_Id__c(accountExternalId);
         final CreateSObjectResult accountResult = template().requestBody("direct:createSObject", account, CreateSObjectResult.class);
         assertNotNull(accountResult);
-        assertTrue("Create success", accountResult.getSuccess());
+        assertTrue(accountResult.getSuccess(), "Create success");
 
         final Account accountRef = new Account();
         accountRef.setExternal_Id__c(accountExternalId);
@@ -302,13 +306,13 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
-    public void testCreateUpdateDeleteTasks() throws Exception {
+    public void testCreateUpdateDeleteTasks(String format) throws Exception {
         final Task taken = new Task();
         taken.setDescription("Task1");
         taken.setActivityDate(ZonedDateTime.of(1700, 1, 2, 3, 4, 5, 6, ZoneId.systemDefault()));
         final CreateSObjectResult result = template().requestBody("direct:createSObject", taken, CreateSObjectResult.class);
         assertNotNull(result);
-        assertTrue("Create success", result.getSuccess());
+        assertTrue(result.getSuccess(), "Create success");
 
         // test JSON update
         // make the plane cheaper
@@ -322,7 +326,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
-    public void testCreateUpdateDeleteWithId() throws Exception {
+    public void testCreateUpdateDeleteWithId(String format) throws Exception {
         Line_Item__c lineItem = new Line_Item__c();
         final String lineItemId = String.valueOf(TEST_LINE_ITEM_ID.incrementAndGet());
         lineItem.setName(lineItemId);
@@ -360,17 +364,17 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
-    public void testGetBasicInfo() throws Exception {
+    public void testGetBasicInfo(String format) throws Exception {
         final SObjectBasicInfo objectBasicInfo = template().requestBody("direct:getBasicInfo", null, SObjectBasicInfo.class);
         assertNotNull(objectBasicInfo);
 
         // set test Id for testGetSObject
-        assertFalse("RecentItems is empty", objectBasicInfo.getRecentItems().isEmpty());
+        assertFalse(objectBasicInfo.getRecentItems().isEmpty(), "RecentItems is empty");
         merchandiseId = objectBasicInfo.getRecentItems().get(0).getId();
     }
 
     @Test
-    public void testGetBlobField() throws Exception {
+    public void testGetBlobField(String format) throws Exception {
         // get document with Name "Test Document"
         final HashMap<String, Object> headers = new HashMap<>();
         headers.put(SalesforceEndpointConfig.SOBJECT_NAME, "Document");
@@ -386,28 +390,25 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
-    public void testGetDescription() throws Exception {
-
+    public void testGetDescription(String format) throws Exception {
         final SObjectDescription sObjectDescription = template().requestBody("direct:getDescription", null, SObjectDescription.class);
         assertNotNull(sObjectDescription);
     }
 
     @Test
-    public void testGetGlobalObjects() throws Exception {
-
+    public void testGetGlobalObjects(String format) throws Exception {
         final GlobalObjects globalObjects = template().requestBody("direct:getGlobalObjects", null, GlobalObjects.class);
         assertNotNull(globalObjects);
     }
 
     @Test
-    public void testGetResources() throws Exception {
-
+    public void testGetResources(String format) throws Exception {
         final RestResources resources = template().requestBody("direct:getResources", null, RestResources.class);
         assertNotNull(resources);
     }
 
     @Test
-    public void testGetSObject() throws Exception {
+    public void testGetSObject(String format) throws Exception {
         final Merchandise__c merchandise = template().requestBody("direct:getSObject", merchandiseId, Merchandise__c.class);
         assertNotNull(merchandise);
 
@@ -416,7 +417,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
-    public void testGetVersions() throws Exception {
+    public void testGetVersions(String format) throws Exception {
         // test getVersions doesn't need a body
         // assert expected result
         final Object o = template().requestBody("direct:getVersions", (Object)null);
@@ -432,25 +433,25 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
-    public void testQuery() throws Exception {
+    public void testQuery(String format) throws Exception {
         final QueryRecordsLine_Item__c queryRecords = template().requestBody("direct:query", null, QueryRecordsLine_Item__c.class);
         assertNotNull(queryRecords);
     }
 
     @Test
-    public void testParentRelationshipQuery() throws Exception {
+    public void testParentRelationshipQuery(String format) throws Exception {
         try {
             createAccountAndContact();
             final QueryRecordsContact queryRecords = template().requestBody("direct:parentRelationshipQuery", null, QueryRecordsContact.class);
             Account account = queryRecords.getRecords().get(0).getAccount();
-            assertNotNull("Account was null", account);
+            assertNotNull(account, "Account was null");
         } finally {
             deleteAccountAndContact();
         }
     }
 
     @Test
-    public void testChildRelationshipQuery() throws Exception {
+    public void testChildRelationshipQuery(String format) throws Exception {
         try {
             createAccountAndContact();
             final QueryRecordsAccount queryRecords = template().requestBody("direct:childRelationshipQuery", null, QueryRecordsAccount.class);
@@ -464,13 +465,13 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
-    public void testQueryAll() throws Exception {
+    public void testQueryAll(String format) throws Exception {
         final QueryRecordsLine_Item__c queryRecords = template().requestBody("direct:queryAll", null, QueryRecordsLine_Item__c.class);
         assertNotNull(queryRecords);
     }
 
     @Test
-    public void testRetry() throws Exception {
+    public void testRetry(String format) throws Exception {
         final SalesforceComponent sf = context().getComponent("salesforce", SalesforceComponent.class);
         final String accessToken = sf.getSession().getAccessToken();
 
@@ -486,11 +487,11 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         final ContentResponse response = logoutGet.send();
         assertEquals(HttpStatus.OK_200, response.getStatus());
 
-        testGetGlobalObjects();
+        testGetGlobalObjects(format);
     }
 
     @Test
-    public void testRetryFailure() throws Exception {
+    public void testRetryFailure(String format) throws Exception {
         final SalesforceComponent sf = context().getComponent("salesforce", SalesforceComponent.class);
         final String accessToken = sf.getSession().getAccessToken();
 
@@ -512,12 +513,12 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         sf.getLoginConfig().setPassword("bad_password");
 
         try {
-            testGetGlobalObjects();
+            testGetGlobalObjects(format);
             fail("Expected CamelExecutionException!");
         } catch (final CamelExecutionException e) {
             if (e.getCause() instanceof SalesforceException) {
                 final SalesforceException cause = (SalesforceException)e.getCause();
-                assertEquals("Expected 400 on authentication retry failure", HttpStatus.BAD_REQUEST_400, cause.getStatusCode());
+                assertEquals(HttpStatus.BAD_REQUEST_400, cause.getStatusCode(), "Expected 400 on authentication retry failure");
             } else {
                 fail("Expected SalesforceException!");
             }
@@ -528,14 +529,14 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
-    public void testSearch() throws Exception {
+    public void testSearch(String format) throws Exception {
 
         final Object obj = template().requestBody("direct:search", (Object)null);
         assertNotNull(obj);
     }
 
     @Test
-    public void testStatus300() throws Exception {
+    public void testStatus300(String format) throws Exception {
         // get test merchandise
         // note that the header value overrides sObjectFields in endpoint
         final Merchandise__c merchandise = template().requestBodyAndHeader("direct:getSObject", merchandiseId, "sObjectFields", "Name,Description__c,Price__c,Total_Inventory__c",
@@ -576,7 +577,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
-    public void testStatus400() throws Exception {
+    public void testStatus400(String format) throws Exception {
         // get test merchandise
         // note that the header value overrides sObjectFields in endpoint
         final Merchandise__c merchandise = template().requestBodyAndHeader("direct:getSObject", merchandiseId, "sObjectFields", "Description__c,Price__c", Merchandise__c.class);
@@ -606,7 +607,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
-    public void testStatus404() {
+    public void testStatus404(String format) throws Exception {
         // try to get a non existent SObject
         try {
             template().requestBody("direct:getSObject", "ILLEGAL_ID", Merchandise__c.class);
@@ -621,7 +622,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
-    public void testFetchingGlobalObjects() {
+    public void testFetchingGlobalObjects(String format) throws Exception {
         final GlobalObjects globalObjects = template().requestBody("salesforce:getGlobalObjects", null, GlobalObjects.class);
 
         assertNotNull(globalObjects);
@@ -713,7 +714,6 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         };
     }
 
-    @Parameters(name = "format = {0}")
     public static Iterable<String> parameters() {
         return Arrays.asList("XML", "JSON");
     }

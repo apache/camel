@@ -27,16 +27,18 @@ import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
 import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * During integration tests setup, Salesforce has been configured to fire change
  * events for Account objects. This test merely uses some API calls to trigger
  * some change events, and then perform assertion on the received events.
  */
-@Category(Standalone.class)
+@Standalone
 public class ChangeEventsConsumerIntegrationTest extends AbstractSalesforceTestBase {
 
     private static final String ACCOUNT_NAME = "ChangeEventsConsumerIntegrationTest-TestAccount";
@@ -52,7 +54,7 @@ public class ChangeEventsConsumerIntegrationTest extends AbstractSalesforceTestB
         final Account account = new Account();
         account.setName(ACCOUNT_NAME);
         final CreateSObjectResult result = template.requestBody("salesforce:createSObject?sObjectName=Account", account, CreateSObjectResult.class);
-        Assert.assertNotNull(result.getId());
+        assertNotNull(result.getId());
 
         // Trigger an UPDATE event for an Account
         account.setDescription(ACCOUNT_DESCRIPTION);
@@ -67,27 +69,27 @@ public class ChangeEventsConsumerIntegrationTest extends AbstractSalesforceTestB
         });
 
         final Message createEvent = capturedChangeEvents.getExchanges().get(0).getIn();
-        Assert.assertNotNull(createEvent);
-        Assert.assertEquals("CREATE", createEvent.getHeader("CamelSalesforceChangeType"));
+        assertNotNull(createEvent);
+        assertEquals("CREATE", createEvent.getHeader("CamelSalesforceChangeType"));
         final Map<String, Object> createEventBody = createEvent.getBody(Map.class);
-        Assert.assertNotNull(createEventBody);
-        Assert.assertEquals(ACCOUNT_NAME, createEventBody.get("Name"));
-        Assert.assertFalse(createEventBody.containsKey("Description"));
+        assertNotNull(createEventBody);
+        assertEquals(ACCOUNT_NAME, createEventBody.get("Name"));
+        assertFalse(createEventBody.containsKey("Description"));
 
         final Message updateEvent = capturedChangeEvents.getExchanges().get(1).getIn();
-        Assert.assertNotNull(updateEvent);
-        Assert.assertEquals("UPDATE", updateEvent.getHeader("CamelSalesforceChangeType"));
+        assertNotNull(updateEvent);
+        assertEquals("UPDATE", updateEvent.getHeader("CamelSalesforceChangeType"));
         final Map<String, Object> updateEventBody = updateEvent.getBody(Map.class);
-        Assert.assertNotNull(updateEventBody);
-        Assert.assertFalse(updateEventBody.containsKey("Name"));
-        Assert.assertEquals(ACCOUNT_DESCRIPTION, updateEventBody.get("Description"));
+        assertNotNull(updateEventBody);
+        assertFalse(updateEventBody.containsKey("Name"));
+        assertEquals(ACCOUNT_DESCRIPTION, updateEventBody.get("Description"));
 
         final Message deleteEvent = capturedChangeEvents.getExchanges().get(2).getIn();
-        Assert.assertNotNull(deleteEvent);
-        Assert.assertEquals("DELETE", deleteEvent.getHeader("CamelSalesforceChangeType"));
+        assertNotNull(deleteEvent);
+        assertEquals("DELETE", deleteEvent.getHeader("CamelSalesforceChangeType"));
         final Map<String, Object> deleteEventBody = deleteEvent.getBody(Map.class);
-        Assert.assertFalse(deleteEventBody.containsKey("Name"));
-        Assert.assertFalse(deleteEventBody.containsKey("Description"));
+        assertFalse(deleteEventBody.containsKey("Name"));
+        assertFalse(deleteEventBody.containsKey("Description"));
     }
 
     @Override

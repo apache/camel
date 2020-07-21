@@ -22,12 +22,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
-import org.junit.Assert;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 
 import static org.apache.camel.maven.AbstractSalesforceMojoIntegrationTest.setup;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SchemaMojoIntegrationTest {
 
@@ -49,10 +49,10 @@ public class SchemaMojoIntegrationTest {
 
         // validate generated schema
         final File schemaFile = mojo.outputDirectory.toPath().resolve("test-schema.json").toFile();
-        Assert.assertTrue("Output file was not created", schemaFile.exists());
+        assertTrue(schemaFile.exists(), "Output file was not created");
         final ObjectMapper objectMapper = JsonUtils.createObjectMapper();
         final JsonSchema jsonSchema = objectMapper.readValue(schemaFile, JsonSchema.class);
-        Assert.assertTrue("Expected root JSON schema with oneOf element", jsonSchema.isObjectSchema() && !((ObjectSchema)jsonSchema).getOneOf().isEmpty());
+        assertTrue(jsonSchema.isObjectSchema() && !((ObjectSchema)jsonSchema).getOneOf().isEmpty(), "Expected root JSON schema with oneOf element");
     }
 
 }

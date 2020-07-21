@@ -35,16 +35,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(Parameterized.class)
 public class SalesforceTimeFormatsTest {
 
     @XStreamAlias("Dto")
@@ -97,51 +93,39 @@ public class SalesforceTimeFormatsTest {
 
     private static final String XML_FMT = "<Dto><value>%s</value></Dto>";
 
-    @Parameter(0)
-    public DateTransferObject<?> dto;
-
-    @Parameter(1)
-    public String json;
-
-    @Parameter(3)
-    public Class<?> parameterType;
-
-    @Parameter(2)
-    public String xml;
-
     private final ObjectMapper objectMapper = JsonUtils.createObjectMapper();
 
     private final XStream xStream = XStreamUtils.createXStream(DateTransferObject.class);
 
-    @Test
-    public void shouldDeserializeJson() throws IOException {
+    @ParameterizedTest @MethodSource("cases")
+    public void shouldDeserializeJson(DateTransferObject<?> dto, String json, String xml, Class<?> parameterType) throws IOException {
         final JavaType javaType = TypeFactory.defaultInstance().constructParametricType(DateTransferObject.class, parameterType);
 
         final DateTransferObject<?> deserialized = objectMapper.readerFor(javaType).readValue(json);
 
-        assertDeserializationResult(deserialized);
+        assertDeserializationResult(dto, deserialized);
     }
 
-    @Test
-    public void shouldDeserializeXml() {
+    @ParameterizedTest @MethodSource("cases")
+    public void shouldDeserializeXml(DateTransferObject<?> dto, String json, String xml, Class<?> parameterType) {
         xStream.addDefaultImplementation(parameterType, Object.class);
 
         final DateTransferObject<?> deserialized = (DateTransferObject<?>)xStream.fromXML(xml);
 
-        assertDeserializationResult(deserialized);
+        assertDeserializationResult(dto, deserialized);
     }
 
-    @Test
-    public void shouldSerializeJson() throws JsonProcessingException {
+    @ParameterizedTest @MethodSource("cases")
+    public void shouldSerializeJson(DateTransferObject<?> dto, String json, String xml, Class<?> parameterType) throws JsonProcessingException {
         assertThat(objectMapper.writeValueAsString(dto)).isEqualTo(json);
     }
 
-    @Test
-    public void shouldSerializeXml() {
+    @ParameterizedTest @MethodSource("cases")
+    public void shouldSerializeXml(DateTransferObject<?> dto, String json, String xml, Class<?> parameterType) {
         assertThat(xStream.toXML(dto)).isEqualTo(xml);
     }
 
-    private void assertDeserializationResult(final DateTransferObject<?> deserialized) {
+    private void assertDeserializationResult(DateTransferObject<?> dto, final DateTransferObject<?> deserialized) {
         if (dto.value instanceof ZonedDateTime) {
             // Salesforce expresses time in UTC+offset (ISO-8601 , with this we
             // loose time zone information
@@ -154,7 +138,6 @@ public class SalesforceTimeFormatsTest {
         }
     }
 
-    @Parameters
     public static Iterable<Object[]> cases() {
         final LocalDate localDate = LocalDate.of(2007, 03, 19);
         final ZonedDateTime zonedDateTime = ZonedDateTime.of(localDate.atTime(10, 54, 57), ZoneId.of("Z"));

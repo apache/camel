@@ -29,11 +29,11 @@ import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
 import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.apache.camel.component.salesforce.dto.generated.Asset;
 import org.apache.camel.component.salesforce.dto.generated.Contact;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class SObjectTreeTest extends CompositeTestBase {
 
@@ -80,7 +80,7 @@ public class SObjectTreeTest extends CompositeTestBase {
                                 + "\"referenceId\":\"ref3\"," + "\"type\":\"Contact\"," + "\"url\":null" + "}" + "}" + "]" + "}" + "}," + "{" + "\"Industry\":\"Banking\","
                                 + "\"Name\":\"SampleAccount2\"," + "\"NumberOfEmployees\":100," + "\"Phone\":\"1234567890\"," + "\"Website\":\"www.salesforce2.com\","
                                 + "\"attributes\":{" + "\"referenceId\":\"ref4\"," + "\"type\":\"Account\"," + "\"url\":null" + "}" + "}" + "]" + "}";
-        assertEquals("Should serialize to JSON as in Salesforce example", expected, json);
+        assertEquals(expected, json, "Should serialize to JSON as in Salesforce example");
     }
 
     @Test
@@ -99,7 +99,7 @@ public class SObjectTreeTest extends CompositeTestBase {
 
         final String xml = xStream.toXML(tree);
 
-        assertEquals("Should serialize to XML as in Salesforce example", "<SObjectTreeRequest>"//
+        assertEquals("<SObjectTreeRequest>"//
                                                                          + "<records type=\"Account\" referenceId=\"ref1\">"//
                                                                          + "<Name>SampleAccount</Name>"//
                                                                          + "<Phone>1234567890</Phone>"//
@@ -127,7 +127,7 @@ public class SObjectTreeTest extends CompositeTestBase {
                                                                          + "<NumberOfEmployees>100</NumberOfEmployees>"//
                                                                          + "</records>"//
                                                                          + "</SObjectTreeRequest>",
-                     xml);
+                     xml, "Should serialize to XML as in Salesforce example");
     }
 
     @Test
