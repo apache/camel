@@ -49,6 +49,21 @@ public interface AwsDdbstreamComponentBuilderFactory {
             extends
                 ComponentBuilder<DdbStreamComponent> {
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default AwsDdbstreamComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * Amazon DynamoDB client to use for all requests for this endpoint.
          * 
          * The option is a:
@@ -248,6 +263,7 @@ public interface AwsDdbstreamComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "autoDiscoverClient": getOrCreateConfiguration((DdbStreamComponent) component).setAutoDiscoverClient((boolean) value); return true;
             case "amazonDynamoDbStreamsClient": getOrCreateConfiguration((DdbStreamComponent) component).setAmazonDynamoDbStreamsClient((com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams) value); return true;
             case "bridgeErrorHandler": ((DdbStreamComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "configuration": ((DdbStreamComponent) component).setConfiguration((org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration) value); return true;
