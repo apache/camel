@@ -50,7 +50,9 @@ public class ECSComponent extends DefaultComponent {
         ECSConfiguration configuration = this.configuration != null ? this.configuration.copy() : new ECSConfiguration();
         ECSEndpoint endpoint = new ECSEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration);
+        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration);
+        }
         if (configuration.getEcsClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon ecs client or accessKey and secretKey must be specified");
         }
