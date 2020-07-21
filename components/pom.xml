@@ -365,6 +365,7 @@
         <module>camel-univocity-parsers</module>
         <module>camel-velocity</module>
         <module>camel-vertx</module>
+        <module>camel-vertx-http</module>
         <module>camel-vertx-websocket</module>
         <module>camel-weather</module>
         <module>camel-web3j</module>
