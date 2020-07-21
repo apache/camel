@@ -341,6 +341,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.ValidatorEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.VelocityEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.VertxEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.VertxHttpEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.VertxWebsocketEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.VmEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.WeatherEndpointBuilderFactory,

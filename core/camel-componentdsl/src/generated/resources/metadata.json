@@ -6997,6 +6997,27 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "VertxHttpComponentBuilderFactory": {
+    "kind": "component",
+    "name": "vertx-http",
+    "title": "Vert.x HTTP Client",
+    "description": "Camel HTTP client support with Vert.x",
+    "deprecated": false,
+    "firstVersion": "3.5.0",
+    "label": "http",
+    "javaType": "org.apache.camel.component.vertx.http.VertxHttpComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-vertx-http",
+    "version": "3.5.0-SNAPSHOT",
+    "scheme": "vertx-http",
+    "extendsScheme": "",
+    "syntax": "vertx-http:httpUri",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": true
+  },
   "VertxWebsocketComponentBuilderFactory": {
     "kind": "component",
     "name": "vertx-websocket",
