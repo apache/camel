@@ -41,7 +41,7 @@ The metrics will be created if they don't already exists. +
 
 
 // component options: START
-The AWS CloudWatch component supports 14 options, which are listed below.
+The AWS CloudWatch component supports 15 options, which are listed below.
 
 
 
@@ -49,6 +49,7 @@ The AWS CloudWatch component supports 14 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *amazonCwClient* (producer) | To use the AmazonCloudWatch as the client |  | AmazonCloudWatch
+| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *configuration* (producer) | The component configuration |  | CwConfiguration
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *name* (producer) | The metric name |  | String
@@ -87,13 +88,14 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (14 parameters):
+=== Query Parameters (15 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *amazonCwClient* (producer) | To use the AmazonCloudWatch as the client |  | AmazonCloudWatch
+| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *name* (producer) | The metric name |  | String
 | *proxyHost* (producer) | To define a proxy host when instantiating the CW client |  | String
