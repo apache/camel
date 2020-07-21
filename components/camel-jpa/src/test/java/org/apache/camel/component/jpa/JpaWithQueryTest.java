@@ -18,6 +18,8 @@ package org.apache.camel.component.jpa;
 
 import org.apache.camel.examples.MultiSteps;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class JpaWithQueryTest extends JpaWithNamedQueryTest {
 
     @Override

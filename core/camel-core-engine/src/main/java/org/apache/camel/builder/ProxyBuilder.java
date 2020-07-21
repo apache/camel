@@ -83,9 +83,6 @@ public final class ProxyBuilder {
         ObjectHelper.notNull(endpoint, "endpoint");
         // use proxy service
         BeanProxyFactory factory = camelContext.adapt(ExtendedCamelContext.class).getBeanProxyFactory();
-        if (factory == null) {
-            throw new IllegalArgumentException("Cannot find BeanProxyFactory. Make sure camel-bean is on the classpath.");
-        }
         return factory.createProxy(endpoint, binding, interfaceClasses);
     }
 

@@ -19,13 +19,14 @@ package org.apache.camel.impl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
  */
-public class DefaultInjectorTest extends Assert {
+public class DefaultInjectorTest {
 
     @Test
     public void testDefaultInjector() throws Exception {

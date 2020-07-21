@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
+import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -46,12 +47,14 @@ import static org.assertj.core.api.Assertions.entry;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class AbstractClientBaseTest {
     static class Client extends AbstractClientBase {
-        Client(final SalesforceSession session) throws SalesforceException {
-            super(null, session, mock(SalesforceHttpClient.class),
+        Client(final SalesforceSession session, final SalesforceLoginConfig loginConfig) throws SalesforceException {
+            super(null, session, mock(SalesforceHttpClient.class), loginConfig,
                   1 /* 1 second termination timeout */);
         }
 
@@ -73,7 +76,7 @@ public class AbstractClientBaseTest {
     final Client client;
 
     public AbstractClientBaseTest() throws SalesforceException {
-        client = new Client(session);
+        client = new Client(session, new SalesforceLoginConfig());
 
         when(session.getAccessToken()).thenReturn("token");
     }
@@ -168,5 +171,29 @@ public class AbstractClientBaseTest {
 
         final long elapsed = System.currentTimeMillis() - stopStartTime;
         assertTrue(elapsed > 900 && elapsed < 1100);
+    }
+
+    @Test
+    public void shouldNotLoginWhenAccessTokenIsNullAndLazyLoginIsTrue() throws SalesforceException {
+        SalesforceLoginConfig loginConfig = new SalesforceLoginConfig();
+        loginConfig.setLazyLogin(true);
+        Client lazyClient = new Client(session, loginConfig);
+        when(session.getAccessToken()).thenReturn(null);
+
+        lazyClient.start();
+
+        verify(session, never()).login(null);
+    }
+
+    @Test
+    public void shouldLoginWhenAccessTokenIsNullAndLazyLoginIsFalse() throws SalesforceException {
+        SalesforceLoginConfig loginConfig = new SalesforceLoginConfig();
+        loginConfig.setLazyLogin(false);
+        Client eagerClient = new Client(session, loginConfig);
+        when(session.getAccessToken()).thenReturn(null);
+
+        eagerClient.start();
+
+        verify(session).login(null);
     }
 }

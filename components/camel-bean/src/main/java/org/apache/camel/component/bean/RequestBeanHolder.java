@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
@@ -31,6 +33,16 @@ public class RequestBeanHolder implements BeanHolder {
     public RequestBeanHolder(BeanHolder holder) {
         this.holder = holder;
         this.key = "CamelBeanRequestScope-" + holder.getBeanInfo().getType().getName();
+    }
+
+    @Override
+    public Map<String, Object> getOptions() {
+        return holder.getOptions();
+    }
+
+    @Override
+    public void setOptions(Map<String, Object> options) {
+        this.holder.setOptions(options);
     }
 
     @Override

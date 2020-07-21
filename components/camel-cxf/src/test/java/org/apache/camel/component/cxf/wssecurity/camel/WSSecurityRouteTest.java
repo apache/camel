@@ -26,15 +26,17 @@ import org.apache.camel.component.cxf.wssecurity.server.CxfServer;
 import org.apache.camel.hello_world_soap_http.Greeter;
 import org.apache.camel.hello_world_soap_http.GreeterService;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WSSecurityRouteTest extends CamelTestSupport {
     static final int PORT = CXFTestSupport.getPort1();
@@ -42,13 +44,13 @@ public class WSSecurityRouteTest extends CamelTestSupport {
     
     private static AbstractXmlApplicationContext applicationContext;
 
-    @BeforeClass
+    @BeforeAll
     public static void setupContext() throws Exception {
         cxfServer = new CxfServer();
         applicationContext = createApplicationContext();
     }
     
-    @AfterClass
+    @AfterAll
     public static void shutdownService() {
         if (applicationContext != null) {
             applicationContext.stop();
@@ -82,7 +84,7 @@ public class WSSecurityRouteTest extends CamelTestSupport {
                 + "/WSSecurityRouteTest/GreeterSignaturePort"
         );
         
-        assertEquals("Get a wrong response", "Hello Security", greeter.greetMe("Security"));
+        assertEquals("Hello Security", greeter.greetMe("Security"), "Get a wrong response");
     }
     
     @Test
@@ -103,7 +105,7 @@ public class WSSecurityRouteTest extends CamelTestSupport {
                 + "/WSSecurityRouteTest/GreeterUsernameTokenPort"
         );
         
-        assertEquals("Get a wrong response", "Hello Security", greeter.greetMe("Security"));
+        assertEquals("Hello Security", greeter.greetMe("Security"), "Get a wrong response");
     }
     
     @Test
@@ -124,7 +126,7 @@ public class WSSecurityRouteTest extends CamelTestSupport {
                 + "/WSSecurityRouteTest/GreeterEncryptionPort"
         );
         
-        assertEquals("Get a wrong response", "Hello Security", greeter.greetMe("Security"));
+        assertEquals("Hello Security", greeter.greetMe("Security"), "Get a wrong response");
     }
    
     @Test
@@ -145,7 +147,7 @@ public class WSSecurityRouteTest extends CamelTestSupport {
                 + "/WSSecurityRouteTest/GreeterSecurityPolicyPort"
         );
         
-        assertEquals("Get a wrong response", "Hello Security", greeter.greetMe("Security"));
+        assertEquals("Hello Security", greeter.greetMe("Security"), "Get a wrong response");
     }
  
 }

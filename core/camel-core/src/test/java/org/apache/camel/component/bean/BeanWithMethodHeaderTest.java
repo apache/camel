@@ -16,16 +16,16 @@
  */
 package org.apache.camel.component.bean;
 
-import javax.naming.Context;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.support.jndi.JndiContext;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanWithMethodHeaderTest extends ContextTestSupport {
 
@@ -39,7 +39,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
         template.sendBody("direct:echo", "Hello World");
 
         assertMockEndpointsSatisfied();
-        assertNull("There should no Bean_METHOD_NAME header", mock.getExchanges().get(0).getIn().getHeader(Exchange.BEAN_METHOD_NAME));
+        assertNull(mock.getExchanges().get(0).getIn().getHeader(Exchange.BEAN_METHOD_NAME), "There should no Bean_METHOD_NAME header");
     }
 
     @Test
@@ -128,8 +128,8 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
         bean = new MyBean();
         answer.bind("myBean", bean);
         return answer;

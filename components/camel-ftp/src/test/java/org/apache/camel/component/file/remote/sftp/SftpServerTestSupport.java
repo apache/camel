@@ -47,8 +47,8 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
     protected static final String FTP_ROOT_DIR = "target/res/home";
     private static final Logger LOG = LoggerFactory.getLogger(SftpServerTestSupport.class);
     private static final String KNOWN_HOSTS = "[localhost]:%d ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQDdfIWeSV4o68dRrKS"
-            + "zFd/Bk51E65UTmmSrmW0O1ohtzi6HzsDPjXgCtlTt3FqTcfFfI92IlTr4JWqC9UK1QT1ZTeng0MkPQmv68hDANHbt5CpETZHjW5q4OOgWhV"
-            + "vj5IyOC2NZHtKlJBkdsMAa15ouOOJLzBvAvbqOR/yUROsEiQ==";
+                                              + "zFd/Bk51E65UTmmSrmW0O1ohtzi6HzsDPjXgCtlTt3FqTcfFfI92IlTr4JWqC9UK1QT1ZTeng0MkPQmv68hDANHbt5CpETZHjW5q4OOgWhV"
+                                              + "vj5IyOC2NZHtKlJBkdsMAa15ouOOJLzBvAvbqOR/yUROsEiQ==";
     protected SshServer sshd;
     protected boolean canTest;
     protected String oldUserHome;
@@ -131,9 +131,12 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
                 sshd.stop(true);
                 sshd = null;
             } catch (Exception e) {
-                // ignore while shutting down as we could be polling during shutdown
-                // and get errors when the ftp server is stopping. This is only an issue
-                // since we host the ftp server embedded in the same jvm for unit testing
+                // ignore while shutting down as we could be polling during
+                // shutdown
+                // and get errors when the ftp server is stopping. This is only
+                // an issue
+                // since we host the ftp server embedded in the same jvm for
+                // unit testing
             }
         }
     }

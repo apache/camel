@@ -30,8 +30,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultMessage;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -46,12 +46,14 @@ public class RabbitMQProducerTest {
     private Message message = new DefaultMessage(new DefaultCamelContext());
     private Connection conn = Mockito.mock(Connection.class);
 
-    @Before
+    @BeforeEach
     public void before() throws IOException, TimeoutException {
+        RabbitMQMessageConverter converter = new RabbitMQMessageConverter();
+        converter.setAllowCustomHeaders(true);
         Mockito.when(exchange.getIn()).thenReturn(message);
         Mockito.when(endpoint.connect(any(ExecutorService.class))).thenReturn(conn);
         Mockito.when(conn.createChannel()).thenReturn(null);
-        Mockito.when(endpoint.getMessageConverter()).thenReturn(new RabbitMQMessageConverter());
+        Mockito.when(endpoint.getMessageConverter()).thenReturn(converter);
     }
 
     @Test
@@ -195,7 +197,7 @@ public class RabbitMQProducerTest {
         assertEquals(42.24, props.getHeaders().get("doubleHeader"));
         assertEquals(true, props.getHeaders().get("booleanHeader"));
         assertEquals(new Date(0), props.getHeaders().get("dateHeader"));
-        assertArrayEquals("foo".getBytes(), (byte[]) props.getHeaders().get("byteArrayHeader"));
+        assertArrayEquals("foo".getBytes(), (byte[])props.getHeaders().get("byteArrayHeader"));
         assertNull(props.getHeaders().get("invalidHeader"));
     }
 

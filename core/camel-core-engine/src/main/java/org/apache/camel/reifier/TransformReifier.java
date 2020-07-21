@@ -18,20 +18,20 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.TransformDefinition;
 import org.apache.camel.processor.TransformProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class TransformReifier extends ExpressionReifier<TransformDefinition> {
 
-    public TransformReifier(ProcessorDefinition<?> definition) {
-        super((TransformDefinition)definition);
+    public TransformReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (TransformDefinition) definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Expression expr = definition.getExpression().createExpression(routeContext);
+    public Processor createProcessor() throws Exception {
+        Expression expr = createExpression(definition.getExpression());
         return new TransformProcessor(expr);
     }
 }

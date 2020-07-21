@@ -21,15 +21,20 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.jsse.SecureRandomParameters;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractSecureRandomParametersFactoryBean extends AbstractJsseUtilFactoryBean<SecureRandomParameters> {
 
     @XmlAttribute(required = true)
+    @Metadata(description = "The Random Number Generator algorithm identifier for the SecureRandom factory method used to create the SecureRandom represented by this object's configuration. "
+            + "See Appendix A in the Java Cryptography Architecture API Specification and Reference guide for information about standard RNG algorithm names.")
     protected String algorithm;
-    
+
     @XmlAttribute
+    @Metadata(description = "The optional provider identifier for the SecureRandom factory"
+            + " method used to create the SecureRandom represented by this object's configuration.")
     protected String provider;
     
     @XmlTransient

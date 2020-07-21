@@ -25,6 +25,7 @@ import org.apache.camel.component.iec60870.AbstractIecComponent;
 import org.apache.camel.component.iec60870.ConnectionId;
 import org.apache.camel.component.iec60870.Constants;
 import org.apache.camel.component.iec60870.ObjectAddress;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.eclipse.neoscada.protocol.iec60870.server.data.DataModuleOptions;
 
@@ -48,8 +49,6 @@ public class ServerComponent extends AbstractIecComponent<ServerConnectionMultip
 
     @Override
     protected ServerConnectionMultiplexor createConnection(final ConnectionId id, final ServerOptions options) {
-        log.debug("Create new server - id: {}", id);
-
         try {
             return new ServerConnectionMultiplexor(new ServerInstance(id.getHost(), id.getPort(), options));
         } catch (final UnknownHostException e) {
@@ -64,11 +63,9 @@ public class ServerComponent extends AbstractIecComponent<ServerConnectionMultip
 
     /**
      * Default connection options
-     *
-     * @param defaultConnectionOptions the new default connection options, must
-     *            not be {@code null}
      */
     @Override
+    @Metadata
     public void setDefaultConnectionOptions(final ServerOptions defaultConnectionOptions) {
         super.setDefaultConnectionOptions(defaultConnectionOptions);
     }

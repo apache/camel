@@ -44,8 +44,8 @@ public final class ParseHelper {
             String className;
             String fieldName;
             try {
-                className = sqlType.substring(0, sqlType.lastIndexOf("."));
-                fieldName = sqlType.substring(sqlType.lastIndexOf(".") + 1);
+                className = sqlType.substring(0, sqlType.lastIndexOf('.'));
+                fieldName = sqlType.substring(sqlType.lastIndexOf('.') + 1);
             } catch (Exception ex) {
                 throw new ParseRuntimeException("Failed to parse class.field:" + sqlType);
             }

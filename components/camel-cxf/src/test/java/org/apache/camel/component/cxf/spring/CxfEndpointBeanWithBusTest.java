@@ -21,7 +21,11 @@ import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for testing CXF bus injection.
@@ -56,11 +60,10 @@ public class CxfEndpointBeanWithBusTest extends AbstractSpringBeanTestSupport {
     @Test
     public void testCxfEndpointBeanDefinitionParser() {
         CxfEndpoint routerEndpoint = ctx.getBean("routerEndpoint", CxfEndpoint.class);
-        assertEquals("Got the wrong endpoint address", "http://localhost:" + port1 
-                     + "/CxfEndpointBeanWithBusTest/router/", routerEndpoint.getAddress());
-        assertEquals("Got the wrong endpont service class", 
-                     "org.apache.camel.component.cxf.HelloService",
-                     routerEndpoint.getServiceClass().getName());
+        assertEquals("http://localhost:" + port1
+                     + "/CxfEndpointBeanWithBusTest/router/", routerEndpoint.getAddress(), "Got the wrong endpoint address");
+        assertEquals("org.apache.camel.component.cxf.HelloService",
+                     routerEndpoint.getServiceClass().getName(), "Got the wrong endpont service class");
         
     }
 

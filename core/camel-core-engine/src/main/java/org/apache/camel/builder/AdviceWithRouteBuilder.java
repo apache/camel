@@ -88,6 +88,62 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      * @throws Exception can be thrown from the route builder
      */
     public static RouteDefinition adviceWith(CamelContext camelContext, Object routeId, ThrowingConsumer<AdviceWithRouteBuilder, Exception> builder) throws Exception {
+        RouteDefinition rd = findRouteDefinition(camelContext, routeId);
+        return camelContext.adapt(ModelCamelContext.class).adviceWith(rd, new AdviceWithRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                builder.accept(this);
+            }
+        });
+    }
+
+    /**
+     * Advices this route with the route builder using a lambda expression. It
+     * can be used as following:
+     *
+     * <pre>
+     * AdviceWithRouteBuilder.adviceWith(context, "myRoute", false, a ->
+     *     a.weaveAddLast().to("mock:result");
+     * </pre>
+     * <p/>
+     * <b>Important:</b> It is recommended to only advice a given route once
+     * (you can of course advice multiple routes). If you do it multiple times,
+     * then it may not work as expected, especially when any kind of error
+     * handling is involved. The Camel team plan for Camel 3.0 to support this
+     * as internal refactorings in the routing engine is needed to support this
+     * properly.
+     * <p/>
+     * The advice process will add the interceptors, on exceptions, on
+     * completions etc. configured from the route builder to this route.
+     * <p/>
+     * This is mostly used for testing purpose to add interceptors and the likes
+     * to an existing route.
+     * <p/>
+     * Will stop and remove the old route from camel context and add and start
+     * this new advised route.
+     *
+     * @param camelContext the camel context
+     * @param routeId either the route id as a string value, or <tt>null</tt> to
+     *            chose the 1st route, or you can specify a number for the n'th
+     *            route, or provide the route definition instance directly as well.
+     * @param logXml whether to log the before and after advices routes as XML to the log (this can be turned off to perform faster)
+     * @param builder the advice with route builder
+     * @return a new route which is this route merged with the route builder
+     * @throws Exception can be thrown from the route builder
+     */
+    public static RouteDefinition adviceWith(CamelContext camelContext, Object routeId, boolean logXml, ThrowingConsumer<AdviceWithRouteBuilder, Exception> builder) throws Exception {
+        RouteDefinition rd = findRouteDefinition(camelContext, routeId);
+
+        return RouteReifier.adviceWith(rd, camelContext, new AdviceWithRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                setLogRouteAsXml(logXml);
+                builder.accept(this);
+            }
+        });
+    }
+
+    protected static RouteDefinition findRouteDefinition(CamelContext camelContext, Object routeId) {
         ModelCamelContext mcc = camelContext.adapt(ModelCamelContext.class);
         if (mcc.getRouteDefinitions().isEmpty()) {
             throw new IllegalArgumentException("Cannot advice route as there are no routes");
@@ -115,16 +171,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
                 rd = mcc.getRouteDefinitions().get(0);
             }
         }
-
-        return RouteReifier.adviceWith(rd, camelContext, new AdviceWithRouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                if (builder instanceof AdviceWithRouteBuilder) {
-                    setLogRouteAsXml(((AdviceWithRouteBuilder) builder).isLogRouteAsXml());
-                }
-                builder.accept(this);
-            }
-        });
+        return rd;
     }
 
     /**

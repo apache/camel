@@ -53,7 +53,7 @@ public class FtpConsumerMaxMessagesPerPollTest extends FtpServerTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     private void prepareFtpServer() throws Exception {
         sendFile(getFtpUrl(), "Bye World", "bye.txt");
         sendFile(getFtpUrl(), "Hello World", "hello.txt");

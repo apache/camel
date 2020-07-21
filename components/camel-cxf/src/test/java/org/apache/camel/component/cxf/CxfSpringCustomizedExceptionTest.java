@@ -26,16 +26,23 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.interceptor.Fault;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfSpringCustomizedExceptionTest extends CamelTestSupport  {
     private static final String EXCEPTION_MESSAGE = "This is an exception test message";
     private static final String DETAIL_TEXT = "This is a detail text node";
@@ -53,21 +60,16 @@ public class CxfSpringCustomizedExceptionTest extends CamelTestSupport  {
     }    
    
     @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-
-    @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         CXFTestSupport.getPort1();
         applicationContext = createApplicationContext();
         super.setUp();
-        assertNotNull("Should have created a valid spring context", applicationContext);
+        assertNotNull(applicationContext, "Should have created a valid spring context");
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         IOHelper.close(applicationContext);
         super.tearDown();
@@ -80,9 +82,9 @@ public class CxfSpringCustomizedExceptionTest extends CamelTestSupport  {
             fail("Should have thrown an exception");
         } catch (Exception ex) {
             Throwable result = ex.getCause();
-            assertTrue("Exception is not instance of SoapFault", result instanceof SoapFault);
-            assertEquals("Expect to get right detail message", DETAIL_TEXT, ((SoapFault)result).getDetail().getTextContent());
-            assertEquals("Expect to get right fault-code", "{http://schemas.xmlsoap.org/soap/envelope/}Client", ((SoapFault)result).getFaultCode().toString());
+            assertTrue(result instanceof SoapFault, "Exception is not instance of SoapFault");
+            assertEquals(DETAIL_TEXT, ((SoapFault)result).getDetail().getTextContent(), "Expect to get right detail message");
+            assertEquals("{http://schemas.xmlsoap.org/soap/envelope/}Client", ((SoapFault)result).getFaultCode().toString(), "Expect to get right fault-code");
         }
         
     }

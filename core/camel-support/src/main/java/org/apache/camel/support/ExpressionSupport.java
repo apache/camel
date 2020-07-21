@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -25,6 +26,10 @@ import org.apache.camel.util.ObjectHelper;
  * A useful base class for {@link Predicate} and {@link Expression} implementations
  */
 public abstract class ExpressionSupport implements Expression, Predicate {
+
+    @Override
+    public void init(CamelContext context) {
+    }
 
     @Override
     public boolean matches(Exchange exchange) {

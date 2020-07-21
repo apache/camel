@@ -1,0 +1,44 @@
+[[marshal-eip]]
+= Marshal EIP
+
+Marshalling is the opposite of unmarshalling, where a bean is marshalled into some binary or textual format for transmission over some transport via a Camel xref:components::index.adoc[Components]. Marshalling is used in the same way as unmarshalling above; in the xref:latest@manual:ROOT:dsl.adoc[DSL] you can use a DataFormat instance, you can configure the DataFormat dynamically using the DSL or you can refer to a named instance of the format in the xref:latest@manual:ROOT:registry.adoc[Registry].
+
+== Options
+
+// eip options: START
+The Marshal EIP supports 1 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *dataFormatType* | *Required* The data format to be used |  | DataFormatDefinition
+|===
+// eip options: END
+
+== Samples
+
+The following example unmarshals via serialization then marshals using a named JAXB data format to perform a kind of xref:message-translator.adoc[Message Translator].
+
+[source,java]
+----
+from("file://foo/bar").
+  unmarshal().serialization().
+  marshal("jaxb").
+  to("activemq:Some.Queue");
+----
+
+[[DataFormat-UsingSpringXML]]
+=== Using Spring XML
+
+This example shows how to configure the data type just once and reuse it
+on multiple routes
+
+You can also define reusable data formats as Spring beans
+
+[source,xml]
+--------------------------------------------------------
+<bean id="myJaxb" class="org.apache.camel.model.dataformat.JaxbDataFormat">
+  <property name="prettyPrint" value="true"/>
+  <property name="contextPath" value="org.apache.camel.example"/>
+</bean> 
+--------------------------------------------------------

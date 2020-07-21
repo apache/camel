@@ -19,10 +19,12 @@ package org.apache.camel.component.google.drive;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveAppsApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Apps APIs.
@@ -34,12 +36,12 @@ public class DriveAppsIntegrationTest extends AbstractGoogleDriveTestSupport {
 
     // TODO getting permission errors for this one
     // May have to adjust scopes used
-    @Ignore    
+    @Disabled    
     @Test
     public void testList() throws Exception {
         final com.google.api.services.drive.model.App result = requestBody("direct://LIST", null);
 
-        assertNotNull("list result", result);
+        assertNotNull(result, "list result");
         LOG.debug("list: " + result);
     }
 

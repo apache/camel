@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -41,6 +42,11 @@ public class MockValueBuilder implements Expression, Predicate {
 
     public MockValueBuilder(Expression expression) {
         this.expression = expression;
+    }
+
+    @Override
+    public void init(CamelContext context) {
+        expression.init(context);
     }
 
     @Override

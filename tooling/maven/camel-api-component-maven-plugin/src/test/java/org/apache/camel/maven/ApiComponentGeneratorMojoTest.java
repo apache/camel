@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.apache.camel.component.test.TestProxy;
 import org.apache.velocity.VelocityContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests {@link ApiComponentGeneratorMojo}

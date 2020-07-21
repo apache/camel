@@ -1,0 +1,55 @@
+[[HowdoIenablestreamswhendebugloggingmessagesinCamel-HowdoIenablestreamswhendebugloggingmessagesinCamel]]
+= How do I enable streams when debug logging messages in Camel
+
+*Since Camel 2.1*
+
+When you run Camel with `DEBUG` level as logging, it will log the
+messages and its content from time to time.
+As some messages can contain streams, which are prone to be not readable
+multiple times, and therefore Camel will by default *not* log these
+types.
+
+These instances are not logged by default:
+
+* `java.xml.transform.StreamSource`
+* `java.io.InputStream`
+* `java.io.OutputStream`
+* `java.io.Reader`
+* `java.io.Writer`
+
+You will see this in the log as:
+
+----
+DEBUG ProducerCache                  - >>>> Endpoint[direct:start] Exchange[Message: [Body is instance of java.xml.transform.StreamSource]]
+----
+
+Here we have a message which is XML stream based.
+You can customize whether Camel should log the payload anyway.
+
+[[HowdoIenablestreamswhendebugloggingmessagesinCamel-CustomizingfromJavaDSL]]
+== Customizing from Java DSL
+
+You add to the Camel properties the flag to log streams.
+
+[source,java]
+----
+        context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_STREAMS, "true");
+----
+
+Notice default is `false`.
+
+[[HowdoIenablestreamswhendebugloggingmessagesinCamel-CustomizingfromSpringDSL]]
+== Customizing from Spring DSL
+
+You add to the Camel properties the flag to log streams.
+
+[source,java]
+----
+   <camelContext>
+       <properties>
+           <property key="CamelLogDebugBodyStreams" value="true"/>
+      </properties>
+   </camelContext>
+----
+
+Notice default is `false`.

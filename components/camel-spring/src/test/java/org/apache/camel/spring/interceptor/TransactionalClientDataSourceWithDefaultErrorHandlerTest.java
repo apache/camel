@@ -16,7 +16,7 @@
  */
 package org.apache.camel.spring.interceptor;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Using the default error handler = DeadLetterChannel to unit test that this works out of the box
@@ -25,7 +25,7 @@ import org.junit.Before;
 public class TransactionalClientDataSourceWithDefaultErrorHandlerTest extends TransactionalClientDataSourceTest {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         useTransactionErrorHandler = false;

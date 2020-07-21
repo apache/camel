@@ -31,6 +31,11 @@ import org.apache.camel.Processor;
 public interface BeanProcessorFactory {
 
     /**
+     * Service factory key.
+     */
+    String FACTORY = "bean-processor-factory";
+
+    /**
      * Creates the bean processor from the existing bean instance
      *
      * @param camelContext  the camel context

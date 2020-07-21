@@ -24,8 +24,10 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.FileUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -48,7 +50,7 @@ public class FileValidatorRouteTest extends ContextTestSupport {
 
         // should be able to delete the file
         oneExchangeDone.matchesMockWaitTime();
-        assertTrue("Should be able to delete the file", FileUtil.deleteFile(new File("target/data/validator/valid.xml")));
+        assertTrue(FileUtil.deleteFile(new File("target/data/validator/valid.xml")), "Should be able to delete the file");
     }
 
     @Test
@@ -62,11 +64,11 @@ public class FileValidatorRouteTest extends ContextTestSupport {
 
         // should be able to delete the file
         oneExchangeDone.matchesMockWaitTime();
-        assertTrue("Should be able to delete the file", FileUtil.deleteFile(new File("target/data/validator/invalid.xml")));
+        assertTrue(FileUtil.deleteFile(new File("target/data/validator/invalid.xml")), "Should be able to delete the file");
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/validator");
         super.setUp();

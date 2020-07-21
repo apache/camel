@@ -43,6 +43,7 @@ public final class MongoDbConstants {
     public static final String ALLOW_DISK_USE = "CamelMongoDbAllowDiskUse";
     public static final String BULK_ORDERED = "CamelMongoDbBulkOrdered";
     public static final String MONGO_ID = "_id"; // default id field
+    public static final String STREAM_OPERATION_TYPE = "CamelMongoDbStreamOperationType";
 
     private MongoDbConstants() {
     }

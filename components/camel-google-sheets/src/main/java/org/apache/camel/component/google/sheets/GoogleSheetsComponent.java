@@ -32,6 +32,9 @@ import org.apache.camel.support.component.AbstractApiComponent;
 @Component("google-sheets")
 public class GoogleSheetsComponent extends AbstractApiComponent<GoogleSheetsApiName, GoogleSheetsConfiguration, GoogleSheetsApiCollection> {
 
+    @Metadata
+    GoogleSheetsConfiguration configuration;
+
     @Metadata(label = "advanced")
     private Sheets client;
     @Metadata(label = "advanced")

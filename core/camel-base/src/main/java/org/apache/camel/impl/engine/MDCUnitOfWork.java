@@ -22,7 +22,8 @@ import java.util.Map;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.Route;
+import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.PatternHelper;
 import org.slf4j.Logger;
@@ -47,8 +48,9 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     private final String originalCamelContextId;
     private final String originalTransactionKey;
 
-    public MDCUnitOfWork(Exchange exchange, String pattern) {
-        super(exchange, LOG);
+    public MDCUnitOfWork(Exchange exchange, InflightRepository inflightRepository,
+                         String pattern, boolean allowUseOriginalMessage, boolean useBreadcrumb) {
+        super(exchange, LOG, inflightRepository, allowUseOriginalMessage, useBreadcrumb);
         this.pattern = pattern;
 
         // remember existing values
@@ -81,7 +83,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
 
     @Override
     public UnitOfWork newInstance(Exchange exchange) {
-        return new MDCUnitOfWork(exchange, pattern);
+        return new MDCUnitOfWork(exchange, inflightRepository, pattern, allowUseOriginalMessage, useBreadcrumb);
     }
 
     @Override
@@ -92,17 +94,20 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     }
 
     @Override
-    public void pushRouteContext(RouteContext routeContext) {
-        super.pushRouteContext(routeContext);
-        MDC.put(MDC_ROUTE_ID, routeContext.getRouteId());
+    public void pushRoute(Route route) {
+        super.pushRoute(route);
+        if (route != null) {
+            MDC.put(MDC_ROUTE_ID, route.getRouteId());
+        } else {
+            MDC.remove(MDC_ROUTE_ID);
+        }
     }
 
     @Override
-    public RouteContext popRouteContext() {
-        RouteContext answer = super.popRouteContext();
-
+    public Route popRoute() {
+        Route answer = super.popRoute();
         // restore old route id back again after we have popped
-        RouteContext previous = getRouteContext();
+        Route previous = getRoute();
         if (previous != null) {
             // restore old route id back again
             MDC.put(MDC_ROUTE_ID, previous.getRouteId());
@@ -124,6 +129,11 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     public void endTransactedBy(Object key) {
         MDC.remove(MDC_TRANSACTION_KEY);
         super.endTransactedBy(key);
+    }
+
+    @Override
+    public boolean isBeforeAfterProcess() {
+        return true;
     }
 
     @Override

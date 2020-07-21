@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
@@ -27,6 +26,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.AsPredicate;
@@ -37,14 +37,18 @@ import org.apache.camel.spi.Metadata;
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "onCompletion")
+@XmlType(propOrder = {"onWhen", "outputs"})
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefinition> implements OutputNode, ExecutorServiceAwareDefinition<OnCompletionDefinition> {
+public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinition> implements ExecutorServiceAwareDefinition<OnCompletionDefinition> {
     @XmlAttribute
-    @Metadata(defaultValue = "AfterConsumer")
-    private OnCompletionMode mode;
+    @Metadata(javaType = "org.apache.camel.model.OnCompletionMode", defaultValue = "AfterConsumer",
+              enums = "AfterConsumer,BeforeConsumer")
+    private String mode;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String onCompleteOnly;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String onFailureOnly;
     @XmlElement(name = "onWhen")
     @AsPredicate
@@ -52,26 +56,32 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     @XmlAttribute
     private String parallelProcessing;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String executorServiceRef;
     @XmlAttribute(name = "useOriginalMessage")
+    @Metadata(javaType = "java.lang.Boolean")
     private String useOriginalMessage;
-    @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
     @XmlTransient
     private ExecutorService executorService;
     @XmlTransient
-    private Boolean routeScoped;
+    private boolean routeScoped = true;
 
     public OnCompletionDefinition() {
     }
 
-    public boolean isRouteScoped() {
-        // is context scoped by default
-        return routeScoped != null ? routeScoped : false;
+    public void setRouteScoped(boolean routeScoped) {
+        this.routeScoped = routeScoped;
     }
 
-    public Boolean getRouteScoped() {
+    public boolean isRouteScoped() {
         return routeScoped;
+    }
+
+    @Override
+    public void setParent(ProcessorDefinition<?> parent) {
+        if (routeScoped) {
+            super.setParent(parent);
+        }
     }
 
     @Override
@@ -132,7 +142,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
      * @return the builder
      */
     public OnCompletionDefinition modeAfterConsumer() {
-        setMode(OnCompletionMode.AfterConsumer);
+        setMode(OnCompletionMode.AfterConsumer.name());
         return this;
     }
 
@@ -145,7 +155,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
      * @return the builder
      */
     public OnCompletionDefinition modeBeforeConsumer() {
-        setMode(OnCompletionMode.BeforeConsumer);
+        setMode(OnCompletionMode.BeforeConsumer.name());
         return this;
     }
 
@@ -268,11 +278,13 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         return outputs;
     }
 
+    @XmlElementRef
+    @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
-        this.outputs = outputs;
+        super.setOutputs(outputs);
     }
 
-    public OnCompletionMode getMode() {
+    public String getMode() {
         return mode;
     }
 
@@ -281,7 +293,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
      * <p/>
      * The default value is AfterConsumer
      */
-    public void setMode(OnCompletionMode mode) {
+    public void setMode(String mode) {
         this.mode = mode;
     }
 

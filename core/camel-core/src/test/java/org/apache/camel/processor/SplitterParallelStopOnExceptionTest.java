@@ -26,16 +26,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SplitterParallelStopOnExceptionTest extends ContextTestSupport {
 
     private ExecutorService service;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // use a pool with 2 concurrent tasks so we cannot run too fast
         service = Executors.newFixedThreadPool(2);
@@ -43,7 +45,7 @@ public class SplitterParallelStopOnExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         service.shutdownNow();

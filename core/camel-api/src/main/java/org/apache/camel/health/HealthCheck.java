@@ -24,7 +24,11 @@ import org.apache.camel.Ordered;
 import org.apache.camel.spi.HasGroup;
 import org.apache.camel.spi.HasId;
 
+/**
+ * Health check
+ */
 public interface HealthCheck extends HasGroup, HasId, Ordered {
+
     enum State {
         UP,
         DOWN,
@@ -44,6 +48,20 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
     }
 
     /**
+     * Whether this health check can be used for readiness checks
+     */
+    default boolean isReadiness() {
+        return true;
+    }
+
+    /**
+     * Whether this health check can be used for liveness checks
+     */
+    default boolean isLiveness() {
+        return true;
+    }
+
+    /**
      * Return the configuration associated with this {@link HealthCheck}.
      */
     HealthCheckConfiguration getConfiguration();
@@ -51,14 +69,16 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
     /**
      * Invoke the check.
      *
-     * @see {@link #call(Map)}
+     * @see #call(Map)
      */
     default Result call() {
         return call(Collections.emptyMap());
     }
 
     /**
-     * Invoke the check. The implementation is responsible to eventually perform
+     * Invoke the check.
+     *
+     * The implementation is responsible to eventually perform
      * the check according to the limitation of the third party system i.e.
      * it should not be performed too often to avoid rate limiting. The options
      * argument can be used to pass information specific to the check like

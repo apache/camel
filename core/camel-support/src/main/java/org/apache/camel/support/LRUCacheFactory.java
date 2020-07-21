@@ -30,7 +30,12 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class LRUCacheFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LRUCacheFactory.class);
+    /**
+     * Factory key
+     */
+    public static final String FACTORY = "lru-cache-factory";
+
+    private static final Logger LOG = LoggerFactory.getLogger(LRUCacheFactory.class);
 
     private static volatile LRUCacheFactory instance;
 
@@ -66,10 +71,10 @@ public abstract class LRUCacheFactory {
     }
 
     private static LRUCacheFactory createLRUCacheFactory() {
-        LOGGER.trace("createLRUCacheFactory");
+        LOG.trace("createLRUCacheFactory");
         try {
             ClassLoader classLoader = LRUCacheFactory.class.getClassLoader();
-            URL url = classLoader.getResource("META-INF/services/org/apache/camel/lru-cache-factory");
+            URL url = classLoader.getResource("META-INF/services/org/apache/camel/" + FACTORY);
             if (url != null) {
                 Properties props = new Properties();
                 try (InputStream is = url.openStream()) {
@@ -77,17 +82,20 @@ public abstract class LRUCacheFactory {
                 }
                 String clazzName = props.getProperty("class");
                 if (clazzName != null) {
-                    LOGGER.trace("Loading class: {}", clazzName);
+                    LOG.trace("Loading class: {}", clazzName);
                     Class<?> clazz = classLoader.loadClass(clazzName);
-                    LOGGER.trace("Creating LURCacheFactory instance from class: {}", clazzName);
+                    LOG.trace("Creating LRUCacheFactory instance from class: {}", clazzName);
                     Object factory = clazz.getDeclaredConstructor().newInstance();
-                    LOGGER.trace("Created LURCacheFactory instance: {}", factory);
+                    LOG.trace("Created LRUCacheFactory instance: {}", factory);
+                    LOG.info("Detected and using LRUCacheFactory: {}", factory);
                     return (LRUCacheFactory) factory;
                 }
             }
         } catch (Throwable t) {
-            LOGGER.warn("Error creating LRUCacheFactory. Will use DefaultLRUCacheFactory.", t);
+            LOG.warn("Error creating LRUCacheFactory. Will use DefaultLRUCacheFactory.", t);
         }
+        // use default
+        LOG.debug("Creating DefaultLRUCacheFactory");
         return new DefaultLRUCacheFactory();
     }
     

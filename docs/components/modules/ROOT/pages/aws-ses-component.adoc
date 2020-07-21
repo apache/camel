@@ -1,12 +1,19 @@
 [[aws-ses-component]]
-= AWS Simple Email Service Component
+= AWS Simple Email Service (SES) Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-ses/src/main/docs/aws-ses-component.adoc
+:docTitle: AWS Simple Email Service (SES)
+:artifactId: camel-aws-ses
+:description: Send e-mails through AWS SES service.
+:since: 2.9
+:supportLevel: Stable
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AWS
 
-*Since Camel 2.9*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The ses component supports sending emails with
 https://aws.amazon.com/ses[Amazon's SES] service.
@@ -31,19 +38,27 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS Simple Email Service component supports 6 options, which are listed below.
+The AWS Simple Email Service (SES) component supports 14 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (advanced) | The AWS SES default configuration |  | SesConfiguration
-| *accessKey* (producer) | Amazon AWS Access Key |  | String
-| *secretKey* (producer) | Amazon AWS Secret Key |  | String
-| *region* (producer) | The region in which SES client needs to work |  | String
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *amazonSESClient* (producer) | To use the AmazonSimpleEmailService as the client |  | AmazonSimpleEmailService
+| *configuration* (producer) | The component configuration |  | SesConfiguration
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *proxyHost* (producer) | To define a proxy host when instantiating the SES client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the SES client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the SES client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *region* (producer) | The region in which SES client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
+| *replyToAddresses* (producer) | List of reply-to email address(es) for the message, override it using 'CamelAwsSesReplyToAddresses' header. |  | List
+| *returnPath* (producer) | The email address to which bounce notifications are to be forwarded, override it using 'CamelAwsSesReturnPath' header. |  | String
+| *subject* (producer) | The subject which is used if the message header 'CamelAwsSesSubject' is not present. |  | String
+| *to* (producer) | List of destination email address. Can be overriden with 'CamelAwsSesTo' header. |  | List
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // component options: END
 
@@ -51,7 +66,7 @@ The AWS Simple Email Service component supports 6 options, which are listed belo
 
 
 // endpoint options: START
-The AWS Simple Email Service endpoint is configured using URI syntax:
+The AWS Simple Email Service (SES) endpoint is configured using URI syntax:
 
 ----
 aws-ses:from
@@ -79,7 +94,7 @@ with the following path and query parameters:
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *proxyHost* (producer) | To define a proxy host when instantiating the SES client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the SES client |  | Integer
-| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the SES client | HTTPS | Protocol
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the SES client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *region* (producer) | The region in which SES client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *replyToAddresses* (producer) | List of reply-to email address(es) for the message, override it using 'CamelAwsSesReplyToAddresses' header. |  | List
 | *returnPath* (producer) | The email address to which bounce notifications are to be forwarded, override it using 'CamelAwsSesReturnPath' header. |  | String
@@ -91,50 +106,6 @@ with the following path and query parameters:
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-aws-ses-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 19 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.aws-ses.access-key* | Amazon AWS Access Key |  | String
-| *camel.component.aws-ses.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.aws-ses.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.aws-ses.configuration.access-key* | Amazon AWS Access Key |  | String
-| *camel.component.aws-ses.configuration.amazon-s-e-s-client* | To use the AmazonSimpleEmailService as the client |  | AmazonSimpleEmailService
-| *camel.component.aws-ses.configuration.from* | The sender's email address. |  | String
-| *camel.component.aws-ses.configuration.proxy-host* | To define a proxy host when instantiating the SES client |  | String
-| *camel.component.aws-ses.configuration.proxy-port* | To define a proxy port when instantiating the SES client |  | Integer
-| *camel.component.aws-ses.configuration.proxy-protocol* | To define a proxy protocol when instantiating the SES client |  | Protocol
-| *camel.component.aws-ses.configuration.region* | The region in which SES client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
-| *camel.component.aws-ses.configuration.reply-to-addresses* | List of reply-to email address(es) for the message, override it using 'CamelAwsSesReplyToAddresses' header. |  | List
-| *camel.component.aws-ses.configuration.return-path* | The email address to which bounce notifications are to be forwarded, override it using 'CamelAwsSesReturnPath' header. |  | String
-| *camel.component.aws-ses.configuration.secret-key* | Amazon AWS Secret Key |  | String
-| *camel.component.aws-ses.configuration.subject* | The subject which is used if the message header 'CamelAwsSesSubject' is not present. |  | String
-| *camel.component.aws-ses.configuration.to* | List of destination email address. Can be overriden with 'CamelAwsSesTo' header. |  | List
-| *camel.component.aws-ses.enabled* | Whether to enable auto configuration of the aws-ses component. This is enabled by default. |  | Boolean
-| *camel.component.aws-ses.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-| *camel.component.aws-ses.region* | The region in which SES client needs to work |  | String
-| *camel.component.aws-ses.secret-key* | Amazon AWS Secret Key |  | String
-|===
-// spring-boot-auto-configure options: END
 
 
 
@@ -237,3 +208,5 @@ Maven users will need to add the following dependency to their pom.xml.
 
 where `$\{camel-version\}` must be replaced by the actual version of Camel.
 
+
+include::camel-spring-boot::page$aws-ses-starter.adoc[]

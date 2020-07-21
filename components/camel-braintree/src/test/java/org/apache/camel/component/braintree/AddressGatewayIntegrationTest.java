@@ -29,10 +29,13 @@ import com.braintreegateway.Result;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.AddressGatewayApiMethod;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(AddressGatewayIntegrationTest.class);
@@ -68,7 +71,7 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (this.gateway != null && customer != null) {
             for (String id : this.addressIds) {
@@ -99,7 +102,7 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
                 .locality("Forest Hill")
         );
 
-        assertNotNull("create", result);
+        assertNotNull(result, "create");
         assertTrue(result.isSuccess());
 
         LOG.info("Address created - customer={}, id={}", this.customer.getId(), result.getTarget().getId());
@@ -113,8 +116,8 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
 
     @Test
     public void testCreate() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
-        assertNotNull("Customer can't be null", this.customer);
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
+        assertNotNull(this.customer, "Customer can't be null");
 
         final Result<Address> address = requestBodyAndHeaders(
             "direct://CREATE",
@@ -129,7 +132,7 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
                 Result.class
              );
 
-        assertNotNull("create", address);
+        assertNotNull(address, "create");
         assertTrue(address.isSuccess());
 
         LOG.info("Address created - customer={}, id={}", customer.getId(), address.getTarget().getId());
@@ -138,8 +141,8 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
 
     @Test
     public void testDelete() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
-        assertNotNull("Customer can't be null", this.customer);
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
+        assertNotNull(this.customer, "Customer can't be null");
 
         final Address address = createAddress();
         final Result<Address> result = requestBodyAndHeaders(
@@ -152,7 +155,7 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
             Result.class
         );
 
-        assertNotNull("delete", address);
+        assertNotNull(address, "delete");
         assertTrue(result.isSuccess());
 
         LOG.info("Address deleted - customer={}, id={}", customer.getId(), address.getId());
@@ -160,8 +163,8 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
 
     @Test
     public void testFind() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
-        assertNotNull("Customer can't be null", this.customer);
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
+        assertNotNull(this.customer, "Customer can't be null");
 
         final Address addressRef = createAddress();
         this.addressIds.add(addressRef.getId());
@@ -175,14 +178,14 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
             Address.class
         );
 
-        assertNotNull("find", address);
+        assertNotNull(address, "find");
         LOG.info("Address found - customer={}, id={}", customer.getId(), address.getId());
     }
 
     @Test
     public void testUpdate() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
-        assertNotNull("Customer can't be null", this.customer);
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
+        assertNotNull(this.customer, "Customer can't be null");
 
         final Address addressRef = createAddress();
         this.addressIds.add(addressRef.getId());
@@ -199,7 +202,7 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
                 .build(),
             Result.class);
 
-        assertNotNull("update", result);
+        assertNotNull(result, "update");
         assertTrue(result.isSuccess());
 
         LOG.info("Address updated - customer={}, id={}", customer.getId(), result.getTarget().getId());

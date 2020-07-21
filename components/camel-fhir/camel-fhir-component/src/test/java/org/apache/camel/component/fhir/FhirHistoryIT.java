@@ -25,9 +25,12 @@ import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirHistoryApiMethod;
 import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.Patient;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirHistory} APIs.
@@ -50,7 +53,7 @@ public class FhirHistoryIT extends AbstractFhirTestSupport {
         Bundle result = requestBodyAndHeaders("direct://ON_INSTANCE", null, headers);
 
         LOG.debug("onInstance: " + result);
-        assertNotNull("onInstance result", result);
+        assertNotNull(result, "onInstance result");
         assertEquals(1, result.getEntry().size());
     }
 
@@ -62,7 +65,7 @@ public class FhirHistoryIT extends AbstractFhirTestSupport {
         Bundle result = requestBodyAndHeaders("direct://ON_SERVER", null, headers);
 
         LOG.debug("onServer: " + result);
-        assertNotNull("onServer result", result);
+        assertNotNull(result, "onServer result");
         assertEquals(1, result.getEntry().size());
     }
 
@@ -79,7 +82,7 @@ public class FhirHistoryIT extends AbstractFhirTestSupport {
         Bundle result = requestBodyAndHeaders("direct://ON_TYPE", null, headers);
 
         LOG.debug("onType: " + result);
-        assertNotNull("onType result", result);
+        assertNotNull(result, "onType result");
         assertEquals(1, result.getEntry().size());
     }
 
@@ -99,7 +102,7 @@ public class FhirHistoryIT extends AbstractFhirTestSupport {
         Bundle result = requestBodyAndHeaders("direct://ON_TYPE", null, headers);
 
         LOG.debug("onType: " + result);
-        assertNotNull("onType result", result);
+        assertNotNull(result, "onType result");
         assertEquals(1, result.getEntry().size());
     }
 

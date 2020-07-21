@@ -18,10 +18,9 @@ package org.apache.camel.component.hazelcast.instance;
 
 import java.net.InetSocketAddress;
 
+import com.hazelcast.cluster.MembershipEvent;
+import com.hazelcast.cluster.MembershipListener;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.MemberAttributeEvent;
-import com.hazelcast.core.MembershipEvent;
-import com.hazelcast.core.MembershipListener;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
@@ -47,11 +46,6 @@ public class HazelcastInstanceConsumer extends DefaultConsumer {
         @Override
         public void memberRemoved(MembershipEvent event) {
             this.sendExchange(event, HazelcastConstants.REMOVED);
-        }
-
-        @Override
-        public void memberAttributeChanged(MemberAttributeEvent event) {
-            this.sendExchange(event, HazelcastConstants.UPDATED);
         }
 
         private void sendExchange(MembershipEvent event, String action) {

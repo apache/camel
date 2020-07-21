@@ -18,10 +18,11 @@ package org.apache.camel.component.properties;
 
 import java.util.Locale;
 
+import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.util.StringHelper;
 
 /**
- * A {@link org.apache.camel.component.properties.PropertiesFunction} that lookup the property value from
+ * A {@link PropertiesFunction} that lookup the property value from
  * OS environment variables using the service idiom.
  * <p/>
  * A service is defined using two environment variables where name is name of the service:

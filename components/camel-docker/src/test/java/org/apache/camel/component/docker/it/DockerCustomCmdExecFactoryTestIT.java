@@ -19,16 +19,14 @@ package org.apache.camel.component.docker.it;
 import java.util.concurrent.TimeUnit;
 
 import com.github.dockerjava.api.model.Version;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DockerCustomCmdExecFactoryTestIT extends DockerITTestSupport  {
 
     @Test
-    public void testNettyCmdExecFactoryConfig() throws Exception {
+    void testNettyCmdExecFactoryConfig() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived(FakeDockerCmdExecFactory.FAKE_VERSION);
@@ -40,7 +38,7 @@ public class DockerCustomCmdExecFactoryTestIT extends DockerITTestSupport  {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         FakeDockerCmdExecFactory.class.getDeclaredConstructors();
 
         return new RouteBuilder() {
@@ -48,12 +46,9 @@ public class DockerCustomCmdExecFactoryTestIT extends DockerITTestSupport  {
                 from("direct:in")
                     .to("docker://version?cmdExecFactory=" + FakeDockerCmdExecFactory.class.getName())
                     .log("${body}")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            Version version = exchange.getIn().getBody(Version.class);
-                            exchange.getOut().setBody(version.getVersion());
-                        }
+                    .process(exchange -> {
+                        Version version = exchange.getIn().getBody(Version.class);
+                        exchange.getMessage().setBody(version.getVersion());
                     })
                     .to("mock:result");
             }

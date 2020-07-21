@@ -24,8 +24,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.MessageHelper;
 import org.apache.cxf.helpers.CastUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
     private String routerEndpointURI = "cxf://" + getRouterAddress() + "?" + SERVICE_CLASS + "&dataFormat=RAW";
     private String serviceEndpointURI = "cxf://" + getServiceAddress() + "?" + SERVICE_CLASS + "&dataFormat=RAW";
@@ -38,10 +44,6 @@ public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
             }
         };
     }
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
 
     @Test
     public void testTheContentType() throws Exception {
@@ -53,11 +55,11 @@ public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
         assertMockEndpointsSatisfied();        
         Map<?, ?> context = CastUtils.cast((Map<?, ?>)result.assertExchangeReceived(0).getIn().getHeaders().get("ResponseContext"));
         Map<?, ?> protocalHeaders = CastUtils.cast((Map<?, ?>) context.get("org.apache.cxf.message.Message.PROTOCOL_HEADERS"));
-        assertTrue("Should get a right content type", protocalHeaders.get("content-type").toString().startsWith("[text/xml;"));
-        assertTrue("Should get a right context type with a charset",  protocalHeaders.get("content-type").toString().indexOf("charset=") > 0);
-        assertEquals("Should get the response code ", context.get("org.apache.cxf.message.Message.RESPONSE_CODE"), 200);
-        assertTrue("Should get the content type", result.assertExchangeReceived(0).getIn().getHeaders().get("content-type").toString().startsWith("text/xml;")); 
-        assertTrue("Should get the content type", result.assertExchangeReceived(0).getIn().getHeaders().get("content-type").toString().indexOf("charset=") > 0); 
+        assertTrue(protocalHeaders.get("content-type").toString().startsWith("[text/xml;"), "Should get a right content type");
+        assertTrue(protocalHeaders.get("content-type").toString().indexOf("charset=") > 0, "Should get a right context type with a charset");
+        assertEquals(context.get("org.apache.cxf.message.Message.RESPONSE_CODE"), 200, "Should get the response code");
+        assertTrue(result.assertExchangeReceived(0).getIn().getHeaders().get("content-type").toString().startsWith("text/xml;"), "Should get the content type");
+        assertTrue(result.assertExchangeReceived(0).getIn().getHeaders().get("content-type").toString().indexOf("charset=") > 0, "Should get the content type");
         
     }
     
@@ -74,11 +76,11 @@ public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
             }
 
         });
-        assertNotNull("We should get the Content-Type here", MessageHelper.getContentType(exchange.getOut()));
-        assertTrue("Get wrong content type", MessageHelper.getContentType(exchange.getOut()).startsWith("text/xml"));
-        assertNotNull("We should get the content-type here", exchange.getOut().getHeader("content-type"));
+        assertNotNull(MessageHelper.getContentType(exchange.getOut()), "We should get the Content-Type here");
+        assertTrue(MessageHelper.getContentType(exchange.getOut()).startsWith("text/xml"), "Get wrong content type");
+        assertNotNull(exchange.getOut().getHeader("content-type"), "We should get the content-type here");
         String response = exchange.getOut().getBody(String.class);
-        assertNotNull("Response should not be null", response);
-        assertTrue("We should get right return result", response.indexOf("echo hello world") > 0);
+        assertNotNull(response, "Response should not be null");
+        assertTrue(response.indexOf("echo hello world") > 0, "We should get right return result");
     }
 }

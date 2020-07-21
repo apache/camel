@@ -28,11 +28,15 @@ import javax.mail.internet.MimeMessage;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.ObjectHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.CastUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MailMessageTest extends CamelTestSupport {
     private Session mailSession;
@@ -47,7 +51,7 @@ public class MailMessageTest extends CamelTestSupport {
         Exchange exchange = endpoint.createExchange(mimeMessage);
         MailMessage in = (MailMessage)exchange.getIn();
         assertNotNull(in);
-        assertEquals("mail body", body, in.getBody());
+        assertEquals(body, in.getBody(), "mail body");
 
         // need to use iterator as some mail impl returns String[] and others a single String with comma as separator
         // so we let Camel create an iterator so we can use the same code for the test
@@ -73,13 +77,13 @@ public class MailMessageTest extends CamelTestSupport {
         assertNotNull(in);
         Object header = in.getHeader("TO");
         String value = assertIsInstanceOf(String.class, header);
-        assertEquals("value", "frank@localhost", value);
+        assertEquals("frank@localhost", value, "value");
 
-        assertEquals("body", body, in.getBody());
+        assertEquals(body, in.getBody(), "body");
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         Mailbox.clearAll();

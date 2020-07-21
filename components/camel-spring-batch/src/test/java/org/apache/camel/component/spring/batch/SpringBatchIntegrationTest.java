@@ -68,7 +68,7 @@ public class SpringBatchIntegrationTest extends CamelSpringTestSupport {
     public void testMessageHeader() throws Exception {
         headerEndpoint.expectedHeaderReceived("header", 1);
         
-        template.sendBodyAndHeader(null, "header", "1");
+        template.sendBodyAndHeader("direct:header", null, "header", "1");
         
         headerEndpoint.assertIsSatisfied();
     }

@@ -16,14 +16,14 @@
  */
 package org.apache.camel.spring.interceptor;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class TransactionalClientDataSourceWithSpringRouteBuilderTest extends TransactionalClientDataSourceTest {
     
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         setUseRouteBuilder(false);
         super.setUp();        

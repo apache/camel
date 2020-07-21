@@ -1,31 +1,35 @@
 [[corda-component]]
 = Corda Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-corda/src/main/docs/corda-component.adoc
-= Corda Component
-*Since Camel 2.23*
+:docTitle: Corda
+:artifactId: camel-corda
+:description: Perform operations against Corda blockchain platform using corda-rpc library.
+:since: 2.23
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+
+*{component-header}*
 
 
-*Since Camel 2.23*
+*Since Camel {since}*
 
-Camel connector for R3's https://www.corda.net/[corda] blockchain platform using corda-rpc library.
-This component uses the corda rpc client.
+Camel connector for R3's https://www.corda.net/[Corda] blockchain platform using corda-rpc library.
+This component uses the Corda RPC client.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-corda</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI Format
 
@@ -38,7 +42,7 @@ corda://<host:port>[?options]
 
 
 // component options: START
-The Corda component supports 4 options, which are listed below.
+The Corda component supports 14 options, which are listed below.
 
 
 
@@ -46,9 +50,19 @@ The Corda component supports 4 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *configuration* (common) | To use a shared configuration. |  | CordaConfiguration
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *pageSpecification* (consumer) | PageSpecification allows specification of a page number (starting from 1) and page size (defaulting to 200 with a maximum page size of (Integer.MAX_INT) Note: we default the page number to 200 to enable queries without requiring a page specification but enabling detection of large results sets that fall out of the 200 requirement. Max page size should be used with extreme caution as results may exceed your JVM memory footprint. | 200 | PageSpecification
+| *processSnapshot* (consumer) | Whether to process snapshots or not | true | boolean
+| *sort* (consumer) | Sort allows specification of a set of entity attribute names and their associated directionality and null handling, to be applied upon processing a query specification. The value can be one of: ASC, DESC |  | Sort
+| *contractStateClass* (consumer) | A contract state (or just state) contains opaque data used by a contract program. It can be thought of as a disk file that the program can use to persist data across transactions. States are immutable: once created they are never updated, instead, any changes must generate a new successor state. States can be updated (consumed) only once: the notary is responsible for ensuring there is no double spending by only signing a transaction if the input states are all free. |  | Class
+| *flowLogicArguments* (consumer) | Start the given flow with the given arguments, returning an Observable with a single observation of the result of running the flow. The flowLogicClass must be annotated with net.corda.core.flows.StartableByRPC. |  | Object[]
+| *flowLogicClass* (consumer) | Start the given flow with the given arguments, returning an Observable with a single observation of the result of running the flow. The flowLogicClass must be annotated with net.corda.core.flows.StartableByRPC. |  | Class
+| *queryCriteria* (consumer) | QueryCriteria assumes underlying schema tables are correctly indexed for performance. |  | QueryCriteria
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | Operation to use |  | String
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *password* (security) | Password for login |  | String
+| *username* (security) | Username for login |  | String
 |===
 // component options: END
 
@@ -72,15 +86,22 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (9 parameters):
+=== Query Parameters (16 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *pageSpecification* (consumer) | PageSpecification allows specification of a page number (starting from 1) and page size (defaulting to 200 with a maximum page size of (Integer.MAX_INT) Note: we default the page number to 200 to enable queries without requiring a page specification but enabling detection of large results sets that fall out of the 200 requirement. Max page size should be used with extreme caution as results may exceed your JVM memory footprint. | 200 | PageSpecification
+| *processSnapshot* (consumer) | Whether to process snapshots or not | true | boolean
+| *sort* (consumer) | Sort allows specification of a set of entity attribute names and their associated directionality and null handling, to be applied upon processing a query specification. The value can be one of: ASC, DESC |  | Sort
+| *contractStateClass* (consumer) | A contract state (or just state) contains opaque data used by a contract program. It can be thought of as a disk file that the program can use to persist data across transactions. States are immutable: once created they are never updated, instead, any changes must generate a new successor state. States can be updated (consumed) only once: the notary is responsible for ensuring there is no double spending by only signing a transaction if the input states are all free. |  | Class
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *flowLogicArguments* (consumer) | Start the given flow with the given arguments, returning an Observable with a single observation of the result of running the flow. The flowLogicClass must be annotated with net.corda.core.flows.StartableByRPC. |  | Object[]
+| *flowLogicClass* (consumer) | Start the given flow with the given arguments, returning an Observable with a single observation of the result of running the flow. The flowLogicClass must be annotated with net.corda.core.flows.StartableByRPC. |  | Class
+| *queryCriteria* (consumer) | QueryCriteria assumes underlying schema tables are correctly indexed for performance. |  | QueryCriteria
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *operation* (producer) | Operation to use |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
@@ -89,48 +110,6 @@ with the following path and query parameters:
 | *username* (security) | Username for login |  | String
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-corda-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 17 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.corda.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.corda.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.corda.configuration.arguments* | Whether to process snapshots or not |  | Object[]
-| *camel.component.corda.configuration.contract-state-class* | Whether to process snapshots or not |  | Class
-| *camel.component.corda.configuration.flow-loci-class* | Whether to process snapshots or not |  | Class
-| *camel.component.corda.configuration.host* | Password for login |  | String
-| *camel.component.corda.configuration.node* | The url for the corda node |  | String
-| *camel.component.corda.configuration.operation* | Operation to use |  | String
-| *camel.component.corda.configuration.page-specification* | Whether to process snapshots or not |  | PageSpecification
-| *camel.component.corda.configuration.password* | Password for login |  | String
-| *camel.component.corda.configuration.port* | Password for login |  | Integer
-| *camel.component.corda.configuration.process-snapshot* | Whether to process snapshots or not |  | Boolean
-| *camel.component.corda.configuration.query-criteria* | Whether to process snapshots or not |  | QueryCriteria
-| *camel.component.corda.configuration.sort* | Whether to process snapshots or not |  | Sort
-| *camel.component.corda.configuration.username* | Username for login |  | String
-| *camel.component.corda.enabled* | Whether to enable auto configuration of the corda component. This is enabled by default. |  | Boolean
-| *camel.component.corda.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-|===
-// spring-boot-auto-configure options: END
 
 
 
@@ -155,15 +134,17 @@ You can append query options to the URI in the following format,
 Subscribe for new vault state changes:
 
 [source,java]
----------------------------------------------------------------------------------------------
+----
 from("corda://localhost:10006?username=user1&password=test&operation=VAULT_TRACK&contractStateClass=#contractStateClass")
     .to("jms:queue:vault");
----------------------------------------------------------------------------------------------
+----
 
 Read the node information:
 
 [source,java]
---------------------------------------------------------
+----
 from("direct:start")
     .to("corda://localhost:10006?username=user1&password=test&operation=NODE_INFO");
---------------------------------------------------------
+----
+
+include::camel-spring-boot::page$corda-starter.adoc[]

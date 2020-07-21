@@ -81,20 +81,20 @@ final class LumberjackFrameDecoder extends ByteToMessageDecoder {
             LOG.debug("Received a lumberjack frame of type {}", (char) frameType);
 
             switch (frameType) {
-            case TYPE_JSON:
-                frameDecoded = handleJsonFrame(in, out);
-                break;
-            case TYPE_DATA:
-                frameDecoded = handleDataFrame(in, out);
-                break;
-            case TYPE_WINDOW:
-                frameDecoded = handleWindowFrame(in);
-                break;
-            case TYPE_COMPRESS:
-                frameDecoded = handleCompressedFrame(ctx, in, out);
-                break;
-            default:
-                throw new RuntimeException("Unsupported frame type=" + frameType);
+                case TYPE_JSON:
+                    frameDecoded = handleJsonFrame(in, out);
+                    break;
+                case TYPE_DATA:
+                    frameDecoded = handleDataFrame(in, out);
+                    break;
+                case TYPE_WINDOW:
+                    frameDecoded = handleWindowFrame(in);
+                    break;
+                case TYPE_COMPRESS:
+                    frameDecoded = handleCompressedFrame(ctx, in, out);
+                    break;
+                default:
+                    throw new RuntimeException("Unsupported frame type=" + frameType);
             }
         } finally {
             if (!frameDecoded) {

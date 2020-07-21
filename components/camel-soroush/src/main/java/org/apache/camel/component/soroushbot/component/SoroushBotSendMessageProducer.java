@@ -43,7 +43,7 @@ import static org.apache.camel.component.soroushbot.utils.StringUtils.ordinal;
  */
 public class SoroushBotSendMessageProducer extends DefaultProducer {
 
-    private static Logger log = LoggerFactory.getLogger(SoroushBotSendMessageProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SoroushBotSendMessageProducer.class);
     SoroushBotEndpoint endpoint;
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -72,8 +72,8 @@ public class SoroushBotSendMessageProducer extends DefaultProducer {
         for (int count = 0; count <= endpoint.getMaxConnectionRetry(); count++) {
             endpoint.waitBeforeRetry(count);
             try {
-                if (log.isDebugEnabled()) {
-                    log.debug("sending message for " + ordinal(count + 1) + " time(s). message:" + message);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("sending message for " + ordinal(count + 1) + " time(s). message:" + message);
                 }
                 response = endpoint.getSendMessageTarget().request(MediaType.APPLICATION_JSON_TYPE)
                         .post(Entity.entity(objectMapper.writeValueAsString(message), MediaType.APPLICATION_JSON_TYPE));
@@ -83,8 +83,8 @@ public class SoroushBotSendMessageProducer extends DefaultProducer {
                 if (count == endpoint.getMaxConnectionRetry()) {
                     throw new MaximumConnectionRetryReachedException("failed to send message. maximum retry limit reached. aborting... message: " + message, ex, message);
                 }
-                if (log.isWarnEnabled()) {
-                    log.warn("failed to send message: " + message, ex);
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("failed to send message: " + message, ex);
                 }
 
             }

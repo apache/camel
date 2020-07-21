@@ -4,8 +4,8 @@
 [![Javadocs](http://www.javadoc.io/badge/org.apache.camel/apache-camel.svg?color=brightgreen)](http://www.javadoc.io/doc/org.apache.camel/camel-core)
 [![Stack Overflow](https://img.shields.io/:stack%20overflow-apache--camel-brightgreen.svg)](http://stackoverflow.com/questions/tagged/apache-camel)
 [![Gitter](https://img.shields.io/gitter/room/apache/apache-camel.js.svg)](https://gitter.im/apache/apache-camel)
+[![Master Build](https://github.com/apache/camel/workflows/build/badge.svg)](https://github.com/apache/camel/actions?query=workflow%3A%22build%22)
 [![Twitter](https://img.shields.io/twitter/follow/ApacheCamel.svg?label=Follow&style=social)](https://twitter.com/ApacheCamel)
- 
 
 [Apache Camel](http://camel.apache.org/) is a powerful open-source integration framework based on known
 Enterprise Integration Patterns with powerful bean integration.
@@ -38,8 +38,8 @@ Apache Camel comes with a lot of artifacts with components, data formats, langua
 The up to date list is available online at the Camel website:
 
 * Components: <https://camel.apache.org/components/latest/>
-* Data Formats: <https://camel.apache.org/components/latest/#_data_formats>
-* Languages: <https://camel.apache.org/components/latest/#_expression_languages>
+* Data Formats: <https://camel.apache.org/components/latest/dataformats/>
+* Languages: <https://camel.apache.org/components/latest/languages/>
 * Miscellaneous: <https://camel.apache.org/components/latest/#_miscellaneous_components>
 
 ## Examples
@@ -47,33 +47,34 @@ The up to date list is available online at the Camel website:
 Apache Camel comes with many examples.
 The up to date list is available online at GitHub:
 
-* Examples: <https://github.com/apache/camel/tree/master/examples#examples>
+* Examples: <https://github.com/apache/camel-examples/tree/master/examples#welcome-to-the-apache-camel-examples>
 
 ## Getting Started
 
 To help you get started, try the following links:
 
 **Getting Started**
-  
+
 <http://camel.apache.org/getting-started.html>
 
 It is also recommended to get started by trying out some of the beginner examples.
 
-* Examples: <https://github.com/apache/camel/tree/master/examples/README.adoc#examples>
+* Examples: <https://github.com/apache/camel-examples/tree/master/examples#welcome-to-the-apache-camel-examples>
 
 **Building**
-  
+
 <http://camel.apache.org/building.html>
 
 **Contributions**
 
 We welcome contributions of all kinds, for details of how you can help
-  
+
 <https://github.com/apache/camel/blob/master/CONTRIBUTING.md>
+
 
 Please refer to the website for details of finding the issue tracker, 
 email lists, GitHub, chat
-  
+
 Website: <http://camel.apache.org/>
 
 Github (source): <https://github.com/apache/camel>
@@ -92,14 +93,14 @@ Twitter: <https://twitter.com/ApacheCamel>
 **Support**
 
 If you need support or help then read this page first
-  
+
 <http://camel.apache.org/support.html>
 
 **Getting Help**
 
 If you hit any problems please talk to us on either StackOverflow, Chat, or the email mailing list.
 
-Please help us make Apache Camel better - we appreciate any feedback 
+Please help us make Apache Camel better - we appreciate any feedback
 you may have.
 
 Enjoy!
@@ -111,7 +112,7 @@ The Camel riders!
 
 This software is licensed under the terms you may find in the file
 named `LICENSE.txt` in this directory.
-   
+
 This distribution includes cryptographic software.  The country in
 which you currently reside may have restrictions on the import,
 possession, use, and/or re-export to another country, of
@@ -148,4 +149,3 @@ software:
 * **camel-netty-http** can be configured to use https
 * **camel-undertow** can be configured to use https
 * **camel-xmlsecurity** can be configured for secure communications
-

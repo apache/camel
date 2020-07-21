@@ -20,14 +20,14 @@ import javax.xml.XMLConstants;
 import javax.xml.validation.SchemaFactory;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
 
 public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
     // Need to bind the CustomerSchemaFactory
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry registry = super.createRegistry();
         SchemaFactory mySchemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         mySchemaFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, false);
         registry.bind("MySchemaFactory", mySchemaFactory);
@@ -39,6 +39,7 @@ public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
     public void testCustomSchemaFactory() throws Exception {
         ValidatorComponent v = new ValidatorComponent();
         v.setCamelContext(context);
+        v.init();
         v.createEndpoint("validator:org/apache/camel/component/validator/unsecuredSchema.xsd?schemaFactory=#MySchemaFactory");
     }
 

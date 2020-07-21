@@ -155,7 +155,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultXmlSignature2Message.class);
 
     @Override
-    public void mapToMessage(Input input, Message output) throws Exception { //NOPMD
+    public void mapToMessage(Input input, Message output) throws Exception {
 
         Node node;
         boolean removeSignatureElements = false;
@@ -202,7 +202,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
     }
 
 
-    protected Node getOutputNodeViaXPath(Input input) throws Exception { //NOPMD
+    protected Node getOutputNodeViaXPath(Input input) throws Exception {
         checkSearchValueNotNull(input);
         checkSearchValueOfType(XPathFilterParameterSpec.class, input);
         XPathFilterParameterSpec xpathFilter = (XPathFilterParameterSpec) input.getOutputNodeSearch();
@@ -230,7 +230,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
                 + "XPATH %s as specified in the output node search results into a node which has the wrong type.", xpathFilter.getXPath()));
     }
 
-    protected Node getOutputElementViaLocalNameAndNamespace(Input input) throws Exception { //NOPMD
+    protected Node getOutputElementViaLocalNameAndNamespace(Input input) throws Exception {
         String search = getNonEmptyStringSearchValue(input);
         String namespace;
         String localName;
@@ -273,7 +273,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
         return nodeList.item(0);
     }
 
-    protected String getNonEmptyStringSearchValue(Input input) throws Exception { //NOPMD
+    protected String getNonEmptyStringSearchValue(Input input) throws Exception {
         checkSearchValueNotNull(input);
         checkSearchValueOfType(String.class, input);
         String search = (String) input.getOutputNodeSearch();
@@ -281,32 +281,32 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
         return search;
     }
 
-    protected void checkSearchValueOfType(Class<?> cl, Input input) throws Exception { //NOPMD
+    protected void checkSearchValueOfType(Class<?> cl, Input input) throws Exception {
         if (!cl.isAssignableFrom(input.getOutputNodeSearch().getClass())) {
             throw new XMLSignatureException(String.format(
-                    "Wrong configruation: Search value is of class %s, the output node search %s requires class %s.", input
+                    "Wrong configuration: Search value is of class %s, the output node search %s requires class %s.", input
                             .getOutputNodeSearch().getClass().getName(), input.getOutputNodeSearchType(), cl.getName()));
         }
 
     }
 
-    protected void checkStringSarchValueNotEmpty(String searchValue, String outputNodeSearchType) throws Exception { //NOPMD
+    protected void checkStringSarchValueNotEmpty(String searchValue, String outputNodeSearchType) throws Exception {
         if (searchValue.isEmpty()) {
-            throw new XMLSignatureException(String.format("Wrong configruation: Value for output node search %s is empty.",
+            throw new XMLSignatureException(String.format("Wrong configuration: Value for output node search %s is empty.",
                     outputNodeSearchType));
         }
     }
 
-    protected void checkSearchValueNotNull(Input input) throws Exception { //NOPMD
+    protected void checkSearchValueNotNull(Input input) throws Exception {
         LOG.debug("Searching for output element with search value '{}' and sarch type {}", input.getOutputNodeSearch(),
                 input.getOutputNodeSearchType());
         if (input.getOutputNodeSearch() == null) {
-            throw new XMLSignatureException(String.format("Wrong configruation: Value is missing for output node search %s.",
+            throw new XMLSignatureException(String.format("Wrong configuration: Value is missing for output node search %s.",
                     input.getOutputNodeSearchType()));
         }
     }
 
-    protected Node getNodeForMessageBodyInEnvelopingCase(Input input) throws Exception { //NOPMD
+    protected Node getNodeForMessageBodyInEnvelopingCase(Input input) throws Exception {
         Node node;
         List<Reference> relevantReferences = getReferencesForMessageMapping(input);
 
@@ -346,7 +346,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
      *         document is the signature element; otherwise <code>false</code>
      * @throws Exception
      */
-    protected boolean isEnveloping(Input input) throws Exception { //NOPMD
+    protected boolean isEnveloping(Input input) throws Exception {
         Element el = input.getMessageBodyDocument().getDocumentElement();
         if ("Signature".equals(el.getLocalName()) && XMLSignature.XMLNS.equals(el.getNamespaceURI())) {
             return true;
@@ -377,7 +377,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
      * @throws Exception
      *             if an error occurs
      */
-    protected List<Reference> getReferencesForMessageMapping(Input input) throws Exception { //NOPMD
+    protected List<Reference> getReferencesForMessageMapping(Input input) throws Exception {
         return input.getReferences();
     }
 
@@ -391,7 +391,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
      * @throws Exception
      *             if an error occurs
      */
-    protected List<XMLObject> getObjectsForMessageMapping(Input input) throws Exception { //NOPMD
+    protected List<XMLObject> getObjectsForMessageMapping(Input input) throws Exception {
         return input.getObjects();
     }
 
@@ -410,7 +410,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
      *             if an error occurs
      */
     protected DOMStructure getDomStructureForMessageBody(List<Reference> relevantReferences, List<XMLObject> relevantObjects)
-        throws Exception { //NOPMD
+        throws Exception {
 
         List<XMLObject> referencedObjects = getReferencedSameDocumentObjects(relevantReferences, relevantObjects);
 

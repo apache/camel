@@ -30,10 +30,13 @@ import com.atlassian.jira.rest.client.api.domain.BasicPriority;
 import com.atlassian.jira.rest.client.api.domain.BasicWatchers;
 import com.atlassian.jira.rest.client.api.domain.Comment;
 import com.atlassian.jira.rest.client.api.domain.Issue;
+import com.atlassian.jira.rest.client.api.domain.IssueLink;
+import com.atlassian.jira.rest.client.api.domain.IssueLinkType;
 import com.atlassian.jira.rest.client.api.domain.IssueType;
 import com.atlassian.jira.rest.client.api.domain.Resolution;
 import com.atlassian.jira.rest.client.api.domain.Status;
 import com.atlassian.jira.rest.client.api.domain.User;
+import com.atlassian.jira.rest.client.api.domain.Worklog;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -102,11 +105,41 @@ public final class Utils {
                 null, null, null, null, null, null, null, null);
     }
 
+    public static Issue createIssueWithLinks(long id, Collection<IssueLink> issueLinks) {
+        URI selfUri = URI.create(TEST_JIRA_URL + "/rest/api/latest/issue/" + id);
+        return new Issue("jira summary test " + id, selfUri, KEY + "-" + id, id, null, issueType, null, "Description " + id,
+            null, null, null, null, userAssignee, null, null, null, null, null, null, null, null, null, null, issueLinks,
+            null, null, null, null, null, null, null, null);
+    }
+
+    public static Issue createIssueWithWorkLogs(long id, Collection<Worklog> worklogs) {
+        URI selfUri = URI.create(TEST_JIRA_URL + "/rest/api/latest/issue/" + id);
+        return new Issue("jira summary test " + id, selfUri, KEY + "-" + id, id, null, issueType, null, "Description " + id,
+            null, null, null, null, userAssignee, null, null, null, null, null, null, null, null, null, null, null,
+            null, worklogs, null, null, null, null, null, null);
+    }
+
     public static Comment newComment(long issueId, int newCommentId, String comment) {
         DateTime now = DateTime.now();
-        Long id = Long.parseLong(issueId + "0" + newCommentId);
+        long id = Long.parseLong(issueId + "0" + newCommentId);
         URI selfUri = URI.create(TEST_JIRA_URL + "/rest/api/latest/issue/" + issueId + "/comment");
         return new Comment(selfUri, comment, null, null, now, null, null, id);
+    }
+
+    public static IssueLink newIssueLink(long issueId, int newLinkId, String comment) {
+        long id = Long.parseLong(issueId + "0" + newLinkId);
+        URI issueUri = URI.create(TEST_JIRA_URL + "/rest/api/latest/issue/" + id);
+        IssueLinkType relatesTo = new IssueLinkType("Relates", "relates to", IssueLinkType.Direction.OUTBOUND);
+
+        return new IssueLink(KEY, issueUri, relatesTo);
+    }
+
+    public static Worklog newWorkLog(long issueId, Integer minutesSpent, String comment) {
+        DateTime now = DateTime.now();
+        URI issueUri = URI.create(TEST_JIRA_URL + "/rest/api/latest/issue/" + issueId);
+        URI selfUri = URI.create(TEST_JIRA_URL + "/rest/api/latest/issue/" + issueId + "/comment");
+
+        return new Worklog(selfUri, issueUri, null, null, comment, now, null, null, minutesSpent, null);
     }
 
     private static Map<String, URI> buildUserAvatarUris(@Nullable String user, Long avatarId) throws Exception {

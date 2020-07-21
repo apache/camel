@@ -18,24 +18,24 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.processor.SetHeaderProcessor;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 public class SetHeaderReifier extends ExpressionReifier<SetHeaderDefinition> {
 
-    public SetHeaderReifier(ProcessorDefinition<?> definition) {
-        super((SetHeaderDefinition)definition);
+    public SetHeaderReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (SetHeaderDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         ObjectHelper.notNull(definition.getName(), "headerName");
-        Expression expr = definition.getExpression().createExpression(routeContext);
-        Expression nameExpr = ExpressionBuilder.parseSimpleOrFallbackToConstantExpression(definition.getName(), routeContext.getCamelContext());
+        Expression expr = createExpression(definition.getExpression());
+        Expression nameExpr = ExpressionBuilder.parseSimpleOrFallbackToConstantExpression(parseString(definition.getName()), camelContext);
         return new SetHeaderProcessor(nameExpr, expr);
     }
 }

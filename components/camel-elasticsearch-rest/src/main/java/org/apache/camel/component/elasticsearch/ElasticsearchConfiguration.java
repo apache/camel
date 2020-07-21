@@ -37,6 +37,10 @@ public class ElasticsearchConfiguration {
     @UriParam
     private ElasticsearchOperation operation;
     @UriParam
+    private Integer size;
+    @UriParam
+    private Integer from;
+    @UriParam
     private String indexName;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_FOR_WAIT_ACTIVE_SHARDS)
     private int waitForActiveShards = ElasticsearchConstants.DEFAULT_FOR_WAIT_ACTIVE_SHARDS;
@@ -62,6 +66,28 @@ public class ElasticsearchConfiguration {
     private int snifferInterval = ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY)
     private int sniffAfterFailureDelay = ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY;
+
+    /**
+     * Starting index of the response.
+     */
+    public Integer getFrom() {
+        return from;
+    }
+
+    public void setFrom(Integer from) {
+        this.from = from;
+    }
+
+    /**
+     * Size of the response.
+     */
+    public Integer getSize() {
+        return size;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
+    }
 
     /**
      * Name of the cluster
@@ -206,11 +232,11 @@ public class ElasticsearchConfiguration {
     /**
      * Enable automatically discover nodes from a running Elasticsearch cluster
      */
-    public Boolean getEnableSniffer() {
+    public boolean isEnableSniffer() {
         return enableSniffer;
     }
 
-    public void setEnableSniffer(Boolean enableSniffer) {
+    public void setEnableSniffer(boolean enableSniffer) {
         this.enableSniffer = enableSniffer;
     }
 

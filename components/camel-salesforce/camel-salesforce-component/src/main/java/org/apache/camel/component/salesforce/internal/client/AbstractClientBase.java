@@ -40,14 +40,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Service;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
+import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.TypeReferences;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.dto.RestErrors;
+import org.apache.camel.support.service.ServiceSupport;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.HttpContentResponse;
 import org.eclipse.jetty.client.api.ContentProvider;
@@ -65,7 +66,7 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractClientBase implements SalesforceSession.SalesforceSessionListener, Service, HttpClientHolder {
+public abstract class AbstractClientBase extends ServiceSupport implements SalesforceSession.SalesforceSessionListener, HttpClientHolder {
 
     protected static final String APPLICATION_JSON_UTF8 = "application/json;charset=utf-8";
     protected static final String APPLICATION_XML_UTF8 = "application/xml;charset=utf-8";
@@ -76,6 +77,7 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
 
     protected final SalesforceHttpClient httpClient;
     protected final SalesforceSession session;
+    protected final SalesforceLoginConfig loginConfig;
     protected final String version;
 
     protected String accessToken;
@@ -85,26 +87,27 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
 
     private long terminationTimeout;
 
-    public AbstractClientBase(String version, SalesforceSession session, SalesforceHttpClient httpClient) throws SalesforceException {
-        this(version, session, httpClient, DEFAULT_TERMINATION_TIMEOUT);
+    public AbstractClientBase(String version, SalesforceSession session, SalesforceHttpClient httpClient, SalesforceLoginConfig loginConfig) throws SalesforceException {
+        this(version, session, httpClient, loginConfig, DEFAULT_TERMINATION_TIMEOUT);
     }
 
-    AbstractClientBase(String version, SalesforceSession session, SalesforceHttpClient httpClient, int terminationTimeout) throws SalesforceException {
-
+    AbstractClientBase(String version, SalesforceSession session, SalesforceHttpClient httpClient, SalesforceLoginConfig loginConfig, int terminationTimeout) throws SalesforceException {
         this.version = version;
         this.session = session;
         this.httpClient = httpClient;
+        this.loginConfig = loginConfig;
         this.terminationTimeout = terminationTimeout;
     }
 
     @Override
-    public void start() {
+    protected void doStart() throws Exception {
+        super.doStart();
+
         // local cache
         accessToken = session.getAccessToken();
-        if (accessToken == null) {
-            // lazy login here!
+        if (accessToken == null && !loginConfig.isLazyLogin()) {
             try {
-                accessToken = session.login(accessToken);
+                accessToken = session.login(null);
             } catch (SalesforceException e) {
                 throw new RuntimeException(e);
             }
@@ -118,7 +121,8 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
     }
 
     @Override
-    public void stop() {
+    public void doStop() throws Exception {
+        super.doStop();
         if (inflightRequests != null) {
             inflightRequests.arrive();
             if (!inflightRequests.isTerminated()) {

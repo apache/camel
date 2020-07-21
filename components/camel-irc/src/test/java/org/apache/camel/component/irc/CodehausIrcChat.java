@@ -17,8 +17,6 @@
 package org.apache.camel.component.irc;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventAdapter;

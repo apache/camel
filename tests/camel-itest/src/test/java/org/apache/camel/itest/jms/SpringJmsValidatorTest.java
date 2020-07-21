@@ -16,8 +16,8 @@
  */
 package org.apache.camel.itest.jms;
 
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -29,7 +29,7 @@ public class SpringJmsValidatorTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testJmsValidator() throws Exception {
+    void testJmsValidator() throws Exception {
         getMockEndpoint("mock:valid").expectedMessageCount(1);
         getMockEndpoint("mock:invalid").expectedMessageCount(0);
         getMockEndpoint("mock:finally").expectedMessageCount(1);
@@ -41,7 +41,7 @@ public class SpringJmsValidatorTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testJmsValidatorInvalid() throws Exception {
+    void testJmsValidatorInvalid() throws Exception {
         getMockEndpoint("mock:valid").expectedMessageCount(0);
         getMockEndpoint("mock:invalid").expectedMessageCount(1);
         getMockEndpoint("mock:finally").expectedMessageCount(1);

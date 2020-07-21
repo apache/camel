@@ -35,8 +35,10 @@ import org.apache.camel.spi.Metadata;
 public class LoopDefinition extends OutputExpressionNode {
 
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String copy;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String doWhile;
 
     public LoopDefinition() {

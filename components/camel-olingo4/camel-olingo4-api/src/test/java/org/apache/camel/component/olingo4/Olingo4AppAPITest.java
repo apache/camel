@@ -73,13 +73,16 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Integration test for
@@ -132,12 +135,12 @@ public class Olingo4AppAPITest {
     private final ClientObjectFactory objFactory = odataClient.getObjectFactory();
     private final ODataReader reader = odataClient.getReader();
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws Exception {
         setupClient();
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() throws Exception {
         if (olingoApp != null) {
             olingoApp.close();
@@ -185,7 +188,7 @@ public class Olingo4AppAPITest {
         final ClientServiceDocument serviceDocument = responseHandler.await();
 
         final Map<String, URI> entitySets = serviceDocument.getEntitySets();
-        assertEquals("Service Entity Sets", 4, entitySets.size());
+        assertEquals(4, entitySets.size(), "Service Entity Sets");
         LOG.info("Service Document Entries:  {}", entitySets);
     }
 
@@ -197,7 +200,7 @@ public class Olingo4AppAPITest {
 
         final ClientEntitySet entitySet = responseHandler.await();
         assertNotNull(entitySet);
-        assertEquals("Entity set count", 20, entitySet.getEntities().size());
+        assertEquals(20, entitySet.getEntities().size(), "Entity set count");
         LOG.info("Entities:  {}", prettyPrint(entitySet));
     }
 
@@ -208,9 +211,9 @@ public class Olingo4AppAPITest {
         olingoApp.uread(edm, PEOPLE, null, null, responseHandler);
 
         final InputStream rawEntitySet = responseHandler.await();
-        assertNotNull("Data entity set", rawEntitySet);
+        assertNotNull(rawEntitySet, "Data entity set");
         final ClientEntitySet entitySet = reader.readEntitySet(rawEntitySet, TEST_FORMAT);
-        assertEquals("Entity set count", 20, entitySet.getEntities().size());
+        assertEquals(20, entitySet.getEntities().size(), "Entity set count");
         LOG.info("Entries:  {}", prettyPrint(entitySet));
     }
 
@@ -245,7 +248,7 @@ public class Olingo4AppAPITest {
 
         olingoApp.uread(edm, TEST_AIRLINE, null, null, responseHandler);
         InputStream rawEntity = responseHandler.await();
-        assertNotNull("Data entity", rawEntity);
+        assertNotNull(rawEntity, "Data entity");
         ClientEntity entity = reader.readEntity(rawEntity, TEST_FORMAT);
         assertEquals("Shanghai Airline", entity.getProperty("Name").getValue().toString());
         LOG.info("Single Entity:  {}", prettyPrint(entity));
@@ -530,7 +533,7 @@ public class Olingo4AppAPITest {
         olingoApp.batch(edm, null, batchParts, responseHandler);
 
         final List<Olingo4BatchResponse> responseParts = responseHandler.await(15, TimeUnit.MINUTES);
-        assertEquals("Batch responses expected", 8, responseParts.size());
+        assertEquals(8, responseParts.size(), "Batch responses expected");
 
         assertNotNull(responseParts.get(0).getBody());
 
@@ -739,11 +742,11 @@ public class Olingo4AppAPITest {
         }
 
         public T await(long timeout, TimeUnit unit) throws Exception {
-            assertTrue("Timeout waiting for response", latch.await(timeout, unit));
+            assertTrue(latch.await(timeout, unit), "Timeout waiting for response");
             if (error != null) {
                 throw error;
             }
-            assertNotNull("Response", response);
+            assertNotNull(response, "Response");
             return response;
         }
 

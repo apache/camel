@@ -20,12 +20,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ironmq.IronMQConstants;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Must be manually tested. Provide your own projectId and token!")
+@Disabled("Must be manually tested. Provide your own projectId and token!")
 public class Queue2QueueExample extends CamelTestSupport {
     private static final String PAYLOAD = "{some:text, number:#}";
 
@@ -37,7 +37,7 @@ public class Queue2QueueExample extends CamelTestSupport {
     private final String ironQueue1 = "ironmq:queue1?projectId=" + projectId + "&token=" + token + "&ironMQCloud=https://mq-aws-eu-west-1-1.iron.io";
     private final String ironQueue2 = "ironmq:queue2?projectId=" + projectId + "&token=" + token + "&ironMQCloud=https://mq-aws-eu-west-1-1.iron.io";
     
-    @Before
+    @BeforeEach
     public void clean() {
         template.sendBodyAndHeader(ironQueue1, "fo", IronMQConstants.OPERATION, IronMQConstants.CLEARQUEUE);
         template.sendBodyAndHeader(ironQueue2, "fo", IronMQConstants.OPERATION, IronMQConstants.CLEARQUEUE);

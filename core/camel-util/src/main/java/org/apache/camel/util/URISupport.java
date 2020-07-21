@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -174,7 +175,7 @@ public final class URISupport {
      * @see #RAW_TOKEN_END
      */
     public static Map<String, Object> parseQuery(String uri, boolean useRaw, boolean lenient) throws URISyntaxException {
-        if (uri == null || ObjectHelper.isEmpty(uri)) {
+        if (uri == null || uri.isEmpty()) {
             // return an empty map
             return new LinkedHashMap<>(0);
         }
@@ -184,7 +185,7 @@ public final class URISupport {
             throw new URISyntaxException(uri, "Invalid uri syntax: Trailing & marker found. " + "Check the uri and remove the trailing & marker.");
         }
 
-        URIScanner scanner = new URIScanner(CHARSET);
+        URIScanner scanner = new URIScanner();
         return scanner.parseQuery(uri, useRaw);
     }
 
@@ -226,7 +227,19 @@ public final class URISupport {
      * @see #RAW_TOKEN_END
      */
     public static boolean isRaw(int index, List<Pair<Integer>> pairs) {
-        return URIScanner.isRaw(index, pairs);
+        if (pairs == null || pairs.isEmpty()) {
+            return false;
+        }
+
+        for (Pair<Integer> pair : pairs) {
+            if (index < pair.getLeft()) {
+                return false;
+            }
+            if (index <= pair.getRight()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -237,21 +250,32 @@ public final class URISupport {
      * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
     public static Map<String, Object> parseParameters(URI uri) throws URISyntaxException {
+        String query = prepareQuery(uri);
+        if (query == null) {
+            // empty an empty map
+            return new LinkedHashMap<>(0);
+        }
+        return parseQuery(query);
+    }
+
+    public static String prepareQuery(URI uri) {
         String query = uri.getQuery();
         if (query == null) {
             String schemeSpecificPart = uri.getSchemeSpecificPart();
             int idx = schemeSpecificPart.indexOf('?');
             if (idx < 0) {
-                // return an empty map
-                return new LinkedHashMap<>(0);
+                return null;
             } else {
                 query = schemeSpecificPart.substring(idx + 1);
             }
-        } else {
-            query = stripPrefix(query, "?");
+        } else if (query.indexOf('?') == 0) {
+            // skip leading query
+            query = query.substring(1);
         }
-        return parseQuery(query);
+        return query;
     }
+
+
 
     /**
      * Traverses the given parameters, and resolve any parameter values which
@@ -281,15 +305,18 @@ public final class URISupport {
                         continue;
                     }
                     String str = obj.toString();
-                    final int index = i;
-                    URIScanner.resolveRaw(str, (s, raw) -> {
+                    String raw = URIScanner.resolveRaw(str);
+                    if (raw != null) {
                         // update the string in the list
-                        list.set(index, raw);
-                    });
+                        list.set(i, raw);
+                    }
                 }
             } else {
                 String str = entry.getValue().toString();
-                URIScanner.resolveRaw(str, (s, raw) -> entry.setValue(raw));
+                String raw = URIScanner.resolveRaw(str);
+                if (raw != null) {
+                    entry.setValue(raw);
+                }
             }
         }
     }
@@ -377,11 +404,15 @@ public final class URISupport {
      */
     @SuppressWarnings("unchecked")
     public static String createQueryString(Map<String, Object> options) throws URISyntaxException {
+        return createQueryString(options.keySet(), options);
+    }
+
+    public static String createQueryString(Collection<String> sortedKeys, Map<String, Object> options) throws URISyntaxException {
         try {
             if (options.size() > 0) {
                 StringBuilder rc = new StringBuilder();
                 boolean first = true;
-                for (Object o : options.keySet()) {
+                for (Object o : sortedKeys) {
                     if (first) {
                         first = false;
                     } else {
@@ -428,13 +459,13 @@ public final class URISupport {
         }
         // only append if value is not null
         rc.append("=");
-        boolean isRaw = URIScanner.resolveRaw(value, (str, raw) -> {
+        String raw = URIScanner.resolveRaw(value);
+        if (raw != null) {
             // do not encode RAW parameters unless it has %
             // need to replace % with %25 to avoid losing "%" when decoding
-            String s = StringHelper.replaceAll(str, "%", "%25");
+            String s = StringHelper.replaceAll(value, "%", "%25");
             rc.append(s);
-        });
-        if (!isRaw) {
+        } else {
             rc.append(URLEncoder.encode(value, CHARSET));
         }
     }
@@ -490,45 +521,58 @@ public final class URISupport {
      * @see #RAW_TOKEN_END
      */
     public static String normalizeUri(String uri) throws URISyntaxException, UnsupportedEncodingException {
+        // try to parse using the simpler and faster Camel URI parser
+        String[] parts = CamelURIParser.parseUri(uri);
+        if (parts != null) {
+            // use the faster and more simple normalizer
+            return doFastNormalizeUri(parts);
+        } else {
+            // use the legacy normalizer as the uri is complex and may have unsafe URL characters
+            return doComplexNormalizeUri(uri);
+        }
+    }
 
+    /**
+     * The complex (and Camel 2.x) compatible URI normalizer when the URI is more complex
+     * such as having percent encoded values, or other unsafe URL characters, or have authority user/password, etc.
+     */
+    private static String doComplexNormalizeUri(String uri) throws URISyntaxException {
         URI u = new URI(UnsafeUriCharactersEncoder.encode(uri, true));
-        String path = u.getSchemeSpecificPart();
         String scheme = u.getScheme();
+        String path = u.getSchemeSpecificPart();
 
         // not possible to normalize
         if (scheme == null || path == null) {
             return uri;
         }
 
-        // lets trim off any query arguments
-        if (path.startsWith("//")) {
-            path = path.substring(2);
-        }
-        int idx = path.indexOf('?');
-        // when the path has ?
-        if (idx != -1) {
-            path = path.substring(0, idx);
-        }
-
-        if (u.getScheme().startsWith("http")) {
-            path = UnsafeUriCharactersEncoder.encodeHttpURI(path);
+        // find start and end position in path as we only check the context-path and not the query parameters
+        int start = path.startsWith("//") ? 2 : 0;
+        int end = path.indexOf('?');
+        if (start == 0 && end == 0 || start == 2 && end == 2) {
+            // special when there is no context path
+            path = "";
         } else {
-            path = UnsafeUriCharactersEncoder.encode(path);
+            if (start != 0 && end == -1) {
+                path = path.substring(start);
+            } else if (end != -1) {
+                path = path.substring(start, end);
+            }
+            if (scheme.startsWith("http")) {
+                path = UnsafeUriCharactersEncoder.encodeHttpURI(path);
+            } else {
+                path = UnsafeUriCharactersEncoder.encode(path);
+            }
         }
 
-        // okay if we have user info in the path and they use @ in username or
-        // password,
-        // then we need to encode them (but leave the last @ sign before the
-        // hostname)
-        // this is needed as Camel end users may not encode their user info
-        // properly, but expect
-        // this to work out of the box with Camel, and hence we need to fix it
-        // for them
-        String userInfoPath = path;
-        if (userInfoPath.contains("/")) {
-            userInfoPath = userInfoPath.substring(0, userInfoPath.indexOf("/"));
-        }
-        if (StringHelper.countChar(userInfoPath, '@') > 1) {
+        // okay if we have user info in the path and they use @ in username or password,
+        // then we need to encode them (but leave the last @ sign before the hostname)
+        // this is needed as Camel end users may not encode their user info properly,
+        // but expect this to work out of the box with Camel, and hence we need to
+        // fix it for them
+        int idxPath = path.indexOf('/');
+        if (StringHelper.countChar(path, '@', idxPath) > 1) {
+            String userInfoPath = idxPath > 0 ? path.substring(0, idxPath) : path;
             int max = userInfoPath.lastIndexOf('@');
             String before = userInfoPath.substring(0, max);
             // after must be from original path
@@ -540,29 +584,90 @@ public final class URISupport {
         }
 
         // in case there are parameters we should reorder them
-        Map<String, Object> parameters = URISupport.parseParameters(u);
-        if (parameters.isEmpty()) {
+        String query = prepareQuery(u);
+        if (query == null) {
             // no parameters then just return
             return buildUri(scheme, path, null);
         } else {
-            // reorder parameters a..z
-            List<String> keys = new ArrayList<>(parameters.keySet());
-            keys.sort(null);
+            Map<String, Object> parameters = URISupport.parseQuery(query, false, false);
+            if (parameters.size() == 1) {
+                // only 1 parameter need to create new query string
+                query = URISupport.createQueryString(parameters);
+                return buildUri(scheme, path, query);
+            } else {
+                // reorder parameters a..z
+                List<String> keys = new ArrayList<>(parameters.keySet());
+                keys.sort(null);
 
-            Map<String, Object> sorted = new LinkedHashMap<>(parameters.size());
-            for (String key : keys) {
-                sorted.put(key, parameters.get(key));
+                // build uri object with sorted parameters
+                query = URISupport.createQueryString(keys, parameters);
+                return buildUri(scheme, path, query);
             }
+        }
+    }
 
-            // build uri object with sorted parameters
-            String query = URISupport.createQueryString(sorted);
-            return buildUri(scheme, path, query);
+    /**
+     * The fast parser for normalizing Camel endpoint URIs when the URI is not complex and
+     * can be parsed in a much more efficient way.
+     */
+    private static String doFastNormalizeUri(String[] parts) throws URISyntaxException {
+        String scheme = parts[0];
+        String path = parts[1];
+        String query = parts[2];
+
+        // in case there are parameters we should reorder them
+        if (query == null) {
+            // no parameters then just return
+            return buildUri(scheme, path, null);
+        } else {
+            Map<String, Object> parameters = null;
+            if (query.indexOf('&') != -1) {
+                // only parse if there is parameters
+                parameters = URISupport.parseQuery(query, false, false);
+            }
+            if (parameters == null || parameters.size() == 1) {
+                return buildUri(scheme, path, query);
+            } else {
+                // reorder parameters a..z
+                // optimize and only build new query if the keys was resorted
+                boolean sort = false;
+                String prev = null;
+                for (String key : parameters.keySet()) {
+                    if (prev == null) {
+                        prev = key;
+                    } else {
+                        int comp = key.compareTo(prev);
+                        if (comp < 0) {
+                            sort = true;
+                            break;
+                        }
+                    }
+                }
+                if (sort) {
+                    List<String> keys = new ArrayList<>(parameters.keySet());
+                    keys.sort(null);
+                    // rebuild query with sorted parameters
+                    query = URISupport.createQueryString(keys, parameters);
+                }
+
+                return buildUri(scheme, path, query);
+            }
         }
     }
 
     private static String buildUri(String scheme, String path, String query) {
         // must include :// to do a correct URI all components can work with
-        return scheme + "://" + path + (query != null ? "?" + query : "");
+        int len = scheme.length() + 3 + path.length();
+        if (query != null) {
+            len += 1 + query.length();
+            StringBuilder sb = new StringBuilder(len);
+            sb.append(scheme).append("://").append(path).append('?').append(query);
+            return sb.toString();
+        } else {
+            StringBuilder sb = new StringBuilder(len);
+            sb.append(scheme).append("://").append(path);
+            return sb.toString();
+        }
     }
 
     public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix) {

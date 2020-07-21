@@ -21,7 +21,10 @@ import javax.xml.transform.TransformerException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class XsltFeatureRouteTest extends ContextTestSupport {
 
@@ -38,8 +41,10 @@ public class XsltFeatureRouteTest extends ContextTestSupport {
             fail("expect an exception here");
         } catch (Exception ex) {
             // expect an exception here
-            assertTrue("Get a wrong exception", ex instanceof CamelExecutionException);
-            assertTrue("Get a wrong exception cause", ex.getCause() instanceof TransformerException);
+            boolean b1 = ex instanceof CamelExecutionException;
+            assertTrue(b1, "Get a wrong exception");
+            boolean b = ex.getCause() instanceof TransformerException;
+            assertTrue(b, "Get a wrong exception cause");
         }
 
     }

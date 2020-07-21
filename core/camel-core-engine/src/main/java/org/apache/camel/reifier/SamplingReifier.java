@@ -19,26 +19,26 @@ package org.apache.camel.reifier;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SamplingDefinition;
 import org.apache.camel.processor.SamplingThrottler;
-import org.apache.camel.spi.RouteContext;
 
 public class SamplingReifier extends ProcessorReifier<SamplingDefinition> {
 
-    public SamplingReifier(ProcessorDefinition<?> definition) {
-        super((SamplingDefinition)definition);
+    public SamplingReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (SamplingDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         if (definition.getMessageFrequency() != null) {
-            return new SamplingThrottler(definition.getMessageFrequency());
+            return new SamplingThrottler(parseLong(definition.getMessageFrequency()));
         } else {
             // should default be 1 sample period
-            long time = definition.getSamplePeriod() != null ? definition.getSamplePeriod() : 1L;
+            long time = definition.getSamplePeriod() != null ? parseDuration(definition.getSamplePeriod()) : 1L;
             // should default be in seconds
-            TimeUnit tu = definition.getUnits() != null ? definition.getUnits() : TimeUnit.SECONDS;
+            TimeUnit tu = definition.getUnits() != null ? parse(TimeUnit.class, definition.getUnits()) : TimeUnit.SECONDS;
             return new SamplingThrottler(time, tu);
         }
     }

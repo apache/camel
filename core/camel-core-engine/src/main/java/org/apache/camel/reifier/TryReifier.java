@@ -20,22 +20,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.FinallyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.processor.TryProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class TryReifier extends ProcessorReifier<TryDefinition> {
 
-    public TryReifier(ProcessorDefinition<?> definition) {
-        super((TryDefinition)definition);
+    public TryReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (TryDefinition) definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor tryProcessor = createOutputsProcessor(routeContext, definition.getOutputsWithoutCatches());
+    public Processor createProcessor() throws Exception {
+        Processor tryProcessor = createOutputsProcessor(definition.getOutputsWithoutCatches());
         if (tryProcessor == null) {
             throw new IllegalArgumentException("Definition has no children on " + this);
         }
@@ -43,7 +43,7 @@ public class TryReifier extends ProcessorReifier<TryDefinition> {
         List<Processor> catchProcessors = new ArrayList<>();
         if (definition.getCatchClauses() != null) {
             for (CatchDefinition catchClause : definition.getCatchClauses()) {
-                catchProcessors.add(createProcessor(routeContext, catchClause));
+                catchProcessors.add(createProcessor(catchClause));
             }
         }
 
@@ -52,14 +52,14 @@ public class TryReifier extends ProcessorReifier<TryDefinition> {
             finallyDefinition = new FinallyDefinition();
             finallyDefinition.setParent(definition);
         }
-        Processor finallyProcessor = createProcessor(routeContext, finallyDefinition);
+        Processor finallyProcessor = createProcessor(finallyDefinition);
 
         // must have either a catch or finally
         if (definition.getFinallyClause() == null && definition.getCatchClauses() == null) {
             throw new IllegalArgumentException("doTry must have one or more catch or finally blocks on " + this);
         }
 
-        return new TryProcessor(tryProcessor, catchProcessors, finallyProcessor);
+        return new TryProcessor(camelContext, tryProcessor, catchProcessors, finallyProcessor);
     }
 
 }

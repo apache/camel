@@ -19,7 +19,11 @@ package org.apache.camel.spring.interceptor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Same route but not transacted
@@ -35,12 +39,12 @@ public class TransactionalClientDataSourceNotTransactedTest extends Transactiona
         } catch (RuntimeCamelException e) {
             // expected as we fail
             assertTrue(e.getCause() instanceof IllegalArgumentException);
-            assertEquals("We don't have Donkeys, only Camels", e.getCause().getMessage());
+            assertEquals(e.getCause().getMessage(), "We don't have Donkeys, only Camels");
         }
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         // should get 2 books as the first operation will succeed and we are not transacted
-        assertEquals("Number of books", 2, count);
+        assertEquals(2, count, "Number of books");
     }
 
     @Override

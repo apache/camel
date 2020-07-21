@@ -25,11 +25,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ScheduledPollConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A scheduled {@link org.apache.camel.Consumer} that polls a data queue for data
  */
 public class Jt400DataQueueConsumer extends ScheduledPollConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Jt400DataQueueConsumer.class);
 
     /**
      * Performs the lifecycle logic of this consumer.
@@ -117,10 +121,10 @@ public class Jt400DataQueueConsumer extends ScheduledPollConsumer {
         DataQueueEntry entry;
         if (timeout >= 0) {
             int seconds = (int) timeout / 1000;
-            log.trace("Reading from data queue: {} with {} seconds timeout", queue.getName(), seconds);
+            LOG.trace("Reading from data queue: {} with {} seconds timeout", queue.getName(), seconds);
             entry = queue.read(seconds);
         } else {
-            log.trace("Reading from data queue: {} with no timeout", queue.getName());
+            LOG.trace("Reading from data queue: {} with no timeout", queue.getName());
             entry = queue.read(-1);
         }
 
@@ -143,10 +147,10 @@ public class Jt400DataQueueConsumer extends ScheduledPollConsumer {
         KeyedDataQueueEntry entry;
         if (timeout >= 0) {
             int seconds = (int) timeout / 1000;
-            log.trace("Reading from data queue: {} with {} seconds timeout", queue.getName(), seconds);
+            LOG.trace("Reading from data queue: {} with {} seconds timeout", queue.getName(), seconds);
             entry = queue.read(key, seconds, searchType);
         } else {
-            log.trace("Reading from data queue: {} with no timeout", queue.getName());
+            LOG.trace("Reading from data queue: {} with no timeout", queue.getName());
             entry = queue.read(key, -1, searchType);
         }
 

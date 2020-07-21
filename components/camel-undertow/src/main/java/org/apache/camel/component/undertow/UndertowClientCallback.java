@@ -183,9 +183,7 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
 
     void hasFailedWith(final Throwable e) {
         LOG.trace("Exchange has failed with", e);
-        if (Boolean.TRUE.equals(throwExceptionOnFailure)) {
-            exchange.setException(e);
-        }
+        exchange.setException(e);
 
         finish(null);
     }

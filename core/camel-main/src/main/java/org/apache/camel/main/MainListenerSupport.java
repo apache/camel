@@ -24,6 +24,22 @@ import org.apache.camel.CamelContext;
 public class MainListenerSupport implements MainListener {
 
     @Override
+    public void beforeInitialize(BaseMainSupport main) {
+        // noop
+    }
+
+    @Override
+    public void beforeConfigure(BaseMainSupport main) {
+        // noop
+    }
+
+    @Override
+    public void afterConfigure(BaseMainSupport main) {
+        // noop
+    }
+
+    @Override
+    @Deprecated
     public void configure(CamelContext context) {
         // noop
     }

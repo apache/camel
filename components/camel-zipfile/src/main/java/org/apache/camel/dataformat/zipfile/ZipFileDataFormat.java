@@ -98,6 +98,8 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
                 if (entry != null) {
                     exchange.getMessage().setHeader(FILE_NAME, entry.getName());
                     IOHelper.copy(zis, osb);
+                } else {
+                    throw new IllegalStateException("Unable to unzip the file, it may be corrupted.");
                 }
 
                 entry = zis.getNextEntry();

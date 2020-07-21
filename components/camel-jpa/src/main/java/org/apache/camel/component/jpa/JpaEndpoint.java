@@ -22,6 +22,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.LockModeType;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -47,9 +48,9 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * The jpa component enables you to store and retrieve Java objects from databases using JPA.
+ * Store and retrieve Java objects from databases using Java Persistence API (JPA).
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "jpa", title = "JPA", syntax = "jpa:entityType", label = "database,sql")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "jpa", title = "JPA", syntax = "jpa:entityType", category = {Category.DATABASE, Category.SQL})
 public class JpaEndpoint extends ScheduledPollEndpoint {
 
     private EntityManagerFactory entityManagerFactory;
@@ -115,10 +116,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     public JpaEndpoint(String uri, JpaComponent component) {
         super(uri, component);
-        if (component != null) {
-            entityManagerFactory = component.getEntityManagerFactory();
-            transactionManager = component.getTransactionManager();
-        }
     }
 
     @Override
@@ -173,11 +170,11 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public void configureProperties(Map<String, Object> options) {
-        super.configureProperties(options);
         Map<String, Object> emProperties = PropertiesHelper.extractProperties(options, "emf.");
         if (!emProperties.isEmpty()) {
             setEntityManagerProperties(emProperties);
         }
+        super.configureProperties(options);
     }
 
     @Override
@@ -318,7 +315,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
-    
+
     public boolean isUsePersist() {
         return usePersist;
     }
@@ -586,4 +583,15 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         };
     }
 
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        if (entityManagerFactory == null && getComponent() != null) {
+            entityManagerFactory = getComponent().getEntityManagerFactory();
+        }
+        if (transactionManager == null && getComponent() != null) {
+            transactionManager = getComponent().getTransactionManager();
+        }
+    }
 }

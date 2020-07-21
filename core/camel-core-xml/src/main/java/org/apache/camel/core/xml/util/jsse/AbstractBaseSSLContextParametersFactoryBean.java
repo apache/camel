@@ -19,6 +19,7 @@ package org.apache.camel.core.xml.util.jsse;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.jsse.BaseSSLContextParameters;
 import org.apache.camel.support.jsse.CipherSuitesParameters;
 import org.apache.camel.support.jsse.FilterParameters;
@@ -36,6 +37,7 @@ public abstract class AbstractBaseSSLContextParametersFactoryBean<T extends Base
     private FilterParametersDefinition secureSocketProtocolsFilter;
 
     @XmlAttribute
+    @Metadata(description = "The optional SSLSessionContext timeout time for javax.net.ssl.SSLSession in seconds.")
     private String sessionTimeout;
 
     @XmlTransient

@@ -30,7 +30,6 @@ import org.apache.camel.cloud.ServiceRegistry;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
-import org.apache.camel.health.HealthCheckService;
 import org.apache.camel.model.Model;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -59,6 +58,7 @@ import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UnitOfWorkFactory;
@@ -86,17 +86,19 @@ public final class DefaultConfigurationConfigurer {
      * @param config       the configuration
      */
     public static void configure(CamelContext camelContext, DefaultConfigurationProperties config) throws Exception {
-        camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setExtendedStatistics(config.isBeanIntrospectionExtendedStatistics());
+        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+        ecc.getBeanIntrospection().setExtendedStatistics(config.isBeanIntrospectionExtendedStatistics());
         if (config.getBeanIntrospectionLoggingLevel() != null) {
-            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setLoggingLevel(config.getBeanIntrospectionLoggingLevel());
+            ecc.getBeanIntrospection().setLoggingLevel(config.getBeanIntrospectionLoggingLevel());
         }
+        ecc.getBeanIntrospection().afterPropertiesConfigured(camelContext);
 
         if (!config.isJmxEnabled()) {
             camelContext.disableJMX();
         }
 
         if (config.getName() != null) {
-            camelContext.adapt(ExtendedCamelContext.class).setName(config.getName());
+            ecc.setName(config.getName());
         }
 
         if (config.getShutdownTimeout() > 0) {
@@ -106,6 +108,8 @@ public final class DefaultConfigurationConfigurer {
         camelContext.getShutdownStrategy().setShutdownNowOnTimeout(config.isShutdownNowOnTimeout());
         camelContext.getShutdownStrategy().setShutdownRoutesInReverseOrder(config.isShutdownRoutesInReverseOrder());
         camelContext.getShutdownStrategy().setLogInflightExchangesOnTimeout(config.isShutdownLogInflightExchangesOnTimeout());
+
+        camelContext.getInflightRepository().setInflightBrowseEnabled(config.isInflightRepositoryBrowseEnabled());
 
         if (config.getLogDebugMaxChars() != 0) {
             camelContext.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "" + config.getLogDebugMaxChars());
@@ -143,6 +147,7 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setLogExhaustedMessageBody(config.isLogExhaustedMessageBody());
         camelContext.setAutoStartup(config.isAutoStartup());
         camelContext.setAllowUseOriginalMessage(config.isAllowUseOriginalMessage());
+        camelContext.setCaseInsensitiveHeaders(config.isCaseInsensitiveHeaders());
         camelContext.setUseBreadcrumb(config.isUseBreadcrumb());
         camelContext.setUseDataType(config.isUseDataType());
         camelContext.setUseMDCLogging(config.isUseMdcLogging());
@@ -153,7 +158,6 @@ public final class DefaultConfigurationConfigurer {
             camelContext.getManagementStrategy().getManagementAgent().setEndpointRuntimeStatisticsEnabled(config.isEndpointRuntimeStatisticsEnabled());
             camelContext.getManagementStrategy().getManagementAgent().setStatisticsLevel(config.getJmxManagementStatisticsLevel());
             camelContext.getManagementStrategy().getManagementAgent().setManagementNamePattern(config.getJmxManagementNamePattern());
-            camelContext.getManagementStrategy().getManagementAgent().setCreateConnector(config.isJmxCreateConnector());
         }
 
         // global endpoint configurations
@@ -172,6 +176,42 @@ public final class DefaultConfigurationConfigurer {
         if (config.getRouteFilterIncludePattern() != null || config.getRouteFilterExcludePattern() != null) {
             camelContext.getExtension(Model.class).setRouteFilterPattern(config.getRouteFilterIncludePattern(), config.getRouteFilterExcludePattern());
         }
+
+        // supervising route controller
+        if (config.isRouteControllerSuperviseEnabled()) {
+            SupervisingRouteController src = camelContext.getRouteController().supervising();
+            if (config.getRouteControllerIncludeRoutes() != null) {
+                src.setIncludeRoutes(config.getRouteControllerIncludeRoutes());
+            }
+            if (config.getRouteControllerExcludeRoutes() != null) {
+                src.setExcludeRoutes(config.getRouteControllerExcludeRoutes());
+            }
+            if (config.getRouteControllerThreadPoolSize() > 0) {
+                src.setThreadPoolSize(config.getRouteControllerThreadPoolSize());
+            }
+            if (config.getRouteControllerBackOffDelay() > 0) {
+                src.setBackOffDelay(config.getRouteControllerBackOffDelay());
+            }
+            if (config.getRouteControllerInitialDelay() > 0) {
+                src.setInitialDelay(config.getRouteControllerInitialDelay());
+            }
+            if (config.getRouteControllerBackOffMaxAttempts() > 0) {
+                src.setBackOffMaxAttempts(config.getRouteControllerBackOffMaxAttempts());
+            }
+            if (config.getRouteControllerBackOffMaxDelay() > 0) {
+                src.setBackOffMaxDelay(config.getRouteControllerBackOffDelay());
+            }
+            if (config.getRouteControllerBackOffMaxElapsedTime() > 0) {
+                src.setBackOffMaxElapsedTime(config.getRouteControllerBackOffMaxElapsedTime());
+            }
+            if (config.getRouteControllerBackOffMultiplier() > 0) {
+                src.setBackOffMultiplier(config.getRouteControllerBackOffMultiplier());
+            }
+            src.setUnhealthyOnExhausted(config.isRouteControllerUnhealthyOnExhausted());
+        }
+        if (config.getRouteControllerRouteStartupLoggingLevel() != null) {
+            camelContext.getRouteController().setRouteStartupLoggingLevel(config.getRouteControllerRouteStartupLoggingLevel());
+        }
     }
 
     /**
@@ -181,7 +221,7 @@ public final class DefaultConfigurationConfigurer {
      * Similar code in camel-core-xml module in class org.apache.camel.core.xml.AbstractCamelContextFactoryBean
      * or in camel-spring-boot module in class org.apache.camel.spring.boot.CamelAutoConfiguration.
      */
-    public static void afterPropertiesSet(final CamelContext camelContext) throws Exception {
+    public static void afterConfigure(final CamelContext camelContext) throws Exception {
         final Registry registry = camelContext.getRegistry();
         final ManagementStrategy managementStrategy = camelContext.getManagementStrategy();
         final ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
@@ -330,31 +370,28 @@ public final class DefaultConfigurationConfigurer {
             LOG.info("Using HealthCheckRegistry: {}", healthCheckRegistry);
             camelContext.setExtension(HealthCheckRegistry.class, healthCheckRegistry);
         } else {
+            // okay attempt to inject this camel context into existing health check (if any)
             healthCheckRegistry = HealthCheckRegistry.get(camelContext);
-            healthCheckRegistry.setCamelContext(camelContext);
+            if (healthCheckRegistry != null) {
+                healthCheckRegistry.setCamelContext(camelContext);
+            }
         }
-        Set<HealthCheckRepository> hcrs = registry.findByType(HealthCheckRepository.class);
-        if (!hcrs.isEmpty()) {
-            hcrs.forEach(healthCheckRegistry::addRepository);
-        }
-
-        HealthCheckService hcs = getSingleBeanOfType(registry, HealthCheckService.class);
-        if (hcs != null) {
-            camelContext.addService(hcs);
+        if (healthCheckRegistry != null) {
+            // Health check repository
+            Set<HealthCheckRepository> repositories = registry.findByType(HealthCheckRepository.class);
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(repositories)) {
+                for (HealthCheckRepository repository : repositories) {
+                    healthCheckRegistry.register(repository);
+                }
+            }
         }
 
         // set the default thread pool profile if defined
         initThreadPoolProfiles(registry, camelContext);
     }
 
-    private static <T> void registerPropertyForBeanType(final Registry registry, final Class<T> beanType, final Consumer<T> propertySetter) {
-        T propertyBean = getSingleBeanOfType(registry, beanType);
-        if (propertyBean == null) {
-            return;
-        }
-
-        LOG.info("Using custom {}: {}", beanType.getSimpleName(), propertyBean);
-        propertySetter.accept(propertyBean);
+    public static void afterPropertiesSet(final CamelContext camelContext) throws Exception {
+        // additional configuration
     }
 
     private static <T> T getSingleBeanOfType(Registry registry, Class<T> type) {
@@ -364,10 +401,6 @@ public final class DefaultConfigurationConfigurer {
         } else {
             return null;
         }
-    }
-
-    private static <T> void registerPropertiesForBeanTypes(final Registry registry, final Class<T> beanType, final Consumer<T> propertySetter) {
-        registerPropertiesForBeanTypesWithCondition(registry, beanType, b -> true, propertySetter);
     }
 
     private static <T> void registerPropertiesForBeanTypesWithCondition(final Registry registry, final Class<T> beanType, final Predicate<T> condition,

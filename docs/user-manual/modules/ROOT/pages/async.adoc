@@ -121,7 +121,7 @@ application is still waiting.
  3. The message is processed completely and the control is returned to
 the client.
 
-So why do you want to use synchronous xref:event-message.adoc[Request Only]?
+So why do you want to use synchronous xref:{eip-vc}:eips:event-message.adoc[Request Only]?
 Well if you want to know whether the message was processed
 successfully or not before continuing. With synchronous it allows you to
 wait while the message is being processed. In case the processing was
@@ -172,7 +172,7 @@ Async API and how to use it with Camel.
 == The Async Client API
 
 Camel provides the Async Client API in the
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/ProducerTemplate.html[ProducerTemplate]
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/ProducerTemplate.html[ProducerTemplate]
 where we have added about 10 new methods to Camel 2.0. We have listed
 the most important in the table below:
 

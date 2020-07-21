@@ -81,6 +81,9 @@
             <configuration>
               <modelPackage>com.foo</modelPackage>
               <modelWithXml>false</modelWithXml>
+              <configOptions>
+                <dateLibrary>java8</dateLibrary>
+              </configOptions>
             </configuration>
           </execution>
         </executions>

@@ -19,7 +19,7 @@ package org.apache.camel.language.tokenizer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.builder.Namespaces;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class XMLTokenizeWrapLanguageTest extends ContextTestSupport {
 

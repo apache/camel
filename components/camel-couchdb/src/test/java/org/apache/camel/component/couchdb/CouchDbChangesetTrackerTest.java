@@ -18,23 +18,23 @@ package org.apache.camel.component.couchdb;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.lightcouch.Changes;
 import org.lightcouch.ChangesResult.Row;
 import org.lightcouch.CouchDbContext;
 import org.lightcouch.CouchDbInfo;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CouchDbChangesetTrackerTest {
 
     @Mock
@@ -66,14 +66,11 @@ public class CouchDbChangesetTrackerTest {
 
     private CouchDbChangesetTracker tracker;
 
-    @Before
+    @BeforeEach
     public void before() {
         when(endpoint.isUpdates()).thenReturn(true);
 
-        when(client.context()).thenReturn(context);
-        when(context.info()).thenReturn(info);
-        when(info.getUpdateSeq()).thenReturn("100");
-
+        when(client.getLatestUpdateSequence()).thenReturn("100");
         when(client.changes()).thenReturn(changes);
         when(changes.continuousChanges()).thenReturn(changes);
         when(changes.includeDocs(true)).thenReturn(changes);
@@ -82,18 +79,18 @@ public class CouchDbChangesetTrackerTest {
         when(changes.style(ArgumentMatchers.isNull())).thenReturn(changes);
 
         when(row1.getSeq()).thenReturn("seq1");
-        when(row2.getSeq()).thenReturn("seq2");
-        when(row3.getSeq()).thenReturn("seq3");
 
         when(row1.getId()).thenReturn("id1");
-        when(row2.getId()).thenReturn("id2");
-        when(row3.getId()).thenReturn("id3");
 
         tracker = new CouchDbChangesetTracker(endpoint, consumer, client);
     }
 
     @Test
-    public void testExchangeCreatedWithCorrectProperties() throws Exception {
+    void testExchangeCreatedWithCorrectProperties() throws Exception {
+        when(row2.getSeq()).thenReturn("seq2");
+        when(row3.getSeq()).thenReturn("seq3");
+        when(row2.getId()).thenReturn("id2");
+        when(row3.getId()).thenReturn("id3");
         when(changes.hasNext()).thenReturn(true, true, true, false);
         when(changes.next()).thenReturn(row1, row2, row3);
         when(endpoint.createExchange("seq1", "id1", null, false)).thenReturn(exchange1);
@@ -112,7 +109,7 @@ public class CouchDbChangesetTrackerTest {
     }
 
     @Test
-    public void testProcessorInvoked() throws Exception {
+    void testProcessorInvoked() throws Exception {
         when(changes.hasNext()).thenReturn(true, false);
         when(changes.next()).thenReturn(row1);
         when(consumer.getProcessor()).thenReturn(processor);

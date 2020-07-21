@@ -25,15 +25,15 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
 import org.infinispan.configuration.cache.Configuration;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unite test for {@link InfinispanLocalAggregationRepository}
@@ -43,7 +43,7 @@ public class InfinispanLocalAggregationRepositoryOperationsTest {
     private static InfinispanLocalAggregationRepository aggregationRepository;
     private CamelContext camelContext = new DefaultCamelContext();
 
-    @BeforeClass
+    @BeforeAll
     public static void starting() throws Exception {
         Configuration conf = new ConfigurationBuilder().build();
         aggregationRepository = new InfinispanLocalAggregationRepository();
@@ -51,7 +51,7 @@ public class InfinispanLocalAggregationRepositoryOperationsTest {
         aggregationRepository.start();
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopping() throws Exception {
         aggregationRepository.stop();
     }

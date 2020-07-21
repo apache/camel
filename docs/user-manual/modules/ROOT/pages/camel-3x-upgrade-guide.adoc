@@ -1,105 +1,16 @@
 = Apache Camel 3.x Upgrade Guide
 
-This document is intended for helping you upgrade your Apache Camel application
-from Camel 3.x to 3.y.
-
 IMPORTANT: If you are migrating from Camel 2.x then use the
-xref:camel-3-migration-guide.adoc[Camel 2.x to 3.0 Migration Guide].
+xref:camel-3-migration-guide.adoc[Camel 2.x to 3.0 Migration Guide] first.
 
-For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
 from both 3.0 to 3.1 and 3.1 to 3.2.
 
-== Upgrading Camel 3.0 to 3.1
+You can find upgrade guide for each release in the following pages:
 
-=== API changes
-
-Cookies from `camel-http-common` has been moved into a new `camel-http-base` JAR.
-The package `org.apache.camel.http.common.cookie` is renamed to `org.apache.camel.http.base.cookie`.
-
-=== camel-ahc, camel-netty-http, camel-undertow
-
-These Camel components now no longer have dependency on Javax Servlet.
-
-=== camel-undertow
-
-The exception class `HttpOperationFailedException` is now from package `org.apache.camel.http.base` instead of `org.apache.camel.http.common`.
-The Camel undertow producer throws this exception.
-
-=== came-bean
-
-The bean component has been changed to behave as singleton scoped by default.
-This means that the bean is created or looked up once and reused.
-
-The option `cache` has been deprecated in favour of the new `scope` option that by default is `Singleton`. You can set this to `Prototype` to use the old behaviour.
-
-NOTE: Setting this to Prototype will let Camel create/lookup a new bean instance, per use; which acts as prototype scoped. However beware that if you lookup the bean, then the registry that holds the bean, would return a bean accordingly to its configuration, which can be singleton or prototype scoped. For example if you use Spring, or CDI, which has their own settings for setting bean scopes.
-
-=== camel-irc
-
-The `camel-irc` component has changed its endpoint syntax and removed option #room as a part of the url path. Allowed syntax is:
-
-[source,text]
-----
-irc:nick@host[:port]?[options]
-----
-
-=== camel-nats
-
-The `camel-nats` component has changed its endpoint syntax from `nats:servers` to `nats:topic`.
-For example before
-
-[source,text]
-----
-nats:myserver:4222?topic=myTopic
-----
-
-Should be changed to
-----
-nats:myTopic?servers=myserver:4222
-----
-
-This change is motivated by allowing to configure servers on component level,
-and also for Spring Boot auto-configuration etc.
-
-=== camel-nsq
-
-The `camel-nsq` component has changed its endpoint syntax from `nsq:servers` to `nsq:topic`.
-For example before
-
-[source,text]
-----
-nsq:myserver:4161/myTopic
-----
-
-Should be changed to
-----
-nsq:myTopic?servers=myserver:4161
-----
-
-This change is motivated by allowing to configure servers on component level,
-and also for Spring Boot auto-configuration etc.
-
-
-=== Java DSL
-
-The Java DSL has been revisited and the following methods have been removed:
-
-* ExpressionClause::body(Supplier<Object>)
-* MulticastDefinition::onPrepare(Supplier<Processor>)
-* ProcessorDefinition::process(Supplier<Processor>)
-* ProcessorDefinition::setBody(Supplier<Result>)
-* RecipientListDefinition::onPrepare(Supplier<Processor>)
-* SplitDefinition::onPrepare(Supplier<Processor>)
-* WireTapDefinition::newExchange(Supplier<Processor>)
-* WireTapDefinition::onPrepare(Supplier<Processor>)
-
-This change is motivated by the need to remove method ambiguity for untyped languages such as Groovy and JavaScript, for more info see https://issues.apache.org/jira/browse/CAMEL-14300
-
-=== CamelContext 
-
-Some unused methods have been removed from `CamelContext` which were not part of the public API. The following methods have been removed:
-
-* getProducerServicePool
-* setProducerServicePool
-* getPollingConsumerServicePool
-* setPollingConsumerServicePool
+- xref:camel-3x-upgrade-guide-3_1.adoc[Upgrade guide from 3.0 to 3.1]
+- xref:camel-3x-upgrade-guide-3_2.adoc[Upgrade guide from 3.1 to 3.2]
+- xref:camel-3x-upgrade-guide-3_3.adoc[Upgrade guide from 3.2 to 3.3]
+- xref:camel-3x-upgrade-guide-3_4.adoc[Upgrade guide from 3.3 to 3.4]
+- xref:camel-3x-upgrade-guide-3_5.adoc[Upgrade guide from 3.4 to 3.5]

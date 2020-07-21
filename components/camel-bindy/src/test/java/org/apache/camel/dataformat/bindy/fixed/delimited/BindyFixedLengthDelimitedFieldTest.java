@@ -29,8 +29,12 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * This test validates the marshalling / unmarshalling of delimited, variable-length fields within a 'fixed-length' record. 
@@ -153,10 +157,10 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
 
             @Override
             public void configure() throws Exception {
-                BindyDataFormat bindy = new BindyDataFormat();
-                bindy.setClassType(BindyFixedLengthDelimitedFieldTest.Order.class);
-                bindy.setLocale("en");
-                bindy.setType(BindyType.Fixed);
+                BindyDataFormat bindy = new BindyDataFormat()
+                        .classType(BindyFixedLengthDelimitedFieldTest.Order.class)
+                        .locale("en")
+                        .fixed();
 
                 from(URI_DIRECT_MARSHALL)
                     .marshal(bindy)

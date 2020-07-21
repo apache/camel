@@ -63,6 +63,10 @@ public class EditMessageReplyMarkupMessage extends OutgoingMessage {
         return replyMarkup;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static final class Builder {
         protected String chatId;
         private Integer messageId;

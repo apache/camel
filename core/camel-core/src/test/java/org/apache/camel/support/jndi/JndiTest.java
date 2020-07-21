@@ -26,8 +26,11 @@ import javax.naming.NamingException;
 
 import org.apache.camel.TestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JndiTest extends TestSupport {
     protected Context context;
@@ -35,7 +38,7 @@ public class JndiTest extends TestSupport {
     public static Context createInitialContext() throws Exception {
         InputStream in = JndiTest.class.getClassLoader().getResourceAsStream("jndi-example.properties");
         try {
-            assertNotNull("Cannot find jndi-example.properties on the classpath!", in);
+            assertNotNull(in, "Cannot find jndi-example.properties on the classpath!");
             Properties properties = new Properties();
             properties.load(in);
             return new InitialContext(new Hashtable<>(properties));
@@ -47,17 +50,17 @@ public class JndiTest extends TestSupport {
     @Test
     public void testLookupOfSimpleName() throws Exception {
         Object value = assertLookup("foo");
-        assertEquals("foo", "bar", value);
+        assertEquals("bar", value, "foo");
     }
 
     protected Object assertLookup(String name) throws NamingException {
         Object value = context.lookup(name);
-        assertNotNull("Should have found JNDI entry: " + name + " in context: " + context, value);
+        assertNotNull(value, "Should have found JNDI entry: " + name + " in context: " + context);
         return value;
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

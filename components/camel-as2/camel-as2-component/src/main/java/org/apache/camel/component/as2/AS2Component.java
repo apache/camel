@@ -25,13 +25,17 @@ import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.AbstractApiComponent;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link AS2Endpoint}.
  */
 @Component("as2")
 public class AS2Component extends AbstractApiComponent<AS2ApiName, AS2Configuration, AS2ApiCollection> {
-    
+
+    private static final Logger LOG = LoggerFactory.getLogger(AS2Component.class);
+
     public AS2Component() {
         super(AS2Endpoint.class, AS2ApiName.class, AS2ApiCollection.getCollection());
     }
@@ -53,19 +57,11 @@ public class AS2Component extends AbstractApiComponent<AS2ApiName, AS2Configurat
         return new AS2Endpoint(uri, this, apiName, methodName, endpointConfiguration);
     }
 
-    /**
-     * To use the shared configuration
-     */
-    @Override
-    public void setConfiguration(AS2Configuration configuration) {
-        super.setConfiguration(configuration);
-    }
-    
     @Override
     protected void doStart() throws Exception {
         super.doStart();
         if (Security.getProvider("BC") == null) {
-            log.debug("Adding BouncyCastleProvider as security provider");
+            LOG.debug("Adding BouncyCastleProvider as security provider");
             Security.addProvider(new BouncyCastleProvider());
         }
     }

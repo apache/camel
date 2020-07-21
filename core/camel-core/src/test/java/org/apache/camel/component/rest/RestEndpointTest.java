@@ -26,10 +26,9 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.support.DefaultComponent;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestEndpointTest {
 
@@ -71,7 +70,7 @@ public class RestEndpointTest {
 
         final RestProducer producer = (RestProducer)restEndpoint.createProducer();
 
-        Assert.assertEquals(producer.getBindingMode().name(), "json");
+        assertEquals(producer.getBindingMode().name(), "json");
     }
 
     @Test

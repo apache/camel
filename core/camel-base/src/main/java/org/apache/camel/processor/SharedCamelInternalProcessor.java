@@ -17,13 +17,13 @@
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Ordered;
@@ -31,7 +31,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
+import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RoutePolicy;
+import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
@@ -69,13 +71,32 @@ import org.slf4j.LoggerFactory;
 public class SharedCamelInternalProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(SharedCamelInternalProcessor.class);
-    private final List<CamelInternalProcessorAdvice> advices = new ArrayList<>();
+    private static final Object[] EMPTY_STATES = new Object[0];
+    private final CamelContext camelContext;
+    private final ReactiveExecutor reactiveExecutor;
+    private final AsyncProcessorAwaitManager awaitManager;
+    private final ShutdownStrategy shutdownStrategy;
+    private final List<CamelInternalProcessorAdvice> advices;
+    private byte statefulAdvices;
 
-    public SharedCamelInternalProcessor(CamelInternalProcessorAdvice... advices) {
+    public SharedCamelInternalProcessor(CamelContext camelContext, CamelInternalProcessorAdvice... advices) {
+        this.camelContext = camelContext;
+        this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
+        this.awaitManager = camelContext.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
+        this.shutdownStrategy = camelContext.getShutdownStrategy();
+
         if (advices != null) {
-            this.advices.addAll(Arrays.asList(advices));
+            this.advices = new ArrayList<>(advices.length);
+            for (CamelInternalProcessorAdvice advice : advices) {
+                this.advices.add(advice);
+                if (advice.hasState()) {
+                    statefulAdvices++;
+                }
+            }
             // ensure advices are sorted so they are in the order we want
             this.advices.sort(OrderedComparator.get());
+        } else {
+            this.advices = null;
         }
     }
 
@@ -83,7 +104,6 @@ public class SharedCamelInternalProcessor {
      * Synchronous API
      */
     public void process(Exchange exchange, AsyncProcessor processor, Processor resultProcessor) {
-        final AsyncProcessorAwaitManager awaitManager = exchange.getContext().adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
         awaitManager.process(new AsyncProcessor() {
             @Override
             public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -128,14 +148,16 @@ public class SharedCamelInternalProcessor {
             return true;
         }
 
-        // optimise to use object array for states
-        final Object[] states = new Object[advices.size()];
+        // optimise to use object array for states, and only for the number of advices that keep state
+        final Object[] states = statefulAdvices > 0 ? new Object[statefulAdvices] : EMPTY_STATES;
         // optimise for loop using index access to avoid creating iterator object
-        for (int i = 0; i < advices.size(); i++) {
+        for (int i = 0, j = 0; i < advices.size(); i++) {
             CamelInternalProcessorAdvice task = advices.get(i);
             try {
                 Object state = task.before(exchange);
-                states[i] = state;
+                if (task.hasState()) {
+                    states[j++] = state;
+                }
             } catch (Throwable e) {
                 exchange.setException(e);
                 originalCallback.done(true);
@@ -173,11 +195,12 @@ public class SharedCamelInternalProcessor {
         } else {
             final UnitOfWork uow = exchange.getUnitOfWork();
 
-            // allow unit of work to wrap callback in case it need to do some special work
-            // for example the MDCUnitOfWork
+            // do uow before processing and if a value is returned the the uow wants to be processed after
+            // was well in the same thread
             AsyncCallback async = callback;
-            if (uow != null) {
-                async = uow.beforeProcess(processor, exchange, callback);
+            boolean beforeAndAfter = uow.isBeforeAfterProcess();
+            if (beforeAndAfter) {
+                async = uow.beforeProcess(processor, exchange, async);
             }
 
             // ----------------------------------------------------------
@@ -191,17 +214,18 @@ public class SharedCamelInternalProcessor {
             // CAMEL END USER - DEBUG ME HERE +++ END +++
             // ----------------------------------------------------------
 
-            exchange.getContext().getReactiveExecutor().schedule(() -> {
-                // execute any after processor work (in current thread, not in the callback)
-                if (uow != null) {
+            // optimize to only do after uow processing if really needed
+            if (beforeAndAfter) {
+                reactiveExecutor.schedule(() -> {
+                    // execute any after processor work (in current thread, not in the callback)
                     uow.afterProcess(processor, exchange, callback, sync);
-                }
+                });
+            }
 
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Exchange processed and is continued routed asynchronously for exchangeId: {} -> {}",
-                            exchange.getExchangeId(), exchange);
-                }
-            });
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Exchange processed and is continued routed asynchronously for exchangeId: {} -> {}",
+                        exchange.getExchangeId(), exchange);
+            }
             return sync;
         }
     }
@@ -239,9 +263,12 @@ public class SharedCamelInternalProcessor {
 
             // we should call after in reverse order
             try {
-                for (int i = advices.size() - 1; i >= 0; i--) {
+                for (int i = advices != null ? advices.size() - 1 : -1, j = states.length - 1; i >= 0; i--) {
                     CamelInternalProcessorAdvice task = advices.get(i);
-                    Object state = states[i];
+                    Object state = null;
+                    if (task.hasState()) {
+                        state = states[j--];
+                    }
                     try {
                         task.after(exchange, state);
                     } catch (Throwable e) {
@@ -254,7 +281,9 @@ public class SharedCamelInternalProcessor {
                 // CAMEL END USER - DEBUG ME HERE +++ START +++
                 // ----------------------------------------------------------
                 // callback must be called
-                exchange.getContext().getReactiveExecutor().schedule(callback);
+                if (callback != null) {
+                    reactiveExecutor.schedule(callback);
+                }
                 // ----------------------------------------------------------
                 // CAMEL END USER - DEBUG ME HERE +++ END +++
                 // ----------------------------------------------------------
@@ -266,18 +295,14 @@ public class SharedCamelInternalProcessor {
      * Strategy to determine if we should continue processing the {@link Exchange}.
      */
     protected boolean continueProcessing(Exchange exchange, AsyncProcessor processor) {
-        Object stop = exchange.getProperty(Exchange.ROUTE_STOP);
-        if (stop != null) {
-            boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
-            if (doStop) {
-                LOG.debug("Exchange is marked to stop routing: {}", exchange);
-                return false;
-            }
+        if (exchange.isRouteStop()) {
+            LOG.debug("Exchange is marked to stop routing: {}", exchange);
+            return false;
         }
 
         // determine if we can still run, or the camel context is forcing a shutdown
         if (processor instanceof Service) {
-            boolean forceShutdown = exchange.getContext().getShutdownStrategy().forceShutdown((Service) processor);
+            boolean forceShutdown = shutdownStrategy.forceShutdown((Service) processor);
             if (forceShutdown) {
                 String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: " + exchange;
                 LOG.debug(msg);

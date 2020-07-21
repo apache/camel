@@ -24,8 +24,11 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.atLeastOnce;
@@ -33,6 +36,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@DisabledOnOs(OS.WINDOWS)
 public class ConsumerToProducerHeadersTest extends BeanstalkMockTestSupport {
 
     @EndpointInject("beanstalk:tube=A")
@@ -41,14 +45,13 @@ public class ConsumerToProducerHeadersTest extends BeanstalkMockTestSupport {
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    private String testMessage = "hello, world";
-    
     private Processor a;
     private Processor b;
 
     @Test
-    public void testBeanstalkConsumerToProducer() throws Exception {
+    void testBeanstalkConsumerToProducer() throws Exception {
         final long jobId = 111;
+        String testMessage = "hello, world";
         final byte[] payload = Helper.stringToBytes(testMessage);
         final Job jobMock = mock(Job.class);
         // stats that may be set in the consumer:

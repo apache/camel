@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.olingo2.internal;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.olingo2.Olingo2Configuration;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
@@ -26,13 +27,13 @@ public final class Olingo2PropertiesHelper extends ApiMethodPropertiesHelper<Oli
 
     private static Olingo2PropertiesHelper helper;
 
-    private Olingo2PropertiesHelper() {
-        super(Olingo2Configuration.class, Olingo2Constants.PROPERTY_PREFIX);
+    private Olingo2PropertiesHelper(CamelContext context) {
+        super(context, Olingo2Configuration.class, Olingo2Constants.PROPERTY_PREFIX);
     }
 
-    public static synchronized Olingo2PropertiesHelper getHelper() {
+    public static synchronized Olingo2PropertiesHelper getHelper(CamelContext context) {
         if (helper == null) {
-            helper = new Olingo2PropertiesHelper();
+            helper = new Olingo2PropertiesHelper(context);
         }
         return helper;
     }

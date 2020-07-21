@@ -37,18 +37,10 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
     private String disabled;
     @XmlAttribute @Metadata(defaultValue = "false")
     private String onlyRegisterProcessorWithCustomId;
-    @XmlAttribute @Metadata(defaultValue = "1099")
-    private String registryPort;
-    @XmlAttribute @Metadata(defaultValue = "-1")
-    private String connectorPort;
     @XmlAttribute @Metadata(defaultValue = "org.apache.camel")
     private String mbeanServerDefaultDomain;
     @XmlAttribute @Metadata(defaultValue = "org.apache.camel")
     private String mbeanObjectDomainName;
-    @XmlAttribute @Metadata(defaultValue = "/jmxrmi")
-    private String serviceUrlPath;
-    @XmlAttribute @Metadata(defaultValue = "false")
-    private String createConnector;
     @XmlAttribute @Metadata(defaultValue = "true")
     private String usePlatformMBeanServer;
     @XmlAttribute @Metadata(defaultValue = "false")
@@ -90,28 +82,6 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         this.onlyRegisterProcessorWithCustomId = onlyRegisterProcessorWithCustomId;
     }
 
-    public String getRegistryPort() {
-        return registryPort;
-    }
-
-    /**
-     * RMI connector registry port (default 1099)
-     */
-    public void setRegistryPort(String registryPort) {
-        this.registryPort = registryPort;
-    }
-
-    public String getConnectorPort() {
-        return connectorPort;
-    }
-
-    /**
-     * RMI connector server port (default -1 not used)
-     */
-    public void setConnectorPort(String connectorPort) {
-        this.connectorPort = connectorPort;
-    }
-
     public String getMbeanServerDefaultDomain() {
         return mbeanServerDefaultDomain;
     }
@@ -132,28 +102,6 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
      */
     public void setMbeanObjectDomainName(String mbeanObjectDomainName) {
         this.mbeanObjectDomainName = mbeanObjectDomainName;
-    }
-
-    public String getServiceUrlPath() {
-        return serviceUrlPath;
-    }
-
-    /**
-     * JMX Service URL path (default /jmxrmi)
-     */
-    public void setServiceUrlPath(String serviceUrlPath) {
-        this.serviceUrlPath = serviceUrlPath;
-    }
-
-    public String getCreateConnector() {
-        return createConnector;
-    }
-
-    /**
-     * A flag that indicates whether the agent should be created
-     */
-    public void setCreateConnector(String createConnector) {
-        this.createConnector = createConnector;
     }
 
     public String getUsePlatformMBeanServer() {
@@ -266,18 +214,6 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         }
         if (usePlatformMBeanServer != null) {
             csb.append("usePlatformMBeanServer=" + usePlatformMBeanServer);
-        }
-        if (createConnector != null) {
-            csb.append("createConnector=" + createConnector);
-        }
-        if (connectorPort != null) {
-            csb.append("connectorPort=" + connectorPort);
-        }
-        if (registryPort != null) {
-            csb.append("registryPort=" + registryPort);
-        }
-        if (serviceUrlPath != null) {
-            csb.append("serviceUrlPath=" + serviceUrlPath);
         }
         if (mbeanServerDefaultDomain != null) {
             csb.append("mbeanServerDefaultDomain=" + mbeanServerDefaultDomain);

@@ -1,0 +1,58 @@
+[[eventDrivenConsumer-eip]]
+= Event Driven Consumer
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/EventDrivenConsumer.html[Event Driven Consumer]
+from the
+xref:enterprise-integration-patterns.adoc[EIP patterns].
+The default consumer model is event based (i.e. asynchronous)
+as this means that the Camel container can then manage pooling,
+threading and concurrency for you in a declarative manner.
+
+image::eip/EventDrivenConsumerSolution.gif[image]
+
+The Event Driven Consumer is implemented by consumers implementing the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor]
+interface which is invoked by the xref:message-endpoint.adoc[Message Endpoint]
+when a xref:message.adoc[Message] is available for processing.
+
+[[eventDrivenConsumer-Example]]
+== Example
+
+The following demonstrates a
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor]
+defined in the Camel xref:latest@manual:ROOT:registry.adoc[Registry] which is
+invoked when an event occurs from a xref:components::jms-component.adoc[JMS] queue.
+
+*Using the xref:latest@manual:ROOT:fluent-builders.adoc[Fluent Builders]*
+
+[source,java]
+----
+from("jms:queue:foo")
+    .processRef("processor");
+----
+
+**Using the xref:latest@manual:ROOT:spring-xml-extensions.adoc[Spring XML Extensions]**
+
+[source,xml]
+----
+<route>
+    <from uri="jms:queue:foo"/>
+    <to uri="processor"/>
+</route>
+----
+
+For more details see:
+
+* xref:message.adoc[Message]
+* xref:message-endpoint.adoc[Message Endpoint]
+
+[[eventDrivenConsumer-UsingThisPattern]]
+== Using This Pattern
+
+If you would like to use this EIP Pattern then please read the
+xref:latest@manual:ROOT:getting-started.adoc[Getting Started], you may also find the
+xref:latest@manual:ROOT:architecture.adoc[Architecture] useful particularly the description
+of xref:latest@manual:ROOT:endpoint.adoc[Endpoint] and xref:latest@manual:ROOT:uris.adoc[URIs]. Then you could
+try out some of the xref:latest@manual:ROOT:examples.adoc[Examples] first before trying
+this pattern out.

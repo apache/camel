@@ -50,20 +50,20 @@ public class SearchTermBuilder {
 
         int asNum() {
             switch (this) {
-            case LE :
-                return ComparisonTerm.LE;
-            case LT :
-                return ComparisonTerm.LT;
-            case EQ :
-                return ComparisonTerm.EQ;
-            case NE :
-                return ComparisonTerm.NE;
-            case GT :
-                return ComparisonTerm.GT;
-            case GE :
-                return ComparisonTerm.GE;
-            default :
-                throw new IllegalArgumentException("Unknown comparison " + this);
+                case LE :
+                    return ComparisonTerm.LE;
+                case LT :
+                    return ComparisonTerm.LT;
+                case EQ :
+                    return ComparisonTerm.EQ;
+                case NE :
+                    return ComparisonTerm.NE;
+                case GT :
+                    return ComparisonTerm.GT;
+                case GE :
+                    return ComparisonTerm.GE;
+                default :
+                    throw new IllegalArgumentException("Unknown comparison " + this);
             }
         }
     }

@@ -27,9 +27,11 @@ import org.apache.camel.component.syslog.netty.Rfc5425FrameDecoder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyRfc5425LongMessageTest extends CamelTestSupport {
 
@@ -53,10 +55,10 @@ public class NettyRfc5425LongMessageTest extends CamelTestSupport {
     @BindToRegistry("encoder")
     private Rfc5425Encoder encoder = new Rfc5425Encoder();    
     
-    @BeforeClass
+    @BeforeAll
     public static void initPort() {
         serverPort = AvailablePortFinder.getNextAvailable();
-        uri = "netty:tcp://localhost:" + serverPort + "?sync=false&allowDefaultCodec=false&decoders=#decoder&encoder=#encoder";
+        uri = "netty:tcp://localhost:" + serverPort + "?sync=false&allowDefaultCodec=false&decoders=#decoder&encoders=#encoder";
     }
 
     @Test

@@ -61,9 +61,9 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
             if (timeout > 0) {
                 long delta = watch.taken();
                 if (delta > timeout) {
-                    CamelLogger.log(LOG, readLockLoggingLevel,
-                            "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
-                    // we could not get the lock within the timeout period, so return false
+                    CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
+                    // we could not get the lock within the timeout period, so
+                    // return false
                     return false;
                 }
             }
@@ -73,7 +73,8 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
 
             List<FTPFile> files;
             if (fastExistsCheck) {
-                // use the absolute file path to only pickup the file we want to check, this avoids expensive
+                // use the absolute file path to only pickup the file we want to
+                // check, this avoids expensive
                 // list operations if we have a lot of files in the directory
                 String path = file.getAbsoluteFilePath();
                 if (path.equals("/") || path.equals("\\")) {
@@ -85,7 +86,8 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
                     files = operations.listFiles(path);
                 }
             } else {
-                // fast option not enabled, so list the directory and filter the file name
+                // fast option not enabled, so list the directory and filter the
+                // file name
                 String path = file.getParent();
                 if (path.equals("/") || path.equals("\\")) {
                     // special for root (= home) directory
@@ -128,7 +130,8 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
 
                 boolean interrupted = sleep();
                 if (interrupted) {
-                    // we were interrupted while sleeping, we are likely being shutdown so return false
+                    // we were interrupted while sleeping, we are likely being
+                    // shutdown so return false
                     return false;
                 }
             }

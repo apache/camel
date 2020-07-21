@@ -26,8 +26,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * JacksonXML data format is used for unmarshal a XML payload to POJO or to
- * marshal POJO back to XML payload.
+ * Unmarshal a XML payloads to POJOs and back using XMLMapper extension of Jackson.
  */
 @Metadata(firstVersion = "2.16.0", label = "dataformat,transformation,xml", title = "JacksonXML")
 @XmlRootElement(name = "jacksonxml")
@@ -104,7 +103,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Class name of the java type to use when unarmshalling
+     * Class name of the java type to use when unmarshalling
      */
     public void setUnmarshalTypeName(String unmarshalTypeName) {
         this.unmarshalTypeName = unmarshalTypeName;
@@ -115,7 +114,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Class of the java type to use when unarmshalling
+     * Class of the java type to use when unmarshalling
      */
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
@@ -186,7 +185,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * To unarmshal to a List of Map or a List of Pojo.
+     * To unmarshal to a List of Map or a List of Pojo.
      */
     public void setUseList(String useList) {
         this.useList = useList;
@@ -279,11 +278,6 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
      */
     public void setAllowUnmarshallType(String allowUnmarshallType) {
         this.allowUnmarshallType = allowUnmarshallType;
-    }
-
-    @Override
-    public String getDataFormatName() {
-        return "jacksonxml";
     }
 
 }

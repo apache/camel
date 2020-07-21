@@ -16,17 +16,13 @@
  */
 package org.apache.camel.component.servlet.rest;
 
-import com.meterware.httpunit.PostMethodWebRequest;
-import com.meterware.httpunit.WebRequest;
-import com.meterware.httpunit.WebResponse;
-import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.component.servlet.ServletRestHttpBinding;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestServletMethodNotAllowedTest extends ServletCamelRouterTestSupport {
 
@@ -35,10 +31,8 @@ public class RestServletMethodNotAllowedTest extends ServletCamelRouterTestSuppo
 
     @Test
     public void testServletMethodNotAllowed() throws Exception {
-        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/users/123/basic");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users/123/basic");
+        WebResponse response = query(req, false);
 
         assertEquals(405, response.getResponseCode());
     }
@@ -52,11 +46,9 @@ public class RestServletMethodNotAllowedTest extends ServletCamelRouterTestSuppo
                 restConfiguration().component("servlet").host("localhost").endpointProperty("httpBinding", "#myBinding");
 
                 // use the rest DSL to define the rest services
-                rest("/users/").get("{id}/basic").route().to("mock:input").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String id = exchange.getIn().getHeader("id", String.class);
-                        exchange.getOut().setBody(id + ";Donald Duck");
-                    }
+                rest("/users/").get("{id}/basic").route().to("mock:input").process(exchange -> {
+                    String id = exchange.getIn().getHeader("id", String.class);
+                    exchange.getMessage().setBody(id + ";Donald Duck");
                 });
             }
         };

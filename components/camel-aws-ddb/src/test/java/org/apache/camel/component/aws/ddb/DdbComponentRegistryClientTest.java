@@ -16,8 +16,13 @@
  */
 package org.apache.camel.component.aws.ddb;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DdbComponentRegistryClientTest extends CamelTestSupport {
     
@@ -31,11 +36,32 @@ public class DdbComponentRegistryClientTest extends CamelTestSupport {
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutRegistryClient() throws Exception {
+        DdbComponent component = context.getComponent("aws-ddb", DdbComponent.class);
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("aws-ddb://myTable"));
+    }
+    
+    @Test
+    public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
+        AmazonDDBClientMock ddbClient = new AmazonDDBClientMock();
+        context.getRegistry().bind("ddbClient", ddbClient);
+        DdbComponent component = context.getComponent("aws-ddb", DdbComponent.class);
+        DdbEndpoint endpoint = (DdbEndpoint)component.createEndpoint("aws-ddb://myTable?autoDiscoverClient=false&accessKey=xxx&secretKey=xxx");
+        
+        assertEquals("myTable", endpoint.getConfiguration().getTableName());
+        assertNotSame(ddbClient, endpoint.getConfiguration().getAmazonDDBClient());
+    }
+    
+    @Test
+    public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
+        AmazonDDBClientMock ddbClient = new AmazonDDBClientMock();
+        context.getRegistry().bind("ddbClient", ddbClient);
         DdbComponent component = context.getComponent("aws-ddb", DdbComponent.class);
         DdbEndpoint endpoint = (DdbEndpoint)component.createEndpoint("aws-ddb://myTable");
         
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
+        assertSame(ddbClient, endpoint.getConfiguration().getAmazonDDBClient());
     }
 }

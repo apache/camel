@@ -1,0 +1,16 @@
+name: Backport
+
+on:
+  pull_request:
+    types:
+      - closed
+      - labeled
+
+jobs:
+  backport:
+    runs-on: ubuntu-latest
+    name: Backport closed pull request
+    steps:
+    - uses: syndesisio/backport-action@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}

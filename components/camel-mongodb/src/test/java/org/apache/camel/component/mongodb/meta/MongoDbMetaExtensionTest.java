@@ -35,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MongoDbMetaExtensionTest extends AbstractMongoDbTest {
-
     // We simulate the presence of an authenticated user
     @BeforeEach
     public void createAuthorizationUser() {
@@ -87,7 +86,7 @@ public class MongoDbMetaExtensionTest extends AbstractMongoDbTest {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("database", database);
         parameters.put("collection", collection);
-        parameters.put("host", HOST);
+        parameters.put("host", container.getConnectionAddress());
         parameters.put("user", USER);
         parameters.put("password", PASSWORD);
 
@@ -113,13 +112,12 @@ public class MongoDbMetaExtensionTest extends AbstractMongoDbTest {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("database", database);
         parameters.put("collection", collection);
-        parameters.put("host", HOST);
+        parameters.put("host", container.getConnectionAddress());
         parameters.put("user", USER);
         parameters.put("password", PASSWORD);
 
         // Then
         assertThrows(IllegalArgumentException.class, () -> {
-
             component.getExtension(MetaDataExtension.class).get().meta(parameters).orElseThrow(IllegalArgumentException::new);
         });
     }
@@ -148,7 +146,7 @@ public class MongoDbMetaExtensionTest extends AbstractMongoDbTest {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("database", database);
         parameters.put("collection", collection);
-        parameters.put("host", HOST);
+        parameters.put("host", container.getConnectionAddress());
         parameters.put("user", USER);
         parameters.put("password", PASSWORD);
 

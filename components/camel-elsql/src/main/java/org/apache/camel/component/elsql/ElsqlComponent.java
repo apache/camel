@@ -33,10 +33,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 @Component("elsql")
 public class ElsqlComponent extends DefaultComponent {
 
+    @Metadata
     private ElSqlDatabaseVendor databaseVendor;
+    @Metadata
     private DataSource dataSource;
     @Metadata(label = "advanced")
     private ElSqlConfig elSqlConfig;
+    @Metadata
     private String resourceUri;
 
     public ElsqlComponent() {

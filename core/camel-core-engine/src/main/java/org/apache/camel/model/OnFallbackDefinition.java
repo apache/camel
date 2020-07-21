@@ -16,11 +16,13 @@
  */
 package org.apache.camel.model;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
@@ -34,10 +36,21 @@ import org.apache.camel.spi.Metadata;
 public class OnFallbackDefinition extends OutputDefinition<OnFallbackDefinition> {
 
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "false")
+    @Metadata(label = "command", defaultValue = "false", javaType = "java.lang.Boolean")
     private String fallbackViaNetwork;
 
     public OnFallbackDefinition() {
+    }
+
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
+    @XmlElementRef
+    @Override
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
+        super.setOutputs(outputs);
     }
 
     @Override

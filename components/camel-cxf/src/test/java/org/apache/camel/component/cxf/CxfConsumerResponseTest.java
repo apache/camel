@@ -27,13 +27,19 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfConsumerResponseTest extends CamelTestSupport {
     
     private static final String ECHO_OPERATION = "echo";
@@ -50,11 +56,6 @@ public class CxfConsumerResponseTest extends CamelTestSupport {
         + "&publishedEndpointUrl=http://www.simple.com/services/test";
     
     
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-
     // START SNIPPET: example
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -67,9 +68,9 @@ public class CxfConsumerResponseTest extends CamelTestSupport {
                             Message in = exchange.getIn();
                             // check the remote IP from the cxfMessage
                             org.apache.cxf.message.Message cxfMessage = in.getHeader(CxfConstants.CAMEL_CXF_MESSAGE, org.apache.cxf.message.Message.class);
-                            assertNotNull("Should get the cxfMessage instance from message header", cxfMessage);
+                            assertNotNull(cxfMessage, "Should get the cxfMessage instance from message header");
                             ServletRequest request = (ServletRequest)cxfMessage.get("HTTP.REQUEST");
-                            assertNotNull("Should get the ServletRequest", request);
+                            assertNotNull(request, "Should get the ServletRequest");
                             assertNotNull("Should get the RemoteAddress" + request.getRemoteAddr());
                             // Get the parameter list
                             List<?> parameter = in.getBody(List.class);
@@ -117,16 +118,16 @@ public class CxfConsumerResponseTest extends CamelTestSupport {
         assertNotNull(client);
 
         String result = client.echo(TEST_MESSAGE);
-        assertEquals("We should get the echo string result from router", result, "echo " + TEST_MESSAGE);
+        assertEquals(result, "echo " + TEST_MESSAGE, "We should get the echo string result from router");
 
         Boolean bool = client.echoBoolean(Boolean.TRUE);
-        assertNotNull("The result should not be null", bool);
-        assertEquals("We should get the echo boolean result from router ", bool.toString(), "true");
+        assertNotNull(bool, "The result should not be null");
+        assertEquals(bool.toString(), "true", "We should get the echo boolean result from router");
         
         int beforeCallingPing = pingCounter;
         client.ping();
         int afterCallingPing = pingCounter;
-        assertTrue("The ping operation doesn't be called", afterCallingPing - beforeCallingPing == 1);
+        assertTrue(afterCallingPing - beforeCallingPing == 1, "The ping operation doesn't be called");
     }
   
 

@@ -25,9 +25,11 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.ExceptionHandler;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -49,12 +51,12 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Should pickup bye.txt file 2 times", 2, myReadLockStrategy.getCounter());
+        assertEquals(2, myReadLockStrategy.getCounter(), "Should pickup bye.txt file 2 times");
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myExceptionHandler", myExceptionHandler);
         jndi.bind("myReadLockStrategy", myReadLockStrategy);
         return jndi;

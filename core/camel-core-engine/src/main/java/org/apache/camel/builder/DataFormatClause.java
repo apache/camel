@@ -195,7 +195,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T bindy(BindyType type, Class<?> classType) {
         BindyDataFormat bindy = new BindyDataFormat();
-        bindy.setType(type);
+        bindy.setType(type.name());
         bindy.setClassType(classType);
         return dataFormat(bindy);
     }
@@ -210,9 +210,9 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T bindy(BindyType type, Class<?> classType, boolean unwrapSingleInstance) {
         BindyDataFormat bindy = new BindyDataFormat();
-        bindy.setType(type);
+        bindy.setType(type.name());
         bindy.setClassType(classType);
-        bindy.setUnwrapSingleInstance(unwrapSingleInstance);
+        bindy.setUnwrapSingleInstance(Boolean.toString(unwrapSingleInstance));
         return dataFormat(bindy);
     }
 
@@ -285,7 +285,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T hl7(boolean validate) {
         HL7DataFormat hl7 = new HL7DataFormat();
-        hl7.setValidate(validate);
+        hl7.setValidate(Boolean.toString(validate));
         return dataFormat(hl7);
     }
 
@@ -303,7 +303,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T ical(boolean validating) {
         IcalDataFormat ical = new IcalDataFormat();
-        ical.setValidating(validating);
+        ical.setValidating(Boolean.toString(validating));
         return dataFormat(ical);
     }
 
@@ -349,9 +349,9 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     public T mimeMultipart(String multipartSubType, boolean multipartWithoutAttachment, boolean headersInline, boolean binaryContent) {
         MimeMultipartDataFormat mm = new MimeMultipartDataFormat();
         mm.setMultipartSubType(multipartSubType);
-        mm.setMultipartWithoutAttachment(multipartWithoutAttachment);
-        mm.setHeadersInline(headersInline);
-        mm.setBinaryContent(binaryContent);
+        mm.setMultipartWithoutAttachment(Boolean.toString(multipartWithoutAttachment));
+        mm.setHeadersInline(Boolean.toString(headersInline));
+        mm.setBinaryContent(Boolean.toString(binaryContent));
         return dataFormat(mm);
     }
 
@@ -373,10 +373,10 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     public T mimeMultipart(String multipartSubType, boolean multipartWithoutAttachment, boolean headersInline, String includeHeaders, boolean binaryContent) {
         MimeMultipartDataFormat mm = new MimeMultipartDataFormat();
         mm.setMultipartSubType(multipartSubType);
-        mm.setMultipartWithoutAttachment(multipartWithoutAttachment);
-        mm.setHeadersInline(headersInline);
+        mm.setMultipartWithoutAttachment(Boolean.toString(multipartWithoutAttachment));
+        mm.setHeadersInline(Boolean.toString(headersInline));
         mm.setIncludeHeaders(includeHeaders);
-        mm.setBinaryContent(binaryContent);
+        mm.setBinaryContent(Boolean.toString(binaryContent));
         return dataFormat(mm);
     }
 
@@ -393,9 +393,9 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T mimeMultipart(boolean multipartWithoutAttachment, boolean headersInline, boolean binaryContent) {
         MimeMultipartDataFormat mm = new MimeMultipartDataFormat();
-        mm.setMultipartWithoutAttachment(multipartWithoutAttachment);
-        mm.setHeadersInline(headersInline);
-        mm.setBinaryContent(binaryContent);
+        mm.setMultipartWithoutAttachment(Boolean.toString(multipartWithoutAttachment));
+        mm.setHeadersInline(Boolean.toString(headersInline));
+        mm.setBinaryContent(Boolean.toString(binaryContent));
         return dataFormat(mm);
     }
 
@@ -574,7 +574,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T json(boolean prettyPrint) {
         JsonDataFormat json = new JsonDataFormat();
-        json.setPrettyPrint(prettyPrint);
+        json.setPrettyPrint(Boolean.toString(prettyPrint));
         return dataFormat(json);
     }
 
@@ -595,7 +595,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T json(JsonLibrary library, boolean prettyPrint) {
         JsonDataFormat json = new JsonDataFormat(library);
-        json.setPrettyPrint(prettyPrint);
+        json.setPrettyPrint(Boolean.toString(prettyPrint));
         return dataFormat(json);
     }
 
@@ -621,7 +621,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     public T json(JsonLibrary type, Class<?> unmarshalType, boolean prettyPrint) {
         JsonDataFormat json = new JsonDataFormat(type);
         json.setUnmarshalType(unmarshalType);
-        json.setPrettyPrint(prettyPrint);
+        json.setPrettyPrint(Boolean.toString(prettyPrint));
         return dataFormat(json);
     }
 
@@ -649,7 +649,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         JsonDataFormat json = new JsonDataFormat(JsonLibrary.Jackson);
         json.setUnmarshalType(unmarshalType);
         json.setJsonView(jsonView);
-        json.setPrettyPrint(prettyPrint);
+        json.setPrettyPrint(Boolean.toString(prettyPrint));
         return dataFormat(json);
     }
 
@@ -681,7 +681,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         json.setUnmarshalType(unmarshalType);
         json.setJsonView(jsonView);
         json.setInclude(include);
-        json.setPrettyPrint(prettyPrint);
+        json.setPrettyPrint(Boolean.toString(prettyPrint));
         return dataFormat(json);
     }
 
@@ -932,7 +932,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     public T secureXML(String secureTag, boolean secureTagContents, String passPhrase) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
-        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setSecureTagContents(Boolean.toString(secureTagContents));
         xsdf.setPassPhrase(passPhrase);
         return dataFormat(xsdf);
     }
@@ -944,7 +944,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
         xsdf.setNamespaces(namespaces);
-        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setSecureTagContents(Boolean.toString(secureTagContents));
         xsdf.setPassPhrase(passPhrase);
         return dataFormat(xsdf);
     }
@@ -955,7 +955,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     public T secureXML(String secureTag, boolean secureTagContents, String passPhrase, String xmlCipherAlgorithm) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
-        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setSecureTagContents(Boolean.toString(secureTagContents));
         xsdf.setPassPhrase(passPhrase);
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         return dataFormat(xsdf);
@@ -968,7 +968,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
         xsdf.setNamespaces(namespaces);
-        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setSecureTagContents(Boolean.toString(secureTagContents));
         xsdf.setPassPhrase(passPhrase);
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         return dataFormat(xsdf);
@@ -980,7 +980,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     public T secureXML(String secureTag, boolean secureTagContents, byte[] passPhraseByte) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
-        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setSecureTagContents(Boolean.toString(secureTagContents));
         xsdf.setPassPhraseByte(passPhraseByte);
         return dataFormat(xsdf);
     }
@@ -992,7 +992,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
         xsdf.setNamespaces(namespaces);
-        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setSecureTagContents(Boolean.toString(secureTagContents));
         xsdf.setPassPhraseByte(passPhraseByte);
         return dataFormat(xsdf);
     }
@@ -1003,7 +1003,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     public T secureXML(String secureTag, boolean secureTagContents, byte[] passPhraseByte, String xmlCipherAlgorithm) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
-        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setSecureTagContents(Boolean.toString(secureTagContents));
         xsdf.setPassPhraseByte(passPhraseByte);
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         return dataFormat(xsdf);
@@ -1016,7 +1016,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
         xsdf.setNamespaces(namespaces);
-        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setSecureTagContents(Boolean.toString(secureTagContents));
         xsdf.setPassPhraseByte(passPhraseByte);
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         return dataFormat(xsdf);
@@ -1029,7 +1029,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
                        String keyOrTrustStoreParametersId) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
-        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setSecureTagContents(Boolean.toString(secureTagContents));
         xsdf.setRecipientKeyAlias(recipientKeyAlias);
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
@@ -1044,7 +1044,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
                        String keyOrTrustStoreParametersId, String keyPassword) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
-        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setSecureTagContents(Boolean.toString(secureTagContents));
         xsdf.setRecipientKeyAlias(recipientKeyAlias);
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
@@ -1060,7 +1060,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
                        KeyStoreParameters keyOrTrustStoreParameters) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
-        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setSecureTagContents(Boolean.toString(secureTagContents));
         xsdf.setRecipientKeyAlias(recipientKeyAlias);
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
@@ -1075,7 +1075,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
                        KeyStoreParameters keyOrTrustStoreParameters, String keyPassword) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
-        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setSecureTagContents(Boolean.toString(secureTagContents));
         xsdf.setRecipientKeyAlias(recipientKeyAlias);
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
@@ -1091,7 +1091,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
                        String keyOrTrustStoreParametersId) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
-        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setSecureTagContents(Boolean.toString(secureTagContents));
         xsdf.setRecipientKeyAlias(recipientKeyAlias);
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
@@ -1106,7 +1106,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
                        String keyOrTrustStoreParametersId, String keyPassword) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
-        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setSecureTagContents(Boolean.toString(secureTagContents));
         xsdf.setRecipientKeyAlias(recipientKeyAlias);
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
@@ -1123,7 +1123,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
         xsdf.setNamespaces(namespaces);
-        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setSecureTagContents(Boolean.toString(secureTagContents));
         xsdf.setRecipientKeyAlias(recipientKeyAlias);
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
@@ -1139,7 +1139,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
         xsdf.setNamespaces(namespaces);
-        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setSecureTagContents(Boolean.toString(secureTagContents));
         xsdf.setRecipientKeyAlias(recipientKeyAlias);
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
@@ -1156,7 +1156,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);
         xsdf.setNamespaces(namespaces);
-        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setSecureTagContents(Boolean.toString(secureTagContents));
         xsdf.setRecipientKeyAlias(recipientKeyAlias);
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
@@ -1187,7 +1187,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T zipDeflater(int compressionLevel) {
         ZipDeflaterDataFormat zdf = new ZipDeflaterDataFormat();
-        zdf.setCompressionLevel(compressionLevel);
+        zdf.setCompressionLevel(Integer.toString(compressionLevel));
         return dataFormat(zdf);
     }
 
@@ -1231,13 +1231,13 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
 
     public T fhirJson(boolean prettyPrint) {
         FhirJsonDataFormat jsonDataFormat = new FhirJsonDataFormat();
-        jsonDataFormat.setPrettyPrint(prettyPrint);
+        jsonDataFormat.setPrettyPrint(Boolean.toString(prettyPrint));
         return dataFormat(jsonDataFormat);
     }
 
     public T fhirJson(String version, boolean prettyPrint) {
         FhirJsonDataFormat jsonDataFormat = new FhirJsonDataFormat();
-        jsonDataFormat.setPrettyPrint(prettyPrint);
+        jsonDataFormat.setPrettyPrint(Boolean.toString(prettyPrint));
         jsonDataFormat.setFhirVersion(version);
         return dataFormat(jsonDataFormat);
     }
@@ -1258,26 +1258,26 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
 
     public T fhirXml(boolean prettyPrint) {
         FhirXmlDataFormat fhirXmlDataFormat = new FhirXmlDataFormat();
-        fhirXmlDataFormat.setPrettyPrint(prettyPrint);
+        fhirXmlDataFormat.setPrettyPrint(Boolean.toString(prettyPrint));
         return dataFormat(fhirXmlDataFormat);
     }
 
     public T fhirXml(String version, boolean prettyPrint) {
         FhirXmlDataFormat fhirXmlDataFormat = new FhirXmlDataFormat();
         fhirXmlDataFormat.setFhirVersion(version);
-        fhirXmlDataFormat.setPrettyPrint(prettyPrint);
+        fhirXmlDataFormat.setPrettyPrint(Boolean.toString(prettyPrint));
         return dataFormat(fhirXmlDataFormat);
     }
 
     @SuppressWarnings("unchecked")
     private T dataFormat(DataFormatDefinition dataFormatType) {
         switch (operation) {
-        case Unmarshal:
-            return (T)processorType.unmarshal(dataFormatType);
-        case Marshal:
-            return (T)processorType.marshal(dataFormatType);
-        default:
-            throw new IllegalArgumentException("Unknown DataFormat operation: " + operation);
+            case Unmarshal:
+                return (T)processorType.unmarshal(dataFormatType);
+            case Marshal:
+                return (T)processorType.marshal(dataFormatType);
+            default:
+                throw new IllegalArgumentException("Unknown DataFormat operation: " + operation);
         }
     }
 }

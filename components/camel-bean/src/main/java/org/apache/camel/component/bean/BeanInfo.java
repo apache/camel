@@ -19,7 +19,6 @@ package org.apache.camel.component.bean;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,6 +42,7 @@ import org.apache.camel.Header;
 import org.apache.camel.Headers;
 import org.apache.camel.Message;
 import org.apache.camel.PropertyInject;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
@@ -62,7 +62,10 @@ import org.slf4j.LoggerFactory;
 public class BeanInfo {
     private static final Logger LOG = LoggerFactory.getLogger(BeanInfo.class);
     private static final String CGLIB_CLASS_SEPARATOR = "$$";
-    private static final List<Method> EXCLUDED_METHODS = new ArrayList<>();
+    private static final String[] EXCLUDED_METHOD_NAMES = new String[]{
+        "clone", "equals", "finalize", "getClass", "hashCode", "notify", "notifyAll", "wait", // java.lang.Object
+        "getInvocationHandler", "getProxyClass", "isProxyClass", "newProxyInstance" // java.lang.Proxy
+    };
     private final CamelContext camelContext;
     private final BeanComponent component;
     private final Class<?> type;
@@ -78,22 +81,6 @@ public class BeanInfo {
     private boolean publicConstructors;
     private boolean publicNoArgConstructors;
 
-    static {
-        // exclude all java.lang.Object methods as we dont want to invoke them
-        EXCLUDED_METHODS.addAll(Arrays.asList(Object.class.getDeclaredMethods()));
-        // exclude all java.lang.reflect.Proxy methods as we dont want to invoke them
-        EXCLUDED_METHODS.addAll(Arrays.asList(Proxy.class.getDeclaredMethods()));
-        // Remove private methods
-        EXCLUDED_METHODS.removeIf(m -> Modifier.isPrivate(m.getModifiers()));
-        try {
-            // but keep toString as this method is okay
-            EXCLUDED_METHODS.remove(Object.class.getDeclaredMethod("toString"));
-            EXCLUDED_METHODS.remove(Proxy.class.getDeclaredMethod("toString"));
-        } catch (Throwable e) {
-            // ignore
-        }
-    }
-
     public BeanInfo(CamelContext camelContext, Class<?> type) {
         this(camelContext, type, createParameterMappingStrategy(camelContext));
     }
@@ -107,6 +94,17 @@ public class BeanInfo {
     }
 
     public BeanInfo(CamelContext camelContext, Class<?> type, Method explicitMethod, ParameterMappingStrategy strategy) {
+        while (type.isSynthetic()) {
+            type = type.getSuperclass();
+            if (explicitMethod != null) {
+                try {
+                    explicitMethod = type.getDeclaredMethod(explicitMethod.getName(), explicitMethod.getParameterTypes());
+                } catch (NoSuchMethodException e) {
+                    throw new RuntimeCamelException("Unable to find a method " + explicitMethod + " on " + type, e);
+                }
+            }
+        }
+
         this.camelContext = camelContext;
         this.type = type;
         this.strategy = strategy;
@@ -177,7 +175,7 @@ public class BeanInfo {
         ParameterMappingStrategy answer = registry.lookupByNameAndType(BeanConstants.BEAN_PARAMETER_MAPPING_STRATEGY, ParameterMappingStrategy.class);
         if (answer == null) {
             // no then use the default one
-            answer = new DefaultParameterMappingStrategy();
+            answer = DefaultParameterMappingStrategy.INSTANCE;
         }
 
         return answer;
@@ -185,25 +183,9 @@ public class BeanInfo {
 
     public MethodInvocation createInvocation(Object pojo, Exchange exchange)
         throws AmbiguousMethodCallException, MethodNotFoundException {
-        return createInvocation(pojo, exchange, null);
-    }
 
-    private MethodInvocation createInvocation(Object pojo, Exchange exchange, Method explicitMethod)
-        throws AmbiguousMethodCallException, MethodNotFoundException {
         MethodInfo methodInfo = null;
         
-        // find the explicit method to invoke
-        if (explicitMethod != null) {
-            for (List<MethodInfo> infos : operations.values()) {
-                for (MethodInfo info : infos) {
-                    if (explicitMethod.equals(info.getMethod())) {
-                        return info.createMethodInvocation(pojo, info.hasParameters(), exchange);
-                    }
-                }
-            }
-            throw new MethodNotFoundException(exchange, pojo, explicitMethod.getName());
-        }
-
         String methodName = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, String.class);
         if (methodName != null) {
 
@@ -886,10 +868,10 @@ public class BeanInfo {
      * @return true if valid, false to skip the method
      */
     protected boolean isValidMethod(Class<?> clazz, Method method) {
-        // must not be in the excluded list
-        for (Method excluded : EXCLUDED_METHODS) {
-            if (org.apache.camel.util.ObjectHelper.isOverridingMethod(excluded, method)) {
-                // the method is overriding an excluded method so its not valid
+        // method name must not be in the excluded list
+        String name = method.getName();
+        for (String s : EXCLUDED_METHOD_NAMES) {
+            if (name.equals(s)) {
                 return false;
             }
         }

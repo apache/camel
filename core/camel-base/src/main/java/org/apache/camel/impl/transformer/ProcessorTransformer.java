@@ -18,6 +18,7 @@ package org.apache.camel.impl.transformer;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.DataType;
@@ -25,6 +26,8 @@ import org.apache.camel.spi.Transformer;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Transformer} implementation which leverages {@link Processor} to perform transformation.
@@ -32,6 +35,8 @@ import org.apache.camel.util.ObjectHelper;
  * {@see Transformer}
  */
 public class ProcessorTransformer extends Transformer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ProcessorTransformer.class);
 
     private Processor processor;
     private String transformerString;
@@ -54,16 +59,16 @@ public class ProcessorTransformer extends Transformer {
             Object input = message.getBody();
             Class<?> fromClass = context.getClassResolver().resolveClass(from.getName());
             if (!fromClass.isAssignableFrom(input.getClass())) {
-                log.debug("Converting to '{}'", fromClass.getName());
+                LOG.debug("Converting to: {}", fromClass.getName());
                 input = context.getTypeConverter().mandatoryConvertTo(fromClass, input);
                 message.setBody(input);
             }
         }
         
-        log.debug("Sending to transform processor '{}'", processor);
-        DefaultExchange transformExchange = new DefaultExchange(exchange);
+        LOG.debug("Sending to transform processor: {}", processor);
+        Exchange transformExchange = new DefaultExchange(exchange);
         transformExchange.setIn(message);
-        transformExchange.setProperties(exchange.getProperties());
+        transformExchange.adapt(ExtendedExchange.class).setProperties(exchange.getProperties());
         processor.process(transformExchange);
         Message answer = transformExchange.getMessage();
         
@@ -71,7 +76,7 @@ public class ProcessorTransformer extends Transformer {
             Object answerBody = answer.getBody();
             Class<?> toClass = context.getClassResolver().resolveClass(to.getName());
             if (!toClass.isAssignableFrom(answerBody.getClass())) {
-                log.debug("Converting to '{}'", toClass.getName());
+                LOG.debug("Converting to: {}", toClass.getName());
                 answerBody = context.getTypeConverter().mandatoryConvertTo(toClass, answerBody);
                 answer.setBody(answerBody);
             }

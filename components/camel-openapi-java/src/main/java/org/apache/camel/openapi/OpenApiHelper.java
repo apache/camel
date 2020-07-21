@@ -16,7 +16,6 @@
  */
 package org.apache.camel.openapi;
 
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 

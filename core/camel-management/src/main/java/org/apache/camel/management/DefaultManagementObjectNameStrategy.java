@@ -53,13 +53,14 @@ import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedRouteController;
 import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedStep;
+import org.apache.camel.management.mbean.ManagedSupervisingRouteController;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementObjectNameStrategy;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.RouteController;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -132,7 +133,10 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
             objectName = getObjectNameForCamelHealth(mch.getContext());
         } else if (managedObject instanceof ManagedRouteController) {
             ManagedRouteController mrc = (ManagedRouteController) managedObject;
-            objectName = getObjectNameForRouteController(mrc.getContext());
+            objectName = getObjectNameForRouteController(mrc.getContext(), mrc.getRouteController());
+        } else if (managedObject instanceof ManagedSupervisingRouteController) {
+            ManagedSupervisingRouteController mrc = (ManagedSupervisingRouteController) managedObject;
+            objectName = getObjectNameForRouteController(mrc.getContext(), mrc.getRouteController());
         } else if (managedObject instanceof ManagedComponent) {
             ManagedComponent mc = (ManagedComponent) managedObject;
             objectName = getObjectNameForComponent(mc.getComponent(), mc.getComponentName());
@@ -149,7 +153,7 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
             objectName = getObjectNameForRoute(mr.getRoute());
         } else if (managedObject instanceof ManagedErrorHandler) {
             ManagedErrorHandler meh = (ManagedErrorHandler) managedObject;
-            objectName = getObjectNameForErrorHandler(meh.getRouteContext(), meh.getErrorHandler(), meh.getErrorHandlerBuilder());
+            objectName = getObjectNameForErrorHandler(meh.getRoute(), meh.getErrorHandler(), meh.getErrorHandlerBuilder());
         } else if (managedObject instanceof ManagedStep) {
             ManagedStep mp = (ManagedStep) managedObject;
             objectName = getObjectNameForStep(mp.getContext(), mp.getProcessor(), mp.getDefinition());
@@ -226,13 +230,13 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(managementName)).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_HEALTH + ",");
-        buffer.append(KEY_NAME + "=").append(ObjectName.quote(context.getName()));
+        buffer.append(KEY_NAME + "=").append("DefaultHealthCheck");
 
         return createObjectName(buffer);
     }
 
     @Override
-    public ObjectName getObjectNameForRouteController(CamelContext context) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForRouteController(CamelContext context, RouteController routeController) throws MalformedObjectNameException {
         // prefer to use the given management name if previously assigned
         String managementName = context.getManagementName();
         if (managementName == null) {
@@ -243,7 +247,7 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(managementName)).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_ROUTE_CONTROLLER + ",");
-        buffer.append(KEY_NAME + "=").append(ObjectName.quote(context.getName()));
+        buffer.append(KEY_NAME + "=").append(routeController.getClass().getSimpleName());
 
         return createObjectName(buffer);
     }
@@ -302,10 +306,10 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     }
 
     @Override
-    public ObjectName getObjectNameForErrorHandler(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory builder) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForErrorHandler(Route route, Processor errorHandler, ErrorHandlerFactory builder) throws MalformedObjectNameException {
         StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
-        buffer.append(KEY_CONTEXT + "=").append(getContextId(routeContext.getCamelContext())).append(",");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(route.getCamelContext())).append(",");
         buffer.append(KEY_TYPE + "=").append(TYPE_ERRORHANDLER + ",");
 
         // we want to only register one instance of the various error handler types and thus do some lookup
@@ -316,7 +320,7 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
 
             // it has not then its an indirection and we should do some work to lookup the real builder
             ref = builderRef.getRef();
-            ErrorHandlerFactory refBuilder = ErrorHandlerReifier.lookupErrorHandlerFactory(routeContext, builderRef.getRef(), false);
+            ErrorHandlerFactory refBuilder = ErrorHandlerReifier.lookupErrorHandlerFactory(route, builderRef.getRef(), false);
             if (refBuilder != null) {
                 builder = refBuilder;
             }
@@ -327,8 +331,8 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
             if (builder instanceof ErrorHandlerBuilderRef) {
                 builderRef = (ErrorHandlerBuilderRef) builder;
                 // does it refer to a non default error handler then do a 2nd lookup
-                if (!builderRef.getRef().equals(ErrorHandlerReifier.DEFAULT_ERROR_HANDLER_BUILDER)) {
-                    refBuilder = ErrorHandlerReifier.lookupErrorHandlerFactory(routeContext, builderRef.getRef(), false);
+                if (!builderRef.getRef().equals(ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER)) {
+                    refBuilder = ErrorHandlerReifier.lookupErrorHandlerFactory(route, builderRef.getRef(), false);
                     if (refBuilder != null) {
                         ref = builderRef.getRef();
                         builder = refBuilder;
@@ -417,7 +421,7 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     }
 
     @Override
-    public ObjectName getObjectNameForRoute(Route route) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForRoute(org.apache.camel.Route route) throws MalformedObjectNameException {
         Endpoint ep = route.getEndpoint();
         String id = route.getId();
 

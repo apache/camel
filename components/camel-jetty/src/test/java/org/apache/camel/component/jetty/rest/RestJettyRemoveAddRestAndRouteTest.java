@@ -23,7 +23,11 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class RestJettyRemoveAddRestAndRouteTest extends BaseJettyTest {
 
@@ -41,7 +45,7 @@ public class RestJettyRemoveAddRestAndRouteTest extends BaseJettyTest {
         context.getRouteController().stopRoute("issues");
         boolean removed = context.removeRoute("issues");
 
-        assertTrue("Should have removed route", removed);
+        assertTrue(removed, "Should have removed route");
 
         try (InputStream stream = new URL("http://localhost:" + getPort() + "/issues/35").openStream()) {
             fail();
@@ -70,7 +74,7 @@ public class RestJettyRemoveAddRestAndRouteTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                restConfiguration("jetty").host("localhost").port(getPort());
+                restConfiguration().host("localhost").port(getPort());
 
                 rest("/").get("/issues/{isin}").route().id("issues").process(e -> e.getOut().setBody("Here's your issue " + e.getIn().getHeader("isin"))).endRest().get("/listings")
                     .route().id("listings").process(e -> e.getOut().setBody("some listings"));

@@ -17,18 +17,18 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.spi.RouteContext;
 
 public class PipelineReifier extends ProcessorReifier<PipelineDefinition> {
 
-    public PipelineReifier(ProcessorDefinition<?> definition) {
-        super(PipelineDefinition.class.cast(definition));
+    public PipelineReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, PipelineDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return this.createChildProcessor(routeContext, true);
+    public Processor createProcessor() throws Exception {
+        return this.createChildProcessor(true);
     }
 }

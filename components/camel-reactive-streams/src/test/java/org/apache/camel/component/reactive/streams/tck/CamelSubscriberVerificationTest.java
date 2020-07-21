@@ -42,7 +42,7 @@ public class CamelSubscriberVerificationTest extends SubscriberBlackboxVerificat
 
         RouteBuilder builder = new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("reactive-streams:sub?maxInflightExchanges=20")
                         .to("log:INFO");
             }

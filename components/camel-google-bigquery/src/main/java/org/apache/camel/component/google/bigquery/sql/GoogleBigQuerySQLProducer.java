@@ -33,11 +33,15 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConstants;
 import org.apache.camel.support.DefaultProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generic BigQuery Producer
  */
 public class GoogleBigQuerySQLProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GoogleBigQuerySQLProducer.class);
 
     private final GoogleBigQuerySQLConfiguration configuration;
     private Bigquery bigquery;
@@ -69,7 +73,7 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
         Map<String, Object> queryParameters = extractParameters(exchange);
         exchange.getMessage().setHeader(GoogleBigQueryConstants.TRANSLATED_QUERY, translatedQuery);
         Long affectedRows = executeSQL(translatedQuery, queryParameters);
-        log.debug("The query {} affected {} rows", query, affectedRows);
+        LOG.debug("The query {} affected {} rows", query, affectedRows);
         exchange.getMessage().setBody(affectedRows);
     }
 
@@ -80,8 +84,8 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
 
         setQueryParameters(queryParameters, apiQueryRequest);
 
-        if (log.isTraceEnabled()) {
-            log.trace("Sending query to bigquery standard sql: {}", translatedQuery);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Sending query to bigquery standard sql: {}", translatedQuery);
         }
 
         QueryResponse apiResponse = apiQuery.execute();
@@ -90,8 +94,8 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
             throw new Exception("Query " + translatedQuery + " failed: " + apiResponse.getErrors());
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("Result of query {} is {}", translatedQuery, apiResponse.toPrettyString());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Result of query {} is {}", translatedQuery, apiResponse.toPrettyString());
         }
         return apiResponse.getNumDmlAffectedRows();
     }

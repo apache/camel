@@ -23,9 +23,14 @@ import org.apache.camel.Message;
 /**
  * Factory to create the {@link Map} implementation to use for storing headers on {@link Message}.
  *
- * @see org.apache.camel.impl.DefaultHeadersMapFactory
+ * @see org.apache.camel.impl.engine.DefaultHeadersMapFactory
  */
 public interface HeadersMapFactory {
+
+    /**
+     * Service factory key.
+     */
+    String FACTORY = "headers-map-factory";
 
     /**
      * Creates a new empty {@link Map}

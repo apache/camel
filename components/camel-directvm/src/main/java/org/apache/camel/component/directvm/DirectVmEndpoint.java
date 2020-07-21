@@ -17,6 +17,7 @@
 package org.apache.camel.component.directvm;
 
 import org.apache.camel.AsyncEndpoint;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -28,11 +29,11 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The direct-vm component provides direct, synchronous call to another endpoint from any CamelContext in the same JVM.
+ * Call another endpoint from any Camel Context in the same JVM synchronously.
  *
  * This endpoint can be used to connect existing routes in the same JVM between different CamelContexts.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "direct-vm", title = "Direct VM", syntax = "direct-vm:name", label = "core,endpoint")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "direct-vm", title = "Direct VM", syntax = "direct-vm:name", category = {Category.CORE, Category.ENDPOINT})
 public class DirectVmEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     @UriPath(description = "Name of direct-vm endpoint") @Metadata(required = true)
@@ -40,7 +41,7 @@ public class DirectVmEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     @UriParam(label = "producer", defaultValue = "true")
     private boolean block = true;
-    @UriParam(label = "producer", defaultValue = "30000")
+    @UriParam(label = "producer", defaultValue = "30000", javaType = "java.time.Duration")
     private long timeout = 30000L;
     @UriParam(label = "producer")
     private boolean failIfNoConsumers = true;

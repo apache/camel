@@ -46,6 +46,7 @@ import io.swagger.models.parameters.QueryParameter;
 import io.swagger.parser.SwaggerParser;
 import io.swagger.util.Json;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
@@ -59,6 +60,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -72,24 +74,20 @@ import static org.apache.camel.component.rest.swagger.RestSwaggerHelper.isHostPa
 import static org.apache.camel.component.rest.swagger.RestSwaggerHelper.isMediaRange;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 import static org.apache.camel.util.ObjectHelper.notNull;
-import static org.apache.camel.util.StringHelper.after;
-import static org.apache.camel.util.StringHelper.before;
-import static org.apache.camel.util.StringHelper.notEmpty;
+import static org.apache.camel.util.StringHelper.*;
 
 /**
- * An awesome REST endpoint backed by Swagger specifications.
+ * Configure REST producers based on a Swagger (OpenAPI) specification document delegating to a component implementing the
+ * RestProducerFactory interface.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "rest-swagger", title = "REST Swagger",
-    syntax = "rest-swagger:specificationUri#operationId", label = "rest,swagger,http", producerOnly = true)
+    syntax = "rest-swagger:specificationUri#operationId", category = {Category.REST, Category.SWAGGER, Category.HTTP}, producerOnly = true)
 public final class RestSwaggerEndpoint extends DefaultEndpoint {
 
     /**
      * Remaining parameters specified in the Endpoint URI.
      */
     Map<String, Object> parameters = Collections.emptyMap();
-
-    /** The name of the Camel component, be it `rest-swagger` or `petstore` */
-    private String assignedComponentName;
 
     @UriParam(
         description = "API basePath, for example \"`/v2`\". Default is unset, if set overrides the value present in"
@@ -152,8 +150,6 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         final Map<String, Object> parameters) {
         super(notEmpty(uri, "uri"), notNull(component, "component"));
         this.parameters = parameters;
-
-        assignedComponentName = before(uri, ":");
 
         final URI componentSpecificationUri = component.getSpecificationUri();
 
@@ -332,13 +328,9 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         }
 
         final CamelContext camelContext = getCamelContext();
-        final RestConfiguration specificConfiguration = camelContext.getRestConfiguration(assignedComponentName, false);
-        if (specificConfiguration != null && isNotEmpty(specificConfiguration.getContextPath())) {
-            return specificConfiguration.getContextPath();
-        }
-
-        final RestConfiguration restConfiguration = camelContext.getRestConfiguration("rest-swagger", true);
+        final RestConfiguration restConfiguration = CamelContextHelper.getRestConfiguration(camelContext, null, determineComponentName());
         final String restConfigurationBasePath = restConfiguration.getContextPath();
+
         if (isNotEmpty(restConfigurationBasePath)) {
             return restConfigurationBasePath;
         }
@@ -431,28 +423,17 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         }
 
         final CamelContext camelContext = getCamelContext();
-
-        final RestConfiguration specificRestConfiguration = camelContext.getRestConfiguration(assignedComponentName,
-            false);
-        final String specificConfigurationHost = hostFrom(specificRestConfiguration);
-        if (specificConfigurationHost != null) {
-            return specificConfigurationHost;
-        }
-
-        final RestConfiguration componentRestConfiguration = camelContext.getRestConfiguration("rest-swagger", false);
-        final String componentConfigurationHost = hostFrom(componentRestConfiguration);
-        if (componentConfigurationHost != null) {
-            return componentConfigurationHost;
-        }
-
-        final RestConfiguration globalRestConfiguration = camelContext.getRestConfiguration();
+        final RestConfiguration globalRestConfiguration = CamelContextHelper.getRestConfiguration(camelContext, null, determineComponentName());
         final String globalConfigurationHost = hostFrom(globalRestConfiguration);
+
         if (globalConfigurationHost != null) {
             return globalConfigurationHost;
         }
 
         final String specificationScheme = specificationUri.getScheme();
-        if (specificationUri.isAbsolute() && specificationScheme.toLowerCase().startsWith("http")) {
+        // Perform a case insensitive "startsWith" check that works for different locales
+        String prefix = Scheme.HTTP.toValue();
+        if (specificationUri.isAbsolute() && specificationScheme.regionMatches(true, 0, prefix, 0, prefix.length())) {
             try {
                 return new URI(specificationUri.getScheme(), specificationUri.getUserInfo(), specificationUri.getHost(),
                     specificationUri.getPort(), null, null, null).toString();
@@ -461,12 +442,10 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
             }
         }
 
-        final boolean areTheSame = "rest-swagger".equals(assignedComponentName);
-
         throw new IllegalStateException("Unable to determine destination host for requests. The Swagger specification"
             + " does not specify `scheme` and `host` parameters, the specification URI is not absolute with `http` or"
             + " `https` scheme, and no RestConfigurations configured with `scheme`, `host` and `port` were found for `"
-            + (areTheSame ? "rest-swagger` component" : assignedComponentName + "` or `rest-swagger` components")
+            + (determineComponentName() != null ? determineComponentName() : "default" + "` component")
             + " and there is no global RestConfiguration with those properties");
     }
 
@@ -515,7 +494,7 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         int pos = 0;
         final StringBuilder resolved = new StringBuilder(uriTemplate.length() * 2);
         while (start != -1) {
-            resolved.append(uriTemplate.substring(pos, start));
+            resolved.append(uriTemplate, pos, start);
 
             final int end = uriTemplate.indexOf('}', start);
 
@@ -534,7 +513,7 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         }
 
         if (pos < uriTemplate.length()) {
-            resolved.append(uriTemplate.substring(pos));
+            resolved.append(uriTemplate, pos, uriTemplate.length());
         }
 
         return resolved.toString();
@@ -601,8 +580,8 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         }
 
         final StringBuilder answer = new StringBuilder(scheme).append("://").append(host);
-        if (port > 0 && !("http".equalsIgnoreCase(scheme) && port == 80)
-            && !("https".equalsIgnoreCase(scheme) && port == 443)) {
+        if (port > 0 && !(Scheme.HTTP.toValue().equalsIgnoreCase(scheme) && port == 80)
+            && !(Scheme.HTTPS.toValue().equalsIgnoreCase(scheme) && port == 443)) {
             answer.append(':').append(port);
         }
 
@@ -671,15 +650,15 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
     static String pickBestScheme(final String specificationScheme, final List<Scheme> schemes) {
         if (schemes != null && !schemes.isEmpty()) {
             if (schemes.contains(Scheme.HTTPS)) {
-                return "https";
+                return Scheme.HTTPS.toValue();
             }
 
             if (schemes.contains(Scheme.HTTP)) {
-                return "http";
+                return Scheme.HTTP.toValue();
             }
         }
 
-        if (specificationScheme != null) {
+        if (specificationScheme != null && (Scheme.HTTP.toValue().contains(specificationScheme) || Scheme.HTTPS.toValue().contains(specificationScheme))) {
             return specificationScheme;
         }
 

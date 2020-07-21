@@ -20,10 +20,10 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import org.hl7.fhir.dstu3.model.Patient;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Helper class to generate search URLs based on HAPI-FHIR's search API")
+@Disabled("Helper class to generate search URLs based on HAPI-FHIR's search API")
 public class UrlFetcherTest {
 
     @Test

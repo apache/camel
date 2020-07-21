@@ -32,7 +32,7 @@ public class SalesforceHeadersIntegrationTest extends AbstractSalesforceTestBase
             exchange1.getIn().setHeader("Sforce-Limit-Info", Collections.singletonList("api-usage"));
         });
 
-        Assertions.assertThat(exchange.getOut().getBody(GlobalObjects.class)).isNotNull();
-        Assertions.assertThat(exchange.getOut().getHeader("Sforce-Limit-Info", String.class)).contains("api-usage=");
+        Assertions.assertThat(exchange.getMessage().getBody(GlobalObjects.class)).isNotNull();
+        Assertions.assertThat(exchange.getMessage().getHeader("Sforce-Limit-Info", String.class)).contains("api-usage=");
     }
 }

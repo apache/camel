@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 
 /**
  * A factory to create {@link Processor} based on the {@link org.apache.camel.model.ProcessorDefinition definition}.
@@ -41,23 +42,23 @@ public interface ProcessorFactory {
      * <p/>
      * The child processor is an output from the given definition, for example the sub route in a splitter EIP.
      *
-     * @param routeContext  the route context
+     * @param route  the route context
      * @param definition    the definition which represents the processor
      * @param mandatory     whether or not the child is mandatory
      * @return the created processor, or <tt>null</tt> to let the default implementation in Camel create the processor.
      * @throws Exception can be thrown if error creating the processor
      */
-    Processor createChildProcessor(RouteContext routeContext, NamedNode definition, boolean mandatory) throws Exception;
+    Processor createChildProcessor(Route route, NamedNode definition, boolean mandatory) throws Exception;
 
     /**
      * Creates the processor.
      *
-     * @param routeContext  the route context
+     * @param route  the route context
      * @param definition    the definition which represents the processor
      * @return the created processor, or <tt>null</tt> to let the default implementation in Camel create the processor.
      * @throws Exception can be thrown if error creating the processor
      */
-    Processor createProcessor(RouteContext routeContext, NamedNode definition) throws Exception;
+    Processor createProcessor(Route route, NamedNode definition) throws Exception;
 
     /**
      * Creates a processor by the name of the definition. This should only be used in some special situations

@@ -18,9 +18,13 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class NettyHttp500ErrorTest extends BaseNettyTest {
 
@@ -54,16 +58,11 @@ public class NettyHttp500ErrorTest extends BaseNettyTest {
     public void testHttp500ErrorDisabledStatusCode() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
 
-        Exchange out = template.request("netty-http:http://localhost:{{port}}/foo?throwExceptionOnFailure=false", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("Hello World");
-            }
-        });
+        Exchange out = template.request("netty-http:http://localhost:{{port}}/foo?throwExceptionOnFailure=false", exchange -> exchange.getIn().setBody("Hello World"));
         assertNotNull(out);
 
-        assertEquals(500, out.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("Internal Server Error", out.getOut().getHeader(Exchange.HTTP_RESPONSE_TEXT));
+        assertEquals(500, out.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("Internal Server Error", out.getMessage().getHeader(Exchange.HTTP_RESPONSE_TEXT));
 
         assertMockEndpointsSatisfied();
     }

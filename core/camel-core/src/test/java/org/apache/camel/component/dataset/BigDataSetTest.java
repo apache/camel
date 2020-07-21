@@ -18,15 +18,14 @@ package org.apache.camel.component.dataset;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.naming.Context;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Manual test")
+@Disabled("Manual test")
 public class BigDataSetTest extends ContextTestSupport {
     protected SimpleDataSet dataSet = new SimpleDataSet(20000);
 
@@ -38,10 +37,10 @@ public class BigDataSetTest extends ContextTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        context.bind("foo", dataSet);
-        return context;
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
+        answer.bind("foo", dataSet);
+        return answer;
     }
 
     @Override

@@ -27,9 +27,13 @@ import org.apache.camel.Producer;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for Camel html attachments and Mail attachments.
@@ -37,7 +41,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailHtmlAttachmentTest extends CamelTestSupport {
 
     @Test
-    public void testSendAndRecieveMailWithAttachments() throws Exception {
+    public void testSendAndReceiveMailWithAttachments() throws Exception {
         // clear mailbox
         Mailbox.clearAll();
 
@@ -74,19 +78,19 @@ public class MailHtmlAttachmentTest extends CamelTestSupport {
 
         // attachment
         Map<String, DataHandler> attachments = out.getIn(AttachmentMessage.class).getAttachments();
-        assertNotNull("Should have attachments", attachments);
+        assertNotNull(attachments, "Should have attachments");
         assertEquals(1, attachments.size());
 
         DataHandler handler = out.getIn(AttachmentMessage.class).getAttachment("logo.jpeg");
-        assertNotNull("The logo should be there", handler);
+        assertNotNull(handler, "The logo should be there");
         byte[] bytes = context.getTypeConverter().convertTo(byte[].class, handler.getInputStream());
-        assertNotNull("content should be there", bytes);
-        assertTrue("logo should be more than 1000 bytes", bytes.length > 1000);
+        assertNotNull(bytes, "content should be there");
+        assertTrue(bytes.length > 1000, "logo should be more than 1000 bytes");
 
         // content type should match
         boolean match1 = "image/jpeg; name=logo.jpeg".equals(handler.getContentType());
         boolean match2 = "application/octet-stream; name=logo.jpeg".equals(handler.getContentType());
-        assertTrue("Should match 1 or 2", match1 || match2);
+        assertTrue(match1 || match2, "Should match 1 or 2");
 
         // save logo for visual inspection
         template.sendBodyAndHeader("file://target", bytes, Exchange.FILE_NAME, "maillogo.jpg");

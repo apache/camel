@@ -20,8 +20,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.management.MBeanServer;
 
-import com.codahale.metrics.JmxReporter;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jmx.JmxReporter;
 import com.codahale.metrics.json.MetricsModule;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -112,7 +112,7 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         if (metricsRegistry == null) {
             Registry camelRegistry = getCamelContext().getRegistry();
             metricsRegistry = camelRegistry.lookupByNameAndType(MetricsComponent.METRIC_REGISTRY_NAME, MetricRegistry.class);
@@ -122,6 +122,18 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
             }
         }
 
+        // json mapper
+        this.mapper = new ObjectMapper().registerModule(new MetricsModule(getRateUnit(), getDurationUnit(), false));
+        if (getRateUnit() == TimeUnit.SECONDS && getDurationUnit() == TimeUnit.SECONDS) {
+            // they both use same units so reuse
+            this.secondsMapper = this.mapper;
+        } else {
+            this.secondsMapper = new ObjectMapper().registerModule(new MetricsModule(TimeUnit.SECONDS, TimeUnit.SECONDS, false));
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
         if (useJmx) {
             ManagementAgent agent = getCamelContext().getManagementStrategy().getManagementAgent();
             if (agent != null) {
@@ -133,15 +145,6 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
             } else {
                 throw new IllegalStateException("CamelContext has not enabled JMX");
             }
-        }
-
-        // json mapper
-        this.mapper = new ObjectMapper().registerModule(new MetricsModule(getRateUnit(), getDurationUnit(), false));
-        if (getRateUnit() == TimeUnit.SECONDS && getDurationUnit() == TimeUnit.SECONDS) {
-            // they both use same units so reuse
-            this.secondsMapper = this.mapper;
-        } else {
-            this.secondsMapper = new ObjectMapper().registerModule(new MetricsModule(TimeUnit.SECONDS, TimeUnit.SECONDS, false));
         }
     }
 

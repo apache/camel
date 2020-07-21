@@ -16,7 +16,7 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
+import java.time.Duration;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -34,6 +34,7 @@ import org.apache.camel.model.config.StreamResequencerConfig;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.TimeUtils;
 
 /**
  * Resequences (re-order) messages based on an expression
@@ -41,7 +42,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "resequence")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefinition> implements OutputNode {
+public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition> {
     @Metadata(required = false)
     @XmlElements({@XmlElement(name = "batch-config", type = BatchResequencerConfig.class), @XmlElement(name = "stream-config", type = StreamResequencerConfig.class)})
     private ResequencerConfig resequencerConfig;
@@ -52,8 +53,6 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
     @XmlElementRef
     @Metadata(required = true)
     private ExpressionDefinition expression;
-    @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     public ResequenceDefinition() {
     }
@@ -69,8 +68,10 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         return outputs;
     }
 
+    @XmlElementRef
+    @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
-        this.outputs = outputs;
+        super.setOutputs(outputs);
     }
 
     // Fluent API
@@ -123,19 +124,39 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
 
     /**
      * Sets the timeout
-     * 
+     *
      * @param timeout timeout in millis
      * @return the builder
      */
     public ResequenceDefinition timeout(long timeout) {
+        return timeout(Duration.ofMillis(timeout));
+    }
+
+    /**
+     * Sets the timeout
+     *
+     * @param timeout timeout
+     * @return the builder
+     */
+    public ResequenceDefinition timeout(Duration timeout) {
+        return timeout(TimeUtils.printDuration(timeout));
+    }
+
+    /**
+     * Sets the timeout
+     *
+     * @param timeout timeout
+     * @return the builder
+     */
+    public ResequenceDefinition timeout(String timeout) {
         if (streamConfig != null) {
-            streamConfig.setTimeout(Long.toString(timeout));
+            streamConfig.setTimeout(timeout);
         } else {
             // initialize batch mode as its default mode
             if (batchConfig == null) {
                 batch();
             }
-            batchConfig.setBatchTimeout(Long.toString(timeout));
+            batchConfig.setBatchTimeout(timeout);
         }
         return this;
     }

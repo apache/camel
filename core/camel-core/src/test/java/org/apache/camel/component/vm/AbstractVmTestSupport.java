@@ -19,11 +19,11 @@ package org.apache.camel.component.vm;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.service.ServiceHelper;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class AbstractVmTestSupport extends ContextTestSupport {
 
@@ -31,13 +31,13 @@ public abstract class AbstractVmTestSupport extends ContextTestSupport {
     protected ProducerTemplate template2;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         context2 = new DefaultCamelContext();
         template2 = context2.createProducerTemplate();
 
-        ServiceHelper.startService(template2, context2);
+        startServices(template2, context2);
 
         // add routes after CamelContext has been started
         RouteBuilder routeBuilder = createRouteBuilderForSecondContext();
@@ -47,9 +47,9 @@ public abstract class AbstractVmTestSupport extends ContextTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
-        ServiceHelper.stopService(context2, template2);
+        stopServices(context2, template2);
         VmComponent.ENDPOINTS.clear();
         VmComponent.QUEUES.clear();
         super.tearDown();
@@ -58,4 +58,25 @@ public abstract class AbstractVmTestSupport extends ContextTestSupport {
     protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
         return null;
     }
+
+    protected void startServices(Object... services) {
+        for (Object o : services) {
+            if (o instanceof Service) {
+                ((Service) o).start();
+            } else if (o instanceof CamelContext) {
+                ((CamelContext) o).start();
+            }
+        }
+    }
+
+    protected void stopServices(Object... services) {
+        for (Object o : services) {
+            if (o instanceof Service) {
+                ((Service) o).stop();
+            } else if (o instanceof CamelContext) {
+                ((CamelContext) o).stop();
+            }
+        }
+    }
+
 }

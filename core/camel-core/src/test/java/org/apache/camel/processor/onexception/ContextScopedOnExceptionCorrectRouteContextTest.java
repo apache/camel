@@ -21,7 +21,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
@@ -41,7 +44,7 @@ public class ContextScopedOnExceptionCorrectRouteContextTest extends ContextTest
                 onException(Exception.class).log("Error due ${exception.message}").process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        String routeId = exchange.getUnitOfWork().getRouteContext().getRouteId();
+                        String routeId = exchange.getUnitOfWork().getRoute().getRouteId();
                         assertEquals("bar", routeId);
                     }
                 });
@@ -76,7 +79,7 @@ public class ContextScopedOnExceptionCorrectRouteContextTest extends ContextTest
                 onException(Exception.class).log("Error due ${exception.message}").process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        String routeId = exchange.getUnitOfWork().getRouteContext().getRouteId();
+                        String routeId = exchange.getUnitOfWork().getRoute().getRouteId();
                         assertEquals("foo", routeId);
                     }
                 });

@@ -41,7 +41,7 @@ public class X2JOutputIdentityTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("xj:?transformDirection=XML2JSON")
+                        .to("xj:identity?transformDirection=XML2JSON")
                         .to("mock:result");
             }
         };

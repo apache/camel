@@ -24,15 +24,15 @@ import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
 import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DropboxProducerMoveTest extends DropboxTestSupport {
 
     public static final String COPY_WORKDIR = "/test-workdir";
     public static final String FILE = "file.txt";
 
-    @Before
+    @BeforeEach
     public void removeDir() throws DbxException, IOException {
         createDir(COPY_WORKDIR);
         createFile(FILE, "content");

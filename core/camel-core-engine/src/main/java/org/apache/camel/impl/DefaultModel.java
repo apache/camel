@@ -28,31 +28,30 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.FailedToStartRouteException;
-import org.apache.camel.Route;
-import org.apache.camel.impl.engine.AbstractCamelContext;
-import org.apache.camel.impl.engine.DefaultRouteContext;
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RouteFilters;
+import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
-import org.apache.camel.reifier.RouteReifier;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.CollectionStringBuffer;
 
 public class DefaultModel implements Model {
 
     private final CamelContext camelContext;
 
     private final List<RouteDefinition> routeDefinitions = new ArrayList<>();
+    private final List<RouteTemplateDefinition> routeTemplateDefinitions = new ArrayList<>();
     private final List<RestDefinition> restDefinitions = new ArrayList<>();
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<>();
     private List<TransformerDefinition> transformers = new ArrayList<>();
@@ -60,6 +59,7 @@ public class DefaultModel implements Model {
     private Map<String, ServiceCallConfigurationDefinition> serviceCallConfigurations = new ConcurrentHashMap<>();
     private Map<String, HystrixConfigurationDefinition> hystrixConfigurations = new ConcurrentHashMap<>();
     private Map<String, Resilience4jConfigurationDefinition> resilience4jConfigurations = new ConcurrentHashMap<>();
+    private Map<String, FaultToleranceConfigurationDefinition> faultToleranceConfigurations = new ConcurrentHashMap<>();
     private Function<RouteDefinition, Boolean> routeFilter;
 
     public DefaultModel(CamelContext camelContext) {
@@ -85,7 +85,7 @@ public class DefaultModel implements Model {
         removeRouteDefinitions(list);
         this.routeDefinitions.addAll(list);
         if (shouldStartRoutes()) {
-            startRouteDefinitions(list);
+            getCamelContext().adapt(ModelCamelContext.class).startRouteDefinitions(list);
         }
     }
 
@@ -127,6 +127,89 @@ public class DefaultModel implements Model {
             }
         }
         return null;
+    }
+
+    @Override
+    public List<RouteTemplateDefinition> getRouteTemplateDefinitions() {
+        return routeTemplateDefinitions;
+    }
+
+    @Override
+    public RouteTemplateDefinition getRouteTemplateDefinition(String id) {
+        for (RouteTemplateDefinition route : routeTemplateDefinitions) {
+            if (route.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory()).equals(id)) {
+                return route;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void addRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception {
+        if (routeTemplateDefinitions == null || routeTemplateDefinitions.isEmpty()) {
+            return;
+        }
+        this.routeTemplateDefinitions.addAll(routeTemplateDefinitions);
+    }
+
+    @Override
+    public void addRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception {
+        addRouteTemplateDefinitions(Collections.singletonList(routeTemplateDefinition));
+    }
+
+    @Override
+    public void removeRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception {
+        routeTemplateDefinitions.removeAll(routeTemplateDefinitions);
+    }
+
+    @Override
+    public void removeRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception {
+        routeTemplateDefinitions.remove(routeTemplateDefinition);
+    }
+
+    @Override
+    public String addRouteFromTemplate(final String routeId, final String routeTemplateId, final Map<String, Object> parameters) throws Exception {
+        RouteTemplateDefinition target = null;
+        for (RouteTemplateDefinition def : routeTemplateDefinitions) {
+            if (routeTemplateId.equals(def.getId())) {
+                target = def;
+                break;
+            }
+        }
+        if (target == null) {
+            throw new IllegalArgumentException("Cannot find RouteTemplate with id " + routeTemplateId);
+        }
+
+        CollectionStringBuffer cbs = new CollectionStringBuffer();
+        final Map<String, Object> prop = new HashMap();
+        // include default values first from the template (and validate that we have inputs for all required parameters)
+        if (target.getTemplateParameters() != null) {
+            for (RouteTemplateParameterDefinition temp : target.getTemplateParameters()) {
+                if (temp.getDefaultValue() != null) {
+                    prop.put(temp.getName(), temp.getDefaultValue());
+                } else {
+                    // this is a required parameter do we have that as input
+                    if (!parameters.containsKey(temp.getName())) {
+                        cbs.append(temp.getName());
+                    }
+                }
+            }
+        }
+        if (!cbs.isEmpty()) {
+            throw new IllegalArgumentException("Route template " + routeTemplateId + " the following mandatory parameters must be provided: " + cbs.toString());
+        }
+        // then override with user parameters
+        if (parameters != null) {
+            prop.putAll(parameters);
+        }
+
+        RouteDefinition def = target.asRouteDefinition();
+        if (routeId != null) {
+            def.setId(routeId);
+        }
+        def.setTemplateParameters(prop);
+        addRouteDefinition(def);
+        return def.getId();
     }
 
     @Override
@@ -235,6 +318,34 @@ public class DefaultModel implements Model {
     }
 
     @Override
+    public FaultToleranceConfigurationDefinition getFaultToleranceConfiguration(String id) {
+        if (id == null) {
+            id = "";
+        }
+
+        return faultToleranceConfigurations.get(id);
+    }
+
+    @Override
+    public void setFaultToleranceConfiguration(FaultToleranceConfigurationDefinition configuration) {
+        faultToleranceConfigurations.put("", configuration);
+    }
+
+    @Override
+    public void setFaultToleranceConfigurations(List<FaultToleranceConfigurationDefinition> configurations) {
+        if (configurations != null) {
+            for (FaultToleranceConfigurationDefinition configuration : configurations) {
+                faultToleranceConfigurations.put(configuration.getId(), configuration);
+            }
+        }
+    }
+
+    @Override
+    public void addFaultToleranceConfiguration(String id, FaultToleranceConfigurationDefinition configuration) {
+        faultToleranceConfigurations.put(id, configuration);
+    }
+
+    @Override
     public DataFormatDefinition resolveDataFormatDefinition(String name) {
         // lookup type and create the data format from it
         DataFormatDefinition type = lookup(camelContext, name, DataFormatDefinition.class);
@@ -244,12 +355,13 @@ public class DefaultModel implements Model {
         return type;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
-    public ProcessorDefinition getProcessorDefinition(String id) {
+    public ProcessorDefinition<?> getProcessorDefinition(String id) {
         for (RouteDefinition route : getRouteDefinitions()) {
             Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
             while (it.hasNext()) {
-                ProcessorDefinition proc = it.next();
+                ProcessorDefinition<?> proc = it.next();
                 if (id.equals(proc.getId())) {
                     return proc;
                 }
@@ -259,8 +371,8 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public <T extends ProcessorDefinition> T getProcessorDefinition(String id, Class<T> type) {
-        ProcessorDefinition answer = getProcessorDefinition(id);
+    public <T extends ProcessorDefinition<T>> T getProcessorDefinition(String id, Class<T> type) {
+        ProcessorDefinition<?> answer = getProcessorDefinition(id);
         if (answer != null) {
             return type.cast(answer);
         }
@@ -298,11 +410,6 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public void startRouteDefinitions() throws Exception {
-        startRouteDefinitions(routeDefinitions);
-    }
-
-    @Override
     public void setRouteFilterPattern(String include, String exclude) {
         setRouteFilter(RouteFilters.filterByPattern(include, exclude));
     }
@@ -315,51 +422,6 @@ public class DefaultModel implements Model {
     @Override
     public void setRouteFilter(Function<RouteDefinition, Boolean> routeFilter) {
         this.routeFilter = routeFilter;
-    }
-
-    protected void startRouteDefinitions(Collection<RouteDefinition> list) throws Exception {
-        if (list != null) {
-            for (RouteDefinition route : list) {
-                startRoute(route);
-            }
-        }
-    }
-
-    public void startRoute(RouteDefinition routeDefinition) throws Exception {
-        prepare(routeDefinition);
-        start(routeDefinition);
-    }
-
-    protected void prepare(RouteDefinition routeDefinition) throws Exception {
-        // assign ids to the routes and validate that the id's is all unique
-        RouteDefinitionHelper.forceAssignIds(camelContext, routeDefinitions);
-        String duplicate = RouteDefinitionHelper.validateUniqueIds(routeDefinition, routeDefinitions);
-        if (duplicate != null) {
-            throw new FailedToStartRouteException(routeDefinition.getId(), "duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");
-        }
-
-        // must ensure route is prepared, before we can start it
-        if (!routeDefinition.isPrepared()) {
-            RouteDefinitionHelper.prepareRoute(camelContext, routeDefinition);
-            routeDefinition.markPrepared();
-        }
-    }
-
-    protected void start(RouteDefinition routeDefinition) throws Exception {
-        // indicate we are staring the route using this thread so
-        // we are able to query this if needed
-        AbstractCamelContext mcc = camelContext.adapt(AbstractCamelContext.class);
-        mcc.setStartingRoutes(true);
-        try {
-            String id = routeDefinition.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
-            RouteContext routeContext = new DefaultRouteContext(camelContext, routeDefinition, id);
-            Route route = new RouteReifier(routeDefinition).createRoute(camelContext, routeContext);
-            RouteService routeService = new RouteService(route);
-            mcc.startRouteService(routeService, true);
-        } finally {
-            // we are done staring routes
-            mcc.setStartingRoutes(false);
-        }
     }
 
     /**

@@ -20,8 +20,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class JettyStreamCacheIssueTest extends BaseJettyTest {
 
@@ -56,7 +58,7 @@ public class JettyStreamCacheIssueTest extends BaseJettyTest {
                 from("jetty:http://localhost:" + getPort() + "/input").process(new Processor() {
                     @Override
                     public void process(final Exchange exchange) throws Exception {
-                        Assert.assertFalse(exchange.hasOut());
+                        assertFalse(exchange.hasOut());
                     }
                 });
             }

@@ -36,11 +36,15 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Consumer that can read from streams
  */
 public class StreamConsumer extends DefaultConsumer implements Runnable {
+
+    private static final Logger LOG = LoggerFactory.getLogger(StreamConsumer.class);
 
     private static final String TYPES = "in,file,url";
     private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{" + TYPES + "}'";
@@ -73,7 +77,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             fileWatcher = new FileWatcherStrategy(dir, file -> {
                 String onlyName = file.getName();
                 String target = FileUtil.stripPath(endpoint.getFileName());
-                log.trace("File changed: {}", onlyName);
+                LOG.trace("File changed: {}", onlyName);
                 if (onlyName.equals(target)) {
                     // file is changed
                     watchFileChanged = true;
@@ -151,7 +155,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             while (isRunAllowed()) {
                 if (br != null) {
                     line = br.readLine();
-                    log.trace("Read line: {}", line);
+                    LOG.trace("Read line: {}", line);
                 } else {
                     line = null;
                 }
@@ -164,14 +168,14 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
                         reOpen = watchFileChanged;
                     }
                     if (reOpen) {
-                        log.debug("File: {} changed/rollover, re-reading file from beginning", file);
+                        LOG.debug("File: {} changed/rollover, re-reading file from beginning", file);
                         br = initializeStream();
                         // we have re-initialized the stream so lower changed flag
                         if (endpoint.isFileWatcher()) {
                             watchFileChanged = false;
                         }
                     } else {
-                        log.trace("File: {} not changed since last read", file);
+                        LOG.trace("File: {} not changed since last read", file);
                     }
                 }
 
@@ -199,7 +203,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
                 } else {
                     line = line2;
                 }
-                log.trace("Read line: {}", line);
+                LOG.trace("Read line: {}", line);
 
                 eos = line == null;
                 if (!eos && isRunAllowed()) {
@@ -290,8 +294,8 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
 
         file = new File(fileName);
 
-        if (log.isDebugEnabled()) {
-            log.debug("File to be scanned: {}, path: {}", file.getName(), file.getAbsolutePath());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("File to be scanned: {}, path: {}", file.getName(), file.getAbsolutePath());
         }
 
         if (file.canRead()) {

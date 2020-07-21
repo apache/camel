@@ -28,15 +28,17 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
 
     private static List<CamelEvent> events = new ArrayList<>();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         events.clear();
         super.setUp();
@@ -85,16 +87,16 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(7));
 
         ExchangeFailureHandlingEvent e0 = assertIsInstanceOf(ExchangeFailureHandlingEvent.class, events.get(8));
-        assertEquals("should be DLC", true, e0.isDeadLetterChannel());
+        assertEquals(true, e0.isDeadLetterChannel(), "should be DLC");
         assertEquals("mock://dead", e0.getDeadLetterUri());
 
         assertIsInstanceOf(ExchangeSendingEvent.class, events.get(9));
         assertIsInstanceOf(ExchangeSentEvent.class, events.get(10));
 
         ExchangeFailureHandledEvent e = assertIsInstanceOf(ExchangeFailureHandledEvent.class, events.get(11));
-        assertEquals("should be DLC", true, e.isDeadLetterChannel());
-        assertTrue("should be marked as failure handled", e.isHandled());
-        assertFalse("should not be continued", e.isContinued());
+        assertEquals(true, e.isDeadLetterChannel(), "should be DLC");
+        assertTrue(e.isHandled(), "should be marked as failure handled");
+        assertFalse(e.isContinued(), "should not be continued");
         Processor fh = e.getFailureHandler();
         if (fh.getClass().getName().endsWith("ProcessorToReactiveProcessorBridge")) {
             fh = ((DelegateProcessor)fh).getProcessor();
@@ -138,15 +140,15 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(7));
 
         ExchangeFailureHandlingEvent e0 = assertIsInstanceOf(ExchangeFailureHandlingEvent.class, events.get(8));
-        assertEquals("should NOT be DLC", false, e0.isDeadLetterChannel());
+        assertEquals(false, e0.isDeadLetterChannel(), "should NOT be DLC");
 
         assertIsInstanceOf(ExchangeSendingEvent.class, events.get(9));
         assertIsInstanceOf(ExchangeSentEvent.class, events.get(10));
 
         ExchangeFailureHandledEvent e = assertIsInstanceOf(ExchangeFailureHandledEvent.class, events.get(11));
-        assertEquals("should NOT be DLC", false, e.isDeadLetterChannel());
-        assertTrue("should be marked as failure handled", e.isHandled());
-        assertFalse("should not be continued", e.isContinued());
+        assertEquals(false, e.isDeadLetterChannel(), "should NOT be DLC");
+        assertTrue(e.isHandled(), "should be marked as failure handled");
+        assertFalse(e.isContinued(), "should not be continued");
 
         // onException will handle the exception
         assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(12));
@@ -181,15 +183,15 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(7));
 
         ExchangeFailureHandlingEvent e0 = assertIsInstanceOf(ExchangeFailureHandlingEvent.class, events.get(8));
-        assertEquals("should NOT be DLC", false, e0.isDeadLetterChannel());
+        assertEquals(false, e0.isDeadLetterChannel(), "should NOT be DLC");
 
         assertIsInstanceOf(ExchangeSendingEvent.class, events.get(9));
         assertIsInstanceOf(ExchangeSentEvent.class, events.get(10));
 
         ExchangeFailureHandledEvent e = assertIsInstanceOf(ExchangeFailureHandledEvent.class, events.get(11));
-        assertEquals("should NOT be DLC", false, e.isDeadLetterChannel());
-        assertFalse("should not be marked as failure handled as it was continued instead", e.isHandled());
-        assertTrue("should be continued", e.isContinued());
+        assertEquals(false, e.isDeadLetterChannel(), "should NOT be DLC");
+        assertFalse(e.isHandled(), "should not be marked as failure handled as it was continued instead");
+        assertTrue(e.isContinued(), "should be continued");
 
         // onException will handle the exception
         assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(12));

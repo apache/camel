@@ -16,62 +16,100 @@
  */
 package org.apache.camel.generator.openapi;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
-
+import java.util.Collections;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
+import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
+import io.apicurio.datamodels.openapi.v3.models.Oas30Server;
+import io.apicurio.datamodels.openapi.v3.models.Oas30ServerVariable;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.rest.RestsDefinition;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class RestDslGeneratorTest {
 
-    static OasDocument openapi;
-    
+    static OasDocument document;
+
     final Instant generated = Instant.parse("2017-10-17T00:00:00.000Z");
 
-       
-    @BeforeClass
-    public static void readOpenApiDoc() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        FileInputStream fis = new FileInputStream(new File("openapi-v2.json"));
-        JsonNode node = mapper.readTree(fis);
-        openapi = (OasDocument)Library.readDocument(node);
+    @Test
+    public void shouldCreateDefinitions() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            final RestsDefinition definition = RestDslGenerator.toDefinition(document).generate(context);
+            assertThat(definition).isNotNull();
+            assertThat(definition.getRests()).hasSize(1);
+            assertThat(definition.getRests().get(0).getPath()).isEqualTo("/v2");
+        }
     }
 
     @Test
-    public void shouldCreateDefinitions() {
-        final CamelContext context = new DefaultCamelContext();
-
-        final RestsDefinition definition = RestDslGenerator.toDefinition(openapi).generate(context);
-        assertThat(definition).isNotNull();
-        assertThat(definition.getRests()).hasSize(1);
-        assertThat(definition.getRests().get(0).getPath()).isEqualTo("/v2");
-               
-       
+    public void shouldDetermineBasePathFromV2Document() {
+        final Oas20Document oas20Document = new Oas20Document();
+        oas20Document.basePath = "/api";
+        assertThat(RestDslGenerator.determineBasePathFrom(oas20Document)).isEqualTo("/api");
     }
 
     @Test
-    public void shouldGenerateSourceCodeWithDefaults() throws IOException, URISyntaxException {
+    public void shouldDetermineBasePathFromV3DocumentsServerUrl() {
+        final Oas30Document oas30Document = new Oas30Document();
+        final Oas30Server server = new Oas30Server();
+        server.url = "https://example.com/api";
+
+        oas30Document.servers = Collections.singletonList(server);
+        assertThat(RestDslGenerator.determineBasePathFrom(oas30Document)).isEqualTo("/api");
+    }
+
+    @Test
+    public void shouldDetermineBasePathFromV3DocumentsServerUrlWithTemplateVariables() {
+        final Oas30Document oas30Document = new Oas30Document();
+        final Oas30Server server = new Oas30Server();
+        addVariableTo(server, "base", "api");
+        addVariableTo(server, "path", "v3");
+        server.url = "https://example.com/{base}/{path}";
+
+        oas30Document.servers = Collections.singletonList(server);
+        assertThat(RestDslGenerator.determineBasePathFrom(oas30Document)).isEqualTo("/api/v3");
+    }
+
+    @Test
+    public void shouldDetermineBasePathFromV3DocumentsWhenServerUrlIsRelative() {
+        final Oas30Document oas30Document = new Oas30Document();
+        final Oas30Server server = new Oas30Server();
+        server.url = "/api/v3";
+
+        oas30Document.servers = Collections.singletonList(server);
+        assertThat(RestDslGenerator.determineBasePathFrom(oas30Document)).isEqualTo("/api/v3");
+    }
+
+    @Test
+    public void shouldDetermineBasePathFromV3DocumentsWhenServerUrlIsRelativeWithoutStartingSlash() {
+        final Oas30Document oas30Document = new Oas30Document();
+        final Oas30Server server = new Oas30Server();
+        server.url = "api/v3";
+
+        oas30Document.servers = Collections.singletonList(server);
+        assertThat(RestDslGenerator.determineBasePathFrom(oas30Document)).isEqualTo("/api/v3");
+    }
+
+    @Test
+    public void shouldGenerateSourceCodeWithDefaults() throws Exception {
         final StringBuilder code = new StringBuilder();
 
-        RestDslGenerator.toAppendable(openapi).withGeneratedTime(generated).generate(code);
+        RestDslGenerator.toAppendable(document).withGeneratedTime(generated).generate(code);
 
         final URI file = RestDslGeneratorTest.class.getResource("/OpenApiPetstore.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
@@ -80,23 +118,35 @@ public class RestDslGeneratorTest {
     }
 
     @Test
-    public void shouldGenerateSourceCodeWithRestComponent() throws IOException, URISyntaxException {
+    public void shouldGenerateSourceCodeWithFilter() throws Exception {
         final StringBuilder code = new StringBuilder();
 
-        RestDslGenerator.toAppendable(openapi).withGeneratedTime(generated).withRestComponent("servlet").withRestContextPath("/").generate(code);
+        RestDslGenerator.toAppendable(document)
+            .withGeneratedTime(generated)
+            .withClassName("MyRestRoute")
+            .withPackageName("com.example")
+            .withIndent("\t")
+            .withSourceCodeTimestamps()
+            .withOperationFilter("find*,deletePet,updatePet")
+            .withDestinationGenerator(o -> "direct:rest-" + o.operationId)
+            .generate(code);
 
-        final URI file = RestDslGeneratorTest.class.getResource("/OpenApiPetstoreWithRestComponent.txt").toURI();
+        final URI file = RestDslGeneratorTest.class.getResource("/MyRestRouteFilter.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
 
         assertThat(code.toString()).isEqualTo(expectedContent);
     }
 
     @Test
-    public void shouldGenerateSourceCodeWithOptions() throws IOException, URISyntaxException {
+    public void shouldGenerateSourceCodeWithOptions() throws Exception {
         final StringBuilder code = new StringBuilder();
 
-        RestDslGenerator.toAppendable(openapi).withGeneratedTime(generated).withClassName("MyRestRoute")
-            .withPackageName("com.example").withIndent("\t").withSourceCodeTimestamps()
+        RestDslGenerator.toAppendable(document)
+            .withGeneratedTime(generated)
+            .withClassName("MyRestRoute")
+            .withPackageName("com.example")
+            .withIndent("\t")
+            .withSourceCodeTimestamps()
             .withDestinationGenerator(o -> "direct:rest-" + o.operationId).generate(code);
 
         final URI file = RestDslGeneratorTest.class.getResource("/MyRestRoute.txt").toURI();
@@ -106,17 +156,64 @@ public class RestDslGeneratorTest {
     }
 
     @Test
-    public void shouldGenerateSourceCodeWithFilter() throws IOException, URISyntaxException {
+    public void shouldGenerateSourceCodeWithRestComponent() throws Exception {
         final StringBuilder code = new StringBuilder();
 
-        RestDslGenerator.toAppendable(openapi).withGeneratedTime(generated).withClassName("MyRestRoute")
-            .withPackageName("com.example").withIndent("\t").withSourceCodeTimestamps()
-            .withOperationFilter("find*,deletePet,updatePet")
-            .withDestinationGenerator(o -> "direct:rest-" + o.operationId).generate(code);
+        RestDslGenerator.toAppendable(document)
+            .withGeneratedTime(generated)
+            .withRestComponent("servlet")
+            .withRestContextPath("/")
+            .generate(code);
 
-        final URI file = RestDslGeneratorTest.class.getResource("/MyRestRouteFilter.txt").toURI();
+        final URI file = RestDslGeneratorTest.class.getResource("/OpenApiPetstoreWithRestComponent.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
 
         assertThat(code.toString()).isEqualTo(expectedContent);
+    }
+
+    @Test
+    public void shouldResolveEmptyVariables() {
+        assertThat(RestDslGenerator.resolveVariablesIn("", new Oas30Server())).isEmpty();
+    }
+
+    @Test
+    public void shouldResolveMultipleOccurancesOfVariables() {
+        final Oas30Server server = new Oas30Server();
+        addVariableTo(server, "var1", "value1");
+        addVariableTo(server, "var2", "value2");
+
+        assertThat(RestDslGenerator.resolveVariablesIn("{var2} before {var1} after {var2}", server)).isEqualTo("value2 before value1 after value2");
+    }
+
+    @Test
+    public void shouldResolveMultipleVariables() {
+        final Oas30Server server = new Oas30Server();
+        addVariableTo(server, "var1", "value1");
+        addVariableTo(server, "var2", "value2");
+
+        assertThat(RestDslGenerator.resolveVariablesIn("before {var1} after {var2}", server)).isEqualTo("before value1 after value2");
+    }
+
+    @Test
+    public void shouldResolveSingleVariable() {
+        final Oas30Server server = new Oas30Server();
+        addVariableTo(server, "var", "value");
+        assertThat(RestDslGenerator.resolveVariablesIn("before {var} after", server)).isEqualTo("before value after");
+    }
+
+    @BeforeAll
+    public static void readOpenApiDoc() throws Exception {
+        final ObjectMapper mapper = new ObjectMapper();
+        try (InputStream is = RestDslGeneratorTest.class.getResourceAsStream("openapi-v2.json")) {
+            final JsonNode node = mapper.readTree(is);
+            document = (OasDocument) Library.readDocument(node);
+        }
+    }
+
+    private static void addVariableTo(final Oas30Server server, final String name, final String value) {
+        final Oas30ServerVariable variable = new Oas30ServerVariable(name);
+        variable.default_ = value;
+
+        server.addServerVariable(name, variable);
     }
 }

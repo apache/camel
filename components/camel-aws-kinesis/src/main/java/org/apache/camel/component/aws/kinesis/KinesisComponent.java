@@ -29,14 +29,8 @@ import org.apache.camel.support.DefaultComponent;
 @Component("aws-kinesis")
 public class KinesisComponent extends DefaultComponent {
 
-    @Metadata
-    private String accessKey;
-    @Metadata
-    private String secretKey;
-    @Metadata
-    private String region;
-    @Metadata(label = "advanced")    
-    private KinesisConfiguration configuration;
+    @Metadata 
+    private KinesisConfiguration configuration = new KinesisConfiguration();
 
     public KinesisComponent() {
         this(null);
@@ -53,9 +47,6 @@ public class KinesisComponent extends DefaultComponent {
         KinesisConfiguration configuration = this.configuration != null ? this.configuration.copy() : new KinesisConfiguration();
         configuration.setStreamName(remaining);
         KinesisEndpoint endpoint = new KinesisEndpoint(uri, configuration, this);
-        endpoint.getConfiguration().setAccessKey(accessKey);
-        endpoint.getConfiguration().setSecretKey(secretKey);
-        endpoint.getConfiguration().setRegion(region);
         setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonKinesisClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
@@ -69,43 +60,10 @@ public class KinesisComponent extends DefaultComponent {
     }
 
     /**
-     * The AWS S3 default configuration
+     * The component configuration
      */
     public void setConfiguration(KinesisConfiguration configuration) {
         this.configuration = configuration;
-    }
-    
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Access Key
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Secret Key
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-    
-    public String getRegion() {
-        return region;
-    }
-
-    /**
-     * Amazon AWS Region
-     */
-    public void setRegion(String region) {
-        this.region = region;
     }
     
     private void checkAndSetRegistryClient(KinesisConfiguration configuration) {

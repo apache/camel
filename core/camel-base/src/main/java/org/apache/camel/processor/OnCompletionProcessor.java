@@ -23,6 +23,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Ordered;
 import org.apache.camel.Predicate;
@@ -35,6 +36,8 @@ import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.service.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -42,6 +45,8 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * Processor implementing <a href="http://camel.apache.org/oncompletion.html">onCompletion</a>.
  */
 public class OnCompletionProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(OnCompletionProcessor.class);
 
     private final CamelContext camelContext;
     private String id;
@@ -139,19 +144,25 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
      * @param exchange the exchange
      */
     protected static void doProcess(Processor processor, Exchange exchange) {
+        ExtendedExchange ee = (ExtendedExchange) exchange;
         // must remember some properties which we cannot use during onCompletion processing
         // as otherwise we may cause issues
         // but keep the caused exception stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
-        Object stop = exchange.removeProperty(Exchange.ROUTE_STOP);
-        Object failureHandled = exchange.removeProperty(Exchange.FAILURE_HANDLED);
-        Object errorhandlerHandled = exchange.removeProperty(Exchange.ERRORHANDLER_HANDLED);
-        Object rollbackOnly = exchange.removeProperty(Exchange.ROLLBACK_ONLY);
-        Object rollbackOnlyLast = exchange.removeProperty(Exchange.ROLLBACK_ONLY_LAST);
+        boolean stop = ee.isRouteStop();
+        ee.setRouteStop(false);
+        Object failureHandled = ee.removeProperty(Exchange.FAILURE_HANDLED);
+        Boolean errorhandlerHandled = ee.getErrorHandlerHandled();
+        ee.setErrorHandlerHandled(null);
+        boolean rollbackOnly = ee.isRollbackOnly();
+        ee.setRollbackOnly(false);
+        boolean rollbackOnlyLast = ee.isRollbackOnlyLast();
+        ee.setRollbackOnlyLast(false);
         // and we should not be regarded as exhausted as we are in a onCompletion block
-        Object exhausted = exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
+        boolean exhausted = ee.adapt(ExtendedExchange.class).isRedeliveryExhausted();
+        ee.setRedeliveryExhausted(false);
 
-        Exception cause = exchange.getException();
-        exchange.setException(null);
+        Exception cause = ee.getException();
+        ee.setException(null);
 
         try {
             processor.process(exchange);
@@ -159,26 +170,18 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
             exchange.setException(e);
         } finally {
             // restore the options
-            if (stop != null) {
-                exchange.setProperty(Exchange.ROUTE_STOP, stop);
-            }
+            ee.setRouteStop(stop);
             if (failureHandled != null) {
-                exchange.setProperty(Exchange.FAILURE_HANDLED, failureHandled);
+                ee.setProperty(Exchange.FAILURE_HANDLED, failureHandled);
             }
             if (errorhandlerHandled != null) {
-                exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, errorhandlerHandled);
+                ee.setErrorHandlerHandled(errorhandlerHandled);
             }
-            if (rollbackOnly != null) {
-                exchange.setProperty(Exchange.ROLLBACK_ONLY, rollbackOnly);
-            }
-            if (rollbackOnlyLast != null) {
-                exchange.setProperty(Exchange.ROLLBACK_ONLY_LAST, rollbackOnlyLast);
-            }
-            if (exhausted != null) {
-                exchange.setProperty(Exchange.REDELIVERY_EXHAUSTED, exhausted);
-            }
+            ee.setRollbackOnly(rollbackOnly);
+            ee.setRollbackOnlyLast(rollbackOnlyLast);
+            ee.setRedeliveryExhausted(exhausted);
             if (cause != null) {
-                exchange.setException(cause);
+                ee.setException(cause);
             }
         }
     }
@@ -210,7 +213,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
         }
 
         if (useOriginalBody) {
-            log.trace("Using the original IN message instead of current");
+            LOG.trace("Using the original IN message instead of current");
 
             Message original = ExchangeHelper.getOriginalInMessage(exchange);
             answer.setIn(original);
@@ -247,14 +250,14 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
             if (executorService != null) {
                 executorService.submit(new Callable<Exchange>() {
                     public Exchange call() throws Exception {
-                        log.debug("Processing onComplete: {}", copy);
+                        LOG.debug("Processing onComplete: {}", copy);
                         doProcess(processor, copy);
                         return copy;
                     }
                 });
             } else {
                 // run without thread-pool
-                log.debug("Processing onComplete: {}", copy);
+                LOG.debug("Processing onComplete: {}", copy);
                 doProcess(processor, copy);
             }
         }
@@ -281,7 +284,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
             if (executorService != null) {
                 executorService.submit(new Callable<Exchange>() {
                     public Exchange call() throws Exception {
-                        log.debug("Processing onFailure: {}", copy);
+                        LOG.debug("Processing onFailure: {}", copy);
                         doProcess(processor, copy);
                         // restore exception after processing
                         copy.setException(original);
@@ -290,7 +293,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
                 });
             } else {
                 // run without thread-pool
-                log.debug("Processing onFailure: {}", copy);
+                LOG.debug("Processing onFailure: {}", copy);
                 doProcess(processor, copy);
                 // restore exception after processing
                 copy.setException(original);
@@ -338,14 +341,14 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
             if (executorService != null) {
                 executorService.submit(new Callable<Exchange>() {
                     public Exchange call() throws Exception {
-                        log.debug("Processing onAfterRoute: {}", copy);
+                        LOG.debug("Processing onAfterRoute: {}", copy);
                         doProcess(processor, copy);
                         return copy;
                     }
                 });
             } else {
                 // run without thread-pool
-                log.debug("Processing onAfterRoute: {}", copy);
+                LOG.debug("Processing onAfterRoute: {}", copy);
                 doProcess(processor, copy);
             }
         }

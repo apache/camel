@@ -26,11 +26,15 @@ import org.apache.camel.component.ignite.IgniteConstants;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.ignite.IgniteMessaging;
 import org.apache.ignite.lang.IgniteBiPredicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Ignite Messaging consumer.
  */
 public class IgniteMessagingConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(IgniteMessagingConsumer.class);
 
     private IgniteMessagingEndpoint endpoint;
     private IgniteMessaging messaging;
@@ -46,12 +50,12 @@ public class IgniteMessagingConsumer extends DefaultConsumer {
             in.setHeader(IgniteConstants.IGNITE_MESSAGING_TOPIC, endpoint.getTopic());
             in.setHeader(IgniteConstants.IGNITE_MESSAGING_UUID, uuid);
             try {
-                if (log.isTraceEnabled()) {
-                    log.trace("Processing Ignite message for subscription {} with payload {}.", uuid, payload);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing Ignite message for subscription {} with payload {}.", uuid, payload);
                 }
                 getProcessor().process(exchange);
             } catch (Exception e) {
-                log.error(String.format("Exception while processing Ignite Message from topic %s", endpoint.getTopic()), e);
+                LOG.error(String.format("Exception while processing Ignite Message from topic %s", endpoint.getTopic()), e);
             }
             return true;
         }
@@ -69,7 +73,7 @@ public class IgniteMessagingConsumer extends DefaultConsumer {
 
         messaging.localListen(endpoint.getTopic(), predicate);
         
-        log.info("Started Ignite Messaging consumer for topic {}.", endpoint.getTopic());
+        LOG.info("Started Ignite Messaging consumer for topic {}.", endpoint.getTopic());
     }
 
     @Override
@@ -78,7 +82,7 @@ public class IgniteMessagingConsumer extends DefaultConsumer {
 
         messaging.stopLocalListen(endpoint.getTopic(), predicate);
         
-        log.info("Stopped Ignite Messaging consumer for topic {}.", endpoint.getTopic());
+        LOG.info("Stopped Ignite Messaging consumer for topic {}.", endpoint.getTopic());
     }
 
 }

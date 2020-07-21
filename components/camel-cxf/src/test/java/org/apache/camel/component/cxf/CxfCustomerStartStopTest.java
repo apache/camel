@@ -24,12 +24,15 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.transport.http_jetty.JettyHTTPServerEngine;
 import org.apache.cxf.transport.http_jetty.JettyHTTPServerEngineFactory;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-@org.junit.Ignore
-public class CxfCustomerStartStopTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+@Disabled
+public class CxfCustomerStartStopTest {
     static final int PORT1 = CXFTestSupport.getPort1();  
     static final int PORT2 = CXFTestSupport.getPort1();
 
@@ -52,14 +55,14 @@ public class CxfCustomerStartStopTest extends Assert {
         Bus bus = BusFactory.getDefaultBus();
         JettyHTTPServerEngineFactory factory = bus.getExtension(JettyHTTPServerEngineFactory.class);
         JettyHTTPServerEngine engine = factory.retrieveJettyHTTPServerEngine(PORT1);
-        assertNotNull("Jetty engine should be found there", engine);
+        assertNotNull(engine, "Jetty engine should be found there");
         // Need to call the bus shutdown ourselves.
         String orig = System.setProperty("org.apache.cxf.transports.http_jetty.DontClosePort", "false");
         bus.shutdown(true);
         System.setProperty("org.apache.cxf.transports.http_jetty.DontClosePort",
                            orig == null ? "true" : "false");
         engine = factory.retrieveJettyHTTPServerEngine(PORT1);
-        assertNull("Jetty engine should be removed", engine);
+        assertNull(engine, "Jetty engine should be removed");
     }
     
     @Test
@@ -77,7 +80,7 @@ public class CxfCustomerStartStopTest extends Assert {
         JettyHTTPServerEngineFactory factory = bus.getExtension(JettyHTTPServerEngineFactory.class);
         // test if the port is still used
         JettyHTTPServerEngine engine = factory.retrieveJettyHTTPServerEngine(PORT2);
-        assertNull("Jetty engine should be removed", engine);
+        assertNull(engine, "Jetty engine should be removed");
     }
     
     

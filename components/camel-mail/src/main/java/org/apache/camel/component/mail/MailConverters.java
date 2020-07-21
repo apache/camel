@@ -40,6 +40,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.TimeUtils;
 
 /**
  * JavaMail specific converters.
@@ -92,7 +93,9 @@ public final class MailConverters {
                 part = ((MimeMultipart)content).getBodyPart(0);
                 content = part.getContent();
             }
-            if (part.getContentType().toLowerCase().startsWith("text")) {
+            // Perform a case insensitive "startsWith" check that works for different locales
+            String prefix = "text";
+            if (part.getContentType().regionMatches(true, 0, prefix, 0, prefix.length())) {
                 return part.getContent().toString();
             }
         }
@@ -143,7 +146,7 @@ public final class MailConverters {
      *
      * This should not be a @Converter method
      */
-    public static SearchTerm toSearchTerm(SimpleSearchTerm simple, TypeConverter typeConverter) throws ParseException, NoTypeConversionAvailableException {
+    public static SearchTerm toSearchTerm(SimpleSearchTerm simple) throws ParseException {
         SearchTermBuilder builder = new SearchTermBuilder();
         if (simple.isUnseen()) {
             builder = builder.unseen();
@@ -170,7 +173,7 @@ public final class MailConverters {
         if (simple.getFromSentDate() != null) {
             String s = simple.getFromSentDate();
             if (s.startsWith("now")) {
-                long offset = extractOffset(s, typeConverter);
+                long offset = extractOffset(s);
                 builder = builder.and(new NowSearchTerm(SearchTermBuilder.Comparison.GE.asNum(), true, offset));
             } else {
                 SimpleDateFormat sdf = new SimpleDateFormat(NOW_DATE_FORMAT);
@@ -181,7 +184,7 @@ public final class MailConverters {
         if (simple.getToSentDate() != null) {
             String s = simple.getToSentDate();
             if (s.startsWith("now")) {
-                long offset = extractOffset(s, typeConverter);
+                long offset = extractOffset(s);
                 builder = builder.and(new NowSearchTerm(SearchTermBuilder.Comparison.LE.asNum(), true, offset));
             } else {
                 SimpleDateFormat sdf = new SimpleDateFormat(NOW_DATE_FORMAT);
@@ -192,7 +195,7 @@ public final class MailConverters {
         if (simple.getFromReceivedDate() != null) {
             String s = simple.getFromReceivedDate();
             if (s.startsWith("now")) {
-                long offset = extractOffset(s, typeConverter);
+                long offset = extractOffset(s);
                 builder = builder.and(new NowSearchTerm(SearchTermBuilder.Comparison.GE.asNum(), false, offset));
             } else {
                 SimpleDateFormat sdf = new SimpleDateFormat(NOW_DATE_FORMAT);
@@ -203,7 +206,7 @@ public final class MailConverters {
         if (simple.getToReceivedDate() != null) {
             String s = simple.getToReceivedDate();
             if (s.startsWith("now")) {
-                long offset = extractOffset(s, typeConverter);
+                long offset = extractOffset(s);
                 builder = builder.and(new NowSearchTerm(SearchTermBuilder.Comparison.LE.asNum(), false, offset));
             } else {
                 SimpleDateFormat sdf = new SimpleDateFormat(NOW_DATE_FORMAT);
@@ -253,7 +256,7 @@ public final class MailConverters {
         }
     }
     
-    private static long extractOffset(String now, TypeConverter typeConverter) throws NoTypeConversionAvailableException {
+    private static long extractOffset(String now) {
         Matcher matcher = NOW_PATTERN.matcher(now);
         if (matcher.matches()) {
             String op = matcher.group(1);
@@ -261,7 +264,7 @@ public final class MailConverters {
 
             // convert remainder to a time millis (eg we have a String -> long converter that supports
             // syntax with hours, days, minutes: eg 5h30m for 5 hours and 30 minutes).
-            long offset = typeConverter.mandatoryConvertTo(long.class, remainder);
+            long offset = TimeUtils.toMilliSeconds(remainder);
 
             if ("+".equals(op)) {
                 return offset;

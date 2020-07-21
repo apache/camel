@@ -17,6 +17,7 @@
 package org.apache.camel.component.guava.eventbus;
 
 import com.google.common.eventbus.EventBus;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -30,9 +31,9 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The guava-eventbus component provides integration bridge between Camel and Google Guava EventBus.
+ * Send and receive messages to/from Guava EventBus.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "guava-eventbus", title = "Guava EventBus", syntax = "guava-eventbus:eventBusRef", label = "eventbus")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "guava-eventbus", title = "Guava EventBus", syntax = "guava-eventbus:eventBusRef", category = {Category.EVENTBUS})
 public class GuavaEventBusEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     private EventBus eventBus;

@@ -65,6 +65,15 @@ public class ConsumerCreationStrategyFactoryTest {
     }
 
     @Test
+    public void verifyKeySharedStrategy() {
+        ConsumerCreationStrategyFactory factory = ConsumerCreationStrategyFactory.create(mock(PulsarConsumer.class));
+
+        ConsumerCreationStrategy strategy = factory.getStrategy(SubscriptionType.KEY_SHARED);
+
+        assertEquals(KeySharedConsumerStrategy.class, strategy.getClass());
+    }
+
+    @Test
     public void verifyDefaultStrategyIsExclusiveStrategy() {
         ConsumerCreationStrategyFactory factory = ConsumerCreationStrategyFactory.create(mock(PulsarConsumer.class));
 

@@ -16,13 +16,14 @@
  */
 package org.apache.camel.reifier.dataformat;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.FhirJsonDataFormat;
 
 public class FhirJsonDataFormatReifier extends FhirDataFormatReifier<FhirJsonDataFormat> {
 
-    public FhirJsonDataFormatReifier(DataFormatDefinition definition) {
-        super(definition);
+    public FhirJsonDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, definition);
     }
 
 }

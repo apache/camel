@@ -18,6 +18,7 @@ package org.apache.camel.component.ignite.queue;
 
 import java.util.Map;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -33,11 +34,11 @@ import org.apache.ignite.IgniteQueue;
 import org.apache.ignite.configuration.CollectionConfiguration;
 
 /**
- * The Ignite Queue endpoint is one of camel-ignite endpoints which allows you to interact with
- * <a href="https://apacheignite.readme.io/docs/queue-and-set">Ignite Queue data structures</a>.
+ * Interact with <a href="https://apacheignite.readme.io/docs/queue-and-set">Ignite Queue data structures</a>.
+ *
  * This endpoint only supports producers.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-queue", title = "Ignite Queues", syntax = "ignite-queue:name", label = "nosql,cache", producerOnly = true)
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-queue", title = "Ignite Queues", syntax = "ignite-queue:name", category = {Category.MESSAGING, Category.QUEUE}, producerOnly = true)
 public class IgniteQueueEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath @Metadata(required = true)

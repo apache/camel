@@ -25,7 +25,7 @@ import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.InterceptStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class InterceptorStrategyOrderedTest extends ContextTestSupport {
 

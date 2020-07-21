@@ -17,7 +17,7 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.component.cxf.CXFTestSupport;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -27,9 +27,13 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class CxfRsRouterTest extends CamelSpringTestSupport {
     private static final int PORT = CXFTestSupport.getPort1();
@@ -49,10 +53,10 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
     @Test 
     public void testEndpointUris() throws Exception {
         CxfRsEndpoint cxfRsEndpoint = context.getEndpoint("cxfrs://bean://rsServer", CxfRsEndpoint.class);
-        assertEquals("Get a wrong endpoint uri", "cxfrs://bean://rsServer", cxfRsEndpoint.getEndpointUri());
+        assertEquals("cxfrs://bean://rsServer", cxfRsEndpoint.getEndpointUri(), "Get a wrong endpoint uri");
         
         cxfRsEndpoint = context.getEndpoint("cxfrs://bean://rsClient", CxfRsEndpoint.class);
-        assertEquals("Get a wrong endpoint uri", "cxfrs://bean://rsClient", cxfRsEndpoint.getEndpointUri());
+        assertEquals("cxfrs://bean://rsClient", cxfRsEndpoint.getEndpointUri(), "Get a wrong endpoint uri");
         
     }
     

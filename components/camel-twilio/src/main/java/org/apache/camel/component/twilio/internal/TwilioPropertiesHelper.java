@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.twilio.internal;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.twilio.TwilioConfiguration;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
@@ -26,13 +27,13 @@ public final class TwilioPropertiesHelper extends ApiMethodPropertiesHelper<Twil
 
     private static TwilioPropertiesHelper helper;
 
-    private TwilioPropertiesHelper() {
-        super(TwilioConfiguration.class, TwilioConstants.PROPERTY_PREFIX);
+    private TwilioPropertiesHelper(CamelContext context) {
+        super(context, TwilioConfiguration.class, TwilioConstants.PROPERTY_PREFIX);
     }
 
-    public static synchronized TwilioPropertiesHelper getHelper() {
+    public static synchronized TwilioPropertiesHelper getHelper(CamelContext context) {
         if (helper == null) {
-            helper = new TwilioPropertiesHelper();
+            helper = new TwilioPropertiesHelper(context);
         }
         return helper;
     }

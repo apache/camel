@@ -26,9 +26,11 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.Workspace;
 
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.jackrabbit.core.TransientRepository;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
  * JcrRouteDifferentWorkspaceTestSupport
@@ -44,7 +46,7 @@ public abstract class JcrRouteDifferentWorkspaceTestSupport extends CamelTestSup
     private Repository repository;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory(REPO_PATH);
         super.setUp();

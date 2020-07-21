@@ -19,16 +19,16 @@ package org.apache.camel.maven;
 import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class EipDocumentationEnricherMojoTest {
 
     private EipDocumentationEnricherMojo eipDocumentationEnricherMojo = new EipDocumentationEnricherMojo();
@@ -40,7 +40,7 @@ public class EipDocumentationEnricherMojoTest {
     private File mockInputSchema;
 
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         eipDocumentationEnricherMojo.camelCoreDir = mockCamelCore;
         eipDocumentationEnricherMojo.inputCamelSchemaFile = mockInputSchema;

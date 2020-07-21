@@ -16,39 +16,22 @@
  */
 package org.apache.camel.reifier.dataformat;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class TidyMarkupDataFormatReifier extends DataFormatReifier<TidyMarkupDataFormat> {
 
-    public TidyMarkupDataFormatReifier(DataFormatDefinition definition) {
-        super((TidyMarkupDataFormat)definition);
+    public TidyMarkupDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (TidyMarkupDataFormat)definition);
     }
 
     @Override
-    protected DataFormat doCreateDataFormat(CamelContext camelContext) {
-        if (definition.getDataObjectType() == null && definition.getDataObjectTypeName() != null) {
-            try {
-                definition.setDataObjectType(camelContext.getClassResolver().resolveMandatoryClass(definition.getDataObjectTypeName()));
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-
-        return super.doCreateDataFormat(camelContext);
-    }
-
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (definition.getDataObjectType() != null) {
-            setProperty(camelContext, dataFormat, "dataObjectType", definition.getDataObjectType());
-        }
-        if (definition.getOmitXmlDeclaration() != null) {
-            setProperty(camelContext, dataFormat, "omitXmlDeclaration", definition.getOmitXmlDeclaration());
-        }
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("dataObjectType", or(definition.getDataObjectType(), definition.getDataObjectTypeName()));
+        properties.put("omitXmlDeclaration", definition.getOmitXmlDeclaration());
     }
 
 }

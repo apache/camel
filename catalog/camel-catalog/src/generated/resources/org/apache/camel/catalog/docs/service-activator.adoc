@@ -1,0 +1,45 @@
+[[Service-Activator]]
+= Service Activator
+
+Camel supports the
+https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessagingAdapter.html[Service Activator]
+from the xref:enterprise-integration-patterns.adoc[EIP patterns] book.
+
+How can an application design a service to be invoked both via various messaging technologies and via non-messaging techniques?
+
+image::eip/MessagingAdapterSolution.gif[image]
+
+Design a Service Activator that connects the messages on the channel to the service being accessed.
+
+Camel has several endpoint components that support the Service Activator from the EIP patterns.
+
+Components like  xref:components::bean-component.adoc[Bean] and xref:components::bean-component.adoc[CXF]
+provide a a way to bind the message exchange to a Java interface/service where the route defines the
+endpoints and wires it up to the bean.
+
+In addition you can use the xref:latest@manual:ROOT:bean-integration.adoc[Bean Integration] to wire messages
+to a bean using annotation, or even xref:latest@manual:ROOT:hiding-middleware.adoc[hide all the middleware]
+behind a plain Java interface.
+
+== Sample
+
+Here is a simple example of using a Direct endpoint to create a messaging interface
+to a POJO Bean service.
+
+Using Java DSL
+
+[source,java]
+----
+from("direct:invokeMyService")
+  .to("bean:myService");
+----
+
+Using the XML DSL
+
+[source,xml]
+----
+<route>
+  <from uri="direct:invokeMyService"/>
+  <to uri="bean:myService"/>
+</route>
+----

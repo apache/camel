@@ -16,12 +16,14 @@
  */
 package org.apache.camel.model;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -39,23 +41,27 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MulticastDefinition extends OutputDefinition<MulticastDefinition> implements ExecutorServiceAwareDefinition<MulticastDefinition> {
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String parallelProcessing;
     @XmlAttribute
     private String strategyRef;
     @XmlAttribute
     private String strategyMethodName;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String strategyMethodAllowNull;
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute
     private String executorServiceRef;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String streaming;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String stopOnException;
     @XmlAttribute
-    @Metadata(defaultValue = "0")
+    @Metadata(javaType = "java.time.Duration", defaultValue = "0")
     private String timeout;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
@@ -64,13 +70,27 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     @XmlTransient
     private Processor onPrepare;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String shareUnitOfWork;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String parallelAggregate;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String stopOnAggregateException;
 
     public MulticastDefinition() {
+    }
+
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
+    @XmlElementRef
+    @Override
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
+        super.setOutputs(outputs);
     }
 
     @Override
@@ -255,7 +275,27 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
      * @return the builder
      */
     public MulticastDefinition stopOnException() {
-        setStopOnException(Boolean.toString(true));
+        return stopOnException(Boolean.toString(true));
+    }
+
+    /**
+     * Will now stop further processing if an exception or failure occurred
+     * during processing of an {@link org.apache.camel.Exchange} and the caused
+     * exception will be thrown.
+     * <p/>
+     * Will also stop if processing the exchange failed (has a fault message) or
+     * an exception was thrown and handled by the error handler (such as using
+     * onException). In all situations the multicast will stop further
+     * processing. This is the same behavior as in pipeline, which is used by
+     * the routing engine.
+     * <p/>
+     * The default behavior is to <b>not</b> stop but continue processing till
+     * the end
+     *
+     * @return the builder
+     */
+    public MulticastDefinition stopOnException(String stopOnException) {
+        setStopOnException(stopOnException);
         return this;
     }
 
@@ -335,7 +375,25 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
      * @return the builder
      */
     public MulticastDefinition timeout(long timeout) {
-        setTimeout(Long.toString(timeout));
+        return timeout(Long.toString(timeout));
+    }
+
+    /**
+     * Sets a total timeout specified in millis, when using parallel processing.
+     * If the Multicast hasn't been able to send and process all replies within
+     * the given timeframe, then the timeout triggers and the Multicast breaks
+     * out and continues. Notice if you provide a
+     * TimeoutAwareAggregationStrategy then the timeout method is invoked before
+     * breaking out. If the timeout is reached with running tasks still
+     * remaining, certain tasks for which it is difficult for Camel to shut down
+     * in a graceful manner may continue to run. So use this option with a bit
+     * of care.
+     *
+     * @param timeout timeout in millis
+     * @return the builder
+     */
+    public MulticastDefinition timeout(String timeout) {
+        setTimeout(timeout);
         return this;
     }
 

@@ -31,13 +31,15 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import io.netty.util.CharsetUtil;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.FixMethodOrder;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 //We need to run the tests with fix order
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.Alphanumeric.class)
 public class NettyUdpConnectedSendTest extends BaseNettyTest {
     private static final String SEND_STRING = "***<We all love camel>***";
     private static final int SEND_COUNT = 10;
@@ -79,11 +81,11 @@ public class NettyUdpConnectedSendTest extends BaseNettyTest {
             template.sendBody("direct:in", SEND_STRING);
         }
         stop();
-        assertTrue("We should have received some datagrams", receivedCount > 0);
+        assertTrue(receivedCount > 0, "We should have received some datagrams");
     }
 
     @Test
-    @Ignore("This test would be failed in JDK7 sometimes")
+    @Disabled("This test would be failed in JDK7 sometimes")
     public void sendBodyWithoutReceiver() throws Exception {
         int exceptionCount = 0;
         for (int i = 0; i < SEND_COUNT; ++i) {
@@ -93,7 +95,7 @@ public class NettyUdpConnectedSendTest extends BaseNettyTest {
                 ++exceptionCount;
             }
         }
-        assertTrue("There should at least one exception because port is unreachable", exceptionCount > 0);
+        assertTrue(exceptionCount > 0, "There should at least one exception because port is unreachable");
     }
 
     @Override

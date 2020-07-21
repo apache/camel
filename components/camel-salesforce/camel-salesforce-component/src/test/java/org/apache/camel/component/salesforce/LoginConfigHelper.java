@@ -48,7 +48,7 @@ public final class LoginConfigHelper {
     }
 
     private String fromEnvName(final String envVariable) {
-        return envVariable.replaceAll("_", ".").toLowerCase();
+        return envVariable.replace('_', '.').toLowerCase();
     }
 
     SalesforceLoginConfig createLoginConfig() {

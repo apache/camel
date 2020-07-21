@@ -22,7 +22,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.http.NoHttpResponseException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
 
@@ -62,7 +66,7 @@ public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
             // expert the exception here
             fail("Expert the exception here");
         } catch (Exception ex) {
-            assertTrue("Should get the ConnectException", ex.getCause() instanceof NoHttpResponseException);
+            assertTrue(ex.getCause() instanceof NoHttpResponseException, "Should get the ConnectException");
         }
 
     }

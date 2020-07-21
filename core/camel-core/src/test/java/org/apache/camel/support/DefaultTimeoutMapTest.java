@@ -24,14 +24,14 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.TimeoutMap;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class DefaultTimeoutMapTest extends Assert {
+public class DefaultTimeoutMapTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTimeoutMapTest.class);
     private ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1);
@@ -103,7 +103,7 @@ public class DefaultTimeoutMapTest extends Assert {
 
         Object old = map.remove("A");
         assertEquals(123, old);
-        assertEquals(null, map.get("A"));
+        assertEquals(null, (Object) map.get("A"));
         assertEquals(0, map.size());
 
         map.stop();
@@ -195,9 +195,7 @@ public class DefaultTimeoutMapTest extends Assert {
         map.start();
 
         // start and wait for scheduler to purge
-        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() ->
-        // now it should be gone
-        assertEquals(0, map.size()));
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(0, map.size()));
 
         map.stop();
     }

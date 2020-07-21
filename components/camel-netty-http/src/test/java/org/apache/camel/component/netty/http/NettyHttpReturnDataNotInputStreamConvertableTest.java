@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.netty.http;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpReturnDataNotInputStreamConvertableTest extends BaseNettyTest {
 
@@ -35,11 +35,7 @@ public class NettyHttpReturnDataNotInputStreamConvertableTest extends BaseNettyT
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://localhost:{{port}}/test")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                exchange.getOut().setBody(new MyResponseBean());
-                            }
-                        });
+                        .process(exchange -> exchange.getMessage().setBody(new MyResponseBean()));
             }
         };
     }

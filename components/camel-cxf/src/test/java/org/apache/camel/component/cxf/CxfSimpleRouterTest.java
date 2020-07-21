@@ -19,15 +19,19 @@ package org.apache.camel.component.cxf;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfSimpleRouterTest extends CamelTestSupport {    
     
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.HelloService";
@@ -47,12 +51,7 @@ public class CxfSimpleRouterTest extends CamelTestSupport {
     protected void configureFactory(ServerFactoryBean svrBean) {
     }
 
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-
-    @Before
+    @BeforeEach
     public void startService() {       
         //start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
@@ -65,7 +64,7 @@ public class CxfSimpleRouterTest extends CamelTestSupport {
         server.start();
     }
     
-    @After
+    @AfterEach
     public void shutdownService() {
         if (server != null) {
             server.stop();
@@ -103,7 +102,7 @@ public class CxfSimpleRouterTest extends CamelTestSupport {
     public void testInvokingServiceFromCXFClient() throws Exception {        
         HelloService client = getCXFClient();
         String result = client.echo("hello world");
-        assertEquals("we should get the right answer from router", result, "echo hello world");
+        assertEquals("echo hello world", result, "we should get the right answer from router");
 
     }
 
@@ -113,7 +112,7 @@ public class CxfSimpleRouterTest extends CamelTestSupport {
         int count = client.getInvocationCount();
         client.ping();
         //oneway ping invoked, so invocationCount ++
-        assertEquals("The ping should be invocated", client.getInvocationCount(), ++count);
+        assertEquals(client.getInvocationCount(), ++count, "The ping should be invocated");
     }
 
 }

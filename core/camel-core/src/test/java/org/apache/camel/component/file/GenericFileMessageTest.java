@@ -23,7 +23,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.FileUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GenericFileMessageTest extends ContextTestSupport {
 
@@ -38,7 +40,8 @@ public class GenericFileMessageTest extends ContextTestSupport {
         file.setFileName("target/data/test.txt");
         file.setFile(new File("target/data/test.txt"));
         message = new GenericFileMessage<>(camelContext, file);
-        assertEquals(FileUtil.isWindows() ? "target\\test.txt" : "target/data/test.txt", message.toString());
+        Object o1 = FileUtil.isWindows() ? "target\\test.txt" : "target/data/test.txt";
+        assertEquals(o1, message.toString());
     }
 
     @Test
@@ -49,6 +52,6 @@ public class GenericFileMessageTest extends ContextTestSupport {
         file.setFile(new File("target/camel-core-test.log"));
         GenericFileMessage<File> message = new GenericFileMessage<>(camelContext, file);
         file.populateHeaders(message, false);
-        assertEquals("Get a wrong file content type", "txt", message.getHeader(Exchange.FILE_CONTENT_TYPE));
+        assertEquals("txt", message.getHeader(Exchange.FILE_CONTENT_TYPE), "Get a wrong file content type");
     }
 }

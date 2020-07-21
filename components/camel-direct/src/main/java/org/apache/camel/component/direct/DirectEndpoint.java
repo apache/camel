@@ -19,6 +19,7 @@ package org.apache.camel.component.direct;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -32,11 +33,11 @@ import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 
 /**
- * The direct component provides direct, synchronous call to another endpoint from the same CamelContext.
+ * Call another endpoint from the same Camel Context synchronously.
  *
  * This endpoint can be used to connect existing routes in the same CamelContext.
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "direct", title = "Direct", syntax = "direct:name", label = "core,endpoint")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "direct", title = "Direct", syntax = "direct:name", category = {Category.CORE, Category.ENDPOINT})
 public class DirectEndpoint extends DefaultEndpoint {
 
     private final Map<String, DirectConsumer> consumers;
@@ -48,7 +49,7 @@ public class DirectEndpoint extends DefaultEndpoint {
     private boolean block = true;
     @UriParam(label = "producer", defaultValue = "30000")
     private long timeout = 30000L;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean failIfNoConsumers = true;
 
     public DirectEndpoint() {

@@ -19,12 +19,16 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SimpleMockTest extends ContextTestSupport {
 
     @Test
     public void testSimple() throws Exception {
+        assertEquals(1, context.getRoutesSize());
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
@@ -35,6 +39,8 @@ public class SimpleMockTest extends ContextTestSupport {
 
     @Test
     public void testSimpleTwoMessages() throws Exception {
+        assertEquals(1, context.getRoutesSize());
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World", "Bye World");
 

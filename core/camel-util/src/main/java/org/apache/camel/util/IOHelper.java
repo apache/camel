@@ -56,7 +56,6 @@ public final class IOHelper {
     public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
     private static final Logger LOG = LoggerFactory.getLogger(IOHelper.class);
-    private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 
     // allows to turn on backwards compatible to turn off regarding the first
     // read byte with value zero (0b0) as EOL.
@@ -65,30 +64,6 @@ public final class IOHelper {
 
     private IOHelper() {
         // Utility Class
-    }
-
-    /**
-     * Use this function instead of new String(byte[]) to avoid surprises from
-     * non-standard default encodings.
-     */
-    public static String newStringFromBytes(byte[] bytes) {
-        try {
-            return new String(bytes, UTF8_CHARSET.name());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Impossible failure: Charset.forName(\"UTF-8\") returns invalid name.", e);
-        }
-    }
-
-    /**
-     * Use this function instead of new String(byte[], int, int) to avoid
-     * surprises from non-standard default encodings.
-     */
-    public static String newStringFromBytes(byte[] bytes, int start, int length) {
-        try {
-            return new String(bytes, start, length, UTF8_CHARSET.name());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Impossible failure: Charset.forName(\"UTF-8\") returns invalid name.", e);
-        }
     }
 
     /**
@@ -501,7 +476,9 @@ public final class IOHelper {
 
         for (String value : values) {
             value = value.trim();
-            if (value.toLowerCase().startsWith("charset=")) {
+            // Perform a case insensitive "startsWith" check that works for different locales
+            String prefix = "charset=";
+            if (value.regionMatches(true, 0, prefix, 0, prefix.length())) {
                 // Take the charset name
                 charset = value.substring(8);
             }
@@ -574,7 +551,7 @@ public final class IOHelper {
         @Override
         public int read() throws IOException {
             if (bufferBytes == null || bufferBytes.remaining() <= 0) {
-                bufferedChars.clear();
+                BufferCaster.cast(bufferedChars).clear();
                 int len = reader.read(bufferedChars);
                 bufferedChars.flip();
                 if (len == -1) {
@@ -582,7 +559,7 @@ public final class IOHelper {
                 }
                 bufferBytes = defaultStreamCharset.encode(bufferedChars);
             }
-            return bufferBytes.get();
+            return bufferBytes.get() & 0xFF;
         }
 
         @Override

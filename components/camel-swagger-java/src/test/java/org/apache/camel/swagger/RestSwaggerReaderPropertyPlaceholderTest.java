@@ -31,22 +31,22 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.swagger.producer.DummyRestProducerFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled("Does not run well on CI due test uses JMX mbeans")
+import static org.junit.jupiter.api.Assertions.*;
+
 public class RestSwaggerReaderPropertyPlaceholderTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestSwaggerReaderPropertyPlaceholderTest.class);
 
     @BindToRegistry("dummy-rest")
     private DummyRestProducerFactory factory = new DummyRestProducerFactory();
+
+    @BindToRegistry("dummy-rest-consumer")
+    private DummyRestConsumerFactory consumerFactory = new DummyRestConsumerFactory();
 
     @Override
     protected boolean useJmx() {
@@ -84,7 +84,7 @@ public class RestSwaggerReaderPropertyPlaceholderTest extends CamelTestSupport {
         RestSwaggerReader reader = new RestSwaggerReader();
 
         RestSwaggerSupport support = new RestSwaggerSupport();
-        List<RestDefinition> rests = support.getRestDefinitions(context.getName());
+        List<RestDefinition> rests = support.getRestDefinitions(context);
 
         Swagger swagger = reader.read(rests, null, config, context.getName(), new DefaultClassResolver());
         assertNotNull(swagger);

@@ -28,7 +28,7 @@ import org.apache.camel.util.URISupport;
 public class DdbProducer extends DefaultProducer {
 
     private transient String ddbProducerToString;
-    
+
     public DdbProducer(Endpoint endpoint) {
         super(endpoint);
     }
@@ -36,38 +36,38 @@ public class DdbProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case BatchGetItems:
-            new BatchGetItemsCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
-            break;
-        case DeleteItem:
-            new DeleteItemCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
-            break;
-        case DeleteTable:
-            new DeleteTableCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
-            break;
-        case DescribeTable:
-            new DescribeTableCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
-            break;
-        case GetItem:
-            new GetItemCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
-            break;
-        case PutItem:
-            new PutItemCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
-            break;
-        case Query:
-            new QueryCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
-            break;
-        case Scan:
-            new ScanCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
-            break;
-        case UpdateItem:
-            new UpdateItemCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
-            break;
-        case UpdateTable:
-            new UpdateTableCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case BatchGetItems:
+                new BatchGetItemsCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
+                break;
+            case DeleteItem:
+                new DeleteItemCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
+                break;
+            case DeleteTable:
+                new DeleteTableCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
+                break;
+            case DescribeTable:
+                new DescribeTableCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
+                break;
+            case GetItem:
+                new GetItemCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
+                break;
+            case PutItem:
+                new PutItemCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
+                break;
+            case Query:
+                new QueryCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
+                break;
+            case Scan:
+                new ScanCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
+                break;
+            case UpdateItem:
+                new UpdateItemCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
+                break;
+            case UpdateTable:
+                new UpdateTableCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 

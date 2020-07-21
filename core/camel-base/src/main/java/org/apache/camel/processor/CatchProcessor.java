@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
@@ -29,11 +30,15 @@ import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A processor which catches exceptions.
  */
 public class CatchProcessor extends DelegateAsyncProcessor implements Traceable, IdAware, RouteIdAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CatchProcessor.class);
 
     private String id;
     private String routeId;
@@ -85,8 +90,8 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
             callback.done(true);
             return true;
         }
-        if (log.isTraceEnabled()) {
-            log.trace("This CatchProcessor catches the exception: {} caused by: {}", caught.getClass().getName(), e.getMessage());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("This CatchProcessor catches the exception: {} caused by: {}", caught.getClass().getName(), e.getMessage());
         }
 
         // store the last to endpoint as the failure endpoint
@@ -98,10 +103,10 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
         exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
         exchange.setException(null);
         // and we should not be regarded as exhausted as we are in a try .. catch block
-        exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
+        exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
 
-        if (log.isDebugEnabled()) {
-            log.debug("The exception is handled for the exception: {} caused by: {}",
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("The exception is handled for the exception: {} caused by: {}",
                     new Object[]{e.getClass().getName(), e.getMessage()});
         }
 
@@ -114,7 +119,7 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
                 EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, false, null);
 
                 // always clear redelivery exhausted in a catch clause
-                exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
+                exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
 
                 if (!doneSync) {
                     // signal callback to continue routing async

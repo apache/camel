@@ -23,4 +23,8 @@ public interface GroovyShellFactory {
 
     GroovyShell createGroovyShell(Exchange exchange);
 
+    default String getFileName(Exchange exchange) {
+        return null;
+    }
+
 }

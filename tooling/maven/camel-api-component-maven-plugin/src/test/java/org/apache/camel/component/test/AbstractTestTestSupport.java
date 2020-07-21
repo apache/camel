@@ -19,18 +19,12 @@ package org.apache.camel.component.test;
 import java.util.Map;
 
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 
 /**
  * Dummy TestSupport class.
  */
 public class AbstractTestTestSupport extends CamelTestSupport {
-
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        // only create the context once for this class
-        return true;
-    }
 
     @SuppressWarnings("unchecked")
     protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers)

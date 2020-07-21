@@ -22,6 +22,8 @@ import org.slf4j.MDC;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class SpringMDCWithBreadcrumbTest extends SpringMDCTest {
 
     @Override

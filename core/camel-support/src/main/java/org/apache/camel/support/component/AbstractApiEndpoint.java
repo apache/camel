@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -84,11 +85,6 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
         this.configuration = endpointConfiguration;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     /**
      * Returns generated helper that extends {@link ApiMethodPropertiesHelper} to work with API properties.
      * @return properties helper.
@@ -98,14 +94,11 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
     @Override
     public void configureProperties(Map<String, Object> options) {
         super.configureProperties(options);
-
-        // set configuration properties first
-        try {
-            T configuration = getConfiguration();
-            setProperties(configuration, options);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e);
-        }
+        // TODO: this is not very clean as it does not leverage the endpoint
+        // TODO: configurer, but the generated configurer currently does not
+        // TODO: support configuration inheritance, so only basic options
+        // TODO: are supported.  This should be fixed.
+        setProperties(getConfiguration(), options);
 
         // validate and initialize state
         initState();
@@ -228,7 +221,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
     public final void setInBody(String inBody) throws IllegalArgumentException {
         // validate property name
         ObjectHelper.notNull(inBody, "inBody");
-        if (!getPropertiesHelper().getValidEndpointProperties(getConfiguration()).contains(inBody)) {
+        if (!getPropertiesHelper().getValidEndpointProperties(getCamelContext(), getConfiguration()).contains(inBody)) {
             throw new IllegalArgumentException("Unknown property " + inBody);
         }
         this.inBody = inBody;

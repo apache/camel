@@ -22,7 +22,7 @@ public class CarWithoutAnnotations implements Car {
     private String manufacturer;
 
     private String licensePlate;
-    
+
     public CarWithoutAnnotations(String manufacturer, String licencePlate) {
         this.manufacturer = manufacturer;
         this.licensePlate = licencePlate;

@@ -31,6 +31,16 @@ import org.apache.camel.spi.EventFactory;
 public class DefaultEventFactory implements EventFactory {
 
     @Override
+    public CamelEvent createCamelContextInitializingEvent(CamelContext context) {
+        return new CamelContextInitializingEvent(context);
+    }
+
+    @Override
+    public CamelEvent createCamelContextInitializedEvent(CamelContext context) {
+        return new CamelContextInitializedEvent(context);
+    }
+
+    @Override
     public CamelEvent createCamelContextStartingEvent(CamelContext context) {
         return new CamelContextStartingEvent(context);
     }

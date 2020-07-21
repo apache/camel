@@ -19,16 +19,23 @@ package org.apache.camel.component.cxf;
 import org.w3c.dom.Node;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 //Modified from https://issues.apache.org/jira/secure/attachment/12730161/0001-CAMEL-8419-Camel-StreamCache-does-not-work-with-CXF-.patch
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfConsumerStreamCacheTest extends CamelTestSupport {
     
     protected static final String REQUEST_MESSAGE = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ser=\"test/service\">"
@@ -46,10 +53,6 @@ public class CxfConsumerStreamCacheTest extends CamelTestSupport {
         + "?synchronous=" + isSynchronous() + "&serviceClass=org.apache.camel.component.cxf.ServiceProvider&dataFormat=PAYLOAD";
 
     @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -66,7 +69,7 @@ public class CxfConsumerStreamCacheTest extends CamelTestSupport {
                         cos.close();
                         exchange.getOut().setBody(cos.newStreamCache());
 
-                        exchange.addOnCompletion(new Synchronization() {
+                        exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
                             @Override
                             public void onComplete(Exchange exchange) {
                                 template.sendBody("mock:onComplete", "");
@@ -91,8 +94,8 @@ public class CxfConsumerStreamCacheTest extends CamelTestSupport {
         // call the service with right post message
         
         String response = template.requestBody(simpleEndpointAddress, REQUEST_MESSAGE, String.class);
-        assertTrue("Get a wrong response ", response.startsWith(RESPONSE_MESSAGE_BEGINE));
-        assertTrue("Get a wrong response ", response.endsWith(RESPONSE_MESSAGE_END));
+        assertTrue(response.startsWith(RESPONSE_MESSAGE_BEGINE), "Get a wrong response");
+        assertTrue(response.endsWith(RESPONSE_MESSAGE_END), "Get a wrong response");
         try {
             template.requestBody(simpleEndpointAddress, null, String.class);
             fail("Excpetion to get exception here");
@@ -101,8 +104,8 @@ public class CxfConsumerStreamCacheTest extends CamelTestSupport {
         }
        
         response = template.requestBody(simpleEndpointAddress, REQUEST_MESSAGE, String.class);
-        assertTrue("Get a wrong response ", response.startsWith(RESPONSE_MESSAGE_BEGINE));
-        assertTrue("Get a wrong response ", response.endsWith(RESPONSE_MESSAGE_END));
+        assertTrue(response.startsWith(RESPONSE_MESSAGE_BEGINE), "Get a wrong response");
+        assertTrue(response.endsWith(RESPONSE_MESSAGE_END), "Get a wrong response");
         mock.assertIsSatisfied();
     }
     

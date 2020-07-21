@@ -16,13 +16,12 @@
  */
 package org.apache.camel.util;
 
-import junit.framework.TestCase;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.StringHelper.camelCaseToDash;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class StringHelperTest extends TestCase {
+public class StringHelperTest {
 
     @Test
     public void testCamelCashToDash() throws Exception {
@@ -43,5 +42,6 @@ public class StringHelperTest extends TestCase {
         assertEquals("my-big-url-again", camelCaseToDash("MyBigURLAgain"));
 
         assertEquals("use-mdc-logging", camelCaseToDash("UseMDCLogging"));
+        assertEquals("mdc-logging-keys-pattern", camelCaseToDash("MDCLoggingKeysPattern"));
     }
 }

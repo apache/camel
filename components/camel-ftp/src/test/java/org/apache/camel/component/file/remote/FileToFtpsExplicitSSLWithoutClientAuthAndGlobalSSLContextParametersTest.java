@@ -39,13 +39,12 @@ public class FileToFtpsExplicitSSLWithoutClientAuthAndGlobalSSLContextParameters
         sslContextParameters.setTrustManagers(tmp);
         context.setSSLContextParameters(sslContextParameters);
 
-        ((SSLContextParametersAware) context.getComponent("ftps")).setUseGlobalSslContextParameters(true);
+        ((SSLContextParametersAware)context.getComponent("ftps")).setUseGlobalSslContextParameters(true);
         return context;
     }
-    
+
     @Override
     protected String getFtpUrl() {
-        return "ftps://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true"
-                + "&implicit=false&delete=true";
+        return "ftps://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true" + "&implicit=false&delete=true";
     }
 }

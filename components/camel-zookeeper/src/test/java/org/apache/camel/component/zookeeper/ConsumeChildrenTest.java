@@ -36,7 +36,7 @@ public class ConsumeChildrenTest extends ZooKeeperTestSupport {
     protected RouteBuilder[] createRouteBuilders() throws Exception {
         return new RouteBuilder[] {new RouteBuilder() {
             public void configure() throws Exception {
-                from("zookeeper://localhost:" + getServerPort() + "/grimm?repeat=true&listChildren=true")
+                from("zookeeper://{{container:host:zookeeper}}:{{container:port:2181@zookeeper}}/grimm?repeat=true&listChildren=true")
                     .sort(body(), new NaturalSortComparator(Order.Descending))
                     .to("mock:zookeeper-data");
             }

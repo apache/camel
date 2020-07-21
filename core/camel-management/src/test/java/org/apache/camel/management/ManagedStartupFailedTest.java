@@ -24,7 +24,12 @@ import javax.management.ObjectName;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ManagedStartupFailedTest extends ManagementTestSupport {
 
@@ -77,7 +82,6 @@ public class ManagedStartupFailedTest extends ManagementTestSupport {
         }
 
         MBeanServer server = getMBeanServer();
-        Set<ObjectName> onames = server.queryNames(new ObjectName("org.apache.camel:*"), null);
-        assertEquals(Collections.emptySet(), onames);
+        assertNull(server);
     }
 }

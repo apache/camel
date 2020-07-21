@@ -38,11 +38,11 @@ public final class GrpcUtils {
     }
     
     public static String extractServiceName(String service) {
-        return service.contains(".") ? service.substring(service.lastIndexOf(".") + 1) : service;
+        return service.contains(".") ? service.substring(service.lastIndexOf('.') + 1) : service;
     }
 
     public static String extractServicePackage(String service) {
-        return service.contains(".") ? service.substring(0, service.lastIndexOf(".")) : "";
+        return service.contains(".") ? service.substring(0, service.lastIndexOf('.')) : "";
     }
 
     public static Object constructGrpcAsyncStub(String packageName, String serviceName, Channel channel, final CallCredentials creds, final CamelContext context) {

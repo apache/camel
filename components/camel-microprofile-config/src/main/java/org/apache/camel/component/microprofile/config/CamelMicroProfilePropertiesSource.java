@@ -25,9 +25,10 @@ import org.eclipse.microprofile.config.ConfigProvider;
 
 /**
  * The microprofile-config component is used for bridging the Eclipse MicroProfile Config with Camels
- * properties component. This allows to use configuration management from Eclipse MicroProfile with Camel.
+ * properties component. This allows to use configuration management from MicroProfile with Camel.
  */
 public class CamelMicroProfilePropertiesSource implements LoadablePropertiesSource {
+
     @Override
     public String getName() {
         return "CamelMicroProfilePropertiesSource";

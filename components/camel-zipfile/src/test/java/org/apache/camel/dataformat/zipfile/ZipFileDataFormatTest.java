@@ -32,6 +32,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
@@ -153,6 +154,15 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         zip.setAllowEmptyDirectory(false);
         template.sendBody("direct:unzipWithEmptyDirectory", new File("src/test/resources/hello.odt"));
         assertTrue(!Files.exists(Paths.get("hello_out/Configurations2")));
+        deleteDirectory(new File("hello_out"));
+    }
+
+    @Test(expected = CamelExecutionException.class)
+    public void testUnzipWithCorruptedZipFile() throws Exception {
+        deleteDirectory(new File("hello_out"));
+
+        template.sendBody("direct:corruptUnzip", new File("src/test/resources/corrupt.zip"));
+
         deleteDirectory(new File("hello_out"));
     }
 
@@ -304,6 +314,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
                 from("direct:zipToFile").marshal(zip).to("file:" + TEST_DIR.getPath()).to("mock:zipToFile");
                 from("direct:dslZip").marshal().zipFile().to("mock:dslZip");
                 from("direct:dslUnzip").unmarshal().zipFile().to("mock:dslUnzip");
+                from("direct:corruptUnzip").unmarshal().zipFile().to("mock:corruptUnzip");
                 from("direct:zipStreamCache").streamCaching().marshal().zipFile().to("mock:zipStreamCache");
             }
         };

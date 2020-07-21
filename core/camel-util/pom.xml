@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.5.0-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -41,40 +41,11 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
-        <!-- enable the APT processor -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>apt</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- testing -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hamcrest</groupId>
-                    <artifactId>hamcrest-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.awaitility</groupId>
-            <artifactId>awaitility</artifactId>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hamcrest</groupId>
-                    <artifactId>hamcrest-core</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
@@ -86,20 +57,9 @@
         <!-- logging -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
         </dependency>
-
 
     </dependencies>
 
@@ -113,6 +73,7 @@
                         <link>http://download.oracle.com/javase/7/docs/api/</link>
                         <link>http://download.oracle.com/javaee/7/api/</link>
                     </links>
+                    <isOffline>${camel.javadoc.offline}</isOffline>
                     <linksource>true</linksource>
                     <maxmemory>256m</maxmemory>
                     <groups>
@@ -215,6 +176,7 @@
                             </links>
                             <linksource>true</linksource>
                             <maxmemory>256m</maxmemory>
+                            <isOffline>${camel.javadoc.offline}</isOffline>
                             <groups>
                                 <group>
                                     <title>Camel API</title>

@@ -68,7 +68,7 @@ public class NagiosConfiguration implements Cloneable {
         }
     }
 
-    public synchronized NagiosSettings getNagiosSettings() {
+    public synchronized NagiosSettings getOrCreateNagiosSettings() {
         if (nagiosSettings == null) {
 
             // validate parameters
@@ -88,10 +88,6 @@ public class NagiosConfiguration implements Cloneable {
         }
 
         return nagiosSettings;
-    }
-
-    public void setNagiosSettings(NagiosSettings nagiosSettings) {
-        this.nagiosSettings = nagiosSettings;
     }
 
     public String getHost() {

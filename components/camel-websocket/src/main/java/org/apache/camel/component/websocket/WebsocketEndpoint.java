@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -34,11 +35,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jetty.server.Handler;
 
 /**
- * The websocket component provides websocket endpoints with Jetty for communicating with clients using websocket.
- *
- * This component uses Jetty as the websocket implementation.
+ * Expose websocket endpoints using Jetty.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "websocket", title = "Jetty Websocket", syntax = "websocket:host:port/resourceUri", label = "websocket")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "websocket", title = "Jetty Websocket", syntax = "websocket:host:port/resourceUri", category = {Category.WEBSOCKET})
 public class WebsocketEndpoint extends DefaultEndpoint {
 
     private WebsocketComponent component;

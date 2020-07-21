@@ -19,6 +19,7 @@ package org.apache.camel.component.chatscript;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -33,9 +34,9 @@ import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.component.chatscript.utils.ChatScriptConstants.DEFAULT_PORT;
 
 /**
- * Represents a ChatScript endpoint.
+ * Chat with a ChatScript Server.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "chatscript", title = "ChatScript", syntax = "chatscript:host:port/botName",  producerOnly = true, label = "ai,chatscript")
+@UriEndpoint(firstVersion = "3.0.0", scheme = "chatscript", title = "ChatScript", syntax = "chatscript:host:port/botName",  producerOnly = true, category = {Category.AI, Category.CHAT})
 public class ChatScriptEndpoint extends DefaultEndpoint {
 
     private ChatScriptBot bot;
@@ -66,7 +67,7 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException(ChatScriptConstants.URI_ERROR);
         }
         host = remainingUri.getHost();
-        if (ObjectHelper.isEmpty(host)) { 
+        if (ObjectHelper.isEmpty(host)) {
             throw new IllegalArgumentException(ChatScriptConstants.URI_ERROR);
         }
         botName = remainingUri.getPath();

@@ -16,16 +16,11 @@
  */
 package org.apache.camel.model;
 
-import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.namespace.QName;
 
-import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -34,20 +29,12 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlType(name = "loadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LoadBalancerDefinition extends IdentifiedType implements OtherAttributesAware {
-    @XmlTransient
-    private LoadBalancer loadBalancer;
+@SuppressWarnings("rawtypes")
+public class LoadBalancerDefinition extends IdentifiedType {
     @XmlTransient
     private String loadBalancerTypeName;
-    // use xs:any to support optional property placeholders
-    @XmlAnyAttribute
-    private Map<QName, Object> otherAttributes;
 
     public LoadBalancerDefinition() {
-    }
-
-    public LoadBalancerDefinition(LoadBalancer loadBalancer) {
-        this.loadBalancer = loadBalancer;
     }
 
     protected LoadBalancerDefinition(String loadBalancerTypeName) {
@@ -62,40 +49,12 @@ public class LoadBalancerDefinition extends IdentifiedType implements OtherAttri
         return Integer.MAX_VALUE;
     }
 
-    /**
-     * Allows derived classes to customize the load balancer
-     */
-    public void configureLoadBalancer(LoadBalancer loadBalancer) {
-    }
-
-    public LoadBalancer getLoadBalancer() {
-        return loadBalancer;
-    }
-
-    public void setLoadBalancer(LoadBalancer loadBalancer) {
-        this.loadBalancer = loadBalancer;
-    }
-
     public String getLoadBalancerTypeName() {
         return loadBalancerTypeName;
     }
 
     @Override
-    public Map<QName, Object> getOtherAttributes() {
-        return otherAttributes;
-    }
-
-    @Override
-    public void setOtherAttributes(Map<QName, Object> otherAttributes) {
-        this.otherAttributes = otherAttributes;
-    }
-
-    @Override
     public String toString() {
-        if (loadBalancer != null) {
-            return loadBalancer.toString();
-        } else {
-            return loadBalancerTypeName;
-        }
+        return loadBalancerTypeName;
     }
 }

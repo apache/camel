@@ -17,13 +17,16 @@
 package org.apache.camel.component.hystrix.processor;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Route;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.support.SimpleRegistry;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HystrixHierarchicalConfigTest {
 
@@ -31,6 +34,7 @@ public class HystrixHierarchicalConfigTest {
     public void testRegistryConfiguration() throws Exception {
         final SimpleRegistry registry = new SimpleRegistry();
         final CamelContext context = new DefaultCamelContext(registry);
+        final Route route = new DefaultRoute(context, null, null, null, null);
 
         HystrixConfigurationDefinition def = new HystrixConfigurationDefinition();
         def.setGroupKey("global-group-key");
@@ -44,7 +48,7 @@ public class HystrixHierarchicalConfigTest {
         registry.bind(HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, def);
         registry.bind("ref-hystrix", ref);
 
-        final HystrixReifier reifier = new HystrixReifier(
+        final HystrixReifier reifier = new HystrixReifier(route,
                 new CircuitBreakerDefinition()
                         .configuration("ref-hystrix")
                         .hystrixConfiguration()
@@ -52,16 +56,17 @@ public class HystrixHierarchicalConfigTest {
                         .requestLogEnabled(false)
                         .end()
         );
-        final HystrixConfigurationDefinition config = reifier.buildHystrixConfiguration(context);
+        final HystrixConfigurationDefinition config = reifier.buildHystrixConfiguration();
 
-        Assert.assertEquals("local-conf-group-key", config.getGroupKey());
-        Assert.assertEquals("global-thread-key", config.getThreadPoolKey());
-        Assert.assertEquals(Integer.toString(5), config.getCorePoolSize());
+        assertEquals("local-conf-group-key", config.getGroupKey());
+        assertEquals("global-thread-key", config.getThreadPoolKey());
+        assertEquals(Integer.toString(5), config.getCorePoolSize());
     }
 
     @Test
     public void testContextConfiguration() throws Exception {
         final CamelContext context = new DefaultCamelContext();
+        final Route route = new DefaultRoute(context, null, null, null, null);
 
         HystrixConfigurationDefinition def = new HystrixConfigurationDefinition();
         def.setGroupKey("global-group-key");
@@ -75,7 +80,7 @@ public class HystrixHierarchicalConfigTest {
         context.getExtension(Model.class).setHystrixConfiguration(def);
         context.getExtension(Model.class).addHystrixConfiguration("ref-hystrix", ref);
 
-        final HystrixReifier reifier = new HystrixReifier(
+        final HystrixReifier reifier = new HystrixReifier(route,
                 new CircuitBreakerDefinition()
                         .configuration("ref-hystrix")
                         .hystrixConfiguration()
@@ -83,17 +88,18 @@ public class HystrixHierarchicalConfigTest {
                         .requestLogEnabled(false)
                         .end()
         );
-        final HystrixConfigurationDefinition config = reifier.buildHystrixConfiguration(context);
+        final HystrixConfigurationDefinition config = reifier.buildHystrixConfiguration();
 
-        Assert.assertEquals("local-conf-group-key", config.getGroupKey());
-        Assert.assertEquals("global-thread-key", config.getThreadPoolKey());
-        Assert.assertEquals(Integer.toString(5), config.getCorePoolSize());
+        assertEquals("local-conf-group-key", config.getGroupKey());
+        assertEquals("global-thread-key", config.getThreadPoolKey());
+        assertEquals(Integer.toString(5), config.getCorePoolSize());
     }
 
     @Test
     public void testMixedConfiguration() throws Exception {
         final SimpleRegistry registry = new SimpleRegistry();
         final CamelContext context = new DefaultCamelContext(registry);
+        final Route route = new DefaultRoute(context, null, null, null, null);
 
         HystrixConfigurationDefinition def = new HystrixConfigurationDefinition();
         def.setGroupKey("global-group-key");
@@ -115,7 +121,7 @@ public class HystrixHierarchicalConfigTest {
         registry.bind(HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, defReg);
         registry.bind("ref-hystrix", ref);
 
-        final HystrixReifier reifier = new HystrixReifier(
+        final HystrixReifier reifier = new HystrixReifier(route,
                 new CircuitBreakerDefinition()
                         .configuration("ref-hystrix")
                         .hystrixConfiguration()
@@ -123,10 +129,10 @@ public class HystrixHierarchicalConfigTest {
                         .requestLogEnabled(false)
                         .end()
         );
-        final HystrixConfigurationDefinition config = reifier.buildHystrixConfiguration(context);
+        final HystrixConfigurationDefinition config = reifier.buildHystrixConfiguration();
 
-        Assert.assertEquals("local-conf-group-key", config.getGroupKey());
-        Assert.assertEquals("global-thread-key", config.getThreadPoolKey());
-        Assert.assertEquals(Integer.toString(5), config.getCorePoolSize());
+        assertEquals("local-conf-group-key", config.getGroupKey());
+        assertEquals("global-thread-key", config.getThreadPoolKey());
+        assertEquals(Integer.toString(5), config.getCorePoolSize());
     }
 }

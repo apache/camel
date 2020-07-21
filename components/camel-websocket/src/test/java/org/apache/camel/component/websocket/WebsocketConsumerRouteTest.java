@@ -51,23 +51,44 @@ public class WebsocketConsumerRouteTest extends CamelTestSupport {
                     }
 
                     @Override
-                    public void onClose(WebSocket websocket) {
+                    public void onClose(WebSocket websocket, int code, String reason) {
+
                     }
 
                     @Override
                     public void onError(Throwable t) {
                         t.printStackTrace();
                     }
+
+                    @Override
+                    public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
+
+                    }
+
+                    @Override
+                    public void onTextFrame(String payload, boolean finalFragment, int rsv) {
+
+                    }
+
+                    @Override
+                    public void onPingFrame(byte[] payload) {
+
+                    }
+
+                    @Override
+                    public void onPongFrame(byte[] payload) {
+
+                    }
                 }).build()).get();
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Test");
 
-        websocket.sendMessage("Test");
+        websocket.sendTextFrame("Test");
 
         result.assertIsSatisfied();
         
-        websocket.close();
+        websocket.sendCloseFrame();
         c.close();
     }
 
@@ -83,12 +104,28 @@ public class WebsocketConsumerRouteTest extends CamelTestSupport {
                     }
 
                     @Override
-                    public void onClose(WebSocket websocket) {
+                    public void onClose(WebSocket websocket, int code, String reason) {
                     }
 
                     @Override
                     public void onError(Throwable t) {
                         t.printStackTrace();
+                    }
+
+                    @Override
+                    public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
+                    }
+
+                    @Override
+                    public void onTextFrame(String payload, boolean finalFragment, int rsv) {
+                    }
+
+                    @Override
+                    public void onPingFrame(byte[] payload) {
+                    }
+
+                    @Override
+                    public void onPongFrame(byte[] payload) {
                     }
                 }).build()).get();
 
@@ -96,11 +133,11 @@ public class WebsocketConsumerRouteTest extends CamelTestSupport {
         final byte[] testmessage = "Test".getBytes("utf-8");
         result.expectedBodiesReceived(testmessage);
 
-        websocket.sendMessage(testmessage);
+        websocket.sendBinaryFrame(testmessage);
 
         result.assertIsSatisfied();
 
-        websocket.close();
+        websocket.sendCloseFrame();
         c.close();
     }
 

@@ -19,6 +19,9 @@ package org.apache.camel.component.vm;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class ConsumerCamelContextAware extends ContextTestSupport {
 
     @Override

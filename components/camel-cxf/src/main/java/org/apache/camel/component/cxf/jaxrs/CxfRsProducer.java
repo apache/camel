@@ -264,8 +264,8 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         if (cxfMessage != null) {
             String requestURL = (String)cxfMessage.get("org.apache.cxf.request.uri"); 
             String matrixParam = null;
-            int matrixStart = requestURL.indexOf(";");
-            int matrixEnd = requestURL.indexOf("?") > -1 ? requestURL.indexOf("?") : requestURL.length();
+            int matrixStart = requestURL.indexOf(';');
+            int matrixEnd = requestURL.indexOf('?') > -1 ? requestURL.indexOf('?') : requestURL.length();
             Map<String, String> maps = null;
             if (requestURL != null && matrixStart > 0) {
                 matrixParam = requestURL.substring(matrixStart + 1, matrixEnd);

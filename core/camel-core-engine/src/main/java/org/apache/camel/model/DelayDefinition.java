@@ -42,10 +42,10 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     @XmlAttribute
     private String executorServiceRef;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     private String asyncDelayed;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     private String callerRunsWhenRejected;
 
     public DelayDefinition() {

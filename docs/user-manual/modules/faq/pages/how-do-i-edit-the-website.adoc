@@ -1,0 +1,42 @@
+[[HowdoIeditthewebsite-HowdoIeditthewebsite]]
+= How do I edit the website?
+
+There are two ways to edit the website:
+
+* Directly on the GitHub website
+* In local repositories
+
+NOTE: All contributions are licensed under the http://www.apache.org/licenses/LICENSE-2.0[Apache Software License version 2.0]
+
+== Directly on the GitHub website
+
+The website pages can be edited on the GitHub website. It's a very quick process and ideal for fixing typos or updating information.
+
+Steps to edit a file:
+
+. Go to the page you want to edit.
+. Look for a link called "Edit this Page" and click on it.
+. Edit the file.
+. Preview your changes.
+. Provide a title and description for your pull request.
+. Click on the "Propose file change" button.
+
+== In local repositories
+
+To edit files locally, it's important to understand how the website is generated and where the files are located. The https://github.com/apache/camel-website[site generator] is located in its own repository. The documentation is located in the main https://github.com/apache/camel[Apache Camel] repository and sub-project repositories, such as https://github.com/apache/camel-k[Camel-K] and https://github.com/apache/camel-quarkus[Camel Quarkus]. Have a look at the xref:how-does-the-website-work.adoc[How does the website work?] page for more details.
+
+Steps to edit a file:
+
+. Fork and clone the https://github.com/apache/camel-website[site generator repository] and the Camel repository that contains the documentation you want to change.
+. Follow the build instructions located in the site generator's https://github.com/apache/camel-website/blob/master/README.md[README file].
+. Open Antora's https://github.com/apache/camel-website/blob/master/site.yml[`site.yml`] configuration file and change the content sources to https://docs.antora.org/antora/2.1/playbook/configure-content-sources/#local-urls[local repositories].
+. Edit the file.
+. Build the website.
+. Preview your changes locally.
+. Revert changes to `site.yml`.
+. Push your changes to your forked repositories and send a pull request.
+
+[NOTE]
+====
+It's a good idea to spend some time and learn how https://antora.org[Antora] and https://gohugo.io/[Hugo] work.
+====

@@ -29,6 +29,15 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Helper for invoking {@link HealthCheck}'s.
+ *
+ * The helper will lookup the {@link HealthCheckRegistry} from {@link CamelContext} and gather
+ * all the registered {@link HealthCheck}s and invoke them and gather their responses.
+ *
+ * The helper allows to filter out unwanted health checks using {@link HealthCheckFilter} or
+ * to invoke only readiness or liveness checks.
+ */
 public final class HealthCheckHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckHelper.class);
 
@@ -50,6 +59,20 @@ public final class HealthCheckHelper {
      */
     public static Collection<HealthCheck.Result> invoke(CamelContext camelContext) {
         return invoke(camelContext, check -> Collections.emptyMap(), check -> false);
+    }
+
+    /**
+     * Invokes the readiness checks and returns a collection of results.
+     */
+    public static Collection<HealthCheck.Result> invokeReadiness(CamelContext camelContext) {
+        return invoke(camelContext, check -> Collections.emptyMap(), check -> !check.isReadiness());
+    }
+
+    /**
+     * Invokes the liveness checks and returns a collection of results.
+     */
+    public static Collection<HealthCheck.Result> invokeLiveness(CamelContext camelContext) {
+        return invoke(camelContext, check -> Collections.emptyMap(), check -> !check.isLiveness());
     }
 
     /**
@@ -85,15 +108,8 @@ public final class HealthCheckHelper {
             HealthCheckFilter filter) {
 
         final HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
-        final HealthCheckService service = camelContext.hasService(HealthCheckService.class);
 
-        if (service != null) {
-            // If a health check service is defined retrieve the current status
-            // of the checks hold by the service.
-            return service.getResults().stream()
-                .filter(result -> !filter.test(result.getCheck()))
-                .collect(Collectors.toList());
-        } else if (registry != null) {
+        if (registry != null) {
             // If no health check service is defined, this endpoint invokes the
             // check one by one.
             return registry.stream()
@@ -103,6 +119,7 @@ public final class HealthCheckHelper {
                     .flatMap(Collection::stream)
                     .filter(check -> !filter.test(check))
                     .sorted(Comparator.comparingInt(HealthCheck::getOrder))
+                    .distinct()
                     .map(check -> check.call(optionsSupplier.apply(check)))
                     .collect(Collectors.toList());
         } else {
@@ -114,8 +131,7 @@ public final class HealthCheckHelper {
 
     /**
      * Query the status of a check by id. Note that this may result in an effective
-     * invocation of the {@link HealthCheck}, i.e. when no {@link HealthCheckService}
-     * is available.
+     * invocation of the {@link HealthCheck}.
      *
      * @param camelContext the camel context.
      * @param id the check id.
@@ -124,13 +140,8 @@ public final class HealthCheckHelper {
      */
     public static Optional<HealthCheck.Result> query(CamelContext camelContext, String id, Map<String, Object> options) {
         final HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
-        final HealthCheckService service = camelContext.hasService(HealthCheckService.class);
 
-        if (service != null) {
-            return service.getResults().stream()
-                .filter(result -> ObjectHelper.equal(result.getCheck().getId(), id))
-                .findFirst();
-        } else if (registry != null) {
+        if (registry != null) {
             return registry.getCheck(id).map(check -> check.call(options));
         } else {
             LOGGER.debug("No health check source found");
@@ -149,11 +160,8 @@ public final class HealthCheckHelper {
      */
     public static Optional<HealthCheck.Result> invoke(CamelContext camelContext, String id, Map<String, Object> options) {
         final HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
-        final HealthCheckService service = camelContext.hasService(HealthCheckService.class);
 
-        if (service != null) {
-            return service.call(id, options);
-        } else if (registry != null) {
+        if (registry != null) {
             return registry.getCheck(id).map(check -> check.call(options));
         } else {
             LOGGER.debug("No health check source found");

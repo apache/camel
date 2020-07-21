@@ -3,7 +3,7 @@
 
 *Since Camel 2.0*
 
-Batch Consumer is basically a xref:polling-consumer.adoc[Polling
+Batch Consumer is basically a xref:{eip-vc}:eips:polling-consumer.adoc[Polling
 Consumer] that is capable of polling multiple
 Exchanges in a pool. What we have done in Camel 2.0
 is to standardize this into a `org.apache.camel.BatchConsumer` interface

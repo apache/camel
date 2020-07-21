@@ -40,18 +40,18 @@ public class DigitalOceanSnapshotsProducer extends DigitalOceanProducer {
 
         switch (determineOperation(exchange)) {
 
-        case list:
-            getSnapshots(exchange);
-            break;
-        case get:
-            getSnapshot(exchange);
-            break;
-        case delete:
-            deleteSnapshot(exchange);
-            break;
+            case list:
+                getSnapshots(exchange);
+                break;
+            case get:
+                getSnapshot(exchange);
+                break;
+            case delete:
+                deleteSnapshot(exchange);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
 
 

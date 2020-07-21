@@ -18,58 +18,69 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.PollEnrichDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.processor.PollEnricher;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.DefaultExchange;
 
 public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
 
-    public PollEnrichReifier(ProcessorDefinition<?> definition) {
-        super((PollEnrichDefinition)definition);
+    public PollEnrichReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (PollEnrichDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
 
         // if no timeout then we should block, and there use a negative timeout
-        long time = definition.getTimeout() != null ? parseLong(routeContext, definition.getTimeout()) : -1;
-        boolean isIgnoreInvalidEndpoint = definition.getIgnoreInvalidEndpoint() != null && parseBoolean(routeContext, definition.getIgnoreInvalidEndpoint());
-        Expression exp = definition.getExpression().createExpression(routeContext);
+        long time = definition.getTimeout() != null ? parseDuration(definition.getTimeout()) : -1;
+        boolean isIgnoreInvalidEndpoint = parseBoolean(definition.getIgnoreInvalidEndpoint(), false);
 
-        PollEnricher enricher = new PollEnricher(exp, time);
+        PollEnricher enricher;
+        if (definition.getExpression() instanceof ConstantExpression) {
+            Expression exp = createExpression(definition.getExpression());
+            Exchange ex = new DefaultExchange(camelContext);
+            String dest = exp.evaluate(ex, String.class);
+            enricher = new PollEnricher(dest, time);
+        } else {
+            Expression exp = createExpression(definition.getExpression());
+            enricher = new PollEnricher(exp, time);
+        }
 
-        AggregationStrategy strategy = createAggregationStrategy(routeContext);
+        AggregationStrategy strategy = createAggregationStrategy();
         if (strategy == null) {
             enricher.setDefaultAggregationStrategy();
         } else {
             enricher.setAggregationStrategy(strategy);
         }
         if (definition.getAggregateOnException() != null) {
-            enricher.setAggregateOnException(parseBoolean(routeContext, definition.getAggregateOnException()));
+            enricher.setAggregateOnException(parseBoolean(definition.getAggregateOnException(), false));
         }
         if (definition.getCacheSize() != null) {
-            enricher.setCacheSize(parseInt(routeContext, definition.getCacheSize()));
+            enricher.setCacheSize(parseInt(definition.getCacheSize()));
         }
         enricher.setIgnoreInvalidEndpoint(isIgnoreInvalidEndpoint);
 
         return enricher;
     }
 
-    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
+    private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategy();
         if (strategy == null && definition.getAggregationStrategyRef() != null) {
-            Object aggStrategy = routeContext.lookup(definition.getAggregationStrategyRef(), Object.class);
+            Object aggStrategy = lookup(parseString(definition.getAggregationStrategyRef()), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy)aggStrategy;
             } else if (aggStrategy != null) {
-                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
+                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, parseString(definition.getAggregationStrategyMethodName()));
                 if (definition.getAggregationStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(routeContext, definition.getAggregationStrategyMethodAllowNull()));
-                    adapter.setAllowNullOldExchange(parseBoolean(routeContext, definition.getAggregationStrategyMethodAllowNull()));
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {
@@ -78,7 +89,7 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
         }
 
         if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware)strategy).setCamelContext(routeContext.getCamelContext());
+            ((CamelContextAware)strategy).setCamelContext(camelContext);
         }
 
         return strategy;

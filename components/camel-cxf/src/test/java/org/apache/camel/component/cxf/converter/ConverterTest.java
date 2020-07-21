@@ -35,14 +35,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.cxf.message.MessageContentsList;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
-public class ConverterTest extends Assert {
+public class ConverterTest {
     
     @Test
     public void testToArray() throws Exception {
@@ -51,8 +54,8 @@ public class ConverterTest extends Assert {
         testList.add("string 2");
         
         Object[] array = CxfConverter.toArray(testList);
-        assertNotNull("The array should not be null", array);
-        assertEquals("The array size should not be wrong", 2, array.length);
+        assertNotNull(array, "The array should not be null");
+        assertEquals(2, array.length, "The array size should not be wrong");
     }
     
     @Test
@@ -66,12 +69,12 @@ public class ConverterTest extends Assert {
         when(response.getEntity()).thenReturn(is);
         
         InputStream result = CxfConverter.toInputStream(response, exchange);
-        assertEquals("We should get the inputStream here ", is, result);
+        assertEquals(is, result, "We should get the inputStream here");
         
         reset(response);
         when(response.getEntity()).thenReturn("Hello World");
         result = CxfConverter.toInputStream(response, exchange);
-        assertTrue("We should get the inputStream here ", result instanceof ByteArrayInputStream);
+        assertTrue(result instanceof ByteArrayInputStream, "We should get the inputStream here");
     }
     
     @Test

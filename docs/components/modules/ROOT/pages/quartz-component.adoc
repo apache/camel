@@ -1,12 +1,17 @@
 [[quartz-component]]
 = Quartz Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-quartz/src/main/docs/quartz-component.adoc
+:docTitle: Quartz
+:artifactId: camel-quartz
+:description: Schedule sending of messages using the Quartz 2.x scheduler.
+:since: 2.12
+:supportLevel: Stable
+:component-header: Only consumer is supported
 
-*Since Camel 2.12*
+*Since Camel {since}*
 
-// HEADER START
-*Only consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Quartz component provides a scheduled delivery of messages using
 the http://www.quartz-scheduler.org/[Quartz Scheduler 2.x].  +
@@ -56,19 +61,19 @@ The Quartz component supports 13 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *autoStartScheduler* (scheduler) | Whether or not the scheduler should be auto started. This options is default true | true | boolean
-| *startDelayedSeconds* (scheduler) | Seconds to wait before starting the quartz scheduler. |  | int
-| *prefixJobNameWith EndpointId* (consumer) | Whether to prefix the quartz job with the endpoint id. This option is default false. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *enableJmx* (consumer) | Whether to enable Quartz JMX which allows to manage the Quartz scheduler from JMX. This options is default true | true | boolean
-| *propertiesRef* (consumer) | References to an existing Properties or Map to lookup in the registry to use for configuring quartz. |  | String
+| *prefixInstanceName* (consumer) | Whether to prefix the Quartz Scheduler instance name with the CamelContext name. This is enabled by default, to let each CamelContext use its own Quartz scheduler instance by default. You can set this option to false to reuse Quartz scheduler instances between multiple CamelContext's. | true | boolean
+| *prefixJobNameWithEndpointId* (consumer) | Whether to prefix the quartz job with the endpoint id. This option is default false. | false | boolean
 | *properties* (consumer) | Properties to configure the Quartz scheduler. |  | Map
 | *propertiesFile* (consumer) | File name of the properties to load from the classpath |  | String
-| *prefixInstanceName* (consumer) | Whether to prefix the Quartz Scheduler instance name with the CamelContext name. This is enabled by default, to let each CamelContext use its own Quartz scheduler instance by default. You can set this option to false to reuse Quartz scheduler instances between multiple CamelContext's. | true | boolean
-| *interruptJobsOn Shutdown* (scheduler) | Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any running jobs. If this is enabled then any running jobs can fail due to being interrupted. | false | boolean
-| *schedulerFactory* (advanced) | To use the custom SchedulerFactory which is used to create the Scheduler. |  | SchedulerFactory
-| *scheduler* (advanced) | To use the custom configured Quartz scheduler, instead of creating a new Scheduler. |  | Scheduler
+| *propertiesRef* (consumer) | References to an existing Properties or Map to lookup in the registry to use for configuring quartz. |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *scheduler* (advanced) | To use the custom configured Quartz scheduler, instead of creating a new Scheduler. |  | Scheduler
+| *schedulerFactory* (advanced) | To use the custom SchedulerFactory which is used to create the Scheduler. |  | SchedulerFactory
+| *autoStartScheduler* (scheduler) | Whether or not the scheduler should be auto started. This options is default true | true | boolean
+| *interruptJobsOnShutdown* (scheduler) | Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any running jobs. If this is enabled then any running jobs can fail due to being interrupted. | false | boolean
+| *startDelayedSeconds* (scheduler) | Seconds to wait before starting the quartz scheduler. |  | int
 |===
 // component options: END
 
@@ -90,8 +95,8 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *groupName* | The quartz group name to use. The combination of group name and timer name should be unique. | Camel | String
-| *triggerName* | *Required* The quartz timer name to use. The combination of group name and timer name should be unique. |  | String
+| *groupName* | The quartz group name to use. The combination of group name and trigger name should be unique. | Camel | String
+| *triggerName* | *Required* The quartz trigger name to use. The combination of group name and trigger name should be unique. |  | String
 |===
 
 
@@ -109,11 +114,11 @@ with the following path and query parameters:
 | *recoverableJob* (consumer) | Instructs the scheduler whether or not the job should be re-executed if a 'recovery' or 'fail-over' situation is encountered. | false | boolean
 | *stateful* (consumer) | Uses a Quartz PersistJobDataAfterExecution and DisallowConcurrentExecution instead of the default job. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *customCalendar* (advanced) | Specifies a custom calendar to avoid specific range of date |  | Calendar
 | *jobParameters* (advanced) | To configure additional options on the job. |  | Map
-| *prefixJobNameWithEndpoint Id* (advanced) | Whether the job name should be prefixed with endpoint id | false | boolean
+| *prefixJobNameWithEndpointId* (advanced) | Whether the job name should be prefixed with endpoint id | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *triggerParameters* (advanced) | To configure additional options on the trigger. |  | Map
 | *usingFixedCamelContextName* (advanced) | If it is true, JobDataMap uses the CamelContext name directly to reference the CamelContext, if it is false, JobDataMap uses use the CamelContext management name which could be changed during the deploy time. | false | boolean
@@ -123,46 +128,6 @@ with the following path and query parameters:
 | *triggerStartDelay* (scheduler) | In case of scheduler has already started, we want the trigger start slightly after current time to ensure endpoint is fully started before the job kicks in. | 500 | long
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-quartz-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 15 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.quartz.auto-start-scheduler* | Whether or not the scheduler should be auto started. This options is default true | true | Boolean
-| *camel.component.quartz.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.quartz.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.quartz.enable-jmx* | Whether to enable Quartz JMX which allows to manage the Quartz scheduler from JMX. This options is default true | true | Boolean
-| *camel.component.quartz.enabled* | Whether to enable auto configuration of the quartz component. This is enabled by default. |  | Boolean
-| *camel.component.quartz.interrupt-jobs-on-shutdown* | Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any running jobs. If this is enabled then any running jobs can fail due to being interrupted. | false | Boolean
-| *camel.component.quartz.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-| *camel.component.quartz.prefix-instance-name* | Whether to prefix the Quartz Scheduler instance name with the CamelContext name. This is enabled by default, to let each CamelContext use its own Quartz scheduler instance by default. You can set this option to false to reuse Quartz scheduler instances between multiple CamelContext's. | true | Boolean
-| *camel.component.quartz.prefix-job-name-with-endpoint-id* | Whether to prefix the quartz job with the endpoint id. This option is default false. | false | Boolean
-| *camel.component.quartz.properties* | Properties to configure the Quartz scheduler. |  | Map
-| *camel.component.quartz.properties-file* | File name of the properties to load from the classpath |  | String
-| *camel.component.quartz.properties-ref* | References to an existing Properties or Map to lookup in the registry to use for configuring quartz. |  | String
-| *camel.component.quartz.scheduler* | To use the custom configured Quartz scheduler, instead of creating a new Scheduler. The option is a org.quartz.Scheduler type. |  | String
-| *camel.component.quartz.scheduler-factory* | To use the custom SchedulerFactory which is used to create the Scheduler. The option is a org.quartz.SchedulerFactory type. |  | String
-| *camel.component.quartz.start-delayed-seconds* | Seconds to wait before starting the quartz scheduler. |  | Integer
-|===
-// spring-boot-auto-configure options: END
 
 
 
@@ -413,7 +378,7 @@ but it does not want to be fired now.
 
 The xref:quartz-component.adoc[Quartz] component provides a
 Polling Consumer scheduler which allows to
-use cron based scheduling for xref:manual::polling-consumer.adoc[Polling
+use cron based scheduling for xref:{eip-vc}:eips:polling-consumer.adoc[Polling
 Consumer] such as the File and FTP
 consumers.
 
@@ -493,3 +458,5 @@ Users can then use the cron component instead of the quartz component, as in the
     from("cron://name?schedule=0+0/5+12-18+?+*+MON-FRI")
     .to("activemq:Totally.Rocks");
 ----
+
+include::camel-spring-boot::page$quartz-starter.adoc[]

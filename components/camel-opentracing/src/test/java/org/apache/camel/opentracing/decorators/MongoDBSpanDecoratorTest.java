@@ -23,11 +23,11 @@ import io.opentracing.mock.MockTracer;
 import io.opentracing.tag.Tags;
 import org.apache.camel.Endpoint;
 import org.apache.camel.opentracing.SpanDecorator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MongoDBSpanDecoratorTest {
 

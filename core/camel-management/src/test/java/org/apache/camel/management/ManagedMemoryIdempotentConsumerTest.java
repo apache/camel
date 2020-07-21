@@ -27,8 +27,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
     protected Endpoint startEndpoint;
@@ -53,7 +57,7 @@ public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
                 break;
             }
         }
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "CacheSize");
         assertEquals(1, size.intValue());
@@ -114,7 +118,7 @@ public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
                 break;
             }
         }
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
         Long count = (Long) mbeanServer.getAttribute(on, "DuplicateMessageCount");
         assertEquals(0L, count.longValue());
@@ -163,7 +167,7 @@ public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         repo = MemoryIdempotentRepository.memoryIdempotentRepository();
         // lets start with 4

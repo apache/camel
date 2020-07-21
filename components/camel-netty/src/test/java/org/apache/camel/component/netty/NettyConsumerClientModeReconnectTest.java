@@ -35,9 +35,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NettyConsumerClientModeReconnectTest extends BaseNettyTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(NettyConsumerClientModeReconnectTest.class);
 
     private MyServer server;
 
@@ -58,20 +62,20 @@ public class NettyConsumerClientModeReconnectTest extends BaseNettyTest {
             MockEndpoint receive = context.getEndpoint("mock:receive", MockEndpoint.class);
             receive.expectedBodiesReceived("Bye Willem");
 
-            log.info(">>> starting Camel route while Netty server is not ready");
+            LOG.info(">>> starting Camel route while Netty server is not ready");
             context.getRouteController().startRoute("client");
 
             Thread.sleep(500);
 
-            log.info(">>> starting Netty server");
+            LOG.info(">>> starting Netty server");
             startNettyServer();
 
             assertMockEndpointsSatisfied();
-            log.info(">>> routing done");
+            LOG.info(">>> routing done");
 
             Thread.sleep(500);
         } finally {
-            log.info(">>> shutting down Netty server");
+            LOG.info(">>> shutting down Netty server");
             shutdownServer();
         }
     }

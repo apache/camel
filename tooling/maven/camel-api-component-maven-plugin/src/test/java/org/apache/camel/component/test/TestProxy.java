@@ -18,6 +18,7 @@ package org.apache.camel.component.test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class TestProxy {
     public String sayHi() {
@@ -56,6 +57,10 @@ public class TestProxy {
         }
         builder.delete(builder.length() - 2, builder.length());
         return builder.toString();
+    }
+
+    public final <K, V> String greetAll(Map<K, V> peopleMap) {
+        return null;
     }
 
     public final String[] greetTimes(String name, int times) {

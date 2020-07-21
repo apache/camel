@@ -22,10 +22,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.FileUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileValidatorRouteTest extends CamelTestSupport {
 
@@ -45,7 +48,7 @@ public class FileValidatorRouteTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
         
-        assertTrue("Should be able to delete the file", FileUtil.deleteFile(new File("target/validator/valid.json")));
+        assertTrue(FileUtil.deleteFile(new File("target/validator/valid.json")), "Should be able to delete the file");
     }
 
     @Test
@@ -61,11 +64,11 @@ public class FileValidatorRouteTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
 
         // should be able to delete the file
-        assertTrue("Should be able to delete the file", FileUtil.deleteFile(new File("target/validator/invalid.json")));
+        assertTrue(FileUtil.deleteFile(new File("target/validator/invalid.json")), "Should be able to delete the file");
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/validator");
         super.setUp();

@@ -18,36 +18,34 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.spi.RouteContext;
 
 abstract class ExpressionReifier<T extends ExpressionNode> extends ProcessorReifier<T> {
 
-    protected ExpressionReifier(T definition) {
-        super(definition);
+    protected ExpressionReifier(Route route, T definition) {
+        super(route, definition);
     }
 
     /**
      * Creates the {@link FilterProcessor} from the expression node.
      *
-     * @param routeContext the route context
      * @return the created {@link FilterProcessor}
      * @throws Exception is thrown if error creating the processor
      */
-    protected FilterProcessor createFilterProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = createOutputsProcessor(routeContext);
-        return new FilterProcessor(createPredicate(routeContext), childProcessor);
+    protected FilterProcessor createFilterProcessor() throws Exception {
+        Processor childProcessor = createOutputsProcessor();
+        return new FilterProcessor(camelContext, createPredicate(), childProcessor);
     }
 
     /**
      * Creates the {@link Predicate} from the expression node.
      *
-     * @param routeContext the route context
      * @return the created predicate
      */
-    protected Predicate createPredicate(RouteContext routeContext) {
-        return definition.getExpression().createPredicate(routeContext);
+    protected Predicate createPredicate() {
+        return createPredicate(definition.getExpression());
     }
 
 }

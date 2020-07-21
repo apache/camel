@@ -16,19 +16,19 @@
  */
 package org.apache.camel.reifier;
 
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class WhenReifier extends ExpressionReifier<WhenDefinition> {
 
-    public WhenReifier(ProcessorDefinition<?> definition) {
-        super((WhenDefinition)definition);
+    public WhenReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (WhenDefinition) definition);
     }
 
     @Override
-    public FilterProcessor createProcessor(RouteContext routeContext) throws Exception {
-        return createFilterProcessor(routeContext);
+    public FilterProcessor createProcessor() throws Exception {
+        return createFilterProcessor();
     }
 }

@@ -18,9 +18,9 @@ package org.apache.camel.component.cometd;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit testing for using a CometdProducer and a CometdConsumer
@@ -33,7 +33,7 @@ public class MultipCometdProducerConsumerTest extends CamelTestSupport {
     private String uri2;
 
     @Test
-    public void testProducer() throws Exception {
+    void testProducer() throws Exception {
         Person person = new Person("David", "Greco");
         
         getMockEndpoint("mock:test1").expectedBodiesReceived(person);
@@ -46,12 +46,8 @@ public class MultipCometdProducerConsumerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-   
-    
-   
-
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         port1 = AvailablePortFinder.getNextAvailable();
         port2 = AvailablePortFinder.getNextAvailable();
@@ -64,10 +60,10 @@ public class MultipCometdProducerConsumerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:input1").to(uri1);
 
                 from(uri1).to("mock:test1");

@@ -16,36 +16,41 @@
  */
 package org.apache.camel.component.rabbitmq.qpid;
 
-import org.apache.camel.component.rabbitmq.RabbitMQRequeueIntTest;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.component.rabbitmq.integration.RabbitMQRequeueIntTest;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class RabbitMQRequeueQpidTest extends RabbitMQRequeueIntTest {
-    @BeforeClass
+    @Override
+    public boolean isStartDocker() {
+        return false;
+    }
+
+    @BeforeAll
     public static void startBroker() throws Exception {
         systemLauncher.startup(createQpidSystemConfig());
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopBroker() {
         systemLauncher.shutdown();
     }
-    
-    @Ignore
+
+    @Disabled
     @Override
     @Test
     public void testNoRequeueHeaderCausesReject() throws Exception {
     }
-    
-    @Ignore
+
+    @Disabled
     @Override
     @Test
     public void testNonBooleanRequeueHeaderCausesReject() throws Exception {
     }
 
-    @Ignore
+    @Disabled
     @Override
     @Test
     public void testFalseRequeueHeaderCausesReject() throws Exception {

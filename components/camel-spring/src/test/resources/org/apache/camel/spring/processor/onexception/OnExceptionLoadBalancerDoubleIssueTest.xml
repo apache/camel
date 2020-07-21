@@ -37,13 +37,17 @@
     <onException>
       <exception>java.lang.Exception</exception>
       <handled> <constant>true</constant> </handled>
+      <to uri="direct:error"/>
+    </onException>
+    <route>
+      <from uri="direct:error"/>
       <loadBalance>
         <roundRobin id="round"/>
         <to uri="mock:error"/>
         <to uri="mock:error2"/>
         <to uri="mock:error3"/>
       </loadBalance>
-    </onException>
+    </route>
 
     <route>
       <from uri="direct:foo"/>

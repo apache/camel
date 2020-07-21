@@ -27,12 +27,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.reifier.RouteReifier;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
 
@@ -42,23 +46,23 @@ public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
 
     protected JdbcTemplate jdbcTemplate;
     protected DataSource dataSource;
-    
+
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     @EndpointInject("mock:error")
     protected MockEndpoint errorEndpoint;
-    
+
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        
+
         dataSource = context.getRegistry().lookupByNameAndType("dataSource", DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.afterPropertiesSet();
     }
-    
+
     @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         resultEndpoint.expectedBodiesReceived("one", "two", "three");
@@ -113,17 +117,17 @@ public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
         template.sendBodyAndHeader("direct:start", "three", "messageId", "3");
 
         assertMockEndpointsSatisfied();
-        
+
         jdbcTemplate.update(CLEAR_STRING, PROCESSOR_NAME);
 
         // only message 1 and 3 should be in jdbc repo
         List<String> receivedMessageIds = jdbcTemplate.queryForList(SELECT_ALL_STRING, String.class, PROCESSOR_NAME);
 
         assertEquals(0, receivedMessageIds.size());
-        assertFalse("Should not contain message 1", receivedMessageIds.contains("1"));
-        assertFalse("Should not contain message 3", receivedMessageIds.contains("3"));
+        assertFalse(receivedMessageIds.contains("1"), "Should not contain message 1");
+        assertFalse(receivedMessageIds.contains("3"), "Should not contain message 3");
     }
-    
+
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/processor/idempotent/jdbc/spring.xml");

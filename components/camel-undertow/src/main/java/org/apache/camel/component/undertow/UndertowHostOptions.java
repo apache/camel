@@ -16,34 +16,22 @@
  */
 package org.apache.camel.component.undertow;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Options to configure an Undertow host.
  */
 public final class UndertowHostOptions {
 
-    /**
-     * The number of worker threads to use in a Undertow host.
-     */
+    @Metadata(description = "The number of worker threads to use in a Undertow host.")
     private Integer workerThreads;
-
-    /**
-     * The number of io threads to use in a Undertow host.
-     */
+    @Metadata(description = "The number of io threads to use in a Undertow host.")
     private Integer ioThreads;
-
-    /**
-     * The buffer size of the Undertow host.
-     */
+    @Metadata(description = "The buffer size of the Undertow host.")
     private Integer bufferSize;
-
-    /**
-     * Set if the Undertow host should use direct buffers.
-     */
+    @Metadata(description = "Set if the Undertow host should use direct buffers.")
     private Boolean directBuffers;
-    
-    /**
-     * Set if the Undertow host should use http2 protocol.
-     */
+    @Metadata(description = "Set if the Undertow host should use http2 protocol.")
     private Boolean http2Enabled;
 
     public UndertowHostOptions() {
@@ -87,18 +75,6 @@ public final class UndertowHostOptions {
 
     public void setHttp2Enabled(Boolean http2Enabled) {
         this.http2Enabled = http2Enabled;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("UndertowHostOptions{");
-        sb.append("workerThreads=").append(workerThreads);
-        sb.append(", ioThreads=").append(ioThreads);
-        sb.append(", bufferSize=").append(bufferSize);
-        sb.append(", directBuffers=").append(directBuffers);
-        sb.append(", http2Enabled=").append(http2Enabled);
-        sb.append('}');
-        return sb.toString();
     }
 
 }

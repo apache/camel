@@ -16,27 +16,29 @@
  */
 package org.apache.camel.component.rest.openapi;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
-
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RestOpenApiHelperTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void emptyHostParamsAreNotAllowed() {
-        RestOpenApiHelper.isHostParam("");
+        assertThrows(IllegalArgumentException.class,
+            () -> RestOpenApiHelper.isHostParam(""));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void nonUriHostParametersAreNotAllowed() {
-        RestOpenApiHelper.isHostParam("carrot");
+        assertThrows(IllegalArgumentException.class,
+            () -> RestOpenApiHelper.isHostParam("carrot"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void nullHostParamsAreNotAllowed() {
-        RestOpenApiHelper.isHostParam(null);
+        assertThrows(IllegalArgumentException.class,
+            () -> RestOpenApiHelper.isHostParam(null));
     }
 
     @Test

@@ -17,9 +17,9 @@
 package org.apache.camel.component.resilience4j;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.impl.engine.TypedProcessorFactory;
 import org.apache.camel.model.CircuitBreakerDefinition;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * To integrate camel-resilience4j with the Camel routes using the Circuit
@@ -32,8 +32,8 @@ public class ResilienceProcessorFactory extends TypedProcessorFactory<CircuitBre
     }
 
     @Override
-    public Processor doCreateProcessor(RouteContext routeContext, CircuitBreakerDefinition definition) throws Exception {
-        return new ResilienceReifier(definition).createProcessor(routeContext);
+    public Processor doCreateProcessor(Route route, CircuitBreakerDefinition definition) throws Exception {
+        return new ResilienceReifier(route, definition).createProcessor();
     }
 
 }

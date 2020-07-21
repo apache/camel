@@ -19,15 +19,17 @@ package org.apache.camel.impl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
 import org.apache.camel.VetoCamelContextStartException;
-import org.apache.camel.support.jndi.JndiContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class LifecycleStrategyFailOnStartupTest extends TestSupport {
 
     private MyLifecycleStrategy dummy1 = new MyLifecycleStrategy();
 
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = new DefaultCamelContext(new JndiContext());
+        CamelContext context = new DefaultCamelContext();
         context.addLifecycleStrategy(dummy1);
         return context;
     }

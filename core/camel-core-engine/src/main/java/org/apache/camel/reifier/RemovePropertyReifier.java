@@ -17,21 +17,21 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RemovePropertyDefinition;
 import org.apache.camel.processor.RemovePropertyProcessor;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 public class RemovePropertyReifier extends ProcessorReifier<RemovePropertyDefinition> {
 
-    public RemovePropertyReifier(ProcessorDefinition<?> definition) {
-        super((RemovePropertyDefinition)definition);
+    public RemovePropertyReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (RemovePropertyDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         ObjectHelper.notNull(definition.getPropertyName(), "propertyName", this);
-        return new RemovePropertyProcessor(definition.getPropertyName());
+        return new RemovePropertyProcessor(parseString(definition.getPropertyName()));
     }
 }

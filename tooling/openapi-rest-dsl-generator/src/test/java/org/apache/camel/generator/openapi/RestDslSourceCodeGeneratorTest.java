@@ -19,7 +19,7 @@ package org.apache.camel.generator.openapi;
 import io.apicurio.datamodels.openapi.models.OasInfo;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Info;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,7 +44,7 @@ public class RestDslSourceCodeGeneratorTest {
     @Test
     public void shouldGenerateClassNameFromTitle() {
         final Oas20Document openapi = new Oas20Document();
-        OasInfo info = new Oas20Info();
+        final OasInfo info = new Oas20Info();
         info.title = "Example API";
         openapi.info = info;
         assertThat(RestDslSourceCodeGenerator.generateClassName(openapi)).isEqualTo("ExampleAPI");
@@ -53,7 +53,7 @@ public class RestDslSourceCodeGeneratorTest {
     @Test
     public void shouldGenerateClassNameFromTitleWithNonValidJavaIdentifiers() {
         final Oas20Document openapi = new Oas20Document();
-        OasInfo info = new Oas20Info();
+        final OasInfo info = new Oas20Info();
         info.title = "Example-API 2.0";
         openapi.info = info;
         assertThat(RestDslSourceCodeGenerator.generateClassName(openapi)).isEqualTo("ExampleAPI20");
@@ -65,6 +65,7 @@ public class RestDslSourceCodeGeneratorTest {
 
         assertThat(RestDslSourceCodeGenerator.generateClassName(openapi))
             .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
+
         openapi.info = new Oas20Info();
         assertThat(RestDslSourceCodeGenerator.generateClassName(openapi))
             .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
@@ -73,10 +74,10 @@ public class RestDslSourceCodeGeneratorTest {
     @Test
     public void shouldUseDefaultClassNameIfTitleContainsOnlyNonValidJavaIdentifiers() {
         final Oas20Document openapi = new Oas20Document();
-        OasInfo info = new Oas20Info();
+        final OasInfo info = new Oas20Info();
         info.title = "\\%/4";
         openapi.info = info;
-       
+
         assertThat(RestDslSourceCodeGenerator.generateClassName(openapi))
             .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
     }
@@ -85,7 +86,7 @@ public class RestDslSourceCodeGeneratorTest {
     public void shouldUseDefaultPackageNameForLocalhost() {
         final Oas20Document openapi = new Oas20Document();
         openapi.host = "localhost";
-        
+
         assertThat(RestDslSourceCodeGenerator.generatePackageName(openapi))
             .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
     }
@@ -94,7 +95,7 @@ public class RestDslSourceCodeGeneratorTest {
     public void shouldUseDefaultPackageNameForLocalhostWithPort() {
         final Oas20Document openapi = new Oas20Document();
         openapi.host = "localhost:8080";
-        
+
         assertThat(RestDslSourceCodeGenerator.generatePackageName(openapi))
             .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
     }

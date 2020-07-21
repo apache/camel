@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -203,5 +204,40 @@ public final class CollectionHelper {
         return Collections.unmodifiableMap(
             mapOf(HashMap::new, key, value, keyVals)
         );
+    }
+
+    /**
+     * Build a {@link java.util.Properties} from varargs.
+     */
+    public static Properties propertiesOf(String key, String value, String... keyVals) {
+        Properties properties = new Properties();
+        properties.setProperty(key, value);
+
+        for (int i = 0; i < keyVals.length; i += 2) {
+            properties.setProperty(
+                keyVals[i],
+                keyVals[i + 1]
+            );
+        }
+
+        return properties;
+    }
+
+    /**
+     * Build a new map that is the result of merging the given list of maps.
+     */
+    @SafeVarargs
+    public static <K, V> Map<K, V> mergeMaps(Map<K, V> map, Map<K, V>... maps) {
+        Map<K, V> answer = new HashMap<>();
+
+        if (map != null) {
+            answer.putAll(map);
+        }
+
+        for (Map<K, V> m : maps) {
+            answer.putAll(m);
+        }
+
+        return answer;
     }
 }

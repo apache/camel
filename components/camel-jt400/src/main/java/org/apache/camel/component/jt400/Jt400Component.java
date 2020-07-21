@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link org.apache.camel.Component} to provide integration with AS/400 objects.
+ * {@link org.apache.camel.Component} to provide integration with IBM i objects (IBM i is the replacement for AS/400 and iSeries servers).
  * 
  * Current implementation supports working with data queues (*DTAQ) and Program calls (*PGM)
  */
@@ -73,7 +73,7 @@ public class Jt400Component extends DefaultComponent {
             connectionPool = getConnectionPool();
         }
 
-        String type = remaining.substring(remaining.lastIndexOf(".") + 1).toUpperCase();
+        String type = remaining.substring(remaining.lastIndexOf('.') + 1).toUpperCase();
         Jt400Endpoint endpoint = new Jt400Endpoint(uri, this, connectionPool);
         setProperties(endpoint, properties);
         endpoint.setType(Jt400Type.valueOf(type));

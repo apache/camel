@@ -28,9 +28,9 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_ARGS;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_EXECUTABLE;
@@ -48,6 +48,9 @@ import static org.apache.camel.component.exec.ExecutableJavaProgram.READ_INPUT_L
 import static org.apache.camel.component.exec.ExecutableJavaProgram.SLEEP_WITH_TIMEOUT;
 import static org.apache.camel.component.exec.ExecutableJavaProgram.THREADS;
 import static org.apache.commons.io.IOUtils.LINE_SEPARATOR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Tests the functionality of the {@link org.apache.camel.component.exec.ExecComponent}, executing<br>
@@ -145,8 +148,8 @@ public class ExecJavaProcessRecipientListTest extends CamelTestSupport {
         ExecResult body = e.getIn().getBody(ExecResult.class);
 
         output.assertIsSatisfied();
-        assertNull("the test executable must not print anything in stdout", body.getStdout());
-        assertNotNull("the test executable must print in stderr", body.getStderr());
+        assertNull(body.getStdout(), "the test executable must not print anything in stdout");
+        assertNotNull(body.getStderr(), "the test executable must print in stderr");
         // the converter must fall back to the stderr, because stdout is null
         String stderr = e.getIn().getBody(String.class);
         assertEquals(PRINT_IN_STDERR, stderr);
@@ -162,11 +165,11 @@ public class ExecJavaProcessRecipientListTest extends CamelTestSupport {
         ExecResult body = e.getIn().getBody(ExecResult.class);
 
         output.assertIsSatisfied();
-        assertNull("the test executable must not print anything in stdout", body.getStdout());
-        assertNotNull("the test executable must print in stderr", body.getStderr());
+        assertNull(body.getStdout(), "the test executable must not print anything in stdout");
+        assertNotNull(body.getStderr(), "the test executable must print in stderr");
         // the converter must fall back to the stderr, because stdout is null
         String out = e.getIn().getBody(String.class);
-        assertEquals("Should be empty", "", out);
+        assertEquals("", out, "Should be empty");
     }
 
     @Test

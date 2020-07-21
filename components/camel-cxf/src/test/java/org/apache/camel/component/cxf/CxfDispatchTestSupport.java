@@ -23,14 +23,18 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.hello_world_soap_http.GreeterImpl;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInstance;
+
+
 
 /**
  * Base class for testing arbitrary payload
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class CxfDispatchTestSupport extends CamelSpringTestSupport {
     protected static final String DISPATCH_NS = "http://camel.apache.org/cxf/jaxws/dispatch";
     protected static final String INVOKE_NAME = "Invoke";
@@ -48,12 +52,8 @@ public abstract class CxfDispatchTestSupport extends CamelSpringTestSupport {
 
     protected Endpoint endpoint;
     private int port = CXFTestSupport.getPort1();
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
 
-    @Before
+    @BeforeEach
     public void startService() {
         Object implementor = new GreeterImpl();
         String address = "http://localhost:" + port + "/"
@@ -61,7 +61,7 @@ public abstract class CxfDispatchTestSupport extends CamelSpringTestSupport {
         endpoint = Endpoint.publish(address, implementor); 
     }
     
-    @After
+    @AfterEach
     public void stopService() {
         if (endpoint != null) {
             endpoint.stop();

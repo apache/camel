@@ -21,14 +21,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
 import org.apache.camel.spi.Metadata;
 
 /**
- * To use Camel message body or header with a XML tokenizer in Camel expressions
- * or predicates.
+ * Tokenize XML payloads using the specified path expression.
  *
  * @see org.apache.camel.language.xtokenizer.XMLTokenizeLanguage
  */
@@ -94,34 +90,6 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
      */
     public void setGroup(String group) {
         this.group = group;
-    }
-
-    @Override
-    protected void configureExpression(CamelContext camelContext, Expression expression) {
-        if (headerName != null) {
-            setProperty(camelContext, expression, "headerName", headerName);
-        }
-        if (mode != null) {
-            setProperty(camelContext, expression, "mode", mode);
-        }
-        if (group != null) {
-            setProperty(camelContext, expression, "group", group);
-        }
-        super.configureExpression(camelContext, expression);
-    }
-
-    @Override
-    protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
-        if (headerName != null) {
-            setProperty(camelContext, predicate, "headerName", headerName);
-        }
-        if (mode != null) {
-            setProperty(camelContext, predicate, "mode", mode);
-        }
-        if (group != null) {
-            setProperty(camelContext, predicate, "group", group);
-        }
-        super.configurePredicate(camelContext, predicate);
     }
 
 }

@@ -47,6 +47,8 @@ import org.elasticsearch.client.sniff.Sniffer;
 import org.elasticsearch.client.sniff.SnifferBuilder;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.elasticsearch.ElasticsearchConstants.PARAM_SCROLL;
 import static org.apache.camel.component.elasticsearch.ElasticsearchConstants.PARAM_SCROLL_KEEP_ALIVE_MS;
@@ -55,6 +57,8 @@ import static org.apache.camel.component.elasticsearch.ElasticsearchConstants.PA
  * Represents an Elasticsearch producer.
  */
 public class ElasticsearchProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchProducer.class);
 
     protected final ElasticsearchConfiguration configuration;
     private RestClient client;
@@ -138,6 +142,16 @@ public class ElasticsearchProducer extends DefaultProducer {
         if (indexName == null) {
             message.setHeader(ElasticsearchConstants.PARAM_INDEX_NAME, configuration.getIndexName());
             configIndexName = true;
+        }
+
+        Integer size = message.getHeader(ElasticsearchConstants.PARAM_SIZE, Integer.class);
+        if (size == null) {
+            message.setHeader(ElasticsearchConstants.PARAM_SIZE, configuration.getSize());
+        }
+
+        Integer from = message.getHeader(ElasticsearchConstants.PARAM_FROM, Integer.class);
+        if (from == null) {
+            message.setHeader(ElasticsearchConstants.PARAM_FROM, configuration.getFrom());
         }
 
         boolean configWaitForActiveShards = false;
@@ -251,7 +265,7 @@ public class ElasticsearchProducer extends DefaultProducer {
             IOHelper.close(client);
             IOHelper.close(restHighLevelClient);
             client = null;
-            if (configuration.getEnableSniffer()) {
+            if (configuration.isEnableSniffer()) {
                 IOHelper.close(sniffer);
                 sniffer = null;
             }
@@ -270,12 +284,12 @@ public class ElasticsearchProducer extends DefaultProducer {
 
     private void startClient() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, UnknownHostException {
         if (client == null) {
-            log.info("Connecting to the ElasticSearch cluster: {}", configuration.getClusterName());
+            LOG.info("Connecting to the ElasticSearch cluster: {}", configuration.getClusterName());
             if (configuration.getHostAddressesList() != null
                 && !configuration.getHostAddressesList().isEmpty()) {
                 client = createClient();
             } else {
-                log.warn("Incorrect ip address and port parameters settings for ElasticSearch cluster");
+                LOG.warn("Incorrect ip address and port parameters settings for ElasticSearch cluster");
             }
         }
     }
@@ -294,7 +308,7 @@ public class ElasticsearchProducer extends DefaultProducer {
             });
         }
         final RestClient restClient = builder.build();
-        if (configuration.getEnableSniffer()) {
+        if (configuration.isEnableSniffer()) {
             SnifferBuilder snifferBuilder = Sniffer.builder(restClient);
             snifferBuilder.setSniffIntervalMillis(configuration.getSnifferInterval());
             snifferBuilder.setSniffAfterFailureDelayMillis(configuration.getSniffAfterFailureDelay());
@@ -307,7 +321,7 @@ public class ElasticsearchProducer extends DefaultProducer {
     @Override
     protected void doStop() throws Exception {
         if (client != null) {
-            log.info("Disconnecting from ElasticSearch cluster: {}", configuration.getClusterName());
+            LOG.info("Disconnecting from ElasticSearch cluster: {}", configuration.getClusterName());
             client.close();
             if (sniffer != null) {
                 sniffer.close();
@@ -319,7 +333,7 @@ public class ElasticsearchProducer extends DefaultProducer {
     public RestClient getClient() {
         return client;
     }
-    
+
     private final class HighLevelClient extends RestHighLevelClient {
         private HighLevelClient(RestClient restClient) {
             super(restClient, client -> { }, Collections.emptyList());

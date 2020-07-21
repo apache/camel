@@ -19,6 +19,7 @@ package org.apache.camel.reifier.loadbalancer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition;
@@ -26,26 +27,25 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedLoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedRandomLoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedRoundRobinLoadBalancer;
-import org.apache.camel.spi.RouteContext;
 
 public class WeightedLoadBalancerReifier extends LoadBalancerReifier<WeightedLoadBalancerDefinition> {
 
-    public WeightedLoadBalancerReifier(LoadBalancerDefinition definition) {
-        super((WeightedLoadBalancerDefinition)definition);
+    public WeightedLoadBalancerReifier(Route route, LoadBalancerDefinition definition) {
+        super(route, (WeightedLoadBalancerDefinition)definition);
     }
 
     @Override
-    public LoadBalancer createLoadBalancer(RouteContext routeContext) {
+    public LoadBalancer createLoadBalancer() {
         WeightedLoadBalancer loadBalancer;
         List<Integer> distributionRatioList = new ArrayList<>();
 
         try {
             String[] ratios = definition.getDistributionRatio().split(definition.getDistributionRatioDelimiter());
             for (String ratio : ratios) {
-                distributionRatioList.add(parseInt(routeContext, ratio.trim()));
+                distributionRatioList.add(parseInt(ratio.trim()));
             }
 
-            boolean isRoundRobin = definition.getRoundRobin() != null && parseBoolean(routeContext, definition.getRoundRobin());
+            boolean isRoundRobin = parseBoolean(definition.getRoundRobin(), false);
             if (isRoundRobin) {
                 loadBalancer = new WeightedRoundRobinLoadBalancer(distributionRatioList);
             } else {

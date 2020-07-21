@@ -1,12 +1,17 @@
 [[quickfix-component]]
 = QuickFix Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-quickfix/src/main/docs/quickfix-component.adoc
+:docTitle: QuickFix
+:artifactId: camel-quickfix
+:description: Open a Financial Interchange (FIX) session using an embedded QuickFix/J engine.
+:since: 2.1
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.1*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Quickfix component adapts the
 http://www.quickfixj.org/[QuickFIX/J] FIX engine for using in Camel .
@@ -81,21 +86,20 @@ inject the session-related fields into the FIX message.
 == Options
 
 // component options: START
-The QuickFix component supports 8 options, which are listed below.
+The QuickFix component supports 7 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *messageFactory* (advanced) | To use the given MessageFactory |  | MessageFactory
-| *logFactory* (advanced) | To use the given LogFactory |  | LogFactory
-| *messageStoreFactory* (advanced) | To use the given MessageStoreFactory |  | MessageStoreFactory
-| *configurations* (common) | To use the given map of pre configured QuickFix configurations mapped to the key |  | Map
 | *lazyCreateEngines* (common) | If set to true, the engines will be created and started when needed (when first message is send) | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *logFactory* (advanced) | To use the given LogFactory |  | LogFactory
+| *messageFactory* (advanced) | To use the given MessageFactory |  | MessageFactory
+| *messageStoreFactory* (advanced) | To use the given MessageStoreFactory |  | MessageStoreFactory
 |===
 // component options: END
 
@@ -128,46 +132,12 @@ with the following path and query parameters:
 | *sessionID* (common) | The optional sessionID identifies a specific FIX session. The format of the sessionID is: (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID) |  | SessionID
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-quickfix-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 9 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.quickfix.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.quickfix.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.quickfix.configurations* | To use the given map of pre configured QuickFix configurations mapped to the key |  | Map
-| *camel.component.quickfix.enabled* | Whether to enable auto configuration of the quickfix component. This is enabled by default. |  | Boolean
-| *camel.component.quickfix.lazy-create-engines* | If set to true, the engines will be created and started when needed (when first message is send) | false | Boolean
-| *camel.component.quickfix.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-| *camel.component.quickfix.log-factory* | To use the given LogFactory. The option is a quickfix.LogFactory type. |  | String
-| *camel.component.quickfix.message-factory* | To use the given MessageFactory. The option is a quickfix.MessageFactory type. |  | String
-| *camel.component.quickfix.message-store-factory* | To use the given MessageStoreFactory. The option is a quickfix.MessageStoreFactory type. |  | String
-|===
-// spring-boot-auto-configure options: END
 
 
 == Exchange Format
@@ -590,7 +560,7 @@ initially as a collection of key value pairs data. You can use this
 object or you can use the method 'toString' to retrieve the original FIX
 message.
 
-*Note:* Alternatively, you can use xref:bindy-dataformat.adoc[camel bindy dataformat] to transform the FIX message into your own java POJO
+*Note:* Alternatively, you can use xref:dataformats:bindy-dataformat.adoc[camel bindy dataformat] to transform the FIX message into your own java POJO
 
 When a message must be send to QuickFix, then you must create a
 QuickFix.Message instance.
@@ -627,3 +597,5 @@ Direction : from FIX gateway
 </route>
 ----
 
+
+include::camel-spring-boot::page$quickfix-starter.adoc[]

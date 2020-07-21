@@ -22,7 +22,7 @@ import com.github.dockerjava.api.command.PullImageCmd;
 import com.github.dockerjava.core.command.PullImageResultCallback;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -42,7 +42,7 @@ public class PullImageCmdHeaderTest extends BaseDockerHeaderTest<PullImageCmd> {
     private PullImageResultCallback callback;
     
     @Test
-    public void pullImageHeaderTest() {
+    void pullImageHeaderTest() {
 
         String repository = "docker/empty";
         String tag = "1.0";

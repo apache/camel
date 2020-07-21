@@ -42,26 +42,36 @@ import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.helpers.XPathUtils;
 import org.apache.cxf.staxutils.StaxUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
 
 /**
  * Unit test for exercising MTOM feature of a CxfConsumer in PAYLOAD mode
  */
 @ContextConfiguration
-public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextTests {
+@ExtendWith(SpringExtension.class)
+public class CxfMtomConsumerPayloadModeTest {
+
     static int port = CXFTestSupport.getPort1();
-    
+
+    private static final Logger LOG = LoggerFactory.getLogger(CxfMtomConsumerPayloadModeTest.class);
+
     @Autowired
     protected CamelContext context;
     
     @Test
     public void testConsumer() throws Exception {
-        if (MtomTestHelper.isAwtHeadless(logger, null)) {
+        if (MtomTestHelper.isAwtHeadless(null, LOG)) {
             return;
         }
 
@@ -69,7 +79,7 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
 
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
-                assertEquals("Get a wrong Content-Type header", "application/xop+xml", exchange.getIn().getHeader("Content-Type"));
+                assertEquals("application/xop+xml", exchange.getIn().getHeader("Content-Type"), "Get a wrong Content-Type header");
                 List<Source> elements = new ArrayList<>();
                 elements.add(new DOMSource(StaxUtils.read(new StringReader(getRequestMessage())).getDocumentElement()));
                 CxfPayload<SoapHeader> body = new CxfPayload<>(new ArrayList<SoapHeader>(),
@@ -113,11 +123,11 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
 
             DataHandler dr = exchange.getIn(AttachmentMessage.class).getAttachment(photoId);
             assertEquals("application/octet-stream", dr.getContentType());
-            MtomTestHelper.assertEquals(MtomTestHelper.REQ_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
+            assertArrayEquals(MtomTestHelper.REQ_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
        
             dr = exchange.getIn(AttachmentMessage.class).getAttachment(imageId);
             assertEquals("image/jpeg", dr.getContentType());
-            MtomTestHelper.assertEquals(MtomTestHelper.requestJpeg, IOUtils.readBytesFromStream(dr.getInputStream()));
+            assertArrayEquals(MtomTestHelper.requestJpeg, IOUtils.readBytesFromStream(dr.getInputStream()));
 
             // create response
             List<Source> elements = new ArrayList<>();

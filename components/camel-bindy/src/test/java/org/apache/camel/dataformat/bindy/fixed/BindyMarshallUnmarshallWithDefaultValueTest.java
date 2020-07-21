@@ -26,9 +26,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BindyMarshallUnmarshallWithDefaultValueTest extends CamelTestSupport {
 
@@ -39,11 +40,11 @@ public class BindyMarshallUnmarshallWithDefaultValueTest extends CamelTestSuppor
 
         // check the model
         Order order = mock.getReceivedExchanges().get(0).getIn().getBody(Order.class);
-        Assert.assertEquals(10, order.getOrderNr());
+        assertEquals(10, order.getOrderNr());
         // Default values are set
-        Assert.assertEquals("John", order.getFirstName());
-        Assert.assertEquals("Doe", order.getLastName());
-        Assert.assertEquals("Hello     ", order.getComment());
+        assertEquals("John", order.getFirstName());
+        assertEquals("Doe", order.getLastName());
+        assertEquals("Hello     ", order.getComment());
     }
     
     @Test
@@ -53,11 +54,11 @@ public class BindyMarshallUnmarshallWithDefaultValueTest extends CamelTestSuppor
 
         // check the model
         OrderEol order = mock.getReceivedExchanges().get(0).getIn().getBody(OrderEol.class);
-        Assert.assertEquals(10, order.getOrderNr());
+        assertEquals(10, order.getOrderNr());
         // Default values are set
-        Assert.assertEquals("John", order.getFirstName());
-        Assert.assertEquals("Doe", order.getLastName());
-        Assert.assertEquals("Hello     ", order.getComment());
+        assertEquals("John", order.getFirstName());
+        assertEquals("Doe", order.getLastName());
+        assertEquals("Hello     ", order.getComment());
     }
 
     @Test

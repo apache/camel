@@ -21,6 +21,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -51,13 +52,17 @@ import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * To send and receive messages from a XMPP (chat) server.
+ * Send and receive messages to/from an XMPP chat server.
  */
 @UriEndpoint(firstVersion = "1.0", scheme = "xmpp", title = "XMPP", syntax = "xmpp:host:port/participant", alternativeSyntax = "xmpp:user:password@host:port/participant",
-        label = "chat,messaging")
+        category = {Category.CHAT, Category.MESSAGING})
 public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(XmppEndpoint.class);
 
     private volatile XMPPTCPConnection connection;
     private XmppBinding binding;
@@ -168,7 +173,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         // prepare for creating new connection
         connection = null;
 
-        log.trace("Creating new connection ...");
+        LOG.trace("Creating new connection ...");
         XMPPTCPConnection newConnection = createConnectionInternal();
 
         newConnection.connect();
@@ -178,11 +183,11 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
         if (!newConnection.isAuthenticated()) {
             if (user != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Logging in to XMPP as user: {} on connection: {}", user, getConnectionMessage(newConnection));
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Logging in to XMPP as user: {} on connection: {}", user, getConnectionMessage(newConnection));
                 }
                 if (password == null) {
-                    log.warn("No password configured for user: {} on connection: {}", user, getConnectionMessage(newConnection));
+                    LOG.warn("No password configured for user: {} on connection: {}", user, getConnectionMessage(newConnection));
                 }
 
                 if (createAccount) {
@@ -197,8 +202,8 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
                     }
                 }
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("Logging in anonymously to XMPP on connection: {}", getConnectionMessage(newConnection));
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Logging in anonymously to XMPP on connection: {}", getConnectionMessage(newConnection));
                 }
                 newConnection.login();
             }
@@ -207,7 +212,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         }
 
         // okay new connection was created successfully so assign it as the connection
-        log.debug("Created new connection successfully: {}", newConnection);
+        LOG.debug("Created new connection successfully: {}", newConnection);
         connection = newConnection;
         return connection;
     }

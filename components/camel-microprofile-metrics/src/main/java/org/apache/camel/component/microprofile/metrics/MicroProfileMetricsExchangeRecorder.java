@@ -73,7 +73,7 @@ public class MicroProfileMetricsExchangeRecorder {
                 failuresHandled.inc();
             }
 
-            if (exchange.isExternalRedelivered() != null && exchange.isExternalRedelivered()) {
+            if (exchange.isExternalRedelivered()) {
                 externalRedeliveries.inc();
             }
         } else {

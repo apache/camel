@@ -21,15 +21,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /* 
  * The keystore used in this test it's from https://github.com/nats-io/jnats/tree/master/src/test/resources, in particular
  * the tls_1222.conf file. Running this test will require use the server-cert.pem and server-key.pem in your gnatsd running instance.
  */
-@Ignore("Require a running Nats server")
+@Disabled("Require a running Nats server")
 public class NatsProducerTLSTest extends CamelTestSupport {
    
     @BindToRegistry("ssl")

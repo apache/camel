@@ -23,6 +23,7 @@ import org.apache.camel.Service;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsCamelSubscriber;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConsumer;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsProducer;
+import org.apache.camel.spi.HasCamelContext;
 import org.apache.camel.spi.HasId;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -30,7 +31,7 @@ import org.reactivestreams.Subscriber;
 /**
  * The interface to which any implementation of the reactive-streams engine should comply.
  */
-public interface CamelReactiveStreamsService extends Service, HasId {
+public interface CamelReactiveStreamsService extends Service, HasId, HasCamelContext {
 
     /*
      * Main API methods.

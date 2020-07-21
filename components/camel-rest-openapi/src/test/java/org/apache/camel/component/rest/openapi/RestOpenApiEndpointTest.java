@@ -34,10 +34,11 @@ import io.apicurio.datamodels.openapi.v2.models.Oas20SecurityScheme;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.spi.RestConfiguration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -47,7 +48,7 @@ public class RestOpenApiEndpointTest {
 
     URI endpointUri = URI.create("endpoint.json");
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldComplainForUnknownOperations() throws Exception {
         final CamelContext camelContext = mock(CamelContext.class);
         when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
@@ -57,7 +58,8 @@ public class RestOpenApiEndpointTest {
         final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint("rest-openapi:unknown", "unknown", component,
             Collections.emptyMap());
 
-        endpoint.createProducer();
+        assertThrows(IllegalArgumentException.class,
+            () -> endpoint.createProducer());
     }
 
     @Test
@@ -86,7 +88,7 @@ public class RestOpenApiEndpointTest {
         final RestConfiguration restConfiguration = new RestConfiguration();
 
         final CamelContext camelContext = mock(CamelContext.class);
-        when(camelContext.getRestConfiguration("rest-openapi", true)).thenReturn(restConfiguration);
+        when(camelContext.getRestConfiguration()).thenReturn(restConfiguration);
 
         final Oas20Document openapi = new Oas20Document();
 
@@ -136,7 +138,7 @@ public class RestOpenApiEndpointTest {
         operation.createParameter();
         assertThat(endpoint.determineEndpointParameters(openapi, operation))
             .containsOnly(entry("host", "http://petstore.openapi.io"));
-        
+
 
         component.setComponentName("xyz");
         assertThat(endpoint.determineEndpointParameters(openapi, operation))
@@ -148,7 +150,7 @@ public class RestOpenApiEndpointTest {
         produces.add("application/xml");
         openapi.consumes = consumers;
         openapi.produces = produces;
-                
+
         assertThat(endpoint.determineEndpointParameters(openapi, operation)).containsOnly(
             entry("host", "http://petstore.openapi.io"), entry("producerComponentName", "xyz"),
             entry("consumes", "application/xml"), entry("produces", "application/json"));
@@ -280,14 +282,9 @@ public class RestOpenApiEndpointTest {
     @Test
     public void shouldHonourHostPrecedence() {
         final RestConfiguration globalRestConfiguration = new RestConfiguration();
-
-        final RestConfiguration componentRestConfiguration = new RestConfiguration();
-        final RestConfiguration specificRestConfiguration = new RestConfiguration();
-
         final CamelContext camelContext = mock(CamelContext.class);
+
         when(camelContext.getRestConfiguration()).thenReturn(globalRestConfiguration);
-        when(camelContext.getRestConfiguration("rest-openapi", false)).thenReturn(componentRestConfiguration);
-        when(camelContext.getRestConfiguration("petstore", false)).thenReturn(specificRestConfiguration);
 
         final RestOpenApiComponent component = new RestOpenApiComponent();
         component.setCamelContext(camelContext);
@@ -305,10 +302,6 @@ public class RestOpenApiEndpointTest {
         globalRestConfiguration.setHost("component-rest");
         globalRestConfiguration.setScheme("http");
         assertThat(endpoint.determineHost(openapi)).isEqualTo("http://component-rest");
-
-        specificRestConfiguration.setHost("specific-rest");
-        specificRestConfiguration.setScheme("http");
-        assertThat(endpoint.determineHost(openapi)).isEqualTo("http://specific-rest");
 
         openapi.host = "specification";
         openapi.schemes = Arrays.asList("http");
@@ -338,7 +331,7 @@ public class RestOpenApiEndpointTest {
         apiKeys.in = "header";
         openapi.securityDefinitions = openapi.createSecurityDefinitions();
         openapi.securityDefinitions.addItem("apiKeys", apiKeys);
-        
+
         final Oas20Operation operation = new Oas20Operation("get");
         Oas20Parameter oas20Parameter = new Oas20Parameter("q");
         oas20Parameter.in = "query";
@@ -347,8 +340,8 @@ public class RestOpenApiEndpointTest {
         SecurityRequirement securityRequirement =  operation.createSecurityRequirement();
         securityRequirement.addSecurityRequirementItem("apiKeys", Collections.emptyList());
         operation.addSecurityRequirement(securityRequirement);
-        
-        
+
+
         assertThat(endpoint.determineEndpointParameters(openapi, operation))
             .containsOnly(entry("host", "http://petstore.openapi.io"), entry("queryParameters", "q={q}"));
 
@@ -383,12 +376,13 @@ public class RestOpenApiEndpointTest {
         assertThat(RestOpenApiEndpoint.pickBestScheme(null, null)).isNull();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldRaiseExceptionsForMissingSpecifications() throws IOException {
         final CamelContext camelContext = mock(CamelContext.class);
         when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
 
-        RestOpenApiEndpoint.loadSpecificationFrom(camelContext, URI.create("non-existant.json"));
+        assertThrows(IllegalArgumentException.class,
+            () -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, URI.create("non-existant.json")));
     }
 
     @Test

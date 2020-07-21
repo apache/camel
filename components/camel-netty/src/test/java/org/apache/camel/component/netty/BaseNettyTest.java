@@ -24,10 +24,10 @@ import io.netty.util.ResourceLeakDetector;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.logging.log4j.core.LogEvent;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,23 +35,24 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class BaseNettyTest extends CamelTestSupport {
-    protected static final Logger LOG = LoggerFactory.getLogger(BaseNettyTest.class);
+
+    private static final Logger LOG = LoggerFactory.getLogger(BaseNettyTest.class);
 
     private static volatile int port;
 
-    @BeforeClass
+    @BeforeAll
     public static void initPort() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startLeakDetection() {
         System.setProperty("io.netty.leakDetection.maxRecords", "100");
         System.setProperty("io.netty.leakDetection.acquireAndReleaseOnly", "true");
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
     }
 
-    @AfterClass
+    @AfterAll
     public static void verifyNoLeaks() throws Exception {
         // Force GC to bring up leaks
         System.gc();

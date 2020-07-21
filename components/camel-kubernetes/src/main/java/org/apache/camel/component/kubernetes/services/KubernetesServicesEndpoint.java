@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kubernetes.services;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -24,10 +25,9 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The Kubernetes Services component provides a producer to execute
- * service operations and a consumer to consume service events.
+ * Perform operations on Kubernetes Services and get notified on Service changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-services", title = "Kubernetes Services", syntax = "kubernetes-services:masterUrl", label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-services", title = "Kubernetes Services", syntax = "kubernetes-services:masterUrl", category = {Category.CONTAINER, Category.CLOUD, Category.PAAS})
 public class KubernetesServicesEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesServicesEndpoint(String uri, KubernetesServicesComponent component, KubernetesConfiguration config) {

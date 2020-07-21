@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
@@ -37,7 +38,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Represents an endpoint which is registered to a Service Registry such as Consul, Etcd.
+ * Register a Camel endpoint to a Service Registry (such as Consul, Etcd) and delegate to it.
  */
 @ManagedResource(description = "Managed Service Endpoint")
 @UriEndpoint(
@@ -47,7 +48,7 @@ import org.apache.camel.support.DefaultEndpoint;
     consumerOnly = true,
     title = "Service",
     lenientProperties = true,
-    label = "cloud")
+    category = {Category.CLOUD})
 public class ServiceEndpoint extends DefaultEndpoint implements DelegateEndpoint {
     private final Endpoint delegateEndpoint;
     private final ServiceRegistry serviceRegistry;
@@ -98,7 +99,7 @@ public class ServiceEndpoint extends DefaultEndpoint implements DelegateEndpoint
     @Override
     public boolean isLenientProperties() {
         return true;
-    } 
+    }
 
     private ServiceDefinition computeServiceDefinition(CamelContext context, Endpoint delegateEndpoint) {
         Map<String, String> parameters = new HashMap<>();

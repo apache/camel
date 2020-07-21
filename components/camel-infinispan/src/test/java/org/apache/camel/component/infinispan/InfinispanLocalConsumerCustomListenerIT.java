@@ -20,7 +20,7 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class InfinispanLocalConsumerCustomListenerIT extends InfinispanTestSupport {
     private static final String CUSTOM_CACHE_NAME = "customCacheName";

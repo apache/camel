@@ -60,28 +60,28 @@ public class KubernetesPodsProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_PODS_OPERATION:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_PODS_OPERATION:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_PODS_BY_LABELS_OPERATION:
-            doListPodsByLabel(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_PODS_BY_LABELS_OPERATION:
+                doListPodsByLabel(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_POD_OPERATION:
-            doGetPod(exchange, operation);
-            break;
+            case KubernetesOperations.GET_POD_OPERATION:
+                doGetPod(exchange, operation);
+                break;
 
-        case KubernetesOperations.CREATE_POD_OPERATION:
-            doCreatePod(exchange, operation);
-            break;
+            case KubernetesOperations.CREATE_POD_OPERATION:
+                doCreatePod(exchange, operation);
+                break;
 
-        case KubernetesOperations.DELETE_POD_OPERATION:
-            doDeletePod(exchange, operation);
-            break;
+            case KubernetesOperations.DELETE_POD_OPERATION:
+                doDeletePod(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 

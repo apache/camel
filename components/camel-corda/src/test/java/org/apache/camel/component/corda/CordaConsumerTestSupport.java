@@ -24,12 +24,10 @@ import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.node.services.vault.Sort;
 import net.corda.core.node.services.vault.SortAttribute;
 import org.apache.camel.BindToRegistry;
-import org.junit.Ignore;
 
 import static net.corda.core.node.services.vault.QueryCriteriaUtils.DEFAULT_PAGE_NUM;
 import static net.corda.core.node.services.vault.QueryCriteriaUtils.MAX_PAGE_SIZE;
 
-@Ignore("This integration test requires a locally running corda node such cordapp-template-java")
 public class CordaConsumerTestSupport extends CordaTestSupport {
 
     @Override

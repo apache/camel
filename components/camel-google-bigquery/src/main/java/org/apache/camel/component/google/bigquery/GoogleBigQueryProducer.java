@@ -27,11 +27,15 @@ import com.google.api.services.bigquery.model.TableDataInsertAllResponse;
 import com.google.api.services.bigquery.model.TableRow;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generic BigQuery Producer
  */
 public class GoogleBigQueryProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GoogleBigQueryProducer.class);
 
     private final GoogleBigQueryConfiguration configuration;
     private Bigquery bigquery;
@@ -110,7 +114,7 @@ public class GoogleBigQueryProducer extends DefaultProducer {
         }
 
         if (totalProcessed == 0) {
-            log.debug("The incoming message is either null or empty for exchange {}", exchange.getExchangeId());
+            LOG.debug("The incoming message is either null or empty for exchange {}", exchange.getExchangeId());
         }
     }
 
@@ -149,8 +153,8 @@ public class GoogleBigQueryProducer extends DefaultProducer {
             apiRequest.set("template_suffix", suffix);
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("Sending {} messages to bigquery table {}, suffix {}, partition {}",
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Sending {} messages to bigquery table {}, suffix {}, partition {}",
                     apiRequestRows.size(), tableId, suffix, partitionDecorator);
         }
 
@@ -160,12 +164,12 @@ public class GoogleBigQueryProducer extends DefaultProducer {
             throw new Exception("InsertAll into " + tableId + " failed: " + apiResponse.getInsertErrors());
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("Sent {} messages to bigquery table {}, suffix {}, partition {}",
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Sent {} messages to bigquery table {}, suffix {}, partition {}",
                 apiRequestRows.size(), tableId, suffix, partitionDecorator);
         }
-        if (log.isDebugEnabled()) {
-            log.debug("uploader thread/id: {} / {} . api call completed.", Thread.currentThread().getId(), exchangeId);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("uploader thread/id: {} / {} . api call completed.", Thread.currentThread().getId(), exchangeId);
         }
         return apiRequestData.size();
     }

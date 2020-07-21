@@ -17,8 +17,11 @@
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class CxfMultipleConsumersSupportTest extends CamelTestSupport {
     protected static int port1 = CXFTestSupport.getPort1(); 

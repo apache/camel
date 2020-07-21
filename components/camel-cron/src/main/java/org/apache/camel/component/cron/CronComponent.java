@@ -28,7 +28,7 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The Camel cron component.
+ * Another Camel cron component.
  */
 @Component("cron")
 public class CronComponent extends DefaultComponent {
@@ -60,7 +60,7 @@ public class CronComponent extends DefaultComponent {
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         initCamelCronService();
     }
 

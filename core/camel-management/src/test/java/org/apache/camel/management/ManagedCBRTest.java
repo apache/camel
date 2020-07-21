@@ -20,7 +20,9 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -38,28 +40,28 @@ public class ManagedCBRTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route\"");
-        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
 
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"task-a\"");
-        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
 
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"choice\"");
-        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
 
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"task-b\"");
-        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
         
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"task-c\"");
-        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
 
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"task-d\"");
-        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
 
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"task-e\"");
-        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
 
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"task-done\"");
-        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
     }
 
     @Override

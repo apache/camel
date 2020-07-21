@@ -30,4 +30,4 @@ The following is an example of what it looks like:
 ----
 
 For more usage examples see the
-xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns].
+xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns].

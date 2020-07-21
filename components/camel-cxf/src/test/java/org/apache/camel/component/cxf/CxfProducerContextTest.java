@@ -28,7 +28,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.message.Message;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 // We use context to change the producer's endpoint address here
 public class CxfProducerContextTest extends CxfProducerTest {
@@ -47,7 +50,7 @@ public class CxfProducerContextTest extends CxfProducerTest {
         // request context from the Camel exchange
         assertNotNull(exchange);
         String actualValue = (String)exchange.getProperties().get(TEST_KEY);
-        assertEquals("exchange property should get propagated to the request context", TEST_VALUE, actualValue);
+        assertEquals(TEST_VALUE, actualValue, "exchange property should get propagated to the request context");
     }
 
     @Override   

@@ -31,6 +31,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.cxf.binding.soap.SoapHeader;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
         
     protected static final String ECHO_RESPONSE = "<ns1:echoResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
@@ -49,11 +51,11 @@ public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
     protected void checkRequest(String expect, String request) {
         //REVIST use a more reliable comparison to tolerate some namespaces being added to the root element
         if (expect.equals("ECHO_REQUEST")) {
-            assertTrue("Get a wrong request", request.startsWith(ECHO_REQUEST.substring(0, 60)) 
-                       && request.endsWith(ECHO_REQUEST.substring(61)));
+            assertTrue(request.startsWith(ECHO_REQUEST.substring(0, 60))
+                       && request.endsWith(ECHO_REQUEST.substring(61)), "Get a wrong request");
         } else {
-            assertTrue("Get a wrong request", request.startsWith(ECHO_BOOLEAN_REQUEST.substring(0, 67)) 
-                       && request.endsWith(ECHO_BOOLEAN_REQUEST.substring(68)));
+            assertTrue(request.startsWith(ECHO_BOOLEAN_REQUEST.substring(0, 67))
+                       && request.endsWith(ECHO_BOOLEAN_REQUEST.substring(68)), "Get a wrong request");
         }
     }
 

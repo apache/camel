@@ -28,7 +28,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
@@ -45,9 +45,9 @@ import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
 public class CMISTestSupport extends CamelTestSupport {
     protected static final String CMIS_ENDPOINT_TEST_SERVER
@@ -70,7 +70,7 @@ public class CMISTestSupport extends CamelTestSupport {
         return exchange;
     }
 
-    protected CmisObject retrieveCMISObjectByIdFromServer(String nodeId) throws Exception {
+    protected CmisObject retrieveCMISObjectByIdFromServer(String nodeId) {
         Session session = createSession();
         return session.getObject(nodeId);
     }
@@ -147,7 +147,7 @@ public class CMISTestSupport extends CamelTestSupport {
         return newFolder.createDocument(properties, contentStream, VersioningState.NONE);
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startServer() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
         cmisServer = new Server(port);
@@ -155,13 +155,13 @@ public class CMISTestSupport extends CamelTestSupport {
         cmisServer.start();
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopServer() throws Exception {
         cmisServer.stop();
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteAllContent();
         super.setUp();

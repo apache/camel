@@ -24,6 +24,7 @@ import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
 import org.apache.camel.component.braintree.internal.BraintreeApiName;
 import org.apache.camel.component.braintree.internal.BraintreeLogHandler;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -34,6 +35,7 @@ import org.apache.camel.util.ObjectHelper;
  * Component configuration for Braintree component.
  */
 @UriParams
+@Configurer
 public class BraintreeConfiguration {
     private static final String ENVIRONMENT = "environment";
     private static final String MERCHANT_ID = "merchant_id";
@@ -49,41 +51,29 @@ public class BraintreeConfiguration {
 
     @UriParam
     private String environment;
-
     @UriParam
     private String merchantId;
 
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String publicKey;
-
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String privateKey;
-
-    @UriParam
-    @Metadata(label = "advanced")
+    @UriParam(label = "security", secret = true)
     private String accessToken;
 
-    @UriParam
-    @Metadata(label = "proxy")
+    @UriParam(label = "proxy")
     private String proxyHost;
-
-    @UriParam
-    @Metadata(label = "proxy")
+    @UriParam(label = "proxy")
     private Integer proxyPort;
 
-    @UriParam(javaType = "java.lang.String")
-    @Metadata(label = "advanced,logging")
-    private Level httpLogLevel;
-
-    @Metadata(label = "advanced,logging")
+    @UriParam(label = "logging", enums = "OFF,SEVERE,WARNING,INFO,CONFIG,FINE,FINER,FINEST,ALL")
+    private String httpLogLevel;
+    @UriParam(label = "logging", defaultValue = "Braintree")
     private String httpLogName;
-
-    @UriParam(defaultValue = "true")
-    @Metadata(label = "advanced,logging")
+    @UriParam(label = "logging", defaultValue = "true")
     private boolean logHandlerEnabled = true;
 
-    @UriParam
-    @Metadata(label = "advanced")
+    @UriParam(label = "advanced")
     private Integer httpReadTimeout;
 
     public BraintreeApiName getApiName() {
@@ -186,7 +176,7 @@ public class BraintreeConfiguration {
         this.proxyPort = proxyPort;
     }
 
-    public Level getHttpLogLevel() {
+    public String getHttpLogLevel() {
         return httpLogLevel;
     }
 
@@ -194,13 +184,6 @@ public class BraintreeConfiguration {
      * Set logging level for http calls, @see java.util.logging.Level
      */
     public void setHttpLogLevel(String httpLogLevel) {
-        this.httpLogLevel = Level.parse(httpLogLevel);
-    }
-
-    /**
-     * Set logging level for http calls, @see java.util.logging.Level
-     */
-    public void setHttpLogLevel(Level httpLogLevel) {
         this.httpLogLevel = httpLogLevel;
     }
 
@@ -209,7 +192,7 @@ public class BraintreeConfiguration {
     }
 
     /**
-     * Set log category to use to log http calls, default "Braintree"
+     * Set log category to use to log http calls.
      */
     public void setHttpLogName(String httpLogName) {
         this.httpLogName = httpLogName;
@@ -303,7 +286,7 @@ public class BraintreeConfiguration {
         }
 
         if (httpLogLevel != null) {
-            logger.setLevel(httpLogLevel);
+            logger.setLevel(Level.parse(httpLogLevel));
         }
 
         gateway.getConfiguration().setLogger(logger);

@@ -49,9 +49,8 @@ public final class RabbitMQConstants {
     public static final String RABBITMQ_QUEUE_MAX_PRIORITY_KEY = "x-max-priority";
     public static final String RABBITMQ_QUEUE_MESSAGE_TTL_KEY = "x-message-ttl";
     public static final String RABBITMQ_QUEUE_TTL_KEY = "x-expires";
-    
 
     private RabbitMQConstants() {
-        //Constants class
+        // Constants class
     }
 }

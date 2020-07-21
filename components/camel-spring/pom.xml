@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-spring</artifactId>
@@ -32,6 +32,13 @@
     <name>Camel :: Spring</name>
     <description>Camel Spring with XML DSL</description>
 
+    <properties>
+        <camel.osgi.import>
+            javax.xml.bind*;version="[2.2,3.0)",
+            *
+        </camel.osgi.import>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -39,7 +46,19 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xml-jaxb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xml-jaxp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-bean</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-health</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -85,8 +104,13 @@
 
         <!-- for testing -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -111,7 +135,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>
+            <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -139,16 +163,6 @@
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
             <scope>test</scope>
         </dependency>
         <!-- todo: remove log4j 1.x logging if possible -->
@@ -195,9 +209,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.woodstox</groupId>
-            <artifactId>woodstox-core-asl</artifactId>
-            <version>${woodstox-version}</version>
+            <groupId>com.fasterxml.woodstox</groupId>
+            <artifactId>woodstox-core</artifactId>
+            <version>${woodstox-core-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -213,15 +227,6 @@
                     <exclude>**/*.class</exclude>
                 </excludes>
             </resource>
-            <!--
-            <resource>
-              <directory>src/main/resources</directory>
-              <includes>
-                <include>**/*</include>
-              </includes>
-              <filtering>true</filtering>
-            </resource>
-            -->
         </resources>
         <pluginManagement>
             <plugins>
@@ -288,7 +293,7 @@
                 <artifactId>jaxb2-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>generate schema</id>
+                        <id>generate-schema</id>
                         <phase>generate-test-sources</phase>
                         <goals>
                             <goal>schemagen</goal>
@@ -312,20 +317,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-package-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <executions>
-                    <execution>
-                        <id>jaxb-list</id>
-                        <goals>
-                            <goal>generate-jaxb-list</goal>
-                        </goals>
-                        <phase>process-classes</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
@@ -347,8 +338,8 @@
 
             <!-- Push the execution order of the maven-bundle-plugin further to the end. That's why we add it here again. -->
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-bundle-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>bundle-manifest</id>
@@ -367,6 +358,62 @@
                 </configuration>
             </plugin>
 
+            <!-- unpack sources which are needed for the scheme generator -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.2</version>
+                <executions>
+                    <execution>
+                        <id>process-sources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-api</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <classifier>sources</classifier>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/sources/camel-api</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-core-engine</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <classifier>sources</classifier>
+                                    <overWrite>true</overWrite>
+                                    <excludes>**/*nDefinitionConfigurer.java</excludes>
+                                    <outputDirectory>target/sources/camel-core-engine</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-core-xml</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <classifier>sources</classifier>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/sources/camel-core-xml</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-util</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <classifier>sources</classifier>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/sources/camel-util</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -409,11 +456,11 @@
                                         <include name="org/apache/camel/spring/package-info.java" />
                                         <include name="org/apache/camel/util/spring/**/*.java" />
                                     </fileset>
-                                    <fileset dir="${basedir}/../../core/camel-core-xml/src/main/java">
+                                    <fileset dir="${project.build.directory}/sources/camel-core-xml">
                                         <include name="org/apache/camel/core/xml/*.java" />
                                         <include name="org/apache/camel/core/xml/util/**/*.java" />
                                     </fileset>
-                                    <fileset dir="${basedir}/../../core/camel-api/src/main/java">
+                                    <fileset dir="${project.build.directory}/sources/camel-api">
                                         <include name="org/apache/camel/ExchangePattern.java" />
                                         <include name="org/apache/camel/LoggingLevel.java" />
                                         <include name="org/apache/camel/ManagementStatisticsLevel.java" />
@@ -421,31 +468,14 @@
                                         <include name="org/apache/camel/ShutdownRunningTask.java" />
                                         <include name="org/apache/camel/WaitForTaskToComplete.java" />
                                     </fileset>
-                                    <fileset dir="${basedir}/../../core/camel-core-engine/src/main/java">
+                                    <fileset dir="${project.build.directory}/sources/camel-core-engine">
                                         <include name="org/apache/camel/model/**/*.java" />
                                         <include name="org/apache/camel/package-info.java" />
                                     </fileset>
-                                    <fileset dir="${basedir}/../../core/camel-util/src/main/java">
+                                    <fileset dir="${project.build.directory}/sources/camel-util">
                                         <include name="org/apache/camel/concurrent/ThreadPoolRejectedPolicy.java" />
                                     </fileset>
                                 </copy>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>include-sources</id>
-                        <phase>package</phase>
-                        <configuration>
-                            <target>
-                                <echo>Including source code from camel-core-xml in the camel-spring-sources.jar</echo>
-                                <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar" update="true">
-                                    <fileset dir="${basedir}/../../core/camel-core-osgi/src/main/java" includes="**/*" />
-                                    <fileset dir="${basedir}/../../core/camel-core-xml/src/main/java" includes="**/*" />
-                                    <fileset dir="${basedir}/src/main/java" includes="**/*" />
-                                </jar>
                             </target>
                         </configuration>
                         <goals>
@@ -532,7 +562,6 @@
                 </executions>
             </plugin>
 
-            <!-- add the sources from camel-core-osgi and camel-core-xml as source code in the camel-spring-sources.jar -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -551,6 +580,21 @@
                                 </artifact>
                             </artifacts>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- generate sources JAR by default as this is needed by camel-blueprint -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -594,6 +638,7 @@
                     </links>
                     <linksource>true</linksource>
                     <maxmemory>256m</maxmemory>
+                    <isOffline>${camel.javadoc.offline}</isOffline>
 
                     <groups>
                         <group>
@@ -661,6 +706,7 @@
                                 <link>http://download.oracle.com/javaee/7/api/</link>
                                 <link>http://static.springsource.org/spring/docs/${spring-version}/javadoc-api/</link>
                             </links>
+                            <isOffline>${camel.javadoc.offline}</isOffline>
                             <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
                             <linksource>true</linksource>
                             <source>${jdk.version}</source>

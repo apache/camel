@@ -20,14 +20,14 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Session;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JmsClientAckTest extends CamelTestSupport {
 
@@ -59,17 +59,14 @@ public class JmsClientAckTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:foo")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                JmsMessage jms = exchange.getIn(JmsMessage.class);
-                                assertNotNull(jms);
-                                Session session = jms.getJmsSession();
-                                assertNotNull("Should have JMS session", session);
+                        .process(exchange -> {
+                            JmsMessage jms = exchange.getIn(JmsMessage.class);
+                            assertNotNull(jms);
+                            Session session = jms.getJmsSession();
+                            assertNotNull(session, "Should have JMS session");
 
-                                assertEquals("Should be client ACK mode", Session.CLIENT_ACKNOWLEDGE, session.getAcknowledgeMode());
-                                jms.getJmsMessage().acknowledge();
-                            }
+                            assertEquals(Session.CLIENT_ACKNOWLEDGE, session.getAcknowledgeMode(), "Should be client ACK mode");
+                            jms.getJmsMessage().acknowledge();
                         })
                         .to("mock:result");
             }

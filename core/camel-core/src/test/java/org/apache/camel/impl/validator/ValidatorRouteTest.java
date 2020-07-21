@@ -35,9 +35,11 @@ import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * A ValidatorRouteTest demonstrates contract based declarative validation via
@@ -148,7 +150,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         public void validate(Message message, DataType type) throws ValidationException {
             message.getExchange().setProperty(VALIDATOR_INVOKED, OtherXOrderValidator.class);
             assertEquals("name=XOrder", message.getBody());
-            log.info("Java validation: other XOrder");
+            LOG.info("Java validation: other XOrder");
         }
     }
 
@@ -157,7 +159,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         public void validate(Message message, DataType type) throws ValidationException {
             message.getExchange().setProperty(VALIDATOR_INVOKED, OtherXOrderResponseValidator.class);
             assertEquals("name=XOrderResponse", message.getBody());
-            log.info("Java validation: other XOrderResponse");
+            LOG.info("Java validation: other XOrderResponse");
         }
     }
 

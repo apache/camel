@@ -31,7 +31,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.support.jndi.ExampleBean;
 import org.apache.camel.util.AnotherExampleBean;
 import org.apache.camel.util.OtherExampleBean;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for IntrospectionSupport

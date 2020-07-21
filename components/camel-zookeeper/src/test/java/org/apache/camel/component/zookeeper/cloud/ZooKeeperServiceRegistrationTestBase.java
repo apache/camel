@@ -23,7 +23,7 @@ import java.util.UUID;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDefinition;
-import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
+import org.apache.camel.component.zookeeper.ZooKeeperContainer;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.curator.framework.CuratorFramework;
@@ -43,9 +43,8 @@ public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupp
     protected static final String SERVICE_HOST = "localhost";
     protected static final String SERVICE_PATH = "/camel";
     protected static final int SERVICE_PORT = AvailablePortFinder.getNextAvailable();
-    protected static final int SERVER_PORT = AvailablePortFinder.getNextAvailable();
 
-    protected ZooKeeperTestSupport.TestZookeeperServer server;
+    protected ZooKeeperContainer container;
     protected CuratorFramework curator;
     protected ServiceDiscovery<ZooKeeperServiceRegistry.MetaData> discovery;
 
@@ -57,11 +56,11 @@ public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupp
     protected void doPreSetup() throws Exception {
         super.doPreSetup();
 
-        server = new ZooKeeperTestSupport.TestZookeeperServer(SERVER_PORT, true);
-        ZooKeeperTestSupport.waitForServerUp("127.0.0.1:" + SERVER_PORT, 1000);
+        container = new ZooKeeperContainer();
+        container.start();
 
         curator = CuratorFrameworkFactory.builder()
-            .connectString("127.0.0.1:" + SERVER_PORT)
+            .connectString(container.getConnectionString())
             .retryPolicy(new ExponentialBackoffRetry(1000, 3))
             .build();
 
@@ -83,7 +82,9 @@ public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupp
         CloseableUtils.closeQuietly(discovery);
         CloseableUtils.closeQuietly(curator);
 
-        server.shutdown();
+        if (container != null) {
+            container.stop();
+        }
     }
 
 
@@ -98,7 +99,7 @@ public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupp
         ZooKeeperServiceRegistry registry = new ZooKeeperServiceRegistry();
         registry.setId(context.getUuidGenerator().generateUuid());
         registry.setCamelContext(context());
-        registry.setNodes("localhost:" + SERVER_PORT);
+        registry.setNodes(container.getConnectionString());
         registry.setBasePath(SERVICE_PATH);
         registry.setServiceHost(SERVICE_HOST);
         registry.setOverrideServiceHost(true);

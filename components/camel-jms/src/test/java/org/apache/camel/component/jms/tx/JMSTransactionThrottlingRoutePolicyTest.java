@@ -17,10 +17,12 @@
 package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class JMSTransactionThrottlingRoutePolicyTest extends CamelSpringTestSupport {
 
@@ -33,7 +35,7 @@ public class JMSTransactionThrottlingRoutePolicyTest extends CamelSpringTestSupp
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("activemq-data");
         super.setUp();

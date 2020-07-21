@@ -24,6 +24,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.kms.AWSKMS;
 import com.amazonaws.services.kms.AWSKMSClientBuilder;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -34,9 +35,9 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-kms is used for managing Amazon KMS
+ * Manage keys stored in AWS KMS instances.
  */
-@UriEndpoint(firstVersion = "2.21.0", scheme = "aws-kms", title = "AWS KMS", syntax = "aws-kms:label", producerOnly = true, label = "cloud,management")
+@UriEndpoint(firstVersion = "2.21.0", scheme = "aws-kms", title = "AWS Key Management Service (KMS)", syntax = "aws-kms:label", producerOnly = true, category = {Category.CLOUD, Category.MESSAGING})
 public class KMSEndpoint extends ScheduledPollEndpoint {
 
     private AWSKMS kmsClient;
@@ -65,7 +66,7 @@ public class KMSEndpoint extends ScheduledPollEndpoint {
 
         kmsClient = configuration.getKmsClient() != null ? configuration.getKmsClient() : createKMSClient();
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getKmsClient())) {

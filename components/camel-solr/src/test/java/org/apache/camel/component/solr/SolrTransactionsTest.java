@@ -54,6 +54,20 @@ public class SolrTransactionsTest extends SolrComponentTestSupport {
     }
 
     @Test
+    public void testSoftCommit() throws Exception {
+
+        //insert and verify
+        solrInsertTestEntry();
+        assertEquals("wrong number of entries found", 0, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound());
+
+        //commit
+        template.sendBodyAndHeader("direct:start", null, SolrConstants.OPERATION, SolrConstants.OPERATION_SOFT_COMMIT);
+
+        //verify exists after commit
+        assertEquals("wrong number of entries found", 1, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound());
+    }
+
+    @Test
     public void testRollback() throws Exception {
 
         if (SolrFixtures.TestServerType.USE_CLOUD == this.solrServerType) {

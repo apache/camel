@@ -23,7 +23,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -38,7 +40,7 @@ public class RoutingSlipContextScopedOnExceptionIssueTest extends ContextTestSup
                 onException(Exception.class).handled(true).process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        String routeId = exchange.getUnitOfWork().getRouteContext().getRouteId();
+                        String routeId = exchange.getUnitOfWork().getRoute().getRouteId();
                         assertEquals("fail", routeId);
                     }
                 }).to("mock:error");
@@ -82,7 +84,7 @@ public class RoutingSlipContextScopedOnExceptionIssueTest extends ContextTestSup
                 onException(Exception.class).handled(true).process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        String routeId = exchange.getUnitOfWork().getRouteContext().getRouteId();
+                        String routeId = exchange.getUnitOfWork().getRoute().getRouteId();
                         assertEquals("fail", routeId);
                     }
                 }).to("mock:error");

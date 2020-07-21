@@ -57,10 +57,10 @@ public class SmppQuerySmCommandTest {
         
         command.execute(exchange);
         
-        assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
-        assertEquals("DELIVERED", exchange.getOut().getHeader(SmppConstants.MESSAGE_STATE));
-        assertEquals((byte) 0, exchange.getOut().getHeader(SmppConstants.ERROR));
-        assertNotNull(exchange.getOut().getHeader(SmppConstants.FINAL_DATE));
+        assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
+        assertEquals("DELIVERED", exchange.getMessage().getHeader(SmppConstants.MESSAGE_STATE));
+        assertEquals((byte) 0, exchange.getMessage().getHeader(SmppConstants.ERROR));
+        assertNotNull(exchange.getMessage().getHeader(SmppConstants.FINAL_DATE));
     }
     
     @Test
@@ -76,9 +76,9 @@ public class SmppQuerySmCommandTest {
         
         command.execute(exchange);
         
-        assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
-        assertEquals("DELIVERED", exchange.getOut().getHeader(SmppConstants.MESSAGE_STATE));
-        assertEquals((byte) 0, exchange.getOut().getHeader(SmppConstants.ERROR));
-        assertNotNull(exchange.getOut().getHeader(SmppConstants.FINAL_DATE));
+        assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
+        assertEquals("DELIVERED", exchange.getMessage().getHeader(SmppConstants.MESSAGE_STATE));
+        assertEquals((byte) 0, exchange.getMessage().getHeader(SmppConstants.ERROR));
+        assertNotNull(exchange.getMessage().getHeader(SmppConstants.FINAL_DATE));
     }
 }

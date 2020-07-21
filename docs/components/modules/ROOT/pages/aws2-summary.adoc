@@ -1,0 +1,16 @@
+= AWS2 Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-aws2-cw/src/main/docs/aws2-summary.adoc
+:docTitle: AWS 2
+
+The *aws2-* component allows you to work with the
+https://aws.amazon.com/[AWS 2].
+AWS 2 offers a great palette of different components like cloudwatch, DynamoDB streams, 
+storage service, email and queue services. The main reason to use AWS is its cloud computing platform.
+
+
+== {docTitle} components
+
+See the following for usage of each component:
+
+indexDescriptionList::[attributes='group={docTitle}',descAttribute=description]

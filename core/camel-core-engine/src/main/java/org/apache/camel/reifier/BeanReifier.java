@@ -17,39 +17,32 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.BeanScope;
-import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.BeanProcessorFactory;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
 
 public class BeanReifier extends ProcessorReifier<BeanDefinition> {
 
-    public BeanReifier(ProcessorDefinition<?> definition) {
-        super(BeanDefinition.class.cast(definition));
+    public BeanReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, BeanDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        CamelContext camelContext = routeContext.getCamelContext();
-
+    public Processor createProcessor() throws Exception {
         Object bean = definition.getBean();
-        String ref = definition.getRef();
-        String method = definition.getMethod();
-        String beanType = definition.getBeanType();
+        String ref = parseString(definition.getRef());
+        String method = parseString(definition.getMethod());
+        String beanType = parseString(definition.getBeanType());
         Class<?> beanClass = definition.getBeanClass();
 
         BeanProcessorFactory fac = camelContext.adapt(ExtendedCamelContext.class).getBeanProcessorFactory();
-        if (fac == null) {
-            throw new IllegalStateException("Cannot find BeanProcessorFactory. Make sure camel-bean is on the classpath.");
-        }
         // use singleton as default scope
         BeanScope scope = BeanScope.Singleton;
         if (definition.getScope() != null) {
-            scope = CamelContextHelper.parse(routeContext.getCamelContext(), BeanScope.class, definition.getScope());
+            scope = parse(BeanScope.class, definition.getScope());
         }
         return fac.createBeanProcessor(camelContext, bean, beanType, beanClass, ref, method, scope);
     }

@@ -21,10 +21,12 @@ import javax.xml.transform.Source;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.xslt.XsltUriResolver;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class XsltUriResolverTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+public class XsltUriResolverTest {
 
     @Test
     public void testResolveUri() throws Exception {

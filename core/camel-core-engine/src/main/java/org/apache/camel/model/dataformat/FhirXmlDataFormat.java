@@ -23,8 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The FHIR XML data format is used to marshall/unmarshall from/to FHIR objects
- * to/from XML.
+ * Marshall and unmarshall FHIR objects to/from XML.
  */
 @Metadata(firstVersion = "2.21.0", label = "dataformat,transformation,hl7,xml", title = "FHIR XML")
 @XmlRootElement(name = "fhirXml")

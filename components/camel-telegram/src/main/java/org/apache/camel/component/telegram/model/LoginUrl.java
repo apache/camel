@@ -22,7 +22,6 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
 /**
  * Represents a parameter of the inline keyboard button used to automatically authorize a user.
  */

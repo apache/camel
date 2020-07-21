@@ -18,7 +18,9 @@ package org.apache.camel.component.stream;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StreamGroupLinesLastStrategyTest extends StreamGroupLinesStrategyTest {
     
@@ -36,11 +38,11 @@ public class StreamGroupLinesLastStrategyTest extends StreamGroupLinesStrategyTe
         assertMockEndpointsSatisfied();
 
         Object result = mock.getExchanges().get(0).getIn().getBody();
-        assertEquals("Get a wrong result.", "A" + LS + "B" + LS + "C" + LS + "D" + LS, result);
+        assertEquals("A" + LS + "B" + LS + "C" + LS + "D" + LS, result, "Get a wrong result.");
 
         // we did not have 4 lines but since its the last it was triggered anyway
         Object result2 = mock.getExchanges().get(1).getIn().getBody();
-        assertEquals("Get a wrong result.", "E" + LS + "F" + LS, result2);
+        assertEquals("E" + LS + "F" + LS, result2, "Get a wrong result.");
     }
 
     @Override

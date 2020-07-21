@@ -24,9 +24,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.base.cookie.ExchangeCookieHandler;
 import org.apache.camel.http.base.cookie.InstanceCookieHandler;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class UndertowHttpProducerSessionTest extends CamelTestSupport {
     private static volatile int port;
@@ -37,7 +37,7 @@ public class UndertowHttpProducerSessionTest extends CamelTestSupport {
     @BindToRegistry("exchangeCookieHandler")
     private ExchangeCookieHandler exchangeCookieHandler = new ExchangeCookieHandler();
 
-    @BeforeClass
+    @BeforeAll
     public static void initPort() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
     }

@@ -76,7 +76,7 @@ the Camel Components
 correlate together the purchase order and invoice messages which can be
 any Expression via any of the
 Languages Supported. In this case we are
-using xref:components::xpath-language.adoc[XPath].
+using xref:components:languages:xpath-language.adoc[XPath].
 
 Then the final line of code defines the temporal rules to use; namely
 that it is considered to be an error if an invoice is not received

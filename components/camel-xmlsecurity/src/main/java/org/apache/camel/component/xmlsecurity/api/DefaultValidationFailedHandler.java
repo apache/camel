@@ -46,13 +46,13 @@ public class DefaultValidationFailedHandler implements ValidationFailedHandler {
     }
 
     @Override
-    public void signatureValueValidationFailed(SignatureValue value) throws Exception { //NOPMD
+    public void signatureValueValidationFailed(SignatureValue value) throws Exception {
         error.append("The signature value could not be validated by the public key. Either the message has been tampered with or the public key is not correct.");
         throw new XmlSignatureInvalidValueException(error.toString());
     }
 
     @Override
-    public void referenceValidationFailed(Reference ref) throws Exception { //NOPMD
+    public void referenceValidationFailed(Reference ref) throws Exception {
         error.append(String
                 .format("The calculated digest value of the document  %s is not equal to the value specified in the XML signature. The document may have been tampered with.",
                         getReferenceUriOrId(ref)));
@@ -60,7 +60,7 @@ public class DefaultValidationFailedHandler implements ValidationFailedHandler {
     }
 
     @Override
-    public void manifestReferenceValidationFailed(Reference ref) throws Exception { //NOPMD
+    public void manifestReferenceValidationFailed(Reference ref) throws Exception {
         error.append(String
                 .format("The calculated digest value of the manifest  %s is not equal to the value specified in the XML signature. The document may have been tampered with.",
                         getReferenceUriOrId(ref)));
@@ -68,7 +68,7 @@ public class DefaultValidationFailedHandler implements ValidationFailedHandler {
     }
 
     @Override
-    public void end() throws Exception { //NOPMD
+    public void end() throws Exception {
         error = null;
     }
 
@@ -81,7 +81,7 @@ public class DefaultValidationFailedHandler implements ValidationFailedHandler {
     }
 
     @Override
-    public boolean ignoreCoreValidationFailure() throws Exception { //NOPMD
+    public boolean ignoreCoreValidationFailure() throws Exception {
         return false;
     }
 

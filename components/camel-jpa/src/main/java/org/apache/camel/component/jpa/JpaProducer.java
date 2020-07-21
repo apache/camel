@@ -29,6 +29,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.support.DefaultProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -36,6 +38,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
 
 public class JpaProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JpaProducer.class);
 
     private final EntityManagerFactory entityManagerFactory;
     private final TransactionTemplate transactionTemplate;
@@ -228,7 +232,7 @@ public class JpaProducer extends DefaultProducer {
                     }
 
                     Object answer = entityManager.find(getEndpoint().getEntityType(), key);
-                    log.debug("Find: {} -> {}", key, answer);
+                    LOG.debug("Find: {} -> {}", key, answer);
 
                     Message target = exchange.getPattern().isOutCapable() ? exchange.getOut() : exchange.getIn();
                     target.setBody(answer);
@@ -315,7 +319,7 @@ public class JpaProducer extends DefaultProducer {
                  * @return the managed entity
                  */
                 private Object save(final Object entity) {
-                    log.debug("save: {}", entity);
+                    LOG.debug("save: {}", entity);
                     if (getEndpoint().isUsePersist()) {
                         entityManager.persist(entity);
                         return entity;
@@ -330,7 +334,7 @@ public class JpaProducer extends DefaultProducer {
                  * @return the managed entity
                  */
                 private Object remove(final Object entity) {
-                    log.debug("remove: {}", entity);
+                    LOG.debug("remove: {}", entity);
 
                     Object managedEntity;
 

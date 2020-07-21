@@ -26,9 +26,12 @@ import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirCreateApiMethod;
 import org.hl7.fhir.dstu3.model.HumanName;
 import org.hl7.fhir.dstu3.model.Patient;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirCreate} APIs.
@@ -46,7 +49,7 @@ public class FhirCreateIT extends AbstractFhirTestSupport {
         MethodOutcome result = requestBody("direct://RESOURCE", patient);
 
         LOG.debug("resource: " + result);
-        assertNotNull("resource result", result);
+        assertNotNull(result, "resource result");
         assertTrue(result.getCreated());
     }
 
@@ -58,7 +61,7 @@ public class FhirCreateIT extends AbstractFhirTestSupport {
         MethodOutcome result = requestBody("direct://RESOURCE_STRING", patientString);
 
         LOG.debug("resource: " + result);
-        assertNotNull("resource result", result);
+        assertNotNull(result, "resource result");
         assertTrue(result.getCreated());
     }
 
@@ -71,7 +74,7 @@ public class FhirCreateIT extends AbstractFhirTestSupport {
         MethodOutcome result = requestBodyAndHeaders("direct://RESOURCE_STRING", patientString, headers);
 
         LOG.debug("resource: " + result);
-        assertNotNull("resource result", result);
+        assertNotNull(result, "resource result");
         assertTrue(result.getCreated());
     }
 

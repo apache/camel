@@ -18,6 +18,7 @@ package org.apache.camel.component.stream;
 
 import java.nio.charset.Charset;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -28,12 +29,16 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * The stream: component provides access to the system-in, system-out and system-err streams as well as allowing streaming of file.
+ * Read from system-in and write to system-out and system-err streams.
  */
-@UriEndpoint(firstVersion = "1.3.0", scheme = "stream", title = "Stream", syntax = "stream:kind", label = "file,system")
+@UriEndpoint(firstVersion = "1.3.0", scheme = "stream", title = "Stream", syntax = "stream:kind", category = {Category.FILE, Category.SYSTEM})
 public class StreamEndpoint extends DefaultEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(StreamEndpoint.class);
 
     private transient Charset charset;
 
@@ -190,7 +195,7 @@ public class StreamEndpoint extends DefaultEndpoint {
     public void setScanStream(boolean scanStream) {
         this.scanStream = scanStream;
     }
-    
+
     public GroupStrategy getGroupStrategy() {
         return groupStrategy;
     }
@@ -261,7 +266,7 @@ public class StreamEndpoint extends DefaultEndpoint {
     public void setGroupLines(int groupLines) {
         this.groupLines = groupLines;
     }
-    
+
     public int getAutoCloseCount() {
         return autoCloseCount;
     }
@@ -299,13 +304,14 @@ public class StreamEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStart() throws Exception {
+        super.doStart();
         charset = loadCharset();
     }
-    
+
     Charset loadCharset() {
         if (encoding == null) {
             encoding = Charset.defaultCharset().name();
-            log.debug("No encoding parameter using default charset: {}", encoding);
+            LOG.debug("No encoding parameter using default charset: {}", encoding);
         }
         if (!Charset.isSupported(encoding)) {
             throw new IllegalArgumentException("The encoding: " + encoding + " is not supported");

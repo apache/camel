@@ -30,13 +30,14 @@ import java.util.stream.Collectors;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.LoadablePropertiesSource;
+import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.spi.PropertiesSource;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -50,6 +51,7 @@ import org.slf4j.LoggerFactory;
  * The properties component allows you to use property placeholders in Camel.
  */
 @ManagedResource(description = "Managed PropertiesComponent")
+@JdkService(org.apache.camel.spi.PropertiesComponent.FACTORY)
 public class PropertiesComponent extends ServiceSupport implements org.apache.camel.spi.PropertiesComponent, StaticService, CamelContextAware {
 
     /**
@@ -110,17 +112,18 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     private boolean defaultFallbackEnabled = true;
     private Properties initialProperties;
     private Properties overrideProperties;
+    private ThreadLocal<Properties> localProperties = new ThreadLocal<>();
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
     private int environmentVariableMode = ENVIRONMENT_VARIABLES_MODE_OVERRIDE;
     private boolean autoDiscoverPropertiesSources = true;
 
     public PropertiesComponent() {
         // include out of the box functions
-        addFunction(new EnvPropertiesFunction());
-        addFunction(new SysPropertiesFunction());
-        addFunction(new ServicePropertiesFunction());
-        addFunction(new ServiceHostPropertiesFunction());
-        addFunction(new ServicePortPropertiesFunction());
+        addPropertiesFunction(new EnvPropertiesFunction());
+        addPropertiesFunction(new SysPropertiesFunction());
+        addPropertiesFunction(new ServicePropertiesFunction());
+        addPropertiesFunction(new ServiceHostPropertiesFunction());
+        addPropertiesFunction(new ServicePortPropertiesFunction());
     }
 
     /**
@@ -156,8 +159,13 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
 
     @Override
     public Optional<String> resolveProperty(String key) {
-        String value = parseUri(key, propertiesLookup);
-        return Optional.of(value);
+        try {
+            String value = parseUri(key, propertiesLookup);
+            return Optional.of(value);
+        } catch (IllegalArgumentException e) {
+            // property not found
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -246,7 +254,7 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
             uri = uri + SUFFIX_TOKEN;
         }
 
-        log.trace("Parsing uri {}", uri);
+        LOG.trace("Parsing uri {}", uri);
         return propertiesParser.parseUri(uri, properties, defaultFallbackEnabled);
     }
 
@@ -433,6 +441,26 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     }
 
     /**
+     * Sets a special list of local properties (ie thread local) that take precedence
+     * and will use first, if a property exist.
+     */
+    @Override
+    public void setLocalProperties(Properties localProperties) {
+        if (localProperties != null) {
+            this.localProperties.set(localProperties);
+        } else {
+            this.localProperties.remove();
+        }
+    }
+
+    /**
+     * Gets a list of properties that are local for the current thread only (ie thread local)
+     */
+    public Properties getLocalProperties() {
+        return localProperties.get();
+    }
+
+    /**
      * Gets the functions registered in this properties component.
      */
     public Map<String, PropertiesFunction> getFunctions() {
@@ -440,14 +468,14 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     }
 
     /**
-     * Registers the {@link org.apache.camel.component.properties.PropertiesFunction} as a function to this component.
+     * Registers the {@link PropertiesFunction} as a function to this component.
      */
-    public void addFunction(PropertiesFunction function) {
+    public void addPropertiesFunction(PropertiesFunction function) {
         this.functions.put(function.getName(), function);
     }
 
     /**
-     * Is there a {@link org.apache.camel.component.properties.PropertiesFunction} with the given name?
+     * Is there a {@link PropertiesFunction} with the given name?
      */
     public boolean hasFunction(String name) {
         return functions.containsKey(name);
@@ -511,10 +539,15 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
         if (propertiesSource instanceof CamelContextAware) {
             ((CamelContextAware) propertiesSource).setCamelContext(getCamelContext());
         }
-        sources.add(propertiesSource);
-        if (!this.isNew()) {
-            // if we have already initialized or started then we should also init the source
-            ServiceHelper.initService(propertiesSource);
+        synchronized (lock) {
+            sources.add(propertiesSource);
+            if (!isNew()) {
+                // if we have already initialized or started then we should also init the source
+                ServiceHelper.initService(propertiesSource);
+            }
+            if (isStarted()) {
+                ServiceHelper.startService(propertiesSource);
+            }
         }
     }
 
@@ -525,6 +558,24 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     @Override
     protected void doInit() throws Exception {
         super.doInit();
+
+        ObjectHelper.notNull(camelContext, "CamelContext", this);
+
+        if (systemPropertiesMode != SYSTEM_PROPERTIES_MODE_NEVER
+                && systemPropertiesMode != SYSTEM_PROPERTIES_MODE_FALLBACK
+                && systemPropertiesMode != SYSTEM_PROPERTIES_MODE_OVERRIDE) {
+            throw new IllegalArgumentException("Option systemPropertiesMode has invalid value: " + systemPropertiesMode);
+        }
+        if (environmentVariableMode != ENVIRONMENT_VARIABLES_MODE_NEVER
+                && environmentVariableMode != ENVIRONMENT_VARIABLES_MODE_FALLBACK
+                && environmentVariableMode != ENVIRONMENT_VARIABLES_MODE_OVERRIDE) {
+            throw new IllegalArgumentException("Option environmentVariableMode has invalid value: " + environmentVariableMode);
+        }
+
+        // inject the component to the parser
+        if (propertiesParser instanceof DefaultPropertiesParser) {
+            ((DefaultPropertiesParser) propertiesParser).setPropertiesComponent(this);
+        }
 
         if (isAutoDiscoverPropertiesSources()) {
             // discover any 3rd party properties sources
@@ -546,42 +597,27 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
                         LOG.warn("PropertiesComponent cannot add custom PropertiesSource as the type is not a org.apache.camel.component.properties.PropertiesSource but: " + type.getName());
                     }
                 }
-            } catch (NoFactoryAvailableException e) {
-                // ignore
             } catch (Exception e) {
                 LOG.debug("Error discovering and using custom PropertiesSource due to " + e.getMessage() + ". This exception is ignored", e);
             }
         }
 
+        sources.sort(OrderedComparator.get());
         ServiceHelper.initService(sources);
     }
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notNull(camelContext, "CamelContext", this);
-
-        sources.sort(OrderedComparator.get());
         ServiceHelper.startService(sources);
-
-        if (systemPropertiesMode != SYSTEM_PROPERTIES_MODE_NEVER
-                && systemPropertiesMode != SYSTEM_PROPERTIES_MODE_FALLBACK
-                && systemPropertiesMode != SYSTEM_PROPERTIES_MODE_OVERRIDE) {
-            throw new IllegalArgumentException("Option systemPropertiesMode has invalid value: " + systemPropertiesMode);
-        }
-        if (environmentVariableMode != ENVIRONMENT_VARIABLES_MODE_NEVER
-                && environmentVariableMode != ENVIRONMENT_VARIABLES_MODE_FALLBACK
-                && environmentVariableMode != ENVIRONMENT_VARIABLES_MODE_OVERRIDE) {
-            throw new IllegalArgumentException("Option environmentVariableMode has invalid value: " + environmentVariableMode);
-        }
-
-        // inject the component to the parser
-        if (propertiesParser instanceof DefaultPropertiesParser) {
-            ((DefaultPropertiesParser) propertiesParser).setPropertiesComponent(this);
-        }
     }
 
     @Override
     protected void doStop() throws Exception {
+        ServiceHelper.stopService(sources);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(sources);
     }
 
@@ -598,11 +634,11 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
         List<PropertiesLocation> answer = new ArrayList<>();
 
         for (PropertiesLocation location : locations) {
-            log.trace("Parsing location: {}", location);
+            LOG.trace("Parsing location: {}", location);
 
             try {
                 String path = FilePathResolver.resolvePath(location.getPath());
-                log.debug("Parsed location: {}", path);
+                LOG.debug("Parsed location: {}", path);
                 if (ObjectHelper.isNotEmpty(path)) {
                     answer.add(new PropertiesLocation(
                         location.getResolver(),
@@ -614,7 +650,7 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
                 if (!ignoreMissingLocation && !location.isOptional()) {
                     throw e;
                 } else {
-                    log.debug("Ignored missing location: {}", location);
+                    LOG.debug("Ignored missing location: {}", location);
                 }
             }
         }

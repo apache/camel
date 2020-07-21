@@ -82,7 +82,7 @@ public class SmppReplaceSmCommandTest {
         verify(session).replaceShortMessage(eq("1"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"), (String) isNull(), (String) isNull(),
                 eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)), eq((byte) 0), eq("new short message body".getBytes()));
         
-        assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
+        assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
     }
     
     @Test
@@ -103,7 +103,7 @@ public class SmppReplaceSmCommandTest {
         verify(session).replaceShortMessage(eq("1"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"), eq("-300101001831100+"), eq("-300101003702200+"),
                 eq(new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE)), eq((byte) 0), eq("new short message body".getBytes()));
         
-        assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
+        assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
     }
     
     @Test
@@ -124,7 +124,7 @@ public class SmppReplaceSmCommandTest {
         verify(session).replaceShortMessage(eq("1"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"), eq("-300101001831100+"), eq("000003000000000R"),
                 eq(new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE)), eq((byte) 0), eq("new short message body".getBytes()));
         
-        assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
+        assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
     }
 
     @Test

@@ -63,6 +63,9 @@ public class DdbStreamConfiguration implements Cloneable {
     private String proxyHost;
     @UriParam(description = "To define a proxy port when instantiating the DDBStreams client")
     private Integer proxyPort;
+    @UriParam(label = "common", defaultValue = "true", description = "Setting the autoDiscoverClient mechanism, if true, the component will "  
+            + " look for a client instance in the registry automatically otherwise it will skip that checking")
+    private boolean autoDiscoverClient = true;
     
     public AmazonDynamoDBStreams getAmazonDynamoDbStreamsClient() {
         return amazonDynamoDbStreamsClient;
@@ -150,6 +153,14 @@ public class DdbStreamConfiguration implements Cloneable {
 
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
+    }
+    
+    public boolean isAutoDiscoverClient() {
+        return autoDiscoverClient;
+    }
+
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
     }
     
     // *************************************************

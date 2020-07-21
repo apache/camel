@@ -30,13 +30,7 @@ import org.apache.camel.support.DefaultComponent;
 public class LambdaComponent extends DefaultComponent {
 
     @Metadata
-    private String accessKey;
-    @Metadata
-    private String secretKey;
-    @Metadata
-    private String region;
-    @Metadata(label = "advanced")    
-    private LambdaConfiguration configuration;
+    private LambdaConfiguration configuration = new LambdaConfiguration();
     
     public LambdaComponent() {
         this(null);
@@ -52,9 +46,6 @@ public class LambdaComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         LambdaConfiguration configuration = this.configuration != null ? this.configuration.copy() : new LambdaConfiguration();
         LambdaEndpoint endpoint = new LambdaEndpoint(uri, this, configuration);
-        endpoint.getConfiguration().setAccessKey(accessKey);
-        endpoint.getConfiguration().setSecretKey(secretKey);
-        endpoint.getConfiguration().setRegion(region);
         setProperties(endpoint, parameters);
         endpoint.setFunction(remaining);
         checkAndSetRegistryClient(configuration);
@@ -76,39 +67,6 @@ public class LambdaComponent extends DefaultComponent {
         this.configuration = configuration;
     }
 
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Access Key
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Secret Key
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    /**
-     * Amazon AWS Region
-     */
-    public void setRegion(String region) {
-        this.region = region;
-    }
-    
     private void checkAndSetRegistryClient(LambdaConfiguration configuration) {
         Set<AWSLambda> clients = getCamelContext().getRegistry().findByType(AWSLambda.class);
         if (clients.size() == 1) {

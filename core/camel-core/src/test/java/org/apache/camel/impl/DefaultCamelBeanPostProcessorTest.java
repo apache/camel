@@ -23,8 +23,10 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spi.CamelBeanPostProcessor;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DefaultCamelBeanPostProcessorTest extends ContextTestSupport {
 
@@ -56,7 +58,7 @@ public class DefaultCamelBeanPostProcessorTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         postProcessor = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();

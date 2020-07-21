@@ -18,7 +18,9 @@ package org.apache.camel.support;
 
 import org.apache.camel.TestSupport;
 import org.apache.camel.support.service.ServiceSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ServiceSupportTest extends TestSupport {
 
@@ -158,7 +160,7 @@ public class ServiceSupportTest extends TestSupport {
 
         public ServiceSupportTestExOnStart() {
             // just for testing force it to not be stopped
-            status = -1;
+            status = SUSPENDED;
         }
 
         @Override

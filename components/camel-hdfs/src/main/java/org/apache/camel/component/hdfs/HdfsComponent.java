@@ -23,6 +23,7 @@ import javax.security.auth.login.Configuration;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.hdfs.kerberos.KerberosConfigurationBuilder;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.hadoop.fs.FsUrlStreamHandlerFactory;
@@ -34,6 +35,8 @@ public class HdfsComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(HdfsComponent.class);
 
+    private static String kerberosConfigFileLocation;
+
     public HdfsComponent() {
         initHdfs();
     }
@@ -41,7 +44,7 @@ public class HdfsComponent extends DefaultComponent {
     @Override
     protected final Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         HdfsEndpoint hdfsEndpoint = new HdfsEndpoint(uri, this);
-        setProperties(hdfsEndpoint.getConfig(), parameters);
+        setProperties(hdfsEndpoint, parameters);
         return hdfsEndpoint;
     }
 
@@ -54,7 +57,7 @@ public class HdfsComponent extends DefaultComponent {
         }
     }
 
-    static Configuration getJAASConfiguration() {
+    public static Configuration getJAASConfiguration() {
         Configuration auth = null;
         try {
             auth = Configuration.getConfiguration();
@@ -68,7 +71,8 @@ public class HdfsComponent extends DefaultComponent {
     /**
      * To use the given configuration for security with JAAS.
      */
-    static void setJAASConfiguration(Configuration auth) {
+    @Metadata(label = "security")
+    public static void setJAASConfiguration(Configuration auth) {
         if (auth != null) {
             LOG.trace("Restoring existing JAAS Configuration {}", auth);
             try {
@@ -87,8 +91,14 @@ public class HdfsComponent extends DefaultComponent {
      *
      * @param kerberosConfigFileLocation - kerb5.conf file (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html)
      */
+    @Metadata(label = "security")
     public static void setKerberosConfigFile(String kerberosConfigFileLocation) {
+        HdfsComponent.kerberosConfigFileLocation = kerberosConfigFileLocation;
         KerberosConfigurationBuilder.setKerberosConfigFile(kerberosConfigFileLocation);
+    }
+
+    public static String getKerberosConfigFile() {
+        return kerberosConfigFileLocation;
     }
 
 }

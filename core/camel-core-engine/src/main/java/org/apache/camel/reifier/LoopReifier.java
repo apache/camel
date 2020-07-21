@@ -19,31 +19,31 @@ package org.apache.camel.reifier;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.LoopDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.LoopProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class LoopReifier extends ExpressionReifier<LoopDefinition> {
 
-    public LoopReifier(ProcessorDefinition<?> definition) {
-        super((LoopDefinition)definition);
+    public LoopReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (LoopDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor output = this.createChildProcessor(routeContext, true);
-        boolean isCopy = definition.getCopy() != null && parseBoolean(routeContext, definition.getCopy());
-        boolean isWhile = definition.getDoWhile() != null && parseBoolean(routeContext, definition.getDoWhile());
+    public Processor createProcessor() throws Exception {
+        Processor output = this.createChildProcessor(true);
+        boolean isCopy = parseBoolean(definition.getCopy(), false);
+        boolean isWhile = parseBoolean(definition.getDoWhile(), false);
 
         Predicate predicate = null;
         Expression expression = null;
         if (isWhile) {
-            predicate = definition.getExpression().createPredicate(routeContext);
+            predicate = createPredicate(definition.getExpression());
         } else {
-            expression = definition.getExpression().createExpression(routeContext);
+            expression = createExpression(definition.getExpression());
         }
-        return new LoopProcessor(output, expression, predicate, isCopy);
+        return new LoopProcessor(camelContext, output, expression, predicate, isCopy);
     }
 
 }

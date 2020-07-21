@@ -16,7 +16,8 @@ public final class CamelRestController {
     public void camelServlet(HttpServletRequest request, HttpServletResponse response) {
         try {
             String path = request.getRequestURI();
-            request.getServletContext().getRequestDispatcher("/camel/" + path).forward(request, response);
+            String camelPrefix = (path != null && path.startsWith("/")) ? "/camel" : "/camel/";
+            request.getServletContext().getRequestDispatcher(camelPrefix + path).forward(request, response);
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }

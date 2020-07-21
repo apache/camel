@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.StaticService;
+import org.apache.camel.spi.RouteController;
 import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.service.ServiceHelper;
@@ -37,13 +38,15 @@ import org.apache.camel.support.service.ServiceHelper;
  */
 public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V>  implements StaticService {
 
-    protected final CamelContext context;
+    protected final ExtendedCamelContext context;
+    protected final RouteController routeController;
     protected final int maxCacheSize;
     protected final Map<K, V> dynamicMap;
     protected final Map<K, V> staticMap;
 
     public AbstractDynamicRegistry(CamelContext context, int maxCacheSize) {
-        this.context = context;
+        this.context = (ExtendedCamelContext) context;
+        this.routeController = context.getRouteController();
         this.maxCacheSize = maxCacheSize;
         // do not stop on eviction, as the transformer may still be in use
         this.dynamicMap = LRUCacheFactory.newLRUCache(this.maxCacheSize, this.maxCacheSize, false);
@@ -64,7 +67,7 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V>  implements
         V answer = staticMap.get(o);
         if (answer == null) {
             answer = dynamicMap.get(o);
-            if (answer != null && (context.adapt(ExtendedCamelContext.class).isSetupRoutes() || context.getRouteController().isStartingRoutes())) {
+            if (answer != null && (context.isSetupRoutes() || routeController.isStartingRoutes())) {
                 dynamicMap.remove(o);
                 staticMap.put((K) o, answer);
             }
@@ -90,7 +93,7 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V>  implements
         }
 
         // we want transformers to be static if they are part of setting up or starting routes
-        if (context.adapt(ExtendedCamelContext.class).isSetupRoutes() || context.getRouteController().isStartingRoutes()) {
+        if (context.isSetupRoutes() || routeController.isStartingRoutes()) {
             answer = staticMap.put(key, transformer);
         } else {
             answer = dynamicMap.put(key, transformer);

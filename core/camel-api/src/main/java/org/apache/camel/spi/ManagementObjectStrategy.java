@@ -29,6 +29,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.cluster.CamelClusterService;
+import org.apache.camel.health.HealthCheckRegistry;
 
 /**
  * Strategy for creating the managed object for the various beans Camel register for management.
@@ -37,7 +38,7 @@ public interface ManagementObjectStrategy {
     
     Object getManagedObjectForCamelContext(CamelContext context);
 
-    Object getManagedObjectForCamelHealth(CamelContext context);
+    Object getManagedObjectForCamelHealth(CamelContext context, HealthCheckRegistry healthCheckRegistry);
 
     Object getManagedObjectForComponent(CamelContext context, Component component, String name);
 
@@ -45,10 +46,10 @@ public interface ManagementObjectStrategy {
 
     Object getManagedObjectForEndpoint(CamelContext context, Endpoint endpoint);
 
-    Object getManagedObjectForErrorHandler(CamelContext context, RouteContext routeContext,
+    Object getManagedObjectForErrorHandler(CamelContext context, Route route,
                                            Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
 
-    Object getManagedObjectForRouteController(CamelContext context);
+    Object getManagedObjectForRouteController(CamelContext context, RouteController routeController);
 
     Object getManagedObjectForRoute(CamelContext context, Route route);
 

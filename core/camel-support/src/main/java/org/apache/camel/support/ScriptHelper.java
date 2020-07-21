@@ -89,4 +89,14 @@ public final class ScriptHelper {
 
         return expression;
     }
+
+    public static boolean hasExternalScript(String external) {
+        if (external.startsWith("resource:")) {
+            external = external.substring(9);
+            if (ResourceHelper.hasScheme(external) && LanguageSupport.hasSimpleFunction(external)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

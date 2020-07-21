@@ -194,8 +194,7 @@ public final class ObjectHelper {
         if (value == null) {
             return false;
         } else if (value instanceof String) {
-            String text = (String) value;
-            return text.trim().length() > 0;
+            return !((String) value).trim().isEmpty();
         } else if (value instanceof Collection) {
             return !((Collection<?>) value).isEmpty();
         } else if (value instanceof Map) {
@@ -1015,8 +1014,7 @@ public final class ObjectHelper {
             return list.getLength() > 0;
         } else if (value instanceof Collection) {
             // is it an empty collection
-            Collection<?> col = (Collection<?>) value;
-            return col.size() > 0;
+            return !((Collection<?>) value).isEmpty();
         }
         return value != null;
     }

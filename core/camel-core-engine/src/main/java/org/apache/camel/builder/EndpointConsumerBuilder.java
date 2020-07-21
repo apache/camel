@@ -16,26 +16,16 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.NoSuchEndpointException;
+import java.util.Map;
+
+import org.apache.camel.EndpointConsumerResolver;
 
 /**
  * Type-safe endpoint DSL for building consumer endpoints.
  *
  * @see EndpointProducerBuilder
  */
-public interface EndpointConsumerBuilder {
-
-    /**
-     * Builds and resolves this endpoint DSL as an endpoint.
-     *
-     * @param context the camel context
-     * @return a built {@link Endpoint}
-     * @throws NoSuchEndpointException is thrown if the endpoint
-     */
-    Endpoint resolve(CamelContext context) throws NoSuchEndpointException;
-
+public interface EndpointConsumerBuilder extends EndpointConsumerResolver {
     /**
      * Builds the url of this endpoint. This API is only intended for Camel
      * internally.
@@ -47,5 +37,17 @@ public interface EndpointConsumerBuilder {
      * internally.
      */
     void doSetProperty(String name, Object value);
+
+    /**
+     * Adds a multi-value option to this endpoint. This API is only intended for Camel
+     * internally.
+     */
+    void doSetMultiValueProperty(String name, String key, Object value);
+
+    /**
+     * Adds multi-value options to this endpoint. This API is only intended for Camel
+     * internally.
+     */
+    void doSetMultiValueProperties(String name, String prefix, Map<String, Object> values);
 
 }

@@ -29,7 +29,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * YAML is a data format to marshal and unmarshal Java objects to and from YAML.
+ * Marshal and unmarshal Java objects to and from YAML.
  */
 @Metadata(firstVersion = "2.17.0", label = "dataformat,transformation,yaml", title = "YAML")
 @XmlRootElement(name = "yaml")
@@ -53,16 +53,22 @@ public class YAMLDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String resolver;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
-    private Boolean useApplicationContextClassLoader = true;
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    private String useApplicationContextClassLoader = Boolean.toString(true);
     @XmlAttribute
-    @Metadata(defaultValue = "false")
-    private Boolean prettyFlow = false;
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
+    private String prettyFlow = Boolean.toString(false);
     @XmlAttribute
-    @Metadata(defaultValue = "false")
-    private Boolean allowAnyType = false;
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
+    private String allowAnyType = Boolean.toString(false);
     @XmlElement(name = "typeFilter")
     private List<YAMLTypeFilterDefinition> typeFilters;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Integer", defaultValue = "50")
+    private String maxAliasesForCollections = "50";
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
+    private String allowRecursiveKeys;
 
     public YAMLDataFormat() {
         this(YAMLLibrary.SnakeYAML);
@@ -109,7 +115,7 @@ public class YAMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Class name of the java type to use when unarmshalling
+     * Class name of the java type to use when unmarshalling
      */
     public void setUnmarshalTypeName(String unmarshalTypeName) {
         this.unmarshalTypeName = unmarshalTypeName;
@@ -170,18 +176,18 @@ public class YAMLDataFormat extends DataFormatDefinition {
         this.resolver = resolver;
     }
 
-    public boolean isUseApplicationContextClassLoader() {
+    public String getUseApplicationContextClassLoader() {
         return useApplicationContextClassLoader;
     }
 
     /**
      * Use ApplicationContextClassLoader as custom ClassLoader
      */
-    public void setUseApplicationContextClassLoader(boolean useApplicationContextClassLoader) {
+    public void setUseApplicationContextClassLoader(String useApplicationContextClassLoader) {
         this.useApplicationContextClassLoader = useApplicationContextClassLoader;
     }
 
-    public boolean isPrettyFlow() {
+    public String getPrettyFlow() {
         return prettyFlow;
     }
 
@@ -189,18 +195,18 @@ public class YAMLDataFormat extends DataFormatDefinition {
      * Force the emitter to produce a pretty YAML document when using the flow
      * style.
      */
-    public void setPrettyFlow(boolean prettyFlow) {
+    public void setPrettyFlow(String prettyFlow) {
         this.prettyFlow = prettyFlow;
     }
 
-    public boolean isAllowAnyType() {
+    public String getAllowAnyType() {
         return allowAnyType;
     }
 
     /**
      * Allow any class to be un-marshaled
      */
-    public void setAllowAnyType(boolean allowAnyType) {
+    public void setAllowAnyType(String allowAnyType) {
         this.allowAnyType = allowAnyType;
     }
 
@@ -215,4 +221,25 @@ public class YAMLDataFormat extends DataFormatDefinition {
         this.typeFilters = typeFilters;
     }
 
+    public String getMaxAliasesForCollections() {
+        return maxAliasesForCollections;
+    }
+
+    /**
+     * Set the maximum amount of aliases allowed for collections.
+     */
+    public void setMaxAliasesForCollections(String maxAliasesForCollections) {
+        this.maxAliasesForCollections = maxAliasesForCollections;
+    }
+
+    public String getAllowRecursiveKeys() {
+        return allowRecursiveKeys;
+    }
+
+    /**
+     * Set whether recursive keys are allowed.
+     */
+    public void setAllowRecursiveKeys(String allowRecursiveKeys) {
+        this.allowRecursiveKeys = allowRecursiveKeys;
+    }
 }

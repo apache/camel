@@ -22,6 +22,7 @@ import java.net.SocketAddress;
 import java.nio.charset.Charset;
 import java.util.Date;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -37,7 +38,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.slf4j.Logger;
 
 /**
- * Provides functionality required by Healthcare providers to communicate with other systems using the MLLP protocol.
+ * Communicate with external systems using the MLLP protocol.
  *
  * <p/>
  * NOTE: MLLP payloads are not logged unless the logging level is set to DEBUG or TRACE to avoid introducing PHI into the log files.  Logging of PHI can be globally disabled by setting the
@@ -45,7 +46,7 @@ import org.slf4j.Logger;
  * <p/>
  */
 @ManagedResource(description = "MLLP Endpoint")
-@UriEndpoint(scheme = "mllp", firstVersion = "2.17.0", title = "MLLP", syntax = "mllp:hostname:port", label = "mllp", generateConfigurer = false)
+@UriEndpoint(scheme = "mllp", firstVersion = "2.17.0", title = "MLLP", syntax = "mllp:hostname:port", category = {Category.NETWORKING, Category.RPC, Category.MLLP}, generateConfigurer = false)
 public class MllpEndpoint extends DefaultEndpoint {
     // Use constants from MllpProtocolConstants
     @Deprecated()
@@ -121,13 +122,11 @@ public class MllpEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        log.trace("({}).createProducer()", this.getEndpointKey());
         return new MllpTcpClientProducer(this);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        log.trace("({}).createConsumer(Processor)", this.getEndpointKey());
         Consumer consumer = new MllpTcpServerConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;

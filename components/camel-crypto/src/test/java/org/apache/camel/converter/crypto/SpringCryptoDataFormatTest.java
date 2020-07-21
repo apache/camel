@@ -34,7 +34,7 @@ public class SpringCryptoDataFormatTest extends CryptoDataFormatTest {
     private static Key aeskey;
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
+    protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] {};
     }
 

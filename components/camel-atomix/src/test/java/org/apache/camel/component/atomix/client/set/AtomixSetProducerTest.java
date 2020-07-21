@@ -29,8 +29,12 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.atomix.client.AtomixClientConstants;
 import org.apache.camel.component.atomix.client.AtomixClientTestSupport;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AtomixSetProducerTest extends AtomixClientTestSupport {
     private static final String SET_NAME = UUID.randomUUID().toString();
@@ -59,7 +63,7 @@ public class AtomixSetProducerTest extends AtomixClientTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         set.close();
 
@@ -71,7 +75,7 @@ public class AtomixSetProducerTest extends AtomixClientTestSupport {
     // ************************************
 
     @Test
-    public void testAdd() throws Exception {
+    void testAdd() {
         final String val1 = context().getUuidGenerator().generateUuid();
         final String val2 = context().getUuidGenerator().generateUuid();
 
@@ -95,7 +99,7 @@ public class AtomixSetProducerTest extends AtomixClientTestSupport {
     }
 
     @Test
-    public void testSizeClearIsEmpty() throws Exception {
+    void testSizeClearIsEmpty() {
         final String val1 = context().getUuidGenerator().generateUuid();
         final String val2 = context().getUuidGenerator().generateUuid();
 
@@ -144,7 +148,7 @@ public class AtomixSetProducerTest extends AtomixClientTestSupport {
     }
 
     @Test
-    public void testContains() throws Exception {
+    void testContains() {
         final String val = context().getUuidGenerator().generateUuid();
 
         Message result;
@@ -171,7 +175,7 @@ public class AtomixSetProducerTest extends AtomixClientTestSupport {
     }
 
     @Test
-    public void testRemove() throws Exception {
+    void testRemove() {
         final String val1 = context().getUuidGenerator().generateUuid();
         final String val2 = context().getUuidGenerator().generateUuid();
 
@@ -195,7 +199,7 @@ public class AtomixSetProducerTest extends AtomixClientTestSupport {
     // ************************************
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")

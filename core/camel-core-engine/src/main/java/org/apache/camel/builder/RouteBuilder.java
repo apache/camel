@@ -17,9 +17,7 @@
 package org.apache.camel.builder;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -29,9 +27,6 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Ordered;
 import org.apache.camel.Route;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.ValueHolder;
-import org.apache.camel.impl.transformer.TransformerKey;
-import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -40,19 +35,16 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
-import org.apache.camel.model.transformer.TransformerDefinition;
-import org.apache.camel.model.validator.ValidatorDefinition;
-import org.apache.camel.reifier.transformer.TransformerReifier;
-import org.apache.camel.reifier.validator.ValidatorReifier;
-import org.apache.camel.spi.DataType;
+import org.apache.camel.spi.OnCamelContextEvent;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.spi.Transformer;
-import org.apache.camel.spi.Validator;
+import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.function.ThrowingConsumer;
@@ -67,10 +59,12 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     protected Logger log = LoggerFactory.getLogger(getClass());
     private AtomicBoolean initialized = new AtomicBoolean(false);
     private RestsDefinition restCollection = new RestsDefinition();
-    private Map<String, RestConfigurationDefinition> restConfigurations;
+    private RestConfigurationDefinition restConfiguration;
     private List<TransformerBuilder> transformerBuilders = new ArrayList<>();
     private List<ValidatorBuilder> validatorBuilders = new ArrayList<>();
     private RoutesDefinition routeCollection = new RoutesDefinition();
+    private RouteTemplatesDefinition routeTemplateCollection = new RouteTemplatesDefinition();
+    private final List<RouteBuilderLifecycleStrategy> lifecycleInterceptors = new ArrayList<>();
 
     public RouteBuilder() {
         this(null);
@@ -96,7 +90,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     /**
      * Add routes to a context using a lambda expression. It can be used as
      * following:
-     * 
+     *
      * <pre>
      * RouteBuilder.addRoutes(context, rb ->
      *     rb.from("direct:inbound").bean(ProduceTemplateBean.class)));
@@ -159,27 +153,23 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @return the builder
      */
     public RestConfigurationDefinition restConfiguration() {
-        return restConfiguration("");
+        if (restConfiguration == null) {
+            restConfiguration = new RestConfigurationDefinition();
+        }
+
+        return restConfiguration;
     }
 
     /**
-     * Configures the REST service for the given component
+     * Creates a new route template
      *
      * @return the builder
      */
-    public RestConfigurationDefinition restConfiguration(String component) {
-        if (restConfigurations == null) {
-            restConfigurations = new HashMap<>();
-        }
-        RestConfigurationDefinition restConfiguration = restConfigurations.get(component);
-        if (restConfiguration == null) {
-            restConfiguration = new RestConfigurationDefinition();
-            if (!component.isEmpty()) {
-                restConfiguration.component(component);
-            }
-            restConfigurations.put(component, restConfiguration);
-        }
-        return restConfiguration;
+    public RouteTemplateDefinition routeTemplate(String id) {
+        getRouteTemplateCollection().setCamelContext(getContext());
+        RouteTemplateDefinition answer = getRouteTemplateCollection().routeTemplate(id);
+        configureRouteTemplate(answer);
+        return answer;
     }
 
     /**
@@ -209,7 +199,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     /**
      * Create a new {@code TransformerBuilder}.
-     * 
+     *
      * @return the builder
      */
     public TransformerBuilder transformer() {
@@ -220,7 +210,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     /**
      * Create a new {@code ValidatorBuilder}.
-     * 
+     *
      * @return the builder
      */
     public ValidatorBuilder validator() {
@@ -433,7 +423,12 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         populateRests();
         populateTransformers();
         populateValidators();
+        populateRouteTemplates();
         populateRoutes();
+
+        if (this instanceof OnCamelContextEvent) {
+            context.addLifecycleStrategy(LifecycleStrategySupport.adapt((OnCamelContextEvent)this));
+        }
     }
 
     /**
@@ -469,6 +464,20 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         getRouteCollection().setErrorHandlerFactory(getErrorHandlerBuilder());
     }
 
+    /**
+     * Adds the given {@link RouteBuilderLifecycleStrategy} to be used.
+     */
+    public void addLifecycleInterceptor(RouteBuilderLifecycleStrategy interceptor) {
+        lifecycleInterceptors.add(interceptor);
+    }
+
+    /**
+     * Adds the given {@link RouteBuilderLifecycleStrategy}.
+     */
+    public void removeLifecycleInterceptor(RouteBuilderLifecycleStrategy interceptor) {
+        lifecycleInterceptors.remove(interceptor);
+    }
+
     // Implementation methods
     // -----------------------------------------------------------------------
     protected void checkInitialized() throws Exception {
@@ -478,13 +487,31 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             if (camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory() instanceof ErrorHandlerBuilder) {
                 setErrorHandlerBuilder((ErrorHandlerBuilder)camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory());
             }
+
+            for (RouteBuilderLifecycleStrategy interceptor : lifecycleInterceptors) {
+                interceptor.beforeConfigure(this);
+            }
+
             configure();
             // mark all route definitions as custom prepared because
             // a route builder prepares the route definitions correctly already
             for (RouteDefinition route : getRouteCollection().getRoutes()) {
                 route.markPrepared();
             }
+
+            for (RouteBuilderLifecycleStrategy interceptor : lifecycleInterceptors) {
+                interceptor.afterConfigure(this);
+            }
         }
+    }
+
+    protected void populateRouteTemplates() throws Exception {
+        CamelContext camelContext = getContext();
+        if (camelContext == null) {
+            throw new IllegalArgumentException("CamelContext has not been injected!");
+        }
+        getRouteTemplateCollection().setCamelContext(camelContext);
+        camelContext.getExtension(Model.class).addRouteTemplateDefinitions(getRouteTemplateCollection().getRouteTemplates());
     }
 
     protected void populateRoutes() throws Exception {
@@ -504,42 +531,37 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         getRestCollection().setCamelContext(camelContext);
 
         // setup rest configuration before adding the rests
-        if (getRestConfigurations() != null) {
-            for (Map.Entry<String, RestConfigurationDefinition> entry : getRestConfigurations().entrySet()) {
-                RestConfiguration config = entry.getValue().asRestConfiguration(getContext());
-                if ("".equals(entry.getKey())) {
-                    camelContext.setRestConfiguration(config);
-                } else {
-                    camelContext.addRestConfiguration(config);
-                }
-            }
+        if (restConfiguration != null) {
+            restConfiguration.asRestConfiguration(getContext(), camelContext.getRestConfiguration());
         }
+
         // cannot add rests as routes yet as we need to initialize this
         // specially
         camelContext.getExtension(Model.class).addRestDefinitions(getRestCollection().getRests(), false);
 
         // convert rests api-doc into routes so they are routes for runtime
-        for (RestConfiguration config : camelContext.getRestConfigurations()) {
-            if (config.getApiContextPath() != null) {
-                // avoid adding rest-api multiple times, in case multiple
-                // RouteBuilder classes is added
-                // to the CamelContext, as we only want to setup rest-api once
-                // so we check all existing routes if they have rest-api route
-                // already added
-                boolean hasRestApi = false;
-                for (RouteDefinition route : camelContext.getExtension(Model.class).getRouteDefinitions()) {
-                    FromDefinition from = route.getInput();
-                    if (from.getEndpointUri() != null && from.getEndpointUri().startsWith("rest-api:")) {
-                        hasRestApi = true;
-                    }
-                }
-                if (!hasRestApi) {
-                    RouteDefinition route = RestDefinition.asRouteApiDefinition(camelContext, config);
-                    log.debug("Adding routeId: {} as rest-api route", route.getId());
-                    getRouteCollection().route(route);
+        RestConfiguration config = camelContext.getRestConfiguration();
+
+        if (config.getApiContextPath() != null) {
+            // avoid adding rest-api multiple times, in case multiple
+            // RouteBuilder classes is added
+            // to the CamelContext, as we only want to setup rest-api once
+            // so we check all existing routes if they have rest-api route
+            // already added
+            boolean hasRestApi = false;
+            for (RouteDefinition route : camelContext.getExtension(Model.class).getRouteDefinitions()) {
+                FromDefinition from = route.getInput();
+                if (from.getEndpointUri() != null && from.getEndpointUri().startsWith("rest-api:")) {
+                    hasRestApi = true;
                 }
             }
+            if (!hasRestApi) {
+                RouteDefinition route = RestDefinition.asRouteApiDefinition(camelContext, config);
+                log.debug("Adding routeId: {} as rest-api route", route.getId());
+                getRouteCollection().route(route);
+            }
         }
+
         // add rest as routes and have them prepared as well via
         // routeCollection.route method
         getRestCollection().getRests().forEach(rest -> rest.asRouteDefinition(getContext()).forEach(route -> getRouteCollection().route(route)));
@@ -553,16 +575,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         for (TransformerBuilder tdb : transformerBuilders) {
             tdb.configure(camelContext);
         }
-
-        // create and register transformers on transformer registry
-        for (TransformerDefinition def : camelContext.getExtension(Model.class).getTransformers()) {
-            Transformer transformer = TransformerReifier.reifier(def).createTransformer(camelContext);
-            camelContext.getTransformerRegistry().put(createTransformerKey(def), transformer);
-        }
-    }
-
-    private static ValueHolder<String> createTransformerKey(TransformerDefinition def) {
-        return ObjectHelper.isNotEmpty(def.getScheme()) ? new TransformerKey(def.getScheme()) : new TransformerKey(new DataType(def.getFromType()), new DataType(def.getToType()));
     }
 
     protected void populateValidators() {
@@ -573,24 +585,14 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         for (ValidatorBuilder vb : validatorBuilders) {
             vb.configure(camelContext);
         }
-
-        // create and register validators on validator registry
-        for (ValidatorDefinition def : camelContext.getExtension(Model.class).getValidators()) {
-            Validator validator = ValidatorReifier.reifier(def).createValidator(camelContext);
-            camelContext.getValidatorRegistry().put(createValidatorKey(def), validator);
-        }
-    }
-
-    private static ValidatorKey createValidatorKey(ValidatorDefinition def) {
-        return new ValidatorKey(new DataType(def.getType()));
     }
 
     public RestsDefinition getRestCollection() {
         return restCollection;
     }
 
-    public Map<String, RestConfigurationDefinition> getRestConfigurations() {
-        return restConfigurations;
+    public RestConfigurationDefinition getRestConfiguration() {
+        return restConfiguration;
     }
 
     public void setRestCollection(RestsDefinition restCollection) {
@@ -605,11 +607,23 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         return this.routeCollection;
     }
 
+    public RouteTemplatesDefinition getRouteTemplateCollection() {
+        return routeTemplateCollection;
+    }
+
+    public void setRouteTemplateCollection(RouteTemplatesDefinition routeTemplateCollection) {
+        this.routeTemplateCollection = routeTemplateCollection;
+    }
+
     protected void configureRest(RestDefinition rest) {
         // noop
     }
 
     protected void configureRoute(RouteDefinition route) {
+        // noop
+    }
+
+    protected void configureRouteTemplate(RouteTemplateDefinition routeTemplate) {
         // noop
     }
 

@@ -32,6 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.service.ServiceSupport;
@@ -40,7 +41,7 @@ import org.apache.camel.util.StringHelper;
 import org.apache.commons.io.IOUtils;
 
 @Dataformat("protobuf")
-public class ProtobufDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
+public class ProtobufDataFormat extends ServiceSupport implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 
     public static final String CONTENT_TYPE_FORMAT_NATIVE = "native";
     public static final String CONTENT_TYPE_FORMAT_JSON = "json";

@@ -41,7 +41,8 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
     private boolean fastExistsCheck;
 
     @Override
-    public void prepareOnStartup(GenericFileOperations<ChannelSftp.LsEntry> tGenericFileOperations, GenericFileEndpoint<ChannelSftp.LsEntry> tGenericFileEndpoint) throws Exception {
+    public void prepareOnStartup(GenericFileOperations<ChannelSftp.LsEntry> tGenericFileOperations, GenericFileEndpoint<ChannelSftp.LsEntry> tGenericFileEndpoint)
+        throws Exception {
         // noop
     }
 
@@ -61,18 +62,20 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
             if (timeout > 0) {
                 long delta = watch.taken();
                 if (delta > timeout) {
-                    CamelLogger.log(LOG, readLockLoggingLevel,
-                            "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
-                    // we could not get the lock within the timeout period, so return false
+                    CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
+                    // we could not get the lock within the timeout period, so
+                    // return false
                     return false;
                 }
             }
 
             long newLastModified = 0;
             long newLength = 0;
-            List files; // operations.listFiles returns List<SftpRemoteFile> so do not use generic in the List files
+            List files; // operations.listFiles returns List<SftpRemoteFile> so
+                        // do not use generic in the List files
             if (fastExistsCheck) {
-                // use the absolute file path to only pickup the file we want to check, this avoids expensive
+                // use the absolute file path to only pickup the file we want to
+                // check, this avoids expensive
                 // list operations if we have a lot of files in the directory
                 String path = file.getAbsoluteFilePath();
                 if (path.equals("/") || path.equals("\\")) {
@@ -96,7 +99,7 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
             }
             LOG.trace("List files {} found {} files", file.getAbsoluteFilePath(), files.size());
             for (Object f : files) {
-                SftpRemoteFile rf = (SftpRemoteFile) f;
+                SftpRemoteFile rf = (SftpRemoteFile)f;
                 boolean match;
                 if (fastExistsCheck) {
                     // uses the absolute file path as well
@@ -125,7 +128,8 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
 
                 boolean interrupted = sleep();
                 if (interrupted) {
-                    // we were interrupted while sleeping, we are likely being shutdown so return false
+                    // we were interrupted while sleeping, we are likely being
+                    // shutdown so return false
                     return false;
                 }
             }
@@ -151,7 +155,8 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
     }
 
     @Override
-    public void releaseExclusiveReadLockOnRollback(GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnRollback(GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange)
+        throws Exception {
         // noop
     }
 

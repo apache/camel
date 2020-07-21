@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.jetty;
 
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -38,9 +41,9 @@ public class JettyComponentSpringConfiguredTest extends CamelSpringTestSupport {
     }
 
     @Test
-    @Ignore("run manual test")
+    @Disabled("run manual test")
     public void testJetty2() throws Exception {
-        assertNotNull("Should have jetty2 component", context.hasComponent("jetty2"));
+        assertNotNull(context.hasComponent("jetty2"), "Should have jetty2 component");
 
         String reply = template.requestBody("jetty2:http://localhost:9090/myapp", "Camel", String.class);
         assertEquals("Hello Camel", reply);

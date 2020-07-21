@@ -47,7 +47,7 @@ public class JmsToHttpRoute extends SpringRouteBuilder {
     protected String ok  = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         port = AvailablePortFinder.getNextAvailable();
 
         // configure a global transacted error handler
@@ -69,7 +69,7 @@ public class JmsToHttpRoute extends SpringRouteBuilder {
                     .to("mock:rollback")
                     // response is not okay so force a rollback by throwing an exception
                     .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
+                        public void process(Exchange exchange) {
                             throw new IllegalArgumentException("Rollback please");
                         }
                     })
@@ -81,11 +81,11 @@ public class JmsToHttpRoute extends SpringRouteBuilder {
         // this is our http route that will fail the first 2 attempts
         // before it sends an ok response
         from("jetty:http://localhost:" + port + "/sender").process(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 if (counter++ < 2) {
-                    exchange.getOut().setBody(nok);
+                    exchange.getMessage().setBody(nok);
                 } else {
-                    exchange.getOut().setBody(ok);
+                    exchange.getMessage().setBody(ok);
                 }
             }
         });

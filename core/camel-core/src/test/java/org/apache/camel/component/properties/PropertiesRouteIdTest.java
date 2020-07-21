@@ -19,7 +19,10 @@ package org.apache.camel.component.properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -29,10 +32,10 @@ public class PropertiesRouteIdTest extends ContextTestSupport {
     @Test
     public void testPropertiesRouteId() throws Exception {
         assertEquals(1, context.getRoutes().size());
-        assertNotNull("Route with name Camel should exist", context.getRoute("Camel"));
+        assertNotNull(context.getRoute("Camel"), "Route with name Camel should exist");
 
         String id = context.getRouteDefinition("Camel").getOutputs().get(0).getId();
-        assertEquals("{{cool.other.name}}", id);
+        assertEquals("Cheese", id);
     }
 
     @Override

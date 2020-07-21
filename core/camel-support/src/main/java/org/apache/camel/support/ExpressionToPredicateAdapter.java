@@ -21,12 +21,14 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerAware;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * To adapt {@link org.apache.camel.Expression} as a {@link Predicate}
  */
-public final class ExpressionToPredicateAdapter implements Predicate, CamelContextAware {
+public final class ExpressionToPredicateAdapter implements Predicate, CamelContextAware, PropertyConfigurerAware {
     private final Expression expression;
 
     public ExpressionToPredicateAdapter(Expression expression) {
@@ -56,6 +58,11 @@ public final class ExpressionToPredicateAdapter implements Predicate, CamelConte
     }
 
     @Override
+    public void init(CamelContext context) {
+        expression.init(context);
+    }
+
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         if (expression instanceof CamelContextAware) {
             ((CamelContextAware) expression).setCamelContext(camelContext);
@@ -66,6 +73,17 @@ public final class ExpressionToPredicateAdapter implements Predicate, CamelConte
     public CamelContext getCamelContext() {
         if (expression instanceof CamelContextAware) {
             return ((CamelContextAware) expression).getCamelContext();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public PropertyConfigurer getPropertyConfigurer(Object instance) {
+        if (expression instanceof PropertyConfigurer) {
+            return (PropertyConfigurer) expression;
+        } else if (expression instanceof PropertyConfigurerAware) {
+            return ((PropertyConfigurerAware) expression).getPropertyConfigurer(expression);
         } else {
             return null;
         }

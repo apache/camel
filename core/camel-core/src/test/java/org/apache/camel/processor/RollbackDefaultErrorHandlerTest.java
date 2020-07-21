@@ -23,7 +23,9 @@ import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RollbackDefaultErrorHandlerTest extends ContextTestSupport {
 
@@ -43,7 +45,8 @@ public class RollbackDefaultErrorHandlerTest extends ContextTestSupport {
             template.requestBody("direct:start", "bad");
             fail("Should have thrown a RollbackExchangeException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof RollbackExchangeException);
+            boolean b = e.getCause() instanceof RollbackExchangeException;
+            assertTrue(b);
         }
     }
 
@@ -56,7 +59,7 @@ public class RollbackDefaultErrorHandlerTest extends ContextTestSupport {
         });
         assertNotNull(out.getException());
         assertIsInstanceOf(RollbackExchangeException.class, out.getException());
-        assertEquals("Should be marked as rollback", true, out.isRollbackOnly());
+        assertEquals(true, out.isRollbackOnly(), "Should be marked as rollback");
     }
 
     @Override
@@ -66,7 +69,7 @@ public class RollbackDefaultErrorHandlerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start").choice().when(body().isNotEqualTo("ok")).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        assertFalse("Rollback flag should have been cleared on redelivery", exchange.isRollbackOnly());
+                        assertFalse(exchange.isRollbackOnly(), "Rollback flag should have been cleared on redelivery");
                     }
                 }).to("mock:rollback").rollback("That do not work").otherwise().to("mock:result").end();
             }

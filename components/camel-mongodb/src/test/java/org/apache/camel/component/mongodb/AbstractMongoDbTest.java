@@ -23,14 +23,14 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.bson.Document;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.junit.jupiter.api.BeforeAll;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,10 +38,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public abstract class AbstractMongoDbTest extends CamelTestSupport {
 
     protected static final String SCHEME = "mongodb";
-    protected static final String HOST = "localhost:" + EmbedMongoConfiguration.PORT;
     protected static final String USER = "test-user";
     protected static final String PASSWORD = "test-pwd";
 
+    protected static MongoDbContainer container;
     protected static MongoClient mongo;
     protected static MongoDatabase db;
     protected static MongoCollection<Document> testCollection;
@@ -51,13 +51,29 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
     protected static String testCollectionName;
     protected static String dynamicCollectionName;
 
-    protected ApplicationContext applicationContext;
+    @BeforeAll
+    public static void doBeforeAll() {
+        container = new MongoDbContainer();
+        container.start();
+    }
+
+    @AfterAll
+    public static void doAfterAll() {
+        if (container != null) {
+            container.stop();
+        }
+    }
+
+    @Override
+    public void doPreSetup() throws Exception {
+        super.doPreSetup();
+
+        mongo = container.createClient();
+        db = mongo.getDatabase(dbName);
+    }
 
     @Override
     public void doPostSetup() {
-        mongo = applicationContext.getBean("myDb", MongoClient.class);
-        db = mongo.getDatabase(dbName);
-
         // Refresh the test collection - drop it and recreate it. We don't do
         // this for the database because MongoDB would create large
         // store files each time
@@ -70,7 +86,6 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
         dynamicCollection = db.getCollection(dynamicCollectionName, Document.class);
         dynamicCollection.drop();
         dynamicCollection = db.getCollection(dynamicCollectionName, Document.class);
-
     }
 
     @Override
@@ -84,10 +99,14 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        applicationContext = new AnnotationConfigApplicationContext(EmbedMongoConfiguration.class);
+        MongoDbComponent component = new MongoDbComponent();
+        component.setMongoConnection(mongo);
+
         @SuppressWarnings("deprecation")
-        CamelContext ctx = SpringCamelContext.springCamelContext(applicationContext, true);
+        CamelContext ctx = new DefaultCamelContext();
         ctx.getPropertiesComponent().setLocation("classpath:mongodb.test.properties");
+        ctx.addComponent(SCHEME, component);
+
         return ctx;
     }
 

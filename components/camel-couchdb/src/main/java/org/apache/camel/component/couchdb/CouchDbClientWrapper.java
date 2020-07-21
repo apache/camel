@@ -16,9 +16,16 @@
  */
 package org.apache.camel.component.couchdb;
 
+import java.io.IOException;
+
+import com.google.gson.JsonObject;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.util.EntityUtils;
 import org.lightcouch.Changes;
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.CouchDbContext;
+import org.lightcouch.CouchDbException;
 import org.lightcouch.Response;
 
 /**
@@ -55,6 +62,26 @@ public class CouchDbClientWrapper {
 
     public CouchDbContext context() {
         return client.context();
+    }
+
+    /**
+     * In CouchDB 2.3.x, the purge_seq field type was changed from number to string.
+     * As such, calling {@link org.lightcouch.CouchDbContext#info()} was throwing an exception.
+     * This method workarounds the issue by getting the update_seq field while ignoring the purge_seq field.
+     * 
+     * @return The latest update sequence
+     */
+    public String getLatestUpdateSequence() {
+        HttpGet getDbInfoRequest = new HttpGet(client.getDBUri());
+        try {
+            HttpResponse getDbInfoResponse = client.executeRequest(getDbInfoRequest);
+            String dbInfoString = EntityUtils.toString(getDbInfoResponse.getEntity());
+            JsonObject dbInfo = client.getGson().fromJson(dbInfoString, JsonObject.class);
+            return dbInfo.get("update_seq").getAsString();
+        } catch (IOException e) {
+            getDbInfoRequest.abort();
+            throw new CouchDbException("Error executing request to fetch the latest update sequence. ", e);
+        }
     }
 
 }

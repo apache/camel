@@ -49,20 +49,20 @@ public final class ServiceNowHelper {
 
                 if (offset != null) {
                     switch (rel) {
-                    case ServiceNowConstants.LINK_FIRST:
-                        consumer.accept(ServiceNowConstants.OFFSET_FIRST, offset);
-                        break;
-                    case ServiceNowConstants.LINK_LAST:
-                        consumer.accept(ServiceNowConstants.OFFSET_LAST, offset);
-                        break;
-                    case ServiceNowConstants.LINK_NEXT:
-                        consumer.accept(ServiceNowConstants.OFFSET_NEXT, offset);
-                        break;
-                    case ServiceNowConstants.LINK_PREV:
-                        consumer.accept(ServiceNowConstants.OFFSET_PREV, offset);
-                        break;
-                    default:
-                        break;
+                        case ServiceNowConstants.LINK_FIRST:
+                            consumer.accept(ServiceNowConstants.OFFSET_FIRST, offset);
+                            break;
+                        case ServiceNowConstants.LINK_LAST:
+                            consumer.accept(ServiceNowConstants.OFFSET_LAST, offset);
+                            break;
+                        case ServiceNowConstants.LINK_NEXT:
+                            consumer.accept(ServiceNowConstants.OFFSET_NEXT, offset);
+                            break;
+                        case ServiceNowConstants.LINK_PREV:
+                            consumer.accept(ServiceNowConstants.OFFSET_PREV, offset);
+                            break;
+                        default:
+                            break;
                     }
                 }
             }

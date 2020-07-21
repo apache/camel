@@ -21,8 +21,8 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
 
 public class BeanLanguageOGNLWithDotInParameterPropertyPlaceholderTest extends ContextTestSupport {
 
@@ -39,8 +39,8 @@ public class BeanLanguageOGNLWithDotInParameterPropertyPlaceholderTest extends C
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myBean", new MyDestinationBean());
 
         myProp = new Properties();

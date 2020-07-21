@@ -30,6 +30,8 @@ import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.concurrent.Rejectable;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Threads processor that leverage a thread pool for continue processing the {@link Exchange}s
@@ -56,6 +58,8 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
  */
 public class ThreadsProcessor extends AsyncProcessorSupport implements IdAware, RouteIdAware {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ThreadsProcessor.class);
+
     private String id;
     private String routeId;
     private final CamelContext camelContext;
@@ -77,7 +81,7 @@ public class ThreadsProcessor extends AsyncProcessorSupport implements IdAware, 
 
         @Override
         public void run() {
-            log.trace("Continue routing exchange {}", exchange);
+            LOG.trace("Continue routing exchange {}", exchange);
             if (shutdown.get()) {
                 exchange.setException(new RejectedExecutionException("ThreadsProcessor is not running."));
             }
@@ -88,7 +92,7 @@ public class ThreadsProcessor extends AsyncProcessorSupport implements IdAware, 
         public void reject() {
             // reject should mark the exchange with an rejected exception and mark not to route anymore
             exchange.setException(new RejectedExecutionException());
-            log.trace("Rejected routing exchange {}", exchange);
+            LOG.trace("Rejected routing exchange {}", exchange);
             if (shutdown.get()) {
                 exchange.setException(new RejectedExecutionException("ThreadsProcessor is not running."));
             }
@@ -120,7 +124,7 @@ public class ThreadsProcessor extends AsyncProcessorSupport implements IdAware, 
         // we cannot execute this asynchronously for transacted exchanges, as the transaction manager doesn't support
         // using different threads in the same transaction
         if (exchange.isTransacted()) {
-            log.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
+            LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
             callback.done(true);
             return true;
         }
@@ -128,7 +132,7 @@ public class ThreadsProcessor extends AsyncProcessorSupport implements IdAware, 
         try {
             // process the call in asynchronous mode
             ProcessCall call = new ProcessCall(exchange, callback, false);
-            log.trace("Submitting task {}", call);
+            LOG.trace("Submitting task {}", call);
             executorService.submit(call);
             // tell Camel routing engine we continue routing asynchronous
             return false;

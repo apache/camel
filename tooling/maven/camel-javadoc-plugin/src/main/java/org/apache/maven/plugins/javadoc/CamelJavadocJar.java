@@ -93,7 +93,7 @@ public class CamelJavadocJar extends AbstractJavadocMojo {
      */
     @Parameter(defaultValue = "${project.build.directory}/apidocstmp", required = true)
     protected File intermediateDirectory;
-    
+
     /**
      * Used for attaching the artifact in the project.
      */

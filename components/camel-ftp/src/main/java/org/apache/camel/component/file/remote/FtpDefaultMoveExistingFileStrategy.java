@@ -37,13 +37,15 @@ public class FtpDefaultMoveExistingFileStrategy implements FileMoveExistingStrat
      * Moves any existing file due fileExists=Move is in use.
      */
     @Override
-    public boolean moveExistingFile(GenericFileEndpoint endpoint, GenericFileOperations operations, String fileName)
-            throws GenericFileOperationFailedException {
-        // need to evaluate using a dummy and simulate the file first, to have access to all the file attributes
-        // create a dummy exchange as Exchange is needed for expression evaluation
+    public boolean moveExistingFile(GenericFileEndpoint endpoint, GenericFileOperations operations, String fileName) throws GenericFileOperationFailedException {
+        // need to evaluate using a dummy and simulate the file first, to have
+        // access to all the file attributes
+        // create a dummy exchange as Exchange is needed for expression
+        // evaluation
         // we support only the following 3 tokens.
         Exchange dummy = endpoint.createExchange();
-        // we only support relative paths for the ftp component, so dont provide any parent
+        // we only support relative paths for the ftp component, so dont provide
+        // any parent
         String parent = null;
         String onlyName = FileUtil.stripPath(fileName);
         dummy.getIn().setHeader(Exchange.FILE_NAME, fileName);
@@ -51,7 +53,8 @@ public class FtpDefaultMoveExistingFileStrategy implements FileMoveExistingStrat
         dummy.getIn().setHeader(Exchange.FILE_PARENT, parent);
 
         String to = endpoint.getMoveExisting().evaluate(dummy, String.class);
-        // we only support relative paths for the ftp component, so strip any leading paths
+        // we only support relative paths for the ftp component, so strip any
+        // leading paths
         to = FileUtil.stripLeadingSeparator(to);
         // normalize accordingly to configuration
         to = ((FtpEndpoint<FTPFile>)endpoint).getConfiguration().normalizePath(to);
@@ -77,8 +80,7 @@ public class FtpDefaultMoveExistingFileStrategy implements FileMoveExistingStrat
                         throw new GenericFileOperationFailedException("Cannot delete file: " + to);
                     }
                 } catch (IOException e) {
-                    throw new GenericFileOperationFailedException(((FtpOperations)operations).getClient().getReplyCode(), 
-                                                                  ((FtpOperations)operations).getClient().getReplyString(), 
+                    throw new GenericFileOperationFailedException(((FtpOperations)operations).getClient().getReplyCode(), ((FtpOperations)operations).getClient().getReplyString(),
                                                                   "Cannot delete file: " + to, e);
                 }
             } else {

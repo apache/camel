@@ -20,18 +20,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class KafkaEndpointTest {
 
     private KafkaEndpoint endpoint;
@@ -42,9 +42,11 @@ public class KafkaEndpointTest {
     @Mock
     private KafkaComponent mockKafkaComponent;
 
-    @Before
+    @BeforeEach
     public void setup() {
-        endpoint = new KafkaEndpoint("kafka:mytopic?brokers=localhost", new KafkaComponent(new DefaultCamelContext()));
+        KafkaComponent kafka = new KafkaComponent(new DefaultCamelContext());
+        kafka.init();
+        endpoint = new KafkaEndpoint("kafka:mytopic?brokers=localhost", kafka);
     }
 
     @Test
@@ -67,7 +69,7 @@ public class KafkaEndpointTest {
     }
 
     @Test
-    public void isSingletonShoudlReturnTrue() {
+    public void isSingletonShouldReturnTrue() {
         assertTrue(endpoint.isSingleton());
     }
 

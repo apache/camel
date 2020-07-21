@@ -17,26 +17,28 @@
 package org.apache.camel.websocket.jsr356;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.nio.ByteBuffer;
 import java.util.function.BiConsumer;
 
 import javax.websocket.ClientEndpointConfig;
+import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.util.IOHelper;
 
 import static java.util.Optional.ofNullable;
 
 public class JSR356Producer extends DefaultAsyncProducer {
-    private final int sessionCount;
     private ClientSessions manager;
     private BiConsumer<Exchange, AsyncCallback> onExchange;
 
-    JSR356Producer(final JSR356Endpoint jsr356Endpoint, final int sessionCount) {
+    JSR356Producer(final JSR356Endpoint jsr356Endpoint) {
         super(jsr356Endpoint);
-        this.sessionCount = sessionCount;
     }
 
     @Override
@@ -60,20 +62,31 @@ public class JSR356Producer extends DefaultAsyncProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        final String endpointKey = getEndpoint().getEndpointUri().substring("websocket-jsr356://".length());
-        if (!endpointKey.contains("://")) { // we act as a client in all cases
-                                            // here
-            throw new IllegalArgumentException("You should pass a client uri");
+        final URI uri = getEndpoint().getUri();
+        if (uri.getScheme() != null && !uri.getScheme().equals("ws")) {
+            throw new IllegalArgumentException("WebSocket endpoint URI must be in the format: websocket-jsr356:ws://host:port/path");
         }
         final ClientEndpointConfig.Builder clientConfig = ClientEndpointConfig.Builder.create();
-        manager = new ClientSessions(sessionCount, URI.create(endpointKey), clientConfig.build(), null);
+        manager = new ClientSessions(getEndpoint().getSessionCount(), uri, clientConfig.build(), null);
         manager.prepare();
         onExchange = (exchange, callback) -> manager.execute(session -> doSend(exchange, callback, session));
     }
 
     private void doSend(final Exchange exchange, final AsyncCallback callback, final Session session) {
         try {
-            JSR356WebSocketComponent.sendMessage(session, exchange.getIn().getBody());
+            Object body = exchange.getMessage().getBody();
+            synchronized (session) {
+                final RemoteEndpoint.Basic basicRemote = session.getBasicRemote();
+                if (String.class.isInstance(body)) {
+                    basicRemote.sendText(String.valueOf(body));
+                } else if (ByteBuffer.class.isInstance(body)) {
+                    basicRemote.sendBinary(ByteBuffer.class.cast(body));
+                } else if (InputStream.class.isInstance(body)) {
+                    IOHelper.copy(InputStream.class.cast(body), basicRemote.getSendStream());
+                } else {
+                    throw new IllegalArgumentException("Unsupported input: " + body);
+                }
+            }
         } catch (final IOException e) {
             exchange.setException(e);
         } finally {

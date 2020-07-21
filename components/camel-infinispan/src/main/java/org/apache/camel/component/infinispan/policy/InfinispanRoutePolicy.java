@@ -112,7 +112,7 @@ public class InfinispanRoutePolicy extends RoutePolicySupport implements CamelCo
         super.onInit(route);
 
         LOGGER.info("Route managed by {}. Setting route {} AutoStartup flag to false.", getClass(), route.getId());
-        route.getRouteContext().setAutoStartup(false);
+        route.setAutoStartup(false);
 
         stoppeddRoutes.add(route);
 

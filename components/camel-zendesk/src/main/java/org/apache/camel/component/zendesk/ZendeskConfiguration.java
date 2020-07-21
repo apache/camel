@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.zendesk;
 
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -26,6 +27,7 @@ import org.apache.camel.util.ObjectHelper;
  * Component configuration for Zendesk component.
  */
 @UriParams
+@Configurer
 public class ZendeskConfiguration {
 
     @UriPath

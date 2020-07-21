@@ -25,8 +25,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.bindy.model.simple.oneclass.Order;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -105,10 +107,10 @@ public class BindyCsvClassTypeTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                BindyDataFormat bindy = new BindyDataFormat();
-                bindy.setClassType(Order.class);
-                bindy.setLocale("en");
-                bindy.setType(BindyType.Csv);
+                BindyDataFormat bindy = new BindyDataFormat()
+                        .classType(Order.class)
+                        .locale("en")
+                        .csv();
 
                 from("direct:in")
                     .marshal(bindy)

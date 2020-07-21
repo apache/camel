@@ -17,12 +17,12 @@
 package org.apache.camel.component.atmosphere.websocket;
 
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public class WebsocketCamelRouterWithInitParamTestSupport extends CamelTestSupport {
     public static final String CONTEXT = "/mycontext";
@@ -35,7 +35,7 @@ public class WebsocketCamelRouterWithInitParamTestSupport extends CamelTestSuppo
     protected ServletHolder servletHolder;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         server = new Server(PORT);
 
@@ -56,7 +56,7 @@ public class WebsocketCamelRouterWithInitParamTestSupport extends CamelTestSuppo
     }
     
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (startCamelContext) {
             super.tearDown();

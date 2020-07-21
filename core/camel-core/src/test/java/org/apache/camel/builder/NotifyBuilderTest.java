@@ -19,7 +19,10 @@ package org.apache.camel.builder;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class NotifyBuilderTest extends ContextTestSupport {
 
@@ -355,7 +358,7 @@ public class NotifyBuilderTest extends ContextTestSupport {
     public void testFilterWhenExchangeDone() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).filter(body().contains("World")).whenDone(3).create();
 
-        assertEquals("filter(simple{${body}} contains World).whenDone(3)", notify.toString());
+        assertEquals("filter(${body} contains World).whenDone(3)", notify.toString());
 
         assertEquals(false, notify.matches());
 

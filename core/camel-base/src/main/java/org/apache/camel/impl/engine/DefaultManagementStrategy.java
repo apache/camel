@@ -21,6 +21,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.impl.event.DefaultEventFactory;
 import org.apache.camel.spi.CamelEvent;
@@ -75,6 +76,10 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     @Override
     public void addEventNotifier(EventNotifier eventNotifier) {
         this.eventNotifiers.add(eventNotifier);
+        if (getCamelContext() != null) {
+            // okay we have an event notifier so its applicable
+            getCamelContext().adapt(ExtendedCamelContext.class).setEventNotificationApplicable(true);
+        }
     }
 
     @Override
@@ -94,9 +99,6 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
 
     @Override
     public ManagementObjectNameStrategy getManagementObjectNameStrategy() {
-        if (managementObjectNameStrategy == null) {
-            managementObjectNameStrategy = createManagementObjectNameStrategy(null);
-        }
         return managementObjectNameStrategy;
     }
 
@@ -107,9 +109,6 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
 
     @Override
     public ManagementObjectStrategy getManagementObjectStrategy() {
-        if (managementObjectStrategy == null) {
-            managementObjectStrategy = createManagementObjectStrategy();
-        }
         return managementObjectStrategy;
     }
 
@@ -177,41 +176,44 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     }
 
     @Override
-    protected void doStart() throws Exception {
-        log.info("JMX is disabled");
-        doStartManagementStrategy();
-    }
-
-    protected void doStartManagementStrategy() throws Exception {
-        ObjectHelper.notNull(camelContext, "CamelContext");
-
+    protected void doInit() throws Exception {
+        ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
+        if (!getEventNotifiers().isEmpty()) {
+            getCamelContext().adapt(ExtendedCamelContext.class).setEventNotificationApplicable(true);
+        }
         for (EventNotifier notifier : eventNotifiers) {
-
             // inject CamelContext if the service is aware
             if (notifier instanceof CamelContextAware) {
                 CamelContextAware aware = (CamelContextAware) notifier;
                 aware.setCamelContext(camelContext);
             }
+        }
+        ServiceHelper.initService(eventNotifiers, managementAgent);
 
-            ServiceHelper.startService(notifier);
+        if (managementObjectStrategy == null) {
+            managementObjectStrategy = createManagementObjectStrategy();
+        }
+        if (managementObjectStrategy instanceof CamelContextAware) {
+            ((CamelContextAware) managementObjectStrategy).setCamelContext(getCamelContext());
         }
 
-        if (managementAgent != null) {
-            ServiceHelper.startService(managementAgent);
-            // set the naming strategy using the domain name from the agent
-            if (managementObjectNameStrategy == null) {
-                String domain = managementAgent.getMBeanObjectDomainName();
-                managementObjectNameStrategy = createManagementObjectNameStrategy(domain);
-            }
+        if (managementObjectNameStrategy == null) {
+            managementObjectNameStrategy = createManagementObjectNameStrategy();
         }
         if (managementObjectNameStrategy instanceof CamelContextAware) {
             ((CamelContextAware) managementObjectNameStrategy).setCamelContext(getCamelContext());
         }
+        ServiceHelper.initService(managementObjectStrategy, managementObjectNameStrategy);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(eventNotifiers, managementAgent, managementObjectStrategy, managementObjectNameStrategy);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(managementAgent, eventNotifiers);
+        ServiceHelper.stopService(managementObjectNameStrategy, managementObjectStrategy, managementAgent, eventNotifiers);
     }
 
     protected ManagementObjectNameStrategy createManagementObjectNameStrategy(String domain) {
@@ -220,6 +222,11 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
 
     protected ManagementObjectStrategy createManagementObjectStrategy() {
         return null;
+    }
+
+    protected ManagementObjectNameStrategy createManagementObjectNameStrategy() {
+        String domain = managementAgent != null ? managementAgent.getMBeanObjectDomainName() : null;
+        return createManagementObjectNameStrategy(domain);
     }
 
 }

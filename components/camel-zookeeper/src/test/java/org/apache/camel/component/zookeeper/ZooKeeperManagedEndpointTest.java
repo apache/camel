@@ -22,40 +22,15 @@ import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jmx.support.JmxUtils;
 
 @SuppressWarnings("all")
-public class ZooKeeperManagedEndpointTest extends CamelTestSupport {
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        ZooKeeperTestSupport.setupTestServer();
-        super.setUp();
-    }
-
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-        ZooKeeperTestSupport.shutdownServer();
-    }
-
+public class ZooKeeperManagedEndpointTest extends ZooKeeperTestSupport {
     @Override
     protected boolean useJmx() {
         return true;
-    }
-
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        return context;
     }
 
     protected MBeanServer getMBeanServer() {
@@ -75,9 +50,12 @@ public class ZooKeeperManagedEndpointTest extends CamelTestSupport {
         verifyManagedAttribute(zepName, "Timeout", 1000);
         verifyManagedAttribute(zepName, "Backoff", 2000L);
 
-        getMBeanServer().invoke(zepName, "clearServers", null, JmxUtils.getMethodSignature(ZooKeeperEndpoint.class.getMethod("clearServers", null)));
-        getMBeanServer().invoke(zepName, "addServer", new Object[]{"someserver:12345"},
-                JmxUtils.getMethodSignature(ZooKeeperEndpoint.class.getMethod("addServer", new Class[]{String.class})));
+        getMBeanServer().invoke(zepName, "clearServers",
+            null,
+            JmxUtils.getMethodSignature(ZooKeeperEndpoint.class.getMethod("clearServers", null)));
+        getMBeanServer().invoke(zepName, "addServer",
+            new Object[]{"someserver:12345"},
+            JmxUtils.getMethodSignature(ZooKeeperEndpoint.class.getMethod("addServer", new Class[]{String.class})));
     }
 
     private void verifyManagedAttribute(ObjectName zepName, String attributeName, String attributeValue) throws Exception {
@@ -99,7 +77,7 @@ public class ZooKeeperManagedEndpointTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("zookeeper://localhost:" + ZooKeeperTestSupport.getServerPort() + "/node?timeout=1000&backoff=2000").to("mock:test");
+                from("zookeeper://{{container:host:zookeeper}}:{{container:port:2181@zookeeper}}/node?timeout=1000&backoff=2000").to("mock:test");
             }
         };
     }

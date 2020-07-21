@@ -22,10 +22,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.activemq.Service;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
+import org.apache.camel.component.jms.JmsEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.URISupport;
@@ -79,9 +83,19 @@ public class ActiveMQComponent extends JmsComponent {
         return answer;
     }
 
+    public String getBrokerURL() {
+        if (getConfiguration() instanceof ActiveMQConfiguration) {
+            return ((ActiveMQConfiguration) getConfiguration()).getBrokerURL();
+        }
+        return null;
+    }
+
     /**
-     * Sets the broker URL to use to connect to ActiveMQ
+     * Sets the broker URL to use to connect to ActiveMQ.
+     * If none configured then localhost:61616 is used by default
+     * (however can be overridden by configuration from environment variables)
      */
+    @Metadata(label = "common")
     public void setBrokerURL(String brokerURL) {
         if (getConfiguration() instanceof ActiveMQConfiguration) {
             ((ActiveMQConfiguration)getConfiguration()).setBrokerURL(brokerURL);
@@ -93,10 +107,18 @@ public class ActiveMQComponent extends JmsComponent {
      * Notice its not recommended practice to send Java serialized objects over network.
      * Setting this to true can expose security risks, so use this with care.
      */
+    @Metadata(defaultValue = "false", label = "advanced")
     public void setTrustAllPackages(boolean trustAllPackages) {
         if (getConfiguration() instanceof ActiveMQConfiguration) {
             ((ActiveMQConfiguration)getConfiguration()).setTrustAllPackages(trustAllPackages);
         }
+    }
+
+    public boolean isTrustAllPackages() {
+        if (getConfiguration() instanceof ActiveMQConfiguration) {
+            return ((ActiveMQConfiguration)getConfiguration()).isTrustAllPackages();
+        }
+        return false;
     }
 
     /**
@@ -108,10 +130,18 @@ public class ActiveMQComponent extends JmsComponent {
      * <p/>
      * The default value is true.
      */
+    @Metadata(defaultValue = "true", label = "common")
     public void setUsePooledConnection(boolean usePooledConnection) {
         if (getConfiguration() instanceof ActiveMQConfiguration) {
             ((ActiveMQConfiguration)getConfiguration()).setUsePooledConnection(usePooledConnection);
         }
+    }
+
+    public boolean isUsePooledConnection() {
+        if (getConfiguration() instanceof ActiveMQConfiguration) {
+            return ((ActiveMQConfiguration)getConfiguration()).isUsePooledConnection();
+        }
+        return true;
     }
 
     /**
@@ -123,10 +153,33 @@ public class ActiveMQComponent extends JmsComponent {
      * <p/>
      * The default value is false and a pooled connection is used by default.
      */
+    @Metadata(defaultValue = "false", label = "common")
     public void setUseSingleConnection(boolean useSingleConnection) {
         if (getConfiguration() instanceof ActiveMQConfiguration) {
             ((ActiveMQConfiguration)getConfiguration()).setUseSingleConnection(useSingleConnection);
         }
+    }
+
+    public boolean isUseSingleConnection() {
+        if (getConfiguration() instanceof ActiveMQConfiguration) {
+            return ((ActiveMQConfiguration)getConfiguration()).isUseSingleConnection();
+        }
+        return false;
+    }
+
+    @Override
+    protected void setProperties(Endpoint bean, Map<String, Object> parameters) throws Exception {
+        Object useSingleConnection = parameters.remove("useSingleConnection");
+        if (useSingleConnection != null) {
+            ((ActiveMQConfiguration) ((JmsEndpoint) bean).getConfiguration())
+                    .setUseSingleConnection(PropertyConfigurerSupport.property(getCamelContext(), boolean.class, useSingleConnection));
+        }
+        Object usePooledConnection = parameters.remove("usePooledConnection");
+        if (usePooledConnection != null) {
+            ((ActiveMQConfiguration) ((JmsEndpoint) bean).getConfiguration())
+                    .setUsePooledConnection(PropertyConfigurerSupport.property(getCamelContext(), boolean.class, usePooledConnection));
+        }
+        super.setProperties(bean, parameters);
     }
 
     protected void addPooledConnectionFactoryService(Service pooledConnectionFactoryService) {

@@ -21,11 +21,12 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsTestSupport;
 import org.eclipse.microprofile.metrics.Gauge;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.DEFAULT_CAMEL_ROUTES_ADDED_METRIC_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.DEFAULT_CAMEL_ROUTES_RUNNING_METRIC_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper.findMetric;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MicroProfileMetricsRouteEventNotifierTest extends MicroProfileMetricsTestSupport {
 

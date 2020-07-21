@@ -26,24 +26,26 @@ import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.spring.SpringCamelContext;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
  */
-public class CxfRsProducerClientFactoryCacheTest extends Assert {
+public class CxfRsProducerClientFactoryCacheTest {
     private static int port1 = CXFTestSupport.getPort1(); 
 
     private CamelContext context1;
     private ProducerTemplate template1;
     private AbstractApplicationContext applicationContext;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryCacheTest1.xml");
         context1 = SpringCamelContext.springCamelContext(applicationContext, false);
@@ -52,7 +54,7 @@ public class CxfRsProducerClientFactoryCacheTest extends Assert {
         template1.start();
     }
     
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (context1 != null) {
             context1.stop();
@@ -86,10 +88,10 @@ public class CxfRsProducerClientFactoryCacheTest extends Assert {
         // get the response message 
         Customer response = (Customer) exchange.getOut().getBody();
         
-        assertNotNull("The response should not be null ", response);
-        assertEquals("Get a wrong customer id ", String.valueOf(response.getId()), "123");
-        assertEquals("Get a wrong customer name", response.getName(), "John");
-        assertEquals("Get a wrong response code", 200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertNotNull(response, "The response should not be null");
+        assertEquals(String.valueOf(response.getId()), "123", "Get a wrong customer id");
+        assertEquals(response.getName(), "John", "Get a wrong customer name");
+        assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
     }
 
     public int getPort1() {

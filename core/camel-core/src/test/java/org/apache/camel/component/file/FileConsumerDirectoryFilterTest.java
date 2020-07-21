@@ -25,9 +25,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for the file filter option using directories
@@ -38,14 +41,14 @@ public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
     private final Set<String> names = new TreeSet<>();
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myFilter", new MyDirectoryFilter<>());
         return jndi;
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/directoryfilter");
         super.setUp();
@@ -73,7 +76,7 @@ public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
 
         assertEquals("okDir", list.get(0));
         // windows or unix paths
-        assertTrue(list.get(0), list.get(1).equals("okDir/hello.txt") || list.get(1).equals("okDir\\hello.txt"));
+        assertTrue(list.get(1).equals("okDir/hello.txt") || list.get(1).equals("okDir\\hello.txt"), list.get(0));
         assertEquals("skipDir", list.get(2));
         assertEquals("skipDir2", list.get(3));
     }

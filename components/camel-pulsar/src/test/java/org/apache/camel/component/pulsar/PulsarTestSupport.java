@@ -22,7 +22,7 @@ import org.testcontainers.containers.GenericContainer;
 
 public class PulsarTestSupport extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_IMAGE = "apachepulsar/pulsar:2.4.2";
+    public static final String CONTAINER_IMAGE = "apachepulsar/pulsar:2.6.0";
     public static final String CONTAINER_NAME = "pulsar";
     public static final int BROKER_PORT = 6650;
     public static final int BROKER_HTTP_PORT = 8080;
@@ -41,5 +41,9 @@ public class PulsarTestSupport extends ContainerAwareTestSupport {
 
     public String getPulsarBrokerUrl() {
         return String.format("pulsar://%s:%s", getContainer(CONTAINER_NAME).getContainerIpAddress(), getContainer(CONTAINER_NAME).getMappedPort(BROKER_PORT));
+    }
+
+    public String getPulsarAdminUrl() {
+        return String.format("http://%s:%s", getContainer(CONTAINER_NAME).getContainerIpAddress(), getContainer(CONTAINER_NAME).getMappedPort(BROKER_HTTP_PORT));
     }
 }

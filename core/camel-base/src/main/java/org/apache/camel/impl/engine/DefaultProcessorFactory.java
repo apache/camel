@@ -26,11 +26,11 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.Route;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.processor.UnitOfWorkProducer;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.ProcessorFactory;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Default {@link ProcessorFactory} that supports using 3rd party Camel components to implement the EIP {@link Processor}.
@@ -48,15 +48,15 @@ public class DefaultProcessorFactory implements ProcessorFactory {
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/model/";
 
     @Override
-    public Processor createChildProcessor(RouteContext routeContext, NamedNode definition, boolean mandatory) throws Exception {
+    public Processor createChildProcessor(Route route, NamedNode definition, boolean mandatory) throws Exception {
         String name = definition.getClass().getSimpleName();
-        FactoryFinder finder = routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
+        FactoryFinder finder = route.getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
         try {
             if (finder != null) {
                 Object object = finder.newInstance(name);
                 if (object instanceof ProcessorFactory) {
                     ProcessorFactory pc = (ProcessorFactory) object;
-                    return pc.createChildProcessor(routeContext, definition, mandatory);
+                    return pc.createChildProcessor(route, definition, mandatory);
                 }
             }
         } catch (NoFactoryAvailableException e) {
@@ -67,13 +67,13 @@ public class DefaultProcessorFactory implements ProcessorFactory {
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext, NamedNode definition) throws Exception {
+    public Processor createProcessor(Route route, NamedNode definition) throws Exception {
         String name = definition.getClass().getSimpleName();
-        FactoryFinder finder = routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
+        FactoryFinder finder = route.getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
         if (finder != null) {
             ProcessorFactory pc = finder.newInstance(name, ProcessorFactory.class).orElse(null);
             if (pc != null) {
-                return pc.createProcessor(routeContext, definition);
+                return pc.createProcessor(route, definition);
             }
         }
 

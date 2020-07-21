@@ -23,7 +23,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.util.IOHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyChuckedFalseTest extends BaseJettyTest {
 
@@ -40,9 +42,9 @@ public class JettyChuckedFalseTest extends BaseJettyTest {
         Message out = exchange.getOut();
         // make sure we have the content-length header
         String len = out.getHeader(Exchange.CONTENT_LENGTH, String.class);
-        assertEquals("We should have the content-length header here.", "20", len);
+        assertEquals("20", len, "We should have the content-length header here.");
         String response = out.getBody(String.class);
-        assertEquals("Get a wrong response", "This is hello world.", response);
+        assertEquals("This is hello world.", response, "Get a wrong response");
     }
 
     @Override

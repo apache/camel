@@ -36,7 +36,7 @@ public class ConsumerTemplateFtpShutdownTest extends FtpServerTestSupport {
 
         Exchange exchange = consumer.receive(getFtpUrl() + "&fileName=hello.txt", 5000);
         assertNotNull(exchange);
-        
+
         consumer.doneUoW(exchange);
         consumer.stop();
     }

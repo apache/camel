@@ -24,9 +24,12 @@ import java.util.stream.Stream;
 
 import io.debezium.config.Field;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.common.config.ConfigDef;
 
 public final class ConnectorConfigFieldsFactory {
+
+    private static final String[] ILLEGAL_CHARS = {"%", "+", "[", "]", "*", "(", ")", "ˆ", "@", "%", "~"};
 
     private ConnectorConfigFieldsFactory() {
     }
@@ -48,7 +51,10 @@ public final class ConnectorConfigFieldsFactory {
 
         // create our map for fields
         configDef.configKeys().forEach((name, configKey) -> {
-            results.put(name, new ConnectorConfigField(configKey, deprecatedFields.contains(name), requiredFields.contains(name), overridenDefaultValues.getOrDefault(name, null)));
+            // check if name is clean
+            if (!StringUtils.containsAny(name, ILLEGAL_CHARS)) {
+                results.put(name, new ConnectorConfigField(configKey, deprecatedFields.contains(name), requiredFields.contains(name), overridenDefaultValues.getOrDefault(name, null)));
+            }
         });
 
         return results;

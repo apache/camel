@@ -18,24 +18,24 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetPropertyDefinition;
 import org.apache.camel.processor.SetPropertyProcessor;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 public class SetPropertyReifier extends ExpressionReifier<SetPropertyDefinition> {
 
-    public SetPropertyReifier(ProcessorDefinition<?> definition) {
-        super((SetPropertyDefinition)definition);
+    public SetPropertyReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (SetPropertyDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         ObjectHelper.notNull(definition.getName(), "propertyName", this);
-        Expression expr = definition.getExpression().createExpression(routeContext);
-        Expression nameExpr = ExpressionBuilder.parseSimpleOrFallbackToConstantExpression(definition.getName(), routeContext.getCamelContext());
+        Expression expr = createExpression(definition.getExpression());
+        Expression nameExpr = ExpressionBuilder.parseSimpleOrFallbackToConstantExpression(parseString(definition.getName()), camelContext);
         return new SetPropertyProcessor(nameExpr, expr);
     }
 }

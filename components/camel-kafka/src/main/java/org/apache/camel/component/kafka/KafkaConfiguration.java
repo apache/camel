@@ -103,9 +103,9 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private Integer sessionTimeoutMs = 10000;
     @UriParam(label = "consumer", defaultValue = "500")
     private Integer maxPollRecords;
-    @UriParam(label = "consumer", defaultValue = "5000")
+    @UriParam(label = "consumer", defaultValue = "5000", javaType = "java.time.Duration")
     private Long pollTimeoutMs = 5000L;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", javaType = "java.time.Duration")
     private Long maxPollIntervalMs;
     // auto.offset.reset1
     @UriParam(label = "consumer", defaultValue = "latest", enums = "latest,earliest,none")
@@ -195,8 +195,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "producer", defaultValue = "65536")
     private Integer receiveBufferBytes = 65536;
     // request.timeout.ms
-    @UriParam(label = "producer", defaultValue = "305000")
-    private Integer requestTimeoutMs = 305000;
+    @UriParam(label = "producer", defaultValue = "30000")
+    private Integer requestTimeoutMs = 30000;
     // send.buffer.bytes
     @UriParam(label = "producer", defaultValue = "131072")
     private Integer sendBufferBytes = 131072;
@@ -272,8 +272,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "common,security")
     private String sslCipherSuites;
     // ssl.endpoint.identification.algorithm
-    @UriParam(label = "common,security")
-    private String sslEndpointAlgorithm;
+    @UriParam(label = "common,security", defaultValue = "https")
+    private String sslEndpointAlgorithm = SslConfigs.DEFAULT_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM;
     // ssl.keymanager.algorithm
     @UriParam(label = "common,security", defaultValue = "SunX509")
     private String sslKeymanagerAlgorithm = "SunX509";
@@ -319,6 +319,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // Additional properties
     @UriParam(label = "common", prefix = "additionalProperties.", multiValue = true)
     private Map<String, Object> additionalProperties = new HashMap<>();
+    @UriParam(label = "common", defaultValue = "30000")
+    private int shutdownTimeout = 30000;
 
     public KafkaConfiguration() {
     }
@@ -661,6 +663,17 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         this.allowManualCommit = allowManualCommit;
     }
 
+    public int getShutdownTimeout() {
+        return shutdownTimeout;
+    }
+
+    /**
+     * Timeout in milli seconds to wait gracefully for the consumer or producer to shutdown and terminate its worker threads.
+     */
+    public void setShutdownTimeout(int shutdownTimeout) {
+        this.shutdownTimeout = shutdownTimeout;
+    }
+
     public StateRepository<String, String> getOffsetRepository() {
         return offsetRepository;
     }
@@ -794,22 +807,24 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * URL of the Confluent Platform schema registry servers to use. 
-     * The format is host1:port1,host2:port2. 
-     * This is known as schema.registry.url in the Confluent Platform documentation.
-     * This option is only available in the Confluent Platform (not standard Apache Kafka)
+     * URL of the Confluent Platform schema registry servers to use. The format
+     * is host1:port1,host2:port2. This is known as schema.registry.url in the
+     * Confluent Platform documentation. This option is only available in the
+     * Confluent Platform (not standard Apache Kafka)
      */
     public void setSchemaRegistryURL(String schemaRegistryURL) {
         this.schemaRegistryURL = schemaRegistryURL;
     }
-    
+
     public boolean isSpecificAvroReader() {
         return specificAvroReader;
     }
-    
+
     /**
-     * This enables the use of a specific Avro reader for use with the Confluent Platform schema registry and the io.confluent.kafka.serializers.KafkaAvroDeserializer.
-     * This option is only available in the Confluent Platform (not standard Apache Kafka)
+     * This enables the use of a specific Avro reader for use with the Confluent
+     * Platform schema registry and the
+     * io.confluent.kafka.serializers.KafkaAvroDeserializer. This option is only
+     * available in the Confluent Platform (not standard Apache Kafka)
      */
     public void setSpecificAvroReader(boolean specificAvroReader) {
         this.specificAvroReader = specificAvroReader;
@@ -957,7 +972,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * and the first rule that matches a principal name is used to map it to a
      * short name. Any later rules in the list are ignored. By default,
      * principal names of the form {username}/{hostname}@{REALM} are mapped to
-     * {username}. For more details on the format please see the security authorization and acls documentation..
+     * {username}. For more details on the format please see the security
+     * authorization and acls documentation..
      * <p/>
      * Multiple values can be separated by comma
      */
@@ -1135,6 +1151,9 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     /**
      * SSL configuration using a Camel {@link SSLContextParameters} object. If
      * configured it's applied before the other SSL endpoint parameters.
+     *
+     * NOTE: Kafka only supports loading keystore from file locations, so prefix the location with file:
+     * in the KeyStoreParameters.resource option.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
@@ -1328,7 +1347,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * under load when records arrive faster than they can be sent out. However
      * in some circumstances the client may want to reduce the number of
      * requests even under moderate load. This setting accomplishes this by
-     * adding a small amount of artificial delay—that is, rather than
+     * adding a small amount of artificial delay that is, rather than
      * immediately sending out a record the producer will wait for up to the
      * given delay to allow other records to be sent so that the sends can be
      * batched together. This can be thought of as analogous to Nagle's
@@ -1632,6 +1651,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * To use a custom worker pool for continue routing {@link Exchange} after
      * kafka server has acknowledge the message that was sent to it from
      * {@link KafkaProducer} using asynchronous non-blocking processing.
+     * If using this option then you must handle the lifecycle of the thread pool
+     * to shut the pool down when no longer needed.
      */
     public void setWorkerPool(ExecutorService workerPool) {
         this.workerPool = workerPool;
@@ -1770,9 +1791,11 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * Sets additional properties for either kafka consumer or kafka producer in case they can't be set directly on the camel configurations
-     * (e.g: new Kafka properties that are not reflected yet in Camel configurations), the properties have to be prefixed with
-     * `additionalProperties.`. E.g: `additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro`
+     * Sets additional properties for either kafka consumer or kafka producer in
+     * case they can't be set directly on the camel configurations (e.g: new
+     * Kafka properties that are not reflected yet in Camel configurations), the
+     * properties have to be prefixed with `additionalProperties.`. E.g:
+     * `additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro`
      */
     public void setAdditionalProperties(Map<String, Object> additionalProperties) {
         this.additionalProperties = additionalProperties;

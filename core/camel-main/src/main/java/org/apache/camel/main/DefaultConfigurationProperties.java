@@ -16,8 +16,10 @@
  */
 package org.apache.camel.main;
 
+import org.apache.camel.Experimental;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.ManagementStatisticsLevel;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.PatternHelper;
 
 /**
@@ -29,16 +31,17 @@ public abstract class DefaultConfigurationProperties<T> {
     private int durationMaxSeconds;
     private int durationMaxIdleSeconds;
     private int durationMaxMessages;
-    private int shutdownTimeout = 300;
+    private int shutdownTimeout = 45;
     private boolean shutdownSuppressLoggingOnTimeout;
     private boolean shutdownNowOnTimeout = true;
     private boolean shutdownRoutesInReverseOrder = true;
     private boolean shutdownLogInflightExchangesOnTimeout = true;
+    private boolean inflightRepositoryBrowseEnabled;
     private String fileConfigurations;
     private boolean jmxEnabled = true;
     private int producerTemplateCacheSize = 1000;
     private int consumerTemplateCacheSize = 1000;
-    private boolean loadTypeConverters = true;
+    private boolean loadTypeConverters;
     private int logDebugMaxChars;
     private boolean streamCachingEnabled;
     private String streamCachingSpoolDirectory;
@@ -53,20 +56,21 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean backlogTracing;
     private boolean tracing;
     private String tracingPattern;
-    private boolean messageHistory = true;
+    private boolean messageHistory;
     private boolean logMask;
     private boolean logExhaustedMessageBody;
     private boolean autoStartup = true;
     private boolean allowUseOriginalMessage;
+    private boolean caseInsensitiveHeaders = true;
     private boolean endpointRuntimeStatisticsEnabled;
     private boolean endpointLazyStartProducer;
     private boolean endpointBridgeErrorHandler;
     private boolean endpointBasicPropertyBinding;
     private boolean useDataType;
     private boolean useBreadcrumb;
+    @Metadata(defaultValue = "Default")
     private ManagementStatisticsLevel jmxManagementStatisticsLevel = ManagementStatisticsLevel.Default;
     private String jmxManagementNamePattern = "#name#";
-    private boolean jmxCreateConnector;
     private boolean useMdcLogging;
     private String mdcLoggingKeysPattern;
     private String threadNamePattern;
@@ -78,7 +82,23 @@ public abstract class DefaultConfigurationProperties<T> {
     private String javaRoutesIncludePattern;
     private String javaRoutesExcludePattern;
     private String xmlRoutes = "classpath:camel/*.xml";
+    private String xmlRouteTemplates = "classpath:camel-template/*.xml";
     private String xmlRests = "classpath:camel-rest/*.xml";
+    private boolean lightweight;
+    // route controller
+    @Metadata(defaultValue = "INFO")
+    private LoggingLevel routeControllerRouteStartupLoggingLevel = LoggingLevel.INFO;
+    private boolean routeControllerSuperviseEnabled;
+    private String routeControllerIncludeRoutes;
+    private String routeControllerExcludeRoutes;
+    private int routeControllerThreadPoolSize;
+    private long routeControllerInitialDelay;
+    private long routeControllerBackOffDelay;
+    private long routeControllerBackOffMaxDelay;
+    private long routeControllerBackOffMaxElapsedTime;
+    private long routeControllerBackOffMaxAttempts;
+    private double routeControllerBackOffMultiplier;
+    private boolean routeControllerUnhealthyOnExhausted;
 
     // getter and setters
     // --------------------------------------------------------------
@@ -190,9 +210,24 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Sets whether to log information about the inflight Exchanges which are still running
      * during a shutdown which didn't complete without the given timeout.
+     *
+     * This requires to enable the option inflightRepositoryBrowseEnabled.
      */
     public void setShutdownLogInflightExchangesOnTimeout(boolean shutdownLogInflightExchangesOnTimeout) {
         this.shutdownLogInflightExchangesOnTimeout = shutdownLogInflightExchangesOnTimeout;
+    }
+
+    public boolean isInflightRepositoryBrowseEnabled() {
+        return inflightRepositoryBrowseEnabled;
+    }
+
+    /**
+     * Sets whether the inflight repository should allow browsing each inflight exchange.
+     *
+     * This is by default disabled as there is a very slight performance overhead when enabled.
+     */
+    public void setInflightRepositoryBrowseEnabled(boolean inflightRepositoryBrowseEnabled) {
+        this.inflightRepositoryBrowseEnabled = inflightRepositoryBrowseEnabled;
     }
 
     public String getFileConfigurations() {
@@ -446,7 +481,7 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Sets whether message history is enabled or not.
      *
-     * Default is true.
+     * Default is false.
      */
     public void setMessageHistory(boolean messageHistory) {
         this.messageHistory = messageHistory;
@@ -509,6 +544,24 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setAllowUseOriginalMessage(boolean allowUseOriginalMessage) {
         this.allowUseOriginalMessage = allowUseOriginalMessage;
+    }
+
+    public boolean isCaseInsensitiveHeaders() {
+        return caseInsensitiveHeaders;
+    }
+
+    /**
+     * Whether to use case sensitive or insensitive headers.
+     *
+     * Important: When using case sensitive (this is set to false).
+     * Then the map is case sensitive which means headers such as content-type and Content-Type are
+     * two different keys which can be a problem for some protocols such as HTTP based, which rely on case insensitive headers.
+     * However case sensitive implementations can yield faster performance. Therefore use case sensitive implementation with care.
+     *
+     * Default is true.
+     */
+    public void setCaseInsensitiveHeaders(boolean caseInsensitiveHeaders) {
+        this.caseInsensitiveHeaders = caseInsensitiveHeaders;
     }
 
     public boolean isEndpointRuntimeStatisticsEnabled() {
@@ -622,19 +675,6 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setJmxManagementNamePattern(String jmxManagementNamePattern) {
         this.jmxManagementNamePattern = jmxManagementNamePattern;
-    }
-
-    public boolean isJmxCreateConnector() {
-        return jmxCreateConnector;
-    }
-
-    /**
-     * Whether JMX connector is created, allowing clients to connect remotely
-     *
-     * The default value is false.
-     */
-    public void setJmxCreateConnector(boolean jmxCreateConnector) {
-        this.jmxCreateConnector = jmxCreateConnector;
     }
 
     public boolean isUseMdcLogging() {
@@ -834,6 +874,27 @@ public abstract class DefaultConfigurationProperties<T> {
         this.xmlRoutes = xmlRoutes;
     }
 
+    public String getXmlRouteTemplates() {
+        return xmlRouteTemplates;
+    }
+
+    /**
+     * Directory to scan for adding additional XML route templates.
+     * You can turn this off by setting the value to false.
+     *
+     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
+     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;template-&#42;.xml
+     *
+     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where
+     * as if you specific the exact name for each XML file is faster as no classpath scanning is needed.
+     *
+     * Multiple directories can be specified and separated by comma, such as:
+     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+     */
+    public void setXmlRouteTemplates(String xmlRouteTemplates) {
+        this.xmlRouteTemplates = xmlRouteTemplates;
+    }
+
     public String getXmlRests() {
         return xmlRests;
     }
@@ -853,6 +914,192 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setXmlRests(String xmlRests) {
         this.xmlRests = xmlRests;
+    }
+
+    @Experimental
+    public boolean isLightweight() {
+        return lightweight;
+    }
+
+    /**
+     * Experimental: Configure the context to be lightweight.
+     * This will trigger some optimizations and memory reduction options.
+     * Lightweight context have some limitations.
+     * At this moment, dynamic endpoint destinations are not supported.
+     */
+    @Experimental
+    public void setLightweight(boolean lightweight) {
+        this.lightweight = lightweight;
+    }
+
+    public LoggingLevel getRouteControllerRouteStartupLoggingLevel() {
+        return routeControllerRouteStartupLoggingLevel;
+    }
+
+    /**
+     * Sets the logging level used for logging route startup activity.
+     * By default INFO level is used. You can use this to change the level for example to OFF if
+     * this kind of logging is not wanted.
+     */
+    public void setRouteControllerRouteStartupLoggingLevel(LoggingLevel routeControllerRouteStartupLoggingLevel) {
+        this.routeControllerRouteStartupLoggingLevel = routeControllerRouteStartupLoggingLevel;
+    }
+
+    public boolean isRouteControllerSuperviseEnabled() {
+        return routeControllerSuperviseEnabled;
+    }
+
+    /**
+     * To enable using supervising route controller which allows Camel to startup
+     * and then the controller takes care of starting the routes in a safe manner.
+     *
+     * This can be used when you want to startup Camel despite a route may otherwise
+     * fail fast during startup and cause Camel to fail to startup as well. By delegating
+     * the route startup to the supervising route controller then its manages the startup
+     * using a background thread. The controller allows to be configured with various
+     * settings to attempt to restart failing routes.
+     */
+    public void setRouteControllerSuperviseEnabled(boolean routeControllerSuperviseEnabled) {
+        this.routeControllerSuperviseEnabled = routeControllerSuperviseEnabled;
+    }
+
+    public String getRouteControllerIncludeRoutes() {
+        return routeControllerIncludeRoutes;
+    }
+
+    /**
+     * Pattern for filtering routes to be excluded as supervised.
+     *
+     * The pattern is matching on route id, and endpoint uri for the route.
+     * Multiple patterns can be separated by comma.
+     *
+     * For example to exclude all JMS routes, you can say <tt>jms:*</tt>.
+     * And to exclude routes with specific route ids <tt>mySpecialRoute,myOtherSpecialRoute</tt>.
+     * The pattern supports wildcards and uses the matcher from
+     * org.apache.camel.support.PatternHelper#matchPattern.
+     */
+    public void setRouteControllerIncludeRoutes(String routeControllerIncludeRoutes) {
+        this.routeControllerIncludeRoutes = routeControllerIncludeRoutes;
+    }
+
+    public String getRouteControllerExcludeRoutes() {
+        return routeControllerExcludeRoutes;
+    }
+
+    /**
+     * Pattern for filtering routes to be included as supervised.
+     *
+     * The pattern is matching on route id, and endpoint uri for the route.
+     * Multiple patterns can be separated by comma.
+     *
+     * For example to include all kafka routes, you can say <tt>kafka:*</tt>.
+     * And to include routes with specific route ids <tt>myRoute,myOtherRoute</tt>.
+     * The pattern supports wildcards and uses the matcher from
+     * org.apache.camel.support.PatternHelper#matchPattern.
+     */
+    public void setRouteControllerExcludeRoutes(String routeControllerExcludeRoutes) {
+        this.routeControllerExcludeRoutes = routeControllerExcludeRoutes;
+    }
+
+    public int getRouteControllerThreadPoolSize() {
+        return routeControllerThreadPoolSize;
+    }
+
+    /**
+     * The number of threads used by the route controller scheduled thread pool that are used for restarting
+     * routes. The pool uses 1 thread by default, but you can increase this to allow the controller
+     * to concurrently attempt to restart multiple routes in case more than one route has problems
+     * starting.
+     */
+    public void setRouteControllerThreadPoolSize(int routeControllerThreadPoolSize) {
+        this.routeControllerThreadPoolSize = routeControllerThreadPoolSize;
+    }
+
+    public long getRouteControllerInitialDelay() {
+        return routeControllerInitialDelay;
+    }
+
+    /**
+     * Initial delay in milli seconds before the route controller starts, after
+     * CamelContext has been started.
+     */
+    public void setRouteControllerInitialDelay(long routeControllerInitialDelay) {
+        this.routeControllerInitialDelay = routeControllerInitialDelay;
+    }
+
+    public long getRouteControllerBackOffDelay() {
+        return routeControllerBackOffDelay;
+    }
+
+    /**
+     * Backoff delay in millis when restarting a route that failed to startup.
+     */
+    public void setRouteControllerBackOffDelay(long routeControllerBackOffDelay) {
+        this.routeControllerBackOffDelay = routeControllerBackOffDelay;
+    }
+
+    public long getRouteControllerBackOffMaxDelay() {
+        return routeControllerBackOffMaxDelay;
+    }
+
+    /**
+     * Backoff maximum delay in millis when restarting a route that failed to startup.
+     */
+    public void setRouteControllerBackOffMaxDelay(long routeControllerBackOffMaxDelay) {
+        this.routeControllerBackOffMaxDelay = routeControllerBackOffMaxDelay;
+    }
+
+    public long getRouteControllerBackOffMaxElapsedTime() {
+        return routeControllerBackOffMaxElapsedTime;
+    }
+
+    /**
+     * Backoff maximum elapsed time in millis, after which the backoff should be considered
+     * exhausted and no more attempts should be made.
+     */
+    public void setRouteControllerBackOffMaxElapsedTime(long routeControllerBackOffMaxElapsedTime) {
+        this.routeControllerBackOffMaxElapsedTime = routeControllerBackOffMaxElapsedTime;
+    }
+
+    public long getRouteControllerBackOffMaxAttempts() {
+        return routeControllerBackOffMaxAttempts;
+    }
+
+    /**
+     * Backoff maximum number of attempts to restart a route that failed to startup.
+     * When this threshold has been exceeded then the controller will give up
+     * attempting to restart the route, and the route will remain as stopped.
+     */
+    public void setRouteControllerBackOffMaxAttempts(long routeControllerBackOffMaxAttempts) {
+        this.routeControllerBackOffMaxAttempts = routeControllerBackOffMaxAttempts;
+    }
+
+    public double getRouteControllerBackOffMultiplier() {
+        return routeControllerBackOffMultiplier;
+    }
+
+    /**
+     * Backoff multiplier to use for exponential backoff. This is used to extend the delay
+     * between restart attempts.
+     */
+    public void setRouteControllerBackOffMultiplier(double routeControllerBackOffMultiplier) {
+        this.routeControllerBackOffMultiplier = routeControllerBackOffMultiplier;
+    }
+
+    public boolean isRouteControllerUnhealthyOnExhausted() {
+        return routeControllerUnhealthyOnExhausted;
+    }
+
+    /**
+     * Whether to mark the route as unhealthy (down) when all restarting attempts (backoff) have failed
+     * and the route is not successfully started and the route manager is giving up.
+     *
+     * Setting this to true allows health checks to know about this and can report the Camel application as DOWN.
+     *
+     * The default is false.
+     */
+    public void setRouteControllerUnhealthyOnExhausted(boolean routeControllerUnhealthyOnExhausted) {
+        this.routeControllerUnhealthyOnExhausted = routeControllerUnhealthyOnExhausted;
     }
 
     // fluent builders
@@ -937,9 +1184,21 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Sets whether to log information about the inflight Exchanges which are still running
      * during a shutdown which didn't complete without the given timeout.
+     *
+     * This requires to enable the option inflightRepositoryExchangeEnabled.
      */
     public T withShutdownLogInflightExchangesOnTimeout(boolean shutdownLogInflightExchangesOnTimeout) {
         this.shutdownLogInflightExchangesOnTimeout = shutdownLogInflightExchangesOnTimeout;
+        return (T) this;
+    }
+
+    /**
+     * Sets whether the inflight repository should allow browsing each inflight exchange.
+     *
+     * This is by default disabled as there is a very slight performance overhead when enabled.
+     */
+    public T withInflightRepositoryBrowseEnabled(boolean inflightRepositoryBrowseEnabled) {
+        this.inflightRepositoryBrowseEnabled = inflightRepositoryBrowseEnabled;
         return (T) this;
     }
 
@@ -1122,7 +1381,7 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Sets whether message history is enabled or not.
      *
-     * Default is true.
+     * Default is false.
      */
     public T withMessageHistory(boolean messageHistory) {
         this.messageHistory = messageHistory;
@@ -1173,6 +1432,21 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withAllowUseOriginalMessage(boolean allowUseOriginalMessage) {
         this.allowUseOriginalMessage = allowUseOriginalMessage;
+        return (T) this;
+    }
+
+    /**
+     * Whether to use case sensitive or insensitive headers.
+     *
+     * Important: When using case sensitive (this is set to false).
+     * Then the map is case sensitive which means headers such as content-type and Content-Type are
+     * two different keys which can be a problem for some protocols such as HTTP based, which rely on case insensitive headers.
+     * However case sensitive implementations can yield faster performance. Therefore use case sensitive implementation with care.
+     *
+     * Default is true.
+     */
+    public T withCaseInsensitiveHeaders(boolean caseInsensitiveHeaders) {
+        this.caseInsensitiveHeaders = caseInsensitiveHeaders;
         return (T) this;
     }
 
@@ -1262,16 +1536,6 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withJmxManagementNamePattern(String jmxManagementNamePattern) {
         this.jmxManagementNamePattern = jmxManagementNamePattern;
-        return (T) this;
-    }
-
-    /**
-     * Whether JMX connector is created, allowing clients to connect remotely
-     *
-     * The default value is false.
-     */
-    public T withJmxCreateConnector(boolean jmxCreateConnector) {
-        this.jmxCreateConnector = jmxCreateConnector;
         return (T) this;
     }
 
@@ -1453,6 +1717,24 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
+     * Directory to scan for adding additional XML route templates.
+     * You can turn this off by setting the value to false.
+     *
+     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
+     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;template-&#42;.xml
+     *
+     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where
+     * as if you specific the exact name for each XML file is faster as no classpath scanning is needed.
+     *
+     * Multiple directories can be specified and separated by comma, such as:
+     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+     */
+    public T withXmlRouteTemplates(String xmlRouteTemplates) {
+        this.xmlRouteTemplates = xmlRouteTemplates;
+        return (T) this;
+    }
+
+    /**
      * Directory to scan for adding additional XML rests.
      * You can turn this off by setting the value to false.
      *
@@ -1471,4 +1753,121 @@ public abstract class DefaultConfigurationProperties<T> {
         this.xmlRests = xmlRests;
         return (T) this;
     }
+
+    /*
+     * Configure the context to be lightweight.  This will trigger some optimizations
+     * and memory reduction options.
+     * <p/>
+     * Lightweight context have some limitations.  At the moment, dynamic endpoint
+     * destinations are not supported.  Also, this should only be done on a JVM with
+     * a single Camel application (microservice like camel-main, camel-quarkus, camel-spring-boot).
+     * As this affects the entire JVM where Camel JARs are on the classpath.
+     */
+    public T withLightweight(boolean lightweight) {
+        this.lightweight = lightweight;
+        return (T) this;
+    }
+
+    /**
+     * Sets the logging level used for logging route startup activity.
+     * By default INFO level is used. You can use this to change the level for example to OFF if
+     * this kind of logging is not wanted.
+     */
+    public T withRouteStartupLoggingLevel(LoggingLevel routeStartupLoggingLevel) {
+        this.routeControllerRouteStartupLoggingLevel = routeStartupLoggingLevel;
+        return (T) this;
+    }
+
+    /**
+     * To enable using supervising route controller which allows Camel to startup
+     * and then the controller takes care of starting the routes in a safe manner.
+     *
+     * This can be used when you want to startup Camel despite a route may otherwise
+     * fail fast during startup and cause Camel to fail to startup as well. By delegating
+     * the route startup to the supervising route controller then its manages the startup
+     * using a background thread. The controller allows to be configured with various
+     * settings to attempt to restart failing routes.
+     */
+    public T withRouteControllerSuperviseEnabled(boolean routeControllerSuperviseEnabled) {
+        this.routeControllerSuperviseEnabled = routeControllerSuperviseEnabled;
+        return (T) this;
+    }
+
+    /**
+     * Initial delay in milli seconds before the route controller starts, after
+     * CamelContext has been started.
+     */
+    public T withRouteControllerInitialDelay(long routeControllerInitialDelay) {
+        this.routeControllerInitialDelay = routeControllerInitialDelay;
+        return (T) this;
+    }
+
+    /**
+     * Backoff delay in millis when restarting a route that failed to startup.
+     */
+    public T withRouteControllerBackOffDelay(long routeControllerBackOffDelay) {
+        this.routeControllerBackOffDelay = routeControllerBackOffDelay;
+        return (T) this;
+    }
+
+    /**
+     * Backoff maximum delay in millis when restarting a route that failed to startup.
+     */
+    public T withRouteControllerBackOffMaxDelay(long routeControllerBackOffMaxDelay) {
+        this.routeControllerBackOffMaxDelay = routeControllerBackOffMaxDelay;
+        return (T) this;
+    }
+
+    /**
+     * Backoff maximum elapsed time in millis, after which the backoff should be considered
+     * exhausted and no more attempts should be made.
+     */
+    public T withRouteControllerBackOffMaxElapsedTime(long routeControllerBackOffMaxElapsedTime) {
+        this.routeControllerBackOffMaxElapsedTime = routeControllerBackOffMaxElapsedTime;
+        return (T) this;
+    }
+
+    /**
+     * Backoff maximum number of attempts to restart a route that failed to startup.
+     * When this threshold has been exceeded then the controller will give up
+     * attempting to restart the route, and the route will remain as stopped.
+     */
+    public T withRouteControllerBackOffMaxAttempts(long routeControllerBackOffMaxAttempts) {
+        this.routeControllerBackOffMaxAttempts = routeControllerBackOffMaxAttempts;
+        return (T) this;
+    }
+
+    /**
+     * Backoff multiplier to use for exponential backoff. This is used to extend the delay
+     * between restart attempts.
+     */
+    public T withRouteControllerBackOffMultiplier(double routeControllerBackOffMultiplier) {
+        this.routeControllerBackOffMultiplier = routeControllerBackOffMultiplier;
+        return (T) this;
+    }
+
+    /**
+     * The number of threads used by the route controller scheduled thread pool that are used for restarting
+     * routes. The pool uses 1 thread by default, but you can increase this to allow the controller
+     * to concurrently attempt to restart multiple routes in case more than one route has problems
+     * starting.
+     */
+    public T withRouteControllerThreadPoolSize(int routeControllerThreadPoolSize) {
+        this.routeControllerThreadPoolSize = routeControllerThreadPoolSize;
+        return (T) this;
+    }
+
+    /**
+     * Whether to mark the route as unhealthy (down) when all restarting attempts (backoff) have failed
+     * and the route is not successfully started and the route manager is giving up.
+     *
+     * Setting this to true allows health checks to know about this and can report the Camel application as DOWN.
+     *
+     * The default is false.
+     */
+    public T withRouteControllerUnhealthyOnExhausted(boolean unhealthyOnExhausted) {
+        this.routeControllerUnhealthyOnExhausted = unhealthyOnExhausted;
+        return (T) this;
+    }
+
 }

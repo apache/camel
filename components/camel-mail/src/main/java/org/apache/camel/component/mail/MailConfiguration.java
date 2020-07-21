@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.net.ssl.SSLContext;
 
@@ -40,12 +41,12 @@ import org.apache.camel.util.ObjectHelper;
 @UriParams
 public class MailConfiguration implements Cloneable {
 
-    private ClassLoader applicationClassLoader;
-    private Properties javaMailProperties;
-    private Map<Message.RecipientType, String> recipients = new HashMap<>();
+    private transient ClassLoader applicationClassLoader;
+    private transient Map<Message.RecipientType, String> recipients = new HashMap<>();
 
     // protocol is implied by component name so it should not be in UriPath
-    private String protocol;
+    private transient String protocol;
+
     @UriPath @Metadata(required = true)
     private String host;
     @UriPath
@@ -76,6 +77,8 @@ public class MailConfiguration implements Cloneable {
     private boolean delete;
     @UriParam @Metadata(label = "consumer")
     private String copyTo;
+    @UriParam @Metadata(label = "consumer")
+    private String moveTo;
     @UriParam(defaultValue = "true") @Metadata(label = "consumer")
     private boolean unseen = true;
     @UriParam(label = "advanced")
@@ -114,6 +117,10 @@ public class MailConfiguration implements Cloneable {
     private Properties additionalJavaMailProperties;
     @UriParam(label = "advanced")
     private AttachmentsContentTransferEncodingResolver attachmentsContentTransferEncodingResolver;
+    @UriParam(label = "advanced")
+    private Properties javaMailProperties;
+    @UriParam(label = "advanced")
+    private MailAuthenticator authenticator;
 
     public MailConfiguration() {
     }
@@ -146,7 +153,7 @@ public class MailConfiguration implements Cloneable {
         if (!isIgnoreUriScheme()) {
             String scheme = uri.getScheme();
             if (scheme != null) {
-                setProtocol(scheme);
+                configureProtocol(scheme);
             }
         }
 
@@ -196,6 +203,9 @@ public class MailConfiguration implements Cloneable {
         if (password != null) {
             answer.setPassword(password);
         }
+        if (authenticator != null) {
+            answer.setAuthenticator(authenticator);
+        }
         if (protocol != null) {
             answer.setProtocol(protocol);
         }
@@ -216,7 +226,8 @@ public class MailConfiguration implements Cloneable {
                     Thread.currentThread().setContextClassLoader(applicationClassLoader);
                 }
                 // use our authenticator that does no live user interaction but returns the already configured username and password
-                Session session = Session.getInstance(answer.getJavaMailProperties(), new DefaultAuthenticator(getUsername(), getPassword()));
+                Session session = Session.getInstance(answer.getJavaMailProperties(),
+                        authenticator == null ? new DefaultAuthenticator(getUsername(), getPassword()) : authenticator);
                 // sets the debug mode of the underlying mail framework
                 session.setDebug(debugMode);
                 answer.setSession(session);
@@ -235,9 +246,10 @@ public class MailConfiguration implements Cloneable {
         properties.put("mail." + protocol + ".timeout", connectionTimeout);
         properties.put("mail." + protocol + ".host", host);
         properties.put("mail." + protocol + ".port", "" + port);
-        if (username != null) {
-            properties.put("mail." + protocol + ".user", username);
-            properties.put("mail.user", username);
+        String pUserName = getPasswordAuthentication().getUserName();
+        if (pUserName != null) {
+            properties.put("mail." + protocol + ".user", pUserName);
+            properties.put("mail.user", pUserName);
             properties.put("mail." + protocol + ".auth", "true");
         } else {
             properties.put("mail." + protocol + ".auth", "false");
@@ -262,6 +274,15 @@ public class MailConfiguration implements Cloneable {
         }
 
         return properties;
+    }
+
+    /**
+     * Returns the password authentication from the authenticator or from the
+     * parameters user and password.
+     */
+    public PasswordAuthentication getPasswordAuthentication() {
+        // call authenticator so that the authenticator can dynamically determine the password or token
+        return authenticator == null ? new PasswordAuthentication(username, password) : authenticator.getPasswordAuthentication();
     }
 
     private SSLContext createSSLContext() {
@@ -356,10 +377,23 @@ public class MailConfiguration implements Cloneable {
     }
 
     /**
-     * The password for login
+     * The password for login. See also {@link #setAuthenticator(MailAuthenticator)}.
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public MailAuthenticator getAuthenticator() {
+        return authenticator;
+    }
+
+    /**
+     * The authenticator for login. If set then the <code>password</code> and
+     * <code>username</code> are ignored. Can be used for tokens which can
+     * expire and therefore must be read dynamically.
+     */
+    public void setAuthenticator(MailAuthenticator authenticator) {
+        this.authenticator = authenticator;
     }
 
     public String getSubject() {
@@ -391,7 +425,7 @@ public class MailConfiguration implements Cloneable {
     /**
      * The protocol for communicating with the mail server
      */
-    public void setProtocol(String protocol) {
+    public void configureProtocol(String protocol) {
         this.protocol = protocol;
     }
 
@@ -413,7 +447,7 @@ public class MailConfiguration implements Cloneable {
     }
 
     /**
-     * The username for login
+     * The username for login. See also {@link #setAuthenticator(MailAuthenticator)}.
      */
     public void setUsername(String username) {
         this.username = username;
@@ -421,7 +455,7 @@ public class MailConfiguration implements Cloneable {
             // set default destination to username@host for backwards compatibility
             // can be overridden by URI parameters
             String address = username;
-            if (address.indexOf("@") == -1) {
+            if (address.indexOf('@') == -1) {
                 address += "@" + host;
             }
             setTo(address);
@@ -671,6 +705,19 @@ public class MailConfiguration implements Cloneable {
 
     public String getCopyTo() {
         return copyTo;
+    }
+
+    public String getMoveTo() {
+        return moveTo;
+    }
+
+    /**
+     * After processing a mail message, it can be moved to a mail folder with the given name.
+     * You can override this configuration value, with a header with the key moveTo, allowing you to move messages
+     * to folder names configured at runtime.
+     */
+    public void setMoveTo(String moveTo) {
+        this.moveTo = moveTo;
     }
 
     /**

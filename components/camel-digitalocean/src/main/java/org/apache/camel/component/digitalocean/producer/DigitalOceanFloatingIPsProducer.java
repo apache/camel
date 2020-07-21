@@ -40,29 +40,29 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
 
-        case list:
-            getFloatingIPs(exchange);
-            break;
-        case create:
-            createFloatingIp(exchange);
-            break;
-        case get:
-            getFloatingIP(exchange);
-            break;
-        case delete:
-            deleteFloatingIP(exchange);
-            break;
-        case assign:
-            assignFloatingIPToDroplet(exchange);
-            break;
-        case unassign:
-            unassignFloatingIP(exchange);
-            break;
-        case listActions:
-            getFloatingIPActions(exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case list:
+                getFloatingIPs(exchange);
+                break;
+            case create:
+                createFloatingIp(exchange);
+                break;
+            case get:
+                getFloatingIP(exchange);
+                break;
+            case delete:
+                deleteFloatingIP(exchange);
+                break;
+            case assign:
+                assignFloatingIPToDroplet(exchange);
+                break;
+            case unassign:
+                unassignFloatingIP(exchange);
+                break;
+            case listActions:
+                getFloatingIPActions(exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 

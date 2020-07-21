@@ -19,9 +19,11 @@ package org.apache.camel.component.irc.it;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.irc.IrcConfiguration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Integration test for the {@link IrcConfiguration#isNamesOnJoin()} option.
@@ -63,7 +65,7 @@ public class IrcsListUsersTest extends IrcIntegrationTestSupport {
         String body = resultEndpoint.getExchanges().get(0).getIn().getBody(String.class);
         LOGGER.debug("Received usernames: [{}]", body);
         String username = properties.getProperty("camelFrom");
-        assertTrue("userlist does not contain test user", body.contains(username));
+        assertTrue(body.contains(username), "userlist does not contain test user");
     }
 
 }

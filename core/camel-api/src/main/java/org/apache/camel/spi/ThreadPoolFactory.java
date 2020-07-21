@@ -29,6 +29,11 @@ import java.util.concurrent.ThreadFactory;
 public interface ThreadPoolFactory {
 
     /**
+     * Service factory key.
+     */
+    String FACTORY = "thread-pool-factory";
+
+    /**
      * Creates a new cached thread pool
      * <p/>
      * The cached thread pool is a term from the JDK from the method {@link java.util.concurrent.Executors#newCachedThreadPool()}.
@@ -37,6 +42,7 @@ public interface ThreadPoolFactory {
      * @param threadFactory factory for creating threads
      * @return the created thread pool
      */
+    @Deprecated
     ExecutorService newCachedThreadPool(ThreadFactory threadFactory);
     
     /**

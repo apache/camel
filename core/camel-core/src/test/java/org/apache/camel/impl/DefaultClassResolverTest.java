@@ -20,10 +20,12 @@ import java.io.InputStream;
 import java.net.URL;
 
 import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class DefaultClassResolverTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class DefaultClassResolverTest {
 
     @Test
     public void testResolveClass() {

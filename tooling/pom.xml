@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.5.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -35,11 +35,10 @@
 
     <modules>
         <module>parent</module>
-        <module>meta-annotations</module>
         <module>spi-annotations</module>
-        <module>apt</module>
+        <module>camel-tooling-model</module>
         <module>camel-util-json</module>
-        <module>camel-bundle-plugin</module>
+        <module>camel-tooling-util</module>
         <module>swagger-rest-dsl-generator</module>
         <module>openapi-rest-dsl-generator</module>
         <module>maven</module>

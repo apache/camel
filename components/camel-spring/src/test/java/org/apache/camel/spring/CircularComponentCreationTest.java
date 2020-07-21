@@ -18,10 +18,12 @@ package org.apache.camel.spring;
 
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.util.IOHelper;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class CircularComponentCreationTest {
     @Test
@@ -29,9 +31,9 @@ public class CircularComponentCreationTest {
         try {
             doTest("org/apache/camel/spring/CircularComponentCreationSimpleTest.xml");
 
-            Assert.fail("Exception should have been thrown");
+            fail("Exception should have been thrown");
         } catch (Exception e) {
-            Assert.assertTrue(e instanceof FailedToCreateRouteException);
+            assertTrue(e instanceof FailedToCreateRouteException);
         }
     }
 

@@ -26,8 +26,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The Protobuf data format is used for serializing between Java objects and the
- * Google Protobuf protocol.
+ * Serialize and deserialize Java objects using Google's Protocol buffers.
  */
 @Metadata(firstVersion = "2.2.0", label = "dataformat,transformation", title = "Protobuf")
 @XmlRootElement(name = "protobuf")
@@ -61,7 +60,7 @@ public class ProtobufDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Name of class to use when unarmshalling
+     * Name of class to use when unmarshalling
      */
     public void setInstanceClass(String instanceClass) {
         this.instanceClass = instanceClass;

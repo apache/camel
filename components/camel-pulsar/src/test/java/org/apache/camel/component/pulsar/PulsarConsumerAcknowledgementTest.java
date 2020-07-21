@@ -25,7 +25,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
@@ -43,11 +44,11 @@ public class PulsarConsumerAcknowledgementTest extends PulsarTestSupport {
     private static final String TOPIC_URI = "persistent://public/default/camel-topic";
     private static final String PRODUCER = "camel-producer-1";
 
-    @EndpointInject(uri = "pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                          + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer" + "&allowManualAcknowledgement=true" + "&ackTimeoutMillis=1000")
+    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
+                          + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer" + "&allowManualAcknowledgement=true" + "&ackTimeoutMillis=1000" + "&negativeAckRedeliveryDelayMicros=100000")
     private Endpoint from;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint to;
 
     private Producer<String> producer;
@@ -59,23 +60,23 @@ public class PulsarConsumerAcknowledgementTest extends PulsarTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry registry = new SimpleRegistry();
 
-        registerPulsarBeans(jndi);
+        registerPulsarBeans(registry);
 
-        return jndi;
+        return registry;
     }
 
-    private void registerPulsarBeans(final JndiRegistry jndi) throws PulsarClientException {
+    private void registerPulsarBeans(final Registry registry) throws PulsarClientException {
         PulsarClient pulsarClient = givenPulsarClient();
         AutoConfiguration autoConfiguration = new AutoConfiguration(null, null);
 
-        jndi.bind("pulsarClient", pulsarClient);
+        registry.bind("pulsarClient", pulsarClient);
         PulsarComponent comp = new PulsarComponent(context);
         comp.setAutoConfiguration(autoConfiguration);
         comp.setPulsarClient(pulsarClient);
-        jndi.bind("pulsar", comp);
+        registry.bind("pulsar", comp);
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
@@ -180,6 +181,36 @@ public class PulsarConsumerAcknowledgementTest extends PulsarTestSupport {
 
         producer.send("Hello World!");
         producer.send("Hello World Again!");
+
+        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
+    }
+
+    @Test
+    public void testNegativeAcknowledge() throws Exception {
+        to.expectedMessageCount(2);
+        to.expectedBodiesReceived("Hello World!", "Hello World!");
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(from).routeId("myRoute").to(to).process(exchange -> {
+                    LOGGER.info("Processing message {}", exchange.getIn().getBody());
+
+                    if (!Boolean.parseBoolean(exchange.getProperty("processedOnce", String.class))) {
+                        exchange.setProperty("processedOnce", "true");
+                        PulsarMessageReceipt receipt = (PulsarMessageReceipt) exchange.getIn()
+                                .getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
+                        receipt.negativeAcknowledge();
+                    } else {
+                        PulsarMessageReceipt receipt = (PulsarMessageReceipt) exchange.getIn()
+                                .getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
+                        receipt.acknowledge();
+                    }
+                });
+            }
+        });
+
+        producer.newMessage().value("Hello World!").property("processedOnce", "false").send();
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
     }

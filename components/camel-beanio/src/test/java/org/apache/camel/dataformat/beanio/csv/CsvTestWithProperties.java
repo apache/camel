@@ -24,10 +24,10 @@ import org.apache.camel.dataformat.beanio.BeanIODataFormat;
 public class CsvTestWithProperties extends CsvTest {
     
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // setup beanio data format using the mapping file, loaded from the classpath
                 BeanIODataFormat format = new BeanIODataFormat(

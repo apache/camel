@@ -51,10 +51,8 @@ public class FtpSimpleConsumeDirectoryParseWithAbsoluteDepthNoStepwiseTest exten
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("ftp://localhost:" + getPort() + "//tmp/mytemp?username=admin&password=admin&delay=10s"
-                    + "&disconnect=true&download=true&stepwise=false&delete=false&handleDirectoryParserAbsoluteResult=true")
-                .routeId("foo").noAutoStartup()
-                    .to("mock:result");
+                from("ftp://localhost:" + getPort() + "//tmp/mytemp?username=admin&password=admin&delay=10000"
+                     + "&disconnect=true&download=true&stepwise=false&delete=false&handleDirectoryParserAbsoluteResult=true").routeId("foo").noAutoStartup().to("mock:result");
             }
         };
     }

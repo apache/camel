@@ -76,7 +76,8 @@ public final class ThreadPoolBuilder {
      * @throws Exception is thrown if error building the thread pool
      */
     public ExecutorService build() throws Exception {
-        return build(null, null);
+        // cannot use null name
+        return build(null, "ThreadPool");
     }
 
     /**
@@ -110,7 +111,7 @@ public final class ThreadPoolBuilder {
      * @throws Exception is thrown if error building the scheduled thread pool
      */
     public ScheduledExecutorService buildScheduled() throws Exception {
-        return buildScheduled(null, null);
+        return buildScheduled(null, "ScheduledThreadPool");
     }
 
     /**

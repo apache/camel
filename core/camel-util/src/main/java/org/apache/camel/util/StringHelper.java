@@ -61,8 +61,8 @@ public final class StringHelper {
      */
     public static String removeCRLF(String s) {
         return s
-            .replaceAll("\r", "")
-            .replaceAll("\n", "");
+            .replace("\r", "")
+            .replace("\n", "");
     }
 
     /**
@@ -73,12 +73,25 @@ public final class StringHelper {
      * @return number of times char is located in the string
      */
     public static int countChar(String s, char ch) {
-        if (ObjectHelper.isEmpty(s)) {
+        return countChar(s, ch, -1);
+    }
+
+    /**
+     * Counts the number of times the given char is in the string
+     *
+     * @param s  the string
+     * @param ch the char
+     * @param end end index
+     * @return number of times char is located in the string
+     */
+    public static int countChar(String s, char ch, int end) {
+        if (s == null || s.isEmpty()) {
             return 0;
         }
 
         int matches = 0;
-        for (int i = 0; i < s.length(); i++) {
+        int len = end < 0 ? s.length() : end;
+        for (int i = 0; i < len; i++) {
             char c = s.charAt(i);
             if (ch == c) {
                 matches++;
@@ -253,6 +266,8 @@ public final class StringHelper {
      * @throws IllegalArgumentException if the input arguments is invalid
      */
     public static String replaceAll(String input, String from, String to) {
+        // TODO: Use String.replace instead of this method when using JDK11 as minimum (as its much faster in JDK 11 onwards)
+
         if (ObjectHelper.isEmpty(input)) {
             return input;
         }
@@ -451,10 +466,11 @@ public final class StringHelper {
      * @return the text after the token, or <tt>null</tt> if text does not contain the token
      */
     public static String after(String text, String after) {
-        if (!text.contains(after)) {
+        int pos = text.indexOf(after);
+        if (pos == -1) {
             return null;
         }
-        return text.substring(text.indexOf(after) + after.length());
+        return text.substring(pos + after.length());
     }
 
     /**
@@ -468,7 +484,7 @@ public final class StringHelper {
     public static <T> Optional<T> after(String text, String after, Function<String, T> mapper) {
         String result = after(text, after);
         if (result == null) {
-            return Optional.empty();            
+            return Optional.empty();
         } else {
             return Optional.ofNullable(mapper.apply(result));
         }
@@ -483,10 +499,8 @@ public final class StringHelper {
      *         contain the token
      */
     public static String before(String text, String before) {
-        if (!text.contains(before)) {
-            return null;
-        }
-        return text.substring(0, text.indexOf(before));
+        int pos = text.indexOf(before);
+        return pos == -1 ? null : text.substring(0, pos);
     }
 
     /**
@@ -500,7 +514,7 @@ public final class StringHelper {
     public static <T> Optional<T> before(String text, String before, Function<String, T> mapper) {
         String result = before(text, before);
         if (result == null) {
-            return Optional.empty();            
+            return Optional.empty();
         } else {
             return Optional.ofNullable(mapper.apply(result));
         }
@@ -534,7 +548,7 @@ public final class StringHelper {
     public static <T> Optional<T> between(String text, String after, String before, Function<String, T> mapper) {
         String result = between(text, after, before);
         if (result == null) {
-            return Optional.empty();            
+            return Optional.empty();
         } else {
             return Optional.ofNullable(mapper.apply(result));
         }
@@ -615,7 +629,7 @@ public final class StringHelper {
     public static <T> Optional<T> betweenOuterPair(String text, char before, char after, Function<String, T> mapper) {
         String result = betweenOuterPair(text, before, after);
         if (result == null) {
-            return Optional.empty();            
+            return Optional.empty();
         } else {
             return Optional.ofNullable(mapper.apply(result));
         }
@@ -847,7 +861,7 @@ public final class StringHelper {
             prev = ch;
         }
         
-        return answer.toString().toLowerCase(Locale.US);
+        return answer.toString().toLowerCase(Locale.ENGLISH);
     }
 
 }

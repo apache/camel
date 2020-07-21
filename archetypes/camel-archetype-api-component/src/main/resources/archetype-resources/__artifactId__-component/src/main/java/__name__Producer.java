@@ -21,12 +21,9 @@ import org.apache.camel.support.component.AbstractApiProducer;
 import ${package}.internal.${name}ApiName;
 import ${package}.internal.${name}PropertiesHelper;
 
-/**
- * The ${name} producer.
- */
 public class ${name}Producer extends AbstractApiProducer<${name}ApiName, ${name}Configuration> {
 
     public ${name}Producer(${name}Endpoint endpoint) {
-        super(endpoint, ${name}PropertiesHelper.getHelper());
+        super(endpoint, ${name}PropertiesHelper.getHelper(endpoint.getCamelContext()));
     }
 }

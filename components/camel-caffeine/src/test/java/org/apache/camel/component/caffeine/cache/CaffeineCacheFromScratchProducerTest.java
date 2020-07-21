@@ -19,13 +19,13 @@ package org.apache.camel.component.caffeine.cache;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.caffeine.CaffeineConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class CaffeineCacheFromScratchProducerTest extends CamelTestSupport {
 
     @Test
-    public void testCacheGet() throws Exception {
+    void testCacheGet() throws Exception {
         final String key = "1";
         final String val = "1";
 
@@ -57,7 +57,7 @@ public class CaffeineCacheFromScratchProducerTest extends CamelTestSupport {
     // ****************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://start").toF("caffeine-cache://%s?statsEnabled=true", "test").to("log:org.apache.camel.component.caffeine?level=INFO&showAll=true&multiline=true")

@@ -34,13 +34,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Producer which sends messages to the Amazon Simple Email Service
  * <a href="http://aws.amazon.com/ses/">AWS SES</a>
  */
 public class SesProducer extends DefaultProducer {
-    
+
+    private static final Logger LOG = LoggerFactory.getLogger(SesProducer.class);
+
     private transient String sesProducerToString;
     
     public SesProducer(Endpoint endpoint) {
@@ -51,16 +55,16 @@ public class SesProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         if (!(exchange.getIn().getBody() instanceof javax.mail.Message)) {
             SendEmailRequest request = createMailRequest(exchange);
-            log.trace("Sending request [{}] from exchange [{}]...", request, exchange);            
+            LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
             SendEmailResult result = getEndpoint().getSESClient().sendEmail(request);
-            log.trace("Received result [{}]", result);
+            LOG.trace("Received result [{}]", result);
             Message message = getMessageForResponse(exchange);
             message.setHeader(SesConstants.MESSAGE_ID, result.getMessageId());
         } else {
             SendRawEmailRequest request = createRawMailRequest(exchange);
-            log.trace("Sending request [{}] from exchange [{}]...", request, exchange);            
+            LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
             SendRawEmailResult result = getEndpoint().getSESClient().sendRawEmail(request);
-            log.trace("Received result [{}]", result);
+            LOG.trace("Received result [{}]", result);
             Message message = getMessageForResponse(exchange);
             message.setHeader(SesConstants.MESSAGE_ID, result.getMessageId());
         }
@@ -105,7 +109,7 @@ public class SesProducer extends DefaultProducer {
         try {
             content.writeTo(byteOutput);
         } catch (Exception e) {
-            log.error("Cannot write to byte Array");
+            LOG.error("Cannot write to byte Array");
             throw e;
         }
         byte[] messageByteArray = ((ByteArrayOutputStream)byteOutput).toByteArray();

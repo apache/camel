@@ -26,7 +26,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
 import org.eclipse.jetty.server.handler.StatisticsHandler;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HandlerTest extends BaseJettyTest {
     @BindToRegistry("statisticsHandler1")

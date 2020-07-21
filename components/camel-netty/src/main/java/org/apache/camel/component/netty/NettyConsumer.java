@@ -20,8 +20,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NettyConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(NettyConsumer.class);
 
     private CamelContext context;
     private NettyConfiguration configuration;
@@ -44,7 +48,7 @@ public class NettyConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        log.debug("Netty consumer binding to: {}", configuration.getAddress());
+        LOG.debug("Netty consumer binding to: {}", configuration.getAddress());
 
         if (nettyServerBootstrapFactory == null) {
             // setup pipeline factory
@@ -70,16 +74,16 @@ public class NettyConsumer extends DefaultConsumer {
 
         ServiceHelper.startService(nettyServerBootstrapFactory);
 
-        log.info("Netty consumer bound to: {}", configuration.getAddress());
+        LOG.info("Netty consumer bound to: {}", configuration.getAddress());
     }
 
     @Override
     protected void doStop() throws Exception {
-        log.debug("Netty consumer unbinding from: {}", configuration.getAddress());
+        LOG.debug("Netty consumer unbinding from: {}", configuration.getAddress());
 
         ServiceHelper.stopService(nettyServerBootstrapFactory);
 
-        log.info("Netty consumer unbound from: {}", configuration.getAddress());
+        LOG.info("Netty consumer unbound from: {}", configuration.getAddress());
 
         super.doStop();
     }

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.gora;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 
 /**
  * GORA Test Support

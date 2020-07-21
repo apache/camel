@@ -1,0 +1,11 @@
+[[random-eip]]
+= Random EIP
+:docTitle: Random
+:description: Random load balancer The random load balancer selects a random endpoint for each exchange.
+:since: 
+:supportLevel: Stable
+
+
+// eip options: START
+The Random EIP has no options.
+// eip options: END

@@ -17,7 +17,7 @@
 package org.apache.camel.component.kafka.serde;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertThat;
@@ -28,12 +28,12 @@ public class DefaultKafkaHeaderDeserializerTest {
 
     @Test
     public void shouldDeserializeAsIs() {
-        byte[] value = new byte[]{0, 4, -2, 54, 126};
+        byte[] value = new byte[] {0, 4, -2, 54, 126};
 
         Object deserializedValue = deserializer.deserialize("someKey", value);
 
         assertThat(deserializedValue, CoreMatchers.instanceOf(byte[].class));
-        assertArrayEquals(value, (byte[]) deserializedValue);
+        assertArrayEquals(value, (byte[])deserializedValue);
     }
 
 }

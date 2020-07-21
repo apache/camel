@@ -56,21 +56,25 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using JAXB2 to marshal to and from XML
  */
 @Dataformat("jaxb")
-public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
+public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JaxbDataFormat.class);
 
     private static final BlockingQueue<SchemaFactory> SCHEMA_FACTORY_POOL = new LinkedBlockingQueue<>();
 
@@ -79,23 +83,22 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
     private JAXBContext context;
     private JAXBIntrospector introspector;
     private String contextPath;
+    private boolean contextPathIsClassName;
     private String schema;
     private int schemaSeverityLevel; // 0 = warning, 1 = error, 2 = fatal
     private String schemaLocation;
     private String noNamespaceSchemaLocation;
 
     private boolean prettyPrint = true;
-    private boolean objectFactory;
+    private boolean objectFactory = true;
     private boolean ignoreJAXBElement = true;
-    private boolean mustBeJAXBElement = true;
+    private boolean mustBeJAXBElement;
     private boolean filterNonXmlChars;
     private String encoding;
     private boolean fragment;
     // partial support
     private QName partNamespace;
-    private String partClass;
-    private Class<Object> partialClass;
-    private String namespacePrefixRef;
+    private Class<?> partClass;
     private Map<String, String> namespacePrefix;
     private JaxbNamespacePrefixMapper namespacePrefixMapper;
     private JaxbXmlStreamWriterWrapper xmlStreamWriterWrapper;
@@ -160,8 +163,8 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
             }
             if (customProperties != null) {
                 for (Entry<String, Object> property : customProperties.entrySet()) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Using JAXB Provider Property {}={}", property.getKey(), property.getValue());
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Using JAXB Provider Property {}={}", property.getKey(), property.getValue());
                     }
                     marshaller.setProperty(property.getKey(), property.getValue());
                 }
@@ -186,11 +189,11 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         QName partNamespaceOnDataFormat = getPartNamespace();
         String partClassFromHeader = exchange.getIn().getHeader(JaxbConstants.JAXB_PART_CLASS, String.class);
         String partNamespaceFromHeader = exchange.getIn().getHeader(JaxbConstants.JAXB_PART_NAMESPACE, String.class);
-        if ((partialClass != null || partClassFromHeader != null)
+        if ((partClass != null || partClassFromHeader != null)
                 && (partNamespaceOnDataFormat != null || partNamespaceFromHeader != null)) {
             if (partClassFromHeader != null) {
                 try {
-                    partialClass = camelContext.getClassResolver().resolveMandatoryClass(partClassFromHeader, Object.class);
+                    partClass = camelContext.getClassResolver().resolveMandatoryClass(partClassFromHeader, Object.class);
                 } catch (ClassNotFoundException e) {
                     throw new JAXBException(e);
                 }
@@ -198,7 +201,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
             if (partNamespaceFromHeader != null) {
                 partNamespaceOnDataFormat = QName.valueOf(partNamespaceFromHeader);
             }
-            element = new JAXBElement<>(partNamespaceOnDataFormat, partialClass, graph);
+            element = new JAXBElement<>(partNamespaceOnDataFormat, (Class<Object>) partClass, graph);
         }
 
         // only marshal if its possible
@@ -247,7 +250,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
                         throw e;
                     }
                     
-                    log.debug("Unable to create JAXBElement object for type " + element.getClass() + " due to " + e.getMessage(), e);
+                    LOG.debug("Unable to create JAXBElement object for type " + element.getClass() + " due to " + e.getMessage(), e);
                 }
             }
         }
@@ -255,8 +258,8 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         // cannot marshal
         if (!mustBeJAXBElement) {
             // write the graph as is to the output stream
-            if (log.isDebugEnabled()) {
-                log.debug("Attempt to marshalling non JAXBElement with type {} as InputStream", ObjectHelper.classCanonicalName(graph));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Attempt to marshalling non JAXBElement with type {} as InputStream", ObjectHelper.classCanonicalName(graph));
             }
             InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
             IOHelper.copyAndCloseInput(is, stream);
@@ -281,16 +284,16 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
                 xmlReader = typeConverter.convertTo(XMLStreamReader.class, exchange, stream);
             }
             String partClassFromHeader = exchange.getIn().getHeader(JaxbConstants.JAXB_PART_CLASS, String.class);
-            if (partialClass != null || partClassFromHeader != null) {
+            if (partClass != null || partClassFromHeader != null) {
                 // partial unmarshalling
                 if (partClassFromHeader != null) {
                     try {
-                        partialClass = camelContext.getClassResolver().resolveMandatoryClass(partClassFromHeader, Object.class);
+                        partClass = camelContext.getClassResolver().resolveMandatoryClass(partClassFromHeader, Object.class);
                     } catch (ClassNotFoundException e) {
                         throw new JAXBException(e);
                     }
                 }
-                answer = createUnmarshaller().unmarshal(xmlReader, partialClass);
+                answer = createUnmarshaller().unmarshal(xmlReader, partClass);
             } else {
                 answer = createUnmarshaller().unmarshal(xmlReader);
             }
@@ -345,6 +348,14 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
+    }
+
+    public boolean isContextPathIsClassName() {
+        return contextPathIsClassName;
+    }
+
+    public void setContextPathIsClassName(boolean contextPathIsClassName) {
+        this.contextPathIsClassName = contextPathIsClassName;
     }
 
     public SchemaFactory getSchemaFactory() {
@@ -422,11 +433,11 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         this.partNamespace = partNamespace;
     }
 
-    public String getPartClass() {
+    public Class<?> getPartClass() {
         return partClass;
     }
 
-    public void setPartClass(String partClass) {
+    public void setPartClass(Class<?> partClass) {
         this.partClass = partClass;
     }
 
@@ -436,14 +447,6 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     public void setNamespacePrefix(Map<String, String> namespacePrefix) {
         this.namespacePrefix = namespacePrefix;
-    }
-
-    public String getNamespacePrefixRef() {
-        return namespacePrefixRef;
-    }
-
-    public void setNamespacePrefixRef(String namespacePrefixRef) {
-        this.namespacePrefixRef = namespacePrefixRef;
     }
 
     @Override
@@ -510,12 +513,6 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         }
         introspector = context.createJAXBIntrospector();
 
-        if (partClass != null) {
-            partialClass = camelContext.getClassResolver().resolveMandatoryClass(partClass, Object.class);
-        }
-        if (namespacePrefixRef != null) {
-            namespacePrefix = CamelContextHelper.mandatoryLookup(camelContext, namespacePrefixRef, Map.class);
-        }
         if (namespacePrefix != null) {
             namespacePrefixMapper = NamespacePrefixMapperFactory.newNamespacePrefixMapper(camelContext, namespacePrefix);
         }
@@ -524,7 +521,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
             cachedSchema = createSchema(getSources());
         }
 
-        log.debug("JaxbDataFormat [prettyPrint={}, objectFactory={}]", prettyPrint, objectFactory);
+        LOG.debug("JaxbDataFormat [prettyPrint={}, objectFactory={}]", prettyPrint, objectFactory);
     }
 
     @Override
@@ -534,20 +531,32 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
     /**
      * Strategy to create JAXB context
      */
-    protected JAXBContext createContext() throws JAXBException {
+    protected JAXBContext createContext() throws Exception {
         if (contextPath != null) {
             // prefer to use application class loader which is most likely to be able to
             // load the class which has been JAXB annotated
             ClassLoader cl = camelContext.getApplicationContextClassLoader();
             if (cl != null) {
-                log.debug("Creating JAXBContext with contextPath: " + contextPath + " and ApplicationContextClassLoader: " + cl);
-                return JAXBContext.newInstance(contextPath, cl);
+                if (contextPathIsClassName) {
+                    LOG.debug("Creating JAXBContext with className: " + contextPath + " and ApplicationContextClassLoader: " + cl);
+                    Class clazz = camelContext.getClassResolver().resolveMandatoryClass(contextPath, cl);
+                    return JAXBContext.newInstance(clazz);
+                } else {
+                    LOG.debug("Creating JAXBContext with contextPath: " + contextPath + " and ApplicationContextClassLoader: " + cl);
+                    return JAXBContext.newInstance(contextPath, cl);
+                }
             } else {
-                log.debug("Creating JAXBContext with contextPath: {}", contextPath);
-                return JAXBContext.newInstance(contextPath);
+                if (contextPathIsClassName) {
+                    LOG.debug("Creating JAXBContext with className: {}", contextPath);
+                    Class clazz = camelContext.getClassResolver().resolveMandatoryClass(contextPath);
+                    return JAXBContext.newInstance(clazz);
+                } else {
+                    LOG.debug("Creating JAXBContext with contextPath: {}", contextPath);
+                    return JAXBContext.newInstance(contextPath);
+                }
             }
         } else {
-            log.debug("Creating JAXBContext");
+            LOG.debug("Creating JAXBContext");
             return JAXBContext.newInstance();
         }
     }

@@ -29,13 +29,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Unit test to test both consumer.moveNamePrefix and consumer.moveNamePostfix options.
+ * Unit test to test both consumer.moveNamePrefix and consumer.moveNamePostfix
+ * options.
  */
 public class FromFtpMoveFileTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false"
-                + "&move=done/sub2/${file:name}.old&delay=5000";
+        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false" + "&move=done/sub2/${file:name}.old&delay=5000";
     }
 
     @Override
@@ -54,9 +54,10 @@ public class FromFtpMoveFileTest extends FtpServerTestSupport {
 
         mock.assertIsSatisfied();
     }
-    
+
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want to unit
+        // prepares the FTP Server by creating a file on the server that we want
+        // to unit
         // test that we can pool and store as a local file
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();

@@ -1,12 +1,17 @@
 [[micrometer-component]]
 = Micrometer Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-micrometer/src/main/docs/micrometer-component.adoc
+:docTitle: Micrometer
+:artifactId: camel-micrometer
+:description: Collect various metrics directly from Camel routes using the Micrometer library.
+:since: 2.22
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.22*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Micrometer component allows to collect various metrics directly
 from Camel routes. Supported metric types
@@ -51,9 +56,9 @@ The Micrometer component supports 3 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *metricsRegistry* (advanced) | To use a custom configured MetricRegistry. |  | MeterRegistry
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *metricsRegistry* (advanced) | To use a custom configured MetricRegistry. |  | MeterRegistry
 |===
 // component options: END
 
@@ -73,7 +78,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *metricsType* | *Required* Type of metrics |  | Type
+| *metricsType* | *Required* Type of metrics. The value can be one of: COUNTER, GAUGE, LONG_TASK_TIMER, TIMER, DISTRIBUTION_SUMMARY, OTHER |  | Type
 | *metricsName* | *Required* Name of metrics |  | String
 | *tags* | Tags of metrics |  | Iterable
 |===
@@ -94,36 +99,6 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-micrometer-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 5 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.micrometer.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.micrometer.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.micrometer.enabled* | Whether to enable auto configuration of the micrometer component. This is enabled by default. |  | Boolean
-| *camel.component.micrometer.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-| *camel.component.micrometer.metrics-registry* | To use a custom configured MetricRegistry. The option is a io.micrometer.core.instrument.MeterRegistry type. |  | String
-|===
-// spring-boot-auto-configure options: END
 
 
 
@@ -439,9 +414,12 @@ route in order to exposes route utilization statistics using Micrometer.
 This factory can be used in Java and XML as the examples below
 demonstrates. 
 
-NOTE: Instead of using the `MicrometerRoutePolicyFactory` you can define a
+[NOTE]
+====
+Instead of using the `MicrometerRoutePolicyFactory` you can define a
 dedicated `MicrometerRoutePolicy` per route you want to instrument, in case you only
 want to instrument a few selected routes.
+====
 
 From Java you just add the factory to the `CamelContext` as shown below:
 
@@ -598,3 +576,5 @@ an MBean name.
 
 `camel-example-micrometer` provides an example how to set up Micrometer monitoring with
 Camel using Java configuration and a Prometheus backend.
+
+include::camel-spring-boot::page$micrometer-starter.adoc[]

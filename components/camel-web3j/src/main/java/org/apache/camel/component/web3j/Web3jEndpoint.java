@@ -18,6 +18,7 @@ package org.apache.camel.component.web3j;
 
 import java.util.List;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -40,10 +41,10 @@ import org.web3j.protocol.ipc.WindowsIpcService;
 import org.web3j.quorum.Quorum;
 
 /**
- * The web3j component uses the Web3j client API and allows you to add/read nodes to/from a web3j compliant content repositories.
+ * Interact with Ethereum nodes using web3j client API.
  */
 @UriEndpoint(firstVersion = "2.22.0", scheme = "web3j", title = "Web3j Ethereum Blockchain", syntax = "web3j:nodeAddress",
-    label = "bitcoin,blockchain")
+    category = {Category.BITCOIN, Category.BLOCKCHAIN, Category.API})
 public class Web3jEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(Web3jEndpoint.class);
 
@@ -99,7 +100,7 @@ public class Web3jEndpoint extends DefaultEndpoint {
             web3jService = new HttpService();
         } else if (clientAddress.startsWith("http")) {
             web3jService = new HttpService(clientAddress);
-        } else if (System.getProperty("os.name").toLowerCase().startsWith("win")) {
+        } else if (System.getProperty("os.name").regionMatches(true, 0, "win", 0, "win".length())) {
             web3jService = new WindowsIpcService(clientAddress);
         } else {
             web3jService = new UnixIpcService(clientAddress);

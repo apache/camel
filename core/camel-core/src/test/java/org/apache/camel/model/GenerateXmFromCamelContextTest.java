@@ -24,14 +24,16 @@ import javax.xml.bind.Marshaller;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GenerateXmFromCamelContextTest extends ContextTestSupport {
 
     @Test
     public void testCreateRouteFromCamelContext() throws Exception {
         List<RouteDefinition> list = context.getRouteDefinitions();
-        assertEquals("Size of list " + list, 1, list.size());
+        assertEquals(1, list.size(), "Size of list " + list);
         RouteDefinition routeType = list.get(0);
 
         log.info("Found route: " + routeType);
@@ -49,7 +51,7 @@ public class GenerateXmFromCamelContextTest extends ContextTestSupport {
         log.info("Created: " + buffer);
         assertNotNull(buffer);
         String out = buffer.toString();
-        assertTrue("Should contain the description", out.indexOf("<from uri=\"direct:start\"/>") > 0);
+        assertTrue(out.indexOf("<from uri=\"direct:start\"/>") > 0, "Should contain the description");
     }
 
     @Override

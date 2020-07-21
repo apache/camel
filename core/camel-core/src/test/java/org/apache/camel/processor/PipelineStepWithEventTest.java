@@ -34,7 +34,10 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test showing how you can use pipeline to group together statistics and
@@ -62,12 +65,12 @@ public class PipelineStepWithEventTest extends ContextTestSupport {
         assertEquals("step-a", event.getId());
         AfterStepEvent event2 = (AfterStepEvent)listener.getEvents().get(1);
         assertEquals("step-a", event2.getId());
-        assertTrue("Should take a little time", event2.getTimeTaken() > 0);
+        assertTrue(event2.getTimeTaken() > 0, "Should take a little time");
         BeforeStepEvent event3 = (BeforeStepEvent)listener.getEvents().get(2);
         assertEquals("step-b", event3.getId());
         AfterStepEvent event4 = (AfterStepEvent)listener.getEvents().get(3);
         assertEquals("step-b", event4.getId());
-        assertTrue("Should take a little time", event4.getTimeTaken() > 0);
+        assertTrue(event4.getTimeTaken() > 0, "Should take a little time");
     }
 
     @Override

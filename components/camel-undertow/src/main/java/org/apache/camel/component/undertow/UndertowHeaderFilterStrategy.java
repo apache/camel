@@ -44,6 +44,6 @@ public class UndertowHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         
         // filter headers begin with "Camel" or "org.apache.camel"
         // must ignore case for Http based transports
-        setOutFilterPattern("(?i)(Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
+        setOutFilterPattern(CAMEL_FILTER_PATTERN);
     }
 }

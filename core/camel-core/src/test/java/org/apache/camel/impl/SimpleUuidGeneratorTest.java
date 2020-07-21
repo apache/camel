@@ -19,12 +19,13 @@ package org.apache.camel.impl;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SimpleUuidGeneratorTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class SimpleUuidGeneratorTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(SimpleUuidGeneratorTest.class);
 

@@ -21,6 +21,7 @@ import javax.xml.validation.SchemaFactory;
 
 import org.w3c.dom.ls.LSResourceResolver;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -38,10 +39,10 @@ import org.apache.camel.support.processor.validation.ValidatingProcessor;
 import org.apache.camel.support.processor.validation.ValidatorErrorHandler;
 
 /**
- * Validates the payload of a message using XML Schema and JAXP Validation.
+ * Validate the payload using XML Schema and JAXP Validation.
  */
 @ManagedResource(description = "Managed ValidatorEndpoint")
-@UriEndpoint(firstVersion = "1.1.0", scheme = "validator", title = "Validator", syntax = "validator:resourceUri", producerOnly = true, label = "core,validation")
+@UriEndpoint(firstVersion = "1.1.0", scheme = "validator", title = "Validator", syntax = "validator:resourceUri", producerOnly = true, category = {Category.CORE, Category.VALIDATION})
 public class ValidatorEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "URL to a local resource on the classpath, or a reference to lookup a bean in the Registry,"
@@ -101,7 +102,7 @@ public class ValidatorEndpoint extends DefaultEndpoint {
                 schemaReader.setResourceResolver(resourceResolver);
             } else if (resourceResolverFactory != null) {
                 resourceResolver = resourceResolverFactory.createResourceResolver(getCamelContext(), resourceUri);
-                // set the created resource resolver to the resourceResolver variable, so that it can 
+                // set the created resource resolver to the resourceResolver variable, so that it can
                 // be accessed by the endpoint
                 schemaReader.setResourceResolver(resourceResolver);
             } else {
@@ -109,7 +110,7 @@ public class ValidatorEndpoint extends DefaultEndpoint {
             }
             schemaReader.setSchemaLanguage(getSchemaLanguage());
             schemaReader.setSchemaFactory(getSchemaFactory());
-            
+
             // force loading of schema at create time otherwise concurrent
             // processing could cause thread safe issues for the
             // javax.xml.validation.SchemaFactory
@@ -211,9 +212,9 @@ public class ValidatorEndpoint extends DefaultEndpoint {
         return resourceResolverFactory;
     }
 
-    /** For creating a resource resolver which depends on the endpoint resource URI. 
-     * Must not be used in combination with method {@link #setResourceResolver(LSResourceResolver)}. 
-     * If not set then {@link DefaultValidatorResourceResolverFactory} is used 
+    /** For creating a resource resolver which depends on the endpoint resource URI.
+     * Must not be used in combination with method {@link #setResourceResolver(LSResourceResolver)}.
+     * If not set then {@link DefaultValidatorResourceResolverFactory} is used
      */
     public void setResourceResolverFactory(ValidatorResourceResolverFactory resourceResolverFactory) {
         this.resourceResolverFactory = resourceResolverFactory;

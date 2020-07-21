@@ -16,23 +16,26 @@
  */
 package org.apache.camel.reifier;
 
+import org.apache.camel.Route;
+import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.model.ProcessDefinition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static junit.framework.TestCase.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ProcessorReifierTest {
     @Test
     public void testHandleCustomProcessorDefinition() {
+        Route ctx = new DefaultRoute(null, null, null, null, null);
         try {
-            ProcessorReifier.reifier(new MyProcessor());
+            ProcessorReifier.reifier(ctx, new MyProcessor());
 
             fail("Should throw IllegalStateException instead");
         } catch (IllegalStateException e) {
         }
 
         ProcessorReifier.registerReifier(MyProcessor.class, ProcessReifier::new);
-        ProcessorReifier.reifier(new ProcessDefinition());
+        ProcessorReifier.reifier(ctx, new ProcessDefinition());
     }
 
     public static class MyProcessor extends ProcessDefinition {

@@ -1,12 +1,19 @@
 [[google-bigquery-component]]
 = Google BigQuery Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-google-bigquery/src/main/docs/google-bigquery-component.adoc
+:docTitle: Google BigQuery
+:artifactId: camel-google-bigquery
+:description: Google BigQuery data warehouse for analytics.
+:since: 2.20
+:supportLevel: Stable
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: Google
 
-*Since Camel 2.20*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Google Bigquery component provides access
 to https://cloud.google.com/bigquery/[Cloud BigQuery Infrastructure] via
@@ -69,11 +76,11 @@ The Google BigQuery component supports 5 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *projectId* (producer) | Google Cloud Project Id |  | String
-| *datasetId* (producer) | BigQuery Dataset Id |  | String
 | *connectionFactory* (producer) | ConnectionFactory to obtain connection to Bigquery Service. If non provided the default one will be used |  | GoogleBigQueryConnectionFactory
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *datasetId* (producer) | BigQuery Dataset Id |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *projectId* (producer) | Google Cloud Project Id |  | String
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -104,48 +111,13 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *connectionFactory* (producer) | ConnectionFactory to obtain connection to Bigquery Service. If non provided the default will be used. |  | GoogleBigQueryConnectionFactory
+| *connectionFactory* (producer) | ConnectionFactory to obtain connection to Bigquery Service. If non provided the default one will be used |  | GoogleBigQueryConnectionFactory
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *useAsInsertId* (producer) | Field name to use as insert id |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-google-bigquery-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 10 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.google-bigquery.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.google-bigquery.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.google-bigquery.connection-factory.credentials-file-location* |  |  | String
-| *camel.component.google-bigquery.connection-factory.service-account* |  |  | String
-| *camel.component.google-bigquery.connection-factory.service-account-key* |  |  | String
-| *camel.component.google-bigquery.connection-factory.service-u-r-l* |  |  | String
-| *camel.component.google-bigquery.dataset-id* | BigQuery Dataset Id |  | String
-| *camel.component.google-bigquery.enabled* | Whether to enable auto configuration of the google-bigquery component. This is enabled by default. |  | Boolean
-| *camel.component.google-bigquery.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-| *camel.component.google-bigquery.project-id* | Google Cloud Project Id |  | String
-|===
-// spring-boot-auto-configure options: END
 
 
 == Message Headers
@@ -204,3 +176,5 @@ A insert id can be set on the exchange with the header `GoogleBigQueryConstants.
 query parameter `useAsInsertId`. As an insert id need to be specified per row inserted the exchange header can't
 be used when the payload is a list - if the payload is a list the `GoogleBigQueryConstants.INSERT_ID` will
 be ignored. In that case use the query parameter `useAsInsertId`.
+
+include::camel-spring-boot::page$google-bigquery-starter.adoc[]

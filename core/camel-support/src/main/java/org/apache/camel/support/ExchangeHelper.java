@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -35,6 +36,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NoSuchBeanException;
@@ -45,8 +47,8 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConversionException;
-import org.apache.camel.TypeConverter;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.IOHelper;
@@ -87,12 +89,73 @@ public final class ExchangeHelper {
      * @throws NoSuchEndpointException if the endpoint cannot be resolved
      */
     public static Endpoint resolveEndpoint(Exchange exchange, Object value) throws NoSuchEndpointException {
+        return resolveEndpoint(exchange.getContext(), value);
+    }
+
+    /**
+     * Attempts to resolve the endpoint for the given value
+     *
+     * @param context  the camel context
+     * @param value    the value which can be an {@link Endpoint} or an object
+     *                 which provides a String representation of an endpoint via
+     *                 {@link #toString()}
+     * @return the endpoint
+     * @throws NoSuchEndpointException if the endpoint cannot be resolved
+     */
+    public static Endpoint resolveEndpoint(CamelContext context, Object value) throws NoSuchEndpointException {
+        if (value == null) {
+            throw new NoSuchEndpointException("null");
+        }
         Endpoint endpoint;
         if (value instanceof Endpoint) {
             endpoint = (Endpoint) value;
+        } else if (value instanceof NormalizedEndpointUri) {
+            NormalizedEndpointUri nu = (NormalizedEndpointUri) value;
+            endpoint = CamelContextHelper.getMandatoryEndpoint(context, nu);
         } else {
             String uri = value.toString().trim();
-            endpoint = CamelContextHelper.getMandatoryEndpoint(exchange.getContext(), uri);
+            endpoint = CamelContextHelper.getMandatoryEndpoint(context, uri);
+        }
+        return endpoint;
+    }
+
+    /**
+     * Attempts to resolve the endpoint (prototype scope) for the given value
+     *
+     * @param exchange the message exchange being processed
+     * @param value    the value which can be an {@link Endpoint} or an object
+     *                 which provides a String representation of an endpoint via
+     *                 {@link #toString()}
+     * @return the endpoint
+     * @throws NoSuchEndpointException if the endpoint cannot be resolved
+     */
+    public static Endpoint resolvePrototypeEndpoint(Exchange exchange, Object value) throws NoSuchEndpointException {
+        return resolvePrototypeEndpoint(exchange.getContext(), value);
+    }
+
+    /**
+     * Attempts to resolve the endpoint (prototype scope) for the given value
+     *
+     * @param context  the camel context
+     * @param value    the value which can be an {@link Endpoint} or an object
+     *                 which provides a String representation of an endpoint via
+     *                 {@link #toString()}
+     * @return the endpoint
+     * @throws NoSuchEndpointException if the endpoint cannot be resolved
+     */
+    public static Endpoint resolvePrototypeEndpoint(CamelContext context, Object value) throws NoSuchEndpointException {
+        if (value == null) {
+            throw new NoSuchEndpointException("null");
+        }
+        Endpoint endpoint;
+        if (value instanceof Endpoint) {
+            endpoint = (Endpoint) value;
+        } else if (value instanceof NormalizedEndpointUri) {
+            NormalizedEndpointUri nu = (NormalizedEndpointUri) value;
+            endpoint = CamelContextHelper.getMandatoryPrototypeEndpoint(context, nu);
+        } else {
+            String uri = value.toString().trim();
+            endpoint = CamelContextHelper.getMandatoryPrototypeEndpoint(context, uri);
         }
         return endpoint;
     }
@@ -176,15 +239,8 @@ public final class ExchangeHelper {
      * @throws TypeConversionException is thrown if error during type conversion
      * @throws NoTypeConversionAvailableException} if no type converters exists to convert to the given type
      */
-    public static <T> T convertToMandatoryType(Exchange exchange, Class<T> type, Object value)
-        throws TypeConversionException, NoTypeConversionAvailableException {
-        CamelContext camelContext = exchange.getContext();
-        ObjectHelper.notNull(camelContext, "CamelContext of Exchange");
-        TypeConverter converter = camelContext.getTypeConverter();
-        if (converter != null) {
-            return converter.mandatoryConvertTo(type, exchange, value);
-        }
-        throw new NoTypeConversionAvailableException(value, type);
+    public static <T> T convertToMandatoryType(Exchange exchange, Class<T> type, Object value) throws TypeConversionException, NoTypeConversionAvailableException {
+        return exchange.getContext().getTypeConverter().mandatoryConvertTo(type, exchange, value);
     }
 
     /**
@@ -194,13 +250,7 @@ public final class ExchangeHelper {
      * @throws org.apache.camel.TypeConversionException is thrown if error during type conversion
      */
     public static <T> T convertToType(Exchange exchange, Class<T> type, Object value) throws TypeConversionException {
-        CamelContext camelContext = exchange.getContext();
-        ObjectHelper.notNull(camelContext, "CamelContext of Exchange");
-        TypeConverter converter = camelContext.getTypeConverter();
-        if (converter != null) {
-            return converter.convertTo(type, exchange, value);
-        }
-        return null;
+        return exchange.getContext().getTypeConverter().convertTo(type, exchange, value);
     }
 
     /**
@@ -254,7 +304,9 @@ public final class ExchangeHelper {
             copy.getIn().setMessageId(null);
         }
         // do not share the unit of work
-        copy.setUnitOfWork(null);
+        ExtendedExchange ce = (ExtendedExchange) copy;
+        ce.setUnitOfWork(null);
+
         // do not reuse the message id
         // hand over on completion to the copy if we got any
         UnitOfWork uow = exchange.getUnitOfWork();
@@ -292,7 +344,7 @@ public final class ExchangeHelper {
      * @param source the source exchange which is not modified
      */
     public static void copyResults(Exchange target, Exchange source) {
-        doCopyResults(target, source, false);
+        doCopyResults((ExtendedExchange) target, (ExtendedExchange) source, false);
     }
 
     /**
@@ -303,10 +355,10 @@ public final class ExchangeHelper {
      * @param source source exchange.
      */
     public static void copyResultsPreservePattern(Exchange target, Exchange source) {
-        doCopyResults(target, source, true);
+        doCopyResults((ExtendedExchange) target, (ExtendedExchange) source, true);
     }
 
-    private static void doCopyResults(Exchange result, Exchange source, boolean preserverPattern) {
+    private static void doCopyResults(ExtendedExchange result, ExtendedExchange source, boolean preserverPattern) {
         if (result == source) {
             // we just need to ensure MEP is as expected (eg copy result to OUT if out capable)
             // and the result is not failed
@@ -353,6 +405,13 @@ public final class ExchangeHelper {
             result.getProperties().putAll(source.getProperties());
         }
 
+        // copy over state
+        result.setRouteStop(source.isRouteStop());
+        result.setRollbackOnly(source.isRollbackOnly());
+        result.setRollbackOnlyLast(source.isRollbackOnlyLast());
+        result.setNotifyEvent(source.isNotifyEvent());
+        result.setRedeliveryExhausted(source.isRedeliveryExhausted());
+        result.setErrorHandlerHandled(source.getErrorHandlerHandled());
         result.setException(source.getException());
     }
 
@@ -398,11 +457,13 @@ public final class ExchangeHelper {
      * Creates a Map of the variables which are made available to a script or template
      *
      * @param exchange the exchange to make available
+     * @param allowContextMapAll whether to allow access to all context map or not
+     *                           (prefer to use false due to security reasons preferred to only allow access to body/headers)
      * @return a Map populated with the require variables
      */
-    public static Map<String, Object> createVariableMap(Exchange exchange) {
+    public static Map<String, Object> createVariableMap(Exchange exchange, boolean allowContextMapAll) {
         Map<String, Object> answer = new HashMap<>();
-        populateVariableMap(exchange, answer);
+        populateVariableMap(exchange, answer, allowContextMapAll);
         return answer;
     }
 
@@ -411,23 +472,27 @@ public final class ExchangeHelper {
      *
      * @param exchange the exchange to make available
      * @param map      the map to populate
+     * @param allowContextMapAll whether to allow access to all context map or not
+     *                           (prefer to use false due to security reasons preferred to only allow access to body/headers)
      */
-    public static void populateVariableMap(Exchange exchange, Map<String, Object> map) {
-        map.put("exchange", exchange);
+    public static void populateVariableMap(Exchange exchange, Map<String, Object> map, boolean allowContextMapAll) {
         Message in = exchange.getIn();
-        map.put("in", in);
-        map.put("request", in);
         map.put("headers", in.getHeaders());
         map.put("body", in.getBody());
-        if (isOutCapable(exchange)) {
-            // if we are out capable then set out and response as well
-            // however only grab OUT if it exists, otherwise reuse IN
-            // this prevents side effects to alter the Exchange if we force creating an OUT message
-            Message msg = exchange.getMessage();
-            map.put("out", msg);
-            map.put("response", msg);
+        if (allowContextMapAll) {
+            map.put("in", in);
+            map.put("request", in);
+            map.put("exchange", exchange);
+            if (isOutCapable(exchange)) {
+                // if we are out capable then set out and response as well
+                // however only grab OUT if it exists, otherwise reuse IN
+                // this prevents side effects to alter the Exchange if we force creating an OUT message
+                Message msg = exchange.getMessage();
+                map.put("out", msg);
+                map.put("response", msg);
+            }
+            map.put("camelContext", exchange.getContext());
         }
-        map.put("camelContext", exchange.getContext());
     }
 
     /**
@@ -513,7 +578,10 @@ public final class ExchangeHelper {
      * @param exchanges  the exchanges
      * @param exchangeId the exchangeId to find
      * @return matching exchange, or <tt>null</tt> if none found
+     *
+     * @deprecated not in use, to be removed in a future Camel release
      */
+    @Deprecated
     public static Exchange getExchangeById(Iterable<Exchange> exchanges, String exchangeId) {
         for (Exchange exchange : exchanges) {
             String id = exchange.getExchangeId();
@@ -582,16 +650,6 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Checks whether the exchange is redelivery exhausted
-     *
-     * @param exchange  the exchange
-     * @return <tt>true</tt> if exhausted, <tt>false</tt> otherwise
-     */
-    public static boolean isRedeliveryExhausted(Exchange exchange) {
-        return exchange.getProperty(Exchange.REDELIVERY_EXHAUSTED, false, Boolean.class);
-    }
-
-    /**
      * Checks whether the exchange {@link UnitOfWork} is redelivered
      *
      * @param exchange  the exchange
@@ -599,17 +657,6 @@ public final class ExchangeHelper {
      */
     public static boolean isRedelivered(Exchange exchange) {
         return exchange.getIn().hasHeaders() && exchange.getIn().getHeader(Exchange.REDELIVERED, false, Boolean.class);
-    }
-
-    /**
-     * Checks whether the exchange {@link UnitOfWork} has been interrupted during processing
-     *
-     * @param exchange  the exchange
-     * @return <tt>true</tt> if interrupted, <tt>false</tt> otherwise
-     */
-    public static boolean isInterrupted(Exchange exchange) {
-        Object value = exchange.getProperty(Exchange.INTERRUPTED);
-        return value != null && Boolean.TRUE == value;
     }
 
     /**
@@ -621,7 +668,7 @@ public final class ExchangeHelper {
     public static boolean isStreamCachingEnabled(final Exchange exchange) {
         Route route = exchange.getContext().getRoute(exchange.getFromRouteId());
         if (route != null) {
-            return route.getRouteContext().isStreamCaching();
+            return route.isStreamCaching();
         } else {
             return exchange.getContext().getStreamCachingStrategy().isEnabled();
         }
@@ -670,16 +717,6 @@ public final class ExchangeHelper {
         }
 
         return answer;
-    }
-
-    /**
-     * Tests whether the exchange has already been handled by the error handler
-     *
-     * @param exchange the exchange
-     * @return <tt>true</tt> if handled already by error handler, <tt>false</tt> otherwise
-     */
-    public static boolean hasExceptionBeenHandledByErrorHandler(Exchange exchange) {
-        return Boolean.TRUE.equals(exchange.getProperty(Exchange.ERRORHANDLER_HANDLED));
     }
 
     /**
@@ -814,7 +851,7 @@ public final class ExchangeHelper {
         }
         if (handover) {
             // Need to hand over the completion for async invocation
-            exchange.handoverCompletions(answer);
+            exchange.adapt(ExtendedExchange.class).handoverCompletions(answer);
         }
         answer.setIn(exchange.getIn().copy());
         if (exchange.hasOut()) {
@@ -878,15 +915,7 @@ public final class ExchangeHelper {
      * @return     the component scheme (name), or <tt>null</tt> if not possible to resolve
      */
     public static String resolveScheme(String uri) {
-        String scheme = null;
-        if (uri != null) {
-            // Use the URI prefix to find the component.
-            String[] splitURI = StringHelper.splitOnCharacter(uri, ":", 2);
-            if (splitURI[1] != null) {
-                scheme = splitURI[0];
-            }
-        }
-        return scheme;
+        return StringHelper.before(uri, ":");
     }
 
     @SuppressWarnings("unchecked")
@@ -895,7 +924,7 @@ public final class ExchangeHelper {
             return null;
         }
 
-        Map<String, Object> answer = new HashMap<>(properties);
+        Map<String, Object> answer = new ConcurrentHashMap<>(properties);
 
         // safe copy message history using a defensive copy
         List<MessageHistory> history = (List<MessageHistory>) answer.remove(Exchange.MESSAGE_HISTORY);
@@ -988,5 +1017,28 @@ public final class ExchangeHelper {
             }
         }
         return scanner;
+    }
+
+    public static String getRouteId(Exchange exchange) {
+        String answer = getAtRouteId(exchange);
+        if (answer == null) {
+            // fallback and get from route id on the exchange
+            answer = exchange.getFromRouteId();
+        }
+        return answer;
+    }
+
+    public static String getAtRouteId(Exchange exchange) {
+        String answer = null;
+        Route rc = getRoute(exchange);
+        if (rc != null) {
+            answer = rc.getRouteId();
+        }
+        return answer;
+    }
+
+    public static Route getRoute(Exchange exchange) {
+        UnitOfWork uow = exchange.getUnitOfWork();
+        return uow != null ? uow.getRoute() : null;
     }
 }

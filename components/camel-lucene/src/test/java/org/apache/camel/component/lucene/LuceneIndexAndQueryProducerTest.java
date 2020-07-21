@@ -27,13 +27,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.lucene.support.Hits;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(LuceneIndexAndQueryProducerTest.class);
@@ -210,12 +212,7 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
                 from("direct:next").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Hits hits = exchange.getIn().getBody(Hits.class);
-                        try {
-                            printResults(hits);
-                        } catch (Exception e) {
-                            LOG.error(e.getMessage());
-                            exchange.getOut().setBody(null);
-                        }
+                        printResults(hits);
                     }
 
                     private void printResults(Hits hits) throws Exception {
@@ -229,17 +226,14 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
                             }
                         }
                     }
-                }).to("mock:searchResult").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        Hits hits = exchange.getIn().getBody(Hits.class);
-                        if (hits == null) {
-                            HashMap<String, String> map = new HashMap<>();
-                            map.put("NO_LUCENE_DOCS_ERROR", "NO LUCENE DOCS FOUND");
-                            exchange.getContext().setGlobalOptions(map);
-                        }
-                        LOG.debug("Number of hits: " + hits.getNumberOfHits());
+                }).to("mock:searchResult").process(exchange -> {
+                    Hits hits = exchange.getIn().getBody(Hits.class);
+                    if (hits == null) {
+                        HashMap<String, String> map = new HashMap<>();
+                        map.put("NO_LUCENE_DOCS_ERROR", "NO LUCENE DOCS FOUND");
+                        exchange.getContext().setGlobalOptions(map);
                     }
+                    LOG.debug("Number of hits: " + hits.getNumberOfHits());
                 });
             }
         });

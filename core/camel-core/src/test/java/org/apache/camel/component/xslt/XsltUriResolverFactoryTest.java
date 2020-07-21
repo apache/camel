@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.naming.Context;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
@@ -29,20 +30,23 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.SimpleExpression;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
+import org.apache.camel.support.jndi.JndiBeanRepository;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
 public class XsltUriResolverFactoryTest extends ContextTestSupport {
 
-    private JndiRegistry registry;
+    private Context jndiContext;
 
     @Test
     public void testConfigurationOnEndpoint() throws Exception {
@@ -51,7 +55,7 @@ public class XsltUriResolverFactoryTest extends ContextTestSupport {
 
         // ensure that the URI resolver factory is not set on the component by
         // the method "testConfigurationOnComponent"
-        registry.getContext().unbind("xslt");
+        jndiContext.unbind("xslt");
         execute(endpointUri, directStart);
     }
 
@@ -60,7 +64,7 @@ public class XsltUriResolverFactoryTest extends ContextTestSupport {
 
         XsltComponent xsltComponent = new XsltComponent();
         xsltComponent.setUriResolverFactory(new CustomXsltUriResolverFactory());
-        registry.bind("xslt", xsltComponent);
+        jndiContext.bind("xslt", xsltComponent);
 
         String endpointUri = "xslt:xslt/staff/staff.xsl";
         String directStart = "direct:startComponent";
@@ -110,15 +114,15 @@ public class XsltUriResolverFactoryTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        registry = super.createRegistry();
-        registry.bind("uriResolverFactory", new CustomXsltUriResolverFactory());
-        return registry;
+    protected Registry createRegistry() throws Exception {
+        jndiContext = createJndiContext();
+        jndiContext.bind("uriResolverFactory", new CustomXsltUriResolverFactory());
+        return new DefaultRegistry(new JndiBeanRepository(jndiContext));
 
     }
 
     void checkResourceUri(Set<String> uris, String resourceUri) {
-        Assert.assertTrue("Missing resource uri " + resourceUri + " in resolved resource URI set", uris.contains(resourceUri));
+        assertTrue(uris.contains(resourceUri), "Missing resource uri " + resourceUri + " in resolved resource URI set");
     }
 
     static class CustomXsltUriResolverFactory implements XsltUriResolverFactory {

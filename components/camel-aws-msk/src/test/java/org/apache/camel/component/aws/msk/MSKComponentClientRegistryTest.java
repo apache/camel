@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.aws.msk;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MSKComponentClientRegistryTest extends CamelTestSupport {
 
@@ -32,10 +35,11 @@ public class MSKComponentClientRegistryTest extends CamelTestSupport {
         assertNotNull(endpoint.getConfiguration().getMskClient());
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithMinimalMSKClientMisconfiguration() throws Exception {
 
         MSKComponent component = context.getComponent("aws-msk", MSKComponent.class);
-        MSKEndpoint endpoint = (MSKEndpoint) component.createEndpoint("aws-msk://label");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("aws-msk://label"));
     }
 }

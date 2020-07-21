@@ -26,8 +26,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * CBOR data format is used for unmarshal a CBOR payload to POJO or to marshal
- * POJO back to CBOR payload.
+ * Unmarshal a CBOR payload to POJO and back.
  */
 @Metadata(firstVersion = "3.0.0", label = "dataformat,transformation,json", title = "CBOR")
 @XmlRootElement(name = "cbor")
@@ -96,7 +95,7 @@ public class CBORDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Class name of the java type to use when unarmshalling
+     * Class name of the java type to use when unmarshalling
      */
     public void setUnmarshalTypeName(String unmarshalTypeName) {
         this.unmarshalTypeName = unmarshalTypeName;
@@ -132,7 +131,7 @@ public class CBORDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Class of the java type to use when unarmshalling
+     * Class of the java type to use when unmarshalling
      */
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
@@ -164,7 +163,7 @@ public class CBORDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * To unarmshal to a List of Map or a List of Pojo.
+     * To unmarshal to a List of Map or a List of Pojo.
      */
     public void setUseList(String useList) {
         this.useList = useList;
@@ -220,11 +219,6 @@ public class CBORDataFormat extends DataFormatDefinition {
      */
     public void setDisableFeatures(String disableFeatures) {
         this.disableFeatures = disableFeatures;
-    }
-
-    @Override
-    public String getDataFormatName() {
-        return "cbor";
     }
 
 }

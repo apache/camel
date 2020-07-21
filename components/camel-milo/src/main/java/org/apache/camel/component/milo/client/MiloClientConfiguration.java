@@ -44,6 +44,8 @@ public class MiloClientConfiguration implements Cloneable {
 
     private static final String DEFAULT_PRODUCT_URI = "http://camel.apache.org/EclipseMilo";
 
+    private static final Double DEFAULT_REQUESTED_PUBLISHING_INTERVAL = 1_000.0;
+
     @XmlTransient // to not be included in component docs
     private String endpointUri;
 
@@ -104,6 +106,9 @@ public class MiloClientConfiguration implements Cloneable {
     @UriParam(label = "client")
     private boolean overrideHost;
 
+    @UriParam(label = "client", defaultValue = "1_000.0")
+    private Double requestedPublishingInterval = DEFAULT_REQUESTED_PUBLISHING_INTERVAL;
+
     public MiloClientConfiguration() {
     }
 
@@ -127,6 +132,7 @@ public class MiloClientConfiguration implements Cloneable {
         this.keyPassword = other.keyPassword;
         this.allowedSecurityPolicies = allowedSecurityPolicies != null ? new HashSet<>(other.allowedSecurityPolicies) : null;
         this.overrideHost = other.overrideHost;
+        this.requestedPublishingInterval = other.requestedPublishingInterval;
     }
 
     /**
@@ -353,12 +359,12 @@ public class MiloClientConfiguration implements Cloneable {
 
             String adding = null;
             try {
-                adding = SecurityPolicy.fromUri(policy).getSecurityPolicyUri();
+                adding = SecurityPolicy.fromUri(policy).getUri();
             } catch (Exception e) {
             }
             if (adding == null) {
                 try {
-                    adding = SecurityPolicy.valueOf(policy).getSecurityPolicyUri();
+                    adding = SecurityPolicy.valueOf(policy).getUri();
                 } catch (Exception e) {
                 }
             }
@@ -386,6 +392,17 @@ public class MiloClientConfiguration implements Cloneable {
 
     public boolean isOverrideHost() {
         return overrideHost;
+    }
+
+    /**
+     * The requested publishing interval in milliseconds
+     */
+    public void setRequestedPublishingInterval(Double requestedPublishingInterval) {
+        this.requestedPublishingInterval = requestedPublishingInterval;
+    }
+
+    public Double getRequestedPublishingInterval() {
+        return requestedPublishingInterval;
     }
 
     @Override

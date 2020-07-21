@@ -18,13 +18,13 @@ package org.apache.camel.component.hazelcast;
 
 import java.util.concurrent.TimeUnit;
 
-import com.hazelcast.core.IQueue;
-import com.hazelcast.core.TransactionalQueue;
+import com.hazelcast.collection.IQueue;
+import com.hazelcast.transaction.TransactionalQueue;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -67,7 +67,7 @@ public abstract class HazelcastSedaRecoverableConsumerTest extends HazelcastCame
         };
     }
 
-    @After
+    @AfterEach
     public final void stopContext() throws Exception {
         context.stop();
     }

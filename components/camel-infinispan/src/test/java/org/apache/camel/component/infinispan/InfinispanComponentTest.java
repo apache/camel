@@ -16,16 +16,16 @@
  */
 package org.apache.camel.component.infinispan;
 
-import java.util.UUID;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.core.Is.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 
 public class InfinispanComponentTest extends InfinispanTestSupport {
-    private final String cacheName = UUID.randomUUID().toString();
+    private final String cacheName = "default";
 
     @Test
     public void consumerReceivedEntryCreatedEventNotifications() throws Exception {

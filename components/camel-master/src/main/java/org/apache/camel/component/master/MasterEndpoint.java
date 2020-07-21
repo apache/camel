@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.master;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
@@ -31,8 +32,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Represents an endpoint which only becomes active when the {@link CamelClusterView}
- * has the leadership.
+ * Have only a single consumer in a cluster consuming from a given endpoint; with automatic failover if the JVM dies.
  */
 @ManagedResource(description = "Managed Master Endpoint")
 @UriEndpoint(
@@ -42,7 +42,7 @@ import org.apache.camel.support.DefaultEndpoint;
     consumerOnly = true,
     title = "Master",
     lenientProperties = true,
-    label = "clustering")
+    category = {Category.CLUSTERING})
 public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint {
     private final Endpoint delegateEndpoint;
     private final CamelClusterService clusterService;

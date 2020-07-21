@@ -25,7 +25,9 @@ import org.apache.camel.Message;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.SimpleUuidGenerator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MessageSupportTest extends ContextTestSupport {
 
@@ -56,19 +58,30 @@ public class MessageSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testGetMessageId() {
+    public void testGetMessageIdWithGenerator() {
         context.setUuidGenerator(new SimpleUuidGenerator());
         Exchange exchange = new DefaultExchange(context);
         Message in = exchange.getIn();
 
+        // they should use the same id
         assertEquals("1", in.getMessageId());
+        assertEquals("1", in.getExchange().getExchangeId());
+    }
+
+    @Test
+    public void testGetMessageId() {
+        Exchange exchange = new DefaultExchange(context);
+        Message in = exchange.getIn();
+
+        // they should use the same id
+        assertSame(in.getExchange().getExchangeId(), in.getMessageId());
     }
 
     @Test
     public void testGetMessageIdWithoutAnExchange() {
         Message in = new DefaultMessage(context);
-
-        assertNotNull(in.getMessageId());
+        // there are no exchange so its null
+        assertNull(in.getMessageId());
     }
 
     @Test

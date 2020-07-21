@@ -89,7 +89,7 @@ public class CamelLogger {
 
     /**
      * Logs the message <b>without</b> checking the {@link #shouldLog()} method first.
-     * 
+     *
      * @param message the message to log
      */
     public void doLog(String message) {
@@ -98,8 +98,8 @@ public class CamelLogger {
 
     public void log(String message, Throwable exception, LoggingLevel loggingLevel) {
         log(log, loggingLevel, marker, message, exception);
-    }   
-    
+    }
+
     public void log(String message, Throwable exception) {
         if (shouldLog(log, level)) {
             log(log, level, marker, message, exception);
@@ -148,22 +148,22 @@ public class CamelLogger {
 
     public static void log(Logger log, LoggingLevel level, String message) {
         switch (level) {
-        case DEBUG:
-            log.debug(message);
-            break;
-        case ERROR:
-            log.error(message);
-            break;
-        case INFO:
-            log.info(message);
-            break;
-        case TRACE:
-            log.trace(message);
-            break;
-        case WARN:
-            log.warn(message);
-            break;
-        default:
+            case DEBUG:
+                log.debug(message);
+                break;
+            case ERROR:
+                log.error(message);
+                break;
+            case INFO:
+                log.info(message);
+                break;
+            case TRACE:
+                log.trace(message);
+                break;
+            case WARN:
+                log.warn(message);
+                break;
+            default:
         }
     }
 
@@ -175,43 +175,43 @@ public class CamelLogger {
 
         // marker must be provided
         switch (level) {
-        case DEBUG:
-            log.debug(marker, message);
-            break;
-        case ERROR:
-            log.error(marker, message);
-            break;
-        case INFO:
-            log.info(marker, message);
-            break;
-        case TRACE:
-            log.trace(marker, message);
-            break;
-        case WARN:
-            log.warn(marker, message);
-            break;
-        default:
+            case DEBUG:
+                log.debug(marker, message);
+                break;
+            case ERROR:
+                log.error(marker, message);
+                break;
+            case INFO:
+                log.info(marker, message);
+                break;
+            case TRACE:
+                log.trace(marker, message);
+                break;
+            case WARN:
+                log.warn(marker, message);
+                break;
+            default:
         }
     }
 
     public static void log(Logger log, LoggingLevel level, String message, Throwable th) {
         switch (level) {
-        case DEBUG:
-            log.debug(message, th);
-            break;
-        case ERROR:
-            log.error(message, th);
-            break;
-        case INFO:
-            log.info(message, th);
-            break;
-        case TRACE:
-            log.trace(message, th);
-            break;
-        case WARN:
-            log.warn(message, th);
-            break;
-        default:
+            case DEBUG:
+                log.debug(message, th);
+                break;
+            case ERROR:
+                log.error(message, th);
+                break;
+            case INFO:
+                log.info(message, th);
+                break;
+            case TRACE:
+                log.trace(message, th);
+                break;
+            case WARN:
+                log.warn(message, th);
+                break;
+            default:
         }
     }
 
@@ -223,22 +223,22 @@ public class CamelLogger {
 
         // marker must be provided
         switch (level) {
-        case DEBUG:
-            log.debug(marker, message, th);
-            break;
-        case ERROR:
-            log.error(marker, message, th);
-            break;
-        case INFO:
-            log.info(marker, message, th);
-            break;
-        case TRACE:
-            log.trace(marker, message, th);
-            break;
-        case WARN:
-            log.warn(marker, message, th);
-            break;
-        default:
+            case DEBUG:
+                log.debug(marker, message, th);
+                break;
+            case ERROR:
+                log.error(marker, message, th);
+                break;
+            case INFO:
+                log.info(marker, message, th);
+                break;
+            case TRACE:
+                log.trace(marker, message, th);
+                break;
+            case WARN:
+                log.warn(marker, message, th);
+                break;
+            default:
         }
     }
 
@@ -248,17 +248,17 @@ public class CamelLogger {
 
     public static boolean shouldLog(Logger log, LoggingLevel level) {
         switch (level) {
-        case DEBUG:
-            return log.isDebugEnabled(); 
-        case ERROR:
-            return log.isErrorEnabled(); 
-        case INFO:
-            return log.isInfoEnabled(); 
-        case TRACE:
-            return log.isTraceEnabled(); 
-        case WARN:
-            return log.isWarnEnabled(); 
-        default:
+            case DEBUG:
+                return log.isDebugEnabled();
+            case ERROR:
+                return log.isErrorEnabled();
+            case INFO:
+                return log.isInfoEnabled();
+            case TRACE:
+                return log.isTraceEnabled();
+            case WARN:
+                return log.isWarnEnabled();
+            default:
         }
         return false;
     }

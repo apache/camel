@@ -23,6 +23,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.Model;
+import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.support.OrderedComparator;
@@ -38,6 +40,7 @@ public class RoutesConfigurer {
 
     private final RoutesCollector routesCollector;
     private final List<RoutesBuilder> routesBuilders;
+    private boolean addRestsToRoutes = true;
 
     /**
      * Creates a new routes configurer
@@ -57,6 +60,13 @@ public class RoutesConfigurer {
     public RoutesConfigurer(RoutesCollector routesCollector, List<RoutesBuilder> routesBuilders) {
         this.routesCollector = routesCollector;
         this.routesBuilders = routesBuilders;
+    }
+
+    /**
+     * Whether rests should be automatic added as routes
+     */
+    public void setAddRestsToRoutes(boolean addRestsToRoutes) {
+        this.addRestsToRoutes = addRestsToRoutes;
     }
 
     /**
@@ -93,12 +103,21 @@ public class RoutesConfigurer {
                     }
                 }
 
+                boolean scanTemplates = !config.getXmlRouteTemplates().equals("false");
+                if (scanTemplates) {
+                    List<RouteTemplatesDefinition> defs = routesCollector.collectXmlRouteTemplatesFromDirectory(camelContext, config.getXmlRouteTemplates());
+                    for (RouteTemplatesDefinition def : defs) {
+                        LOG.debug("Adding route templates into CamelContext from XML files: {}", config.getXmlRouteTemplates());
+                        camelContext.getExtension(Model.class).addRouteTemplateDefinitions(def.getRouteTemplates());
+                    }
+                }
+
                 boolean scanRests = !config.getXmlRests().equals("false");
                 if (scanRests) {
                     List<RestsDefinition> defs = routesCollector.collectXmlRestsFromDirectory(camelContext, config.getXmlRests());
                     for (RestsDefinition def : defs) {
                         LOG.debug("Adding rests into CamelContext from XML files: {}", config.getXmlRests());
-                        camelContext.getExtension(Model.class).addRestDefinitions(def.getRests(), true);
+                        camelContext.getExtension(Model.class).addRestDefinitions(def.getRests(), addRestsToRoutes);
                     }
                 }
             } catch (Exception e) {

@@ -31,12 +31,17 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 public class JdbcProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JdbcProducer.class);
 
     private DataSource dataSource;
     private int readSize;
@@ -88,7 +93,7 @@ public class JdbcProducer extends DefaultProducer {
                     conn.rollback();
                 }
             } catch (Throwable sqle) {
-                log.warn("Error occurred during jdbc rollback. This exception will be ignored.", sqle);
+                LOG.warn("Error occurred during JDBC rollback. This exception will be ignored.", sqle);
             }
             throw e;
         } finally {
@@ -156,7 +161,7 @@ public class JdbcProducer extends DefaultProducer {
                 getEndpoint().getPrepareStatementStrategy().populateStatement(ps, it, expectedCount);
             }
 
-            log.debug("Executing JDBC PreparedStatement: {}", sql);
+            LOG.debug("Executing JDBC PreparedStatement: {}", sql);
 
             boolean stmtExecutionResult = ps.execute();
             if (stmtExecutionResult) {
@@ -195,7 +200,7 @@ public class JdbcProducer extends DefaultProducer {
                 PropertyBindingSupport.bindProperties(exchange.getContext(), stmt, copy);
             }
 
-            log.debug("Executing JDBC Statement: {}", sql);
+            LOG.debug("Executing JDBC Statement: {}", sql);
 
             Boolean shouldRetrieveGeneratedKeys = exchange.getIn().getHeader(JdbcConstants.JDBC_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
 
@@ -246,7 +251,7 @@ public class JdbcProducer extends DefaultProducer {
                     rs.close();
                 }
             } catch (Throwable sqle) {
-                log.debug("Error by closing result set", sqle);
+                LOG.debug("Error by closing result set", sqle);
             }
         }
     }
@@ -258,7 +263,7 @@ public class JdbcProducer extends DefaultProducer {
                     stmt.close();
                 }
             } catch (Throwable sqle) {
-                log.debug("Error by closing statement", sqle);
+                LOG.debug("Error by closing statement", sqle);
             }
         }
     }
@@ -268,7 +273,7 @@ public class JdbcProducer extends DefaultProducer {
             try {
                 con.setAutoCommit(autoCommit);
             } catch (Throwable sqle) {
-                log.debug("Error by resetting auto commit to its original value", sqle);
+                LOG.debug("Error by resetting auto commit to its original value", sqle);
             }
         }
     }
@@ -280,7 +285,7 @@ public class JdbcProducer extends DefaultProducer {
                     con.close();
                 }
             } catch (Throwable sqle) {
-                log.debug("Error by closing connection", sqle);
+                LOG.debug("Error by closing connection", sqle);
             }
         }
     }
@@ -321,7 +326,7 @@ public class JdbcProducer extends DefaultProducer {
         exchange.getOut().setHeader(JdbcConstants.JDBC_COLUMN_NAMES, iterator.getColumnNames());
         if (outputType == JdbcOutputType.StreamList) {
             exchange.getOut().setBody(new StreamListIterator(getEndpoint().getCamelContext(), getEndpoint().getOutputClass(), getEndpoint().getBeanRowMapper(), iterator));
-            exchange.addOnCompletion(new ResultSetIteratorCompletion(iterator));
+            exchange.adapt(ExtendedExchange.class).addOnCompletion(new ResultSetIteratorCompletion(iterator));
             // do not close resources as we are in streaming mode
             answer = false;
         } else if (outputType == JdbcOutputType.SelectList) {

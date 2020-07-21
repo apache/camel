@@ -31,10 +31,13 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.atomix.client.AtomixClientConstants;
 import org.apache.camel.component.atomix.client.AtomixClientTestSupport;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
     private static final String MAP_NAME = UUID.randomUUID().toString();
@@ -63,7 +66,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         map.close();
 
@@ -75,7 +78,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
     // ************************************
 
     @Test
-    public void testPut() throws Exception {
+    void testPut() {
         final String key  = context().getUuidGenerator().generateUuid();
         final String val1 = context().getUuidGenerator().generateUuid();
         final String val2 = context().getUuidGenerator().generateUuid();
@@ -104,7 +107,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
     }
 
     @Test
-    public void testGet() throws Exception {
+    void testGet() {
         final String key = context().getUuidGenerator().generateUuid();
         final String val = context().getUuidGenerator().generateUuid();
 
@@ -132,7 +135,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
     }
 
     @Test
-    public void testSizeClearIsEmpty() throws Exception {
+    void testSizeClearIsEmpty() {
         final String key1 = context().getUuidGenerator().generateUuid();
         final String key2 = context().getUuidGenerator().generateUuid();
 
@@ -190,7 +193,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
     }
 
     @Test
-    public void testContainsKey() throws Exception {
+    void testContainsKey() {
         final String key = context().getUuidGenerator().generateUuid();
         final String val = context().getUuidGenerator().generateUuid();
 
@@ -220,7 +223,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
     }
 
 //    @Test
-//    public void testContainsValue() throws Exception {
+//    void testContainsValue() throws Exception {
 //        final String key = context().getUuidGenerator().generateUuid();
 //        final String val1 = context().getUuidGenerator().generateUuid();
 //        final String val2 = context().getUuidGenerator().generateUuid();
@@ -260,7 +263,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
 
 //
 //    @Test
-//    public void testContainsEntry() throws Exception {
+//    void testContainsEntry() throws Exception {
 //        final String key = context().getUuidGenerator().generateUuid();
 //        final String val1 = context().getUuidGenerator().generateUuid();
 //        final String val2 = context().getUuidGenerator().generateUuid();
@@ -292,7 +295,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
 //    }
 
     @Test
-    public void testRemove() throws Exception {
+    void testRemove() {
         final String key = context().getUuidGenerator().generateUuid();
         final String val1 = context().getUuidGenerator().generateUuid();
         final String val2 = context().getUuidGenerator().generateUuid();
@@ -331,11 +334,11 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
         assertFalse(map.containsKey(key).join());
     }
 
-    @Ignore
+    @Disabled
     @Test
-    public void test() {
+    void test() {
         //Assert.assertFalse(map.containsValue("abc").join());
-        Assert.assertFalse(map.containsEntry("abc", "abc").join());
+        assertFalse(map.containsEntry("abc", "abc").join());
     }
 
     // ************************************
@@ -343,7 +346,7 @@ public class AtomixMultiMapProducerTest extends AtomixClientTestSupport {
     // ************************************
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")

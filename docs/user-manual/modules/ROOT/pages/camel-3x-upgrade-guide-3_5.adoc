@@ -1,0 +1,22 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.4 to 3.5
+
+=== camel-bean
+
+The `bean(class)` EIP will now lookup in the registry first whether there is a single bean instance of the given class type
+and use the existing bean (for singleton scope) instead of creating a new instance.
+
+=== Camel Karaf
+
+The following features has been removed due they become not compatible with OSGi: `camel-couchbase`.
+
+=== camel-weather
+
+The option `httpClient` is now a query parameter.
+
+A new parameter `geoLocationProvider` was introduced to allow the use of a custom `GeolocationProvider` implementation.

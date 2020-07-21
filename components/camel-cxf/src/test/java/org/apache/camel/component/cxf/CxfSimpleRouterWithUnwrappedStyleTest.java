@@ -20,10 +20,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("As the refelection can't tell the paramenter name from SEI without annonation, "
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@Disabled("As the refelection can't tell the paramenter name from SEI without annonation, "
     + "CXF cannot send a meaningful request for unwrapped message."
     + " We need to use the annontated SEI for testing")
 public class CxfSimpleRouterWithUnwrappedStyleTest extends CxfSimpleRouterTest {    
@@ -69,7 +71,7 @@ public class CxfSimpleRouterWithUnwrappedStyleTest extends CxfSimpleRouterTest {
     public void testInvokingServiceFromCXFClient() throws Exception {        
         HelloService client = getCXFClient();
         Boolean result = client.echoBoolean(true);
-        assertEquals("we should get the right answer from router", true, result);
+        assertEquals(true, result, "we should get the right answer from router");
         // The below invocation is failed with CXF 2.6.1 as the request are all start with <arg0>
         String str = client.echo("hello world");
         assertEquals("we should get the right answer from router", "echo hello world", str);

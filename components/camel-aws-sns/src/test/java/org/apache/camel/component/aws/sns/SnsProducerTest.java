@@ -22,17 +22,16 @@ import java.util.Map;
 
 import com.amazonaws.services.sns.model.MessageAttributeValue;
 import org.apache.camel.Exchange;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class SnsProducerTest {
 
     @Mock
@@ -41,7 +40,7 @@ public class SnsProducerTest {
     private SnsEndpoint endpoint;
     private SnsProducer producer;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         producer = new SnsProducer(endpoint);
 
@@ -61,13 +60,13 @@ public class SnsProducerTest {
 
         Map<String, MessageAttributeValue> translateAttributes = producer.translateAttributes(headers, exchange);
 
-        assertThat(translateAttributes.size(), is(5));
-        assertThat(translateAttributes.get("key3").getDataType(), is("String"));
-        assertThat(translateAttributes.get("key3").getStringValue(), is("value3"));
-        assertThat(translateAttributes.get("key4").getDataType(), is("String.Array"));
-        assertThat(translateAttributes.get("key4").getStringValue(), is("[\"Value4\", \"Value5\", \"Value6\"]"));
-        assertThat(translateAttributes.get("key5").getStringValue(), is("[\"Value7\", null, \"Value9\"]"));
-        assertThat(translateAttributes.get("key6").getStringValue(), is("[10, null, 12]"));
-        assertThat(translateAttributes.get("key7").getStringValue(), is("[true, null, false]"));
+        assertEquals(5, translateAttributes.size());
+        assertEquals("String", translateAttributes.get("key3").getDataType());
+        assertEquals("value3", translateAttributes.get("key3").getStringValue());
+        assertEquals("String.Array", translateAttributes.get("key4").getDataType());
+        assertEquals("[\"Value4\", \"Value5\", \"Value6\"]", translateAttributes.get("key4").getStringValue());
+        assertEquals("[\"Value7\", null, \"Value9\"]", translateAttributes.get("key5").getStringValue());
+        assertEquals("[10, null, 12]", translateAttributes.get("key6").getStringValue());
+        assertEquals("[true, null, false]", translateAttributes.get("key7").getStringValue());
     }
 }

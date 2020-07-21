@@ -30,7 +30,6 @@ import org.junit.Test;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 /**
@@ -58,18 +57,6 @@ public class SmppProducerLazySessionCreationTest {
                 return session;
             }
         };
-    }
-
-    @Test
-    public void doStartShouldNotCreateTheSmppSession() throws Exception {
-        when(endpoint.getConnectionString()).thenReturn("smpp://smppclient@localhost:2775");
-        when(endpoint.isSingleton()).thenReturn(true);
-
-        producer.doStart();
-
-        verify(endpoint).getConnectionString();
-        verify(endpoint).isSingleton();
-        verifyNoMoreInteractions(endpoint, session);
     }
 
     @Test

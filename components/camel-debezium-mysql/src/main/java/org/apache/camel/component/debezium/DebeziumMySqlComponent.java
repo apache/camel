@@ -18,11 +18,13 @@ package org.apache.camel.component.debezium;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 
 @Component("debezium-mysql")
 public final class DebeziumMySqlComponent extends DebeziumComponent<MySqlConnectorEmbeddedDebeziumConfiguration> {
 
+    @Metadata
     private MySqlConnectorEmbeddedDebeziumConfiguration configuration;
 
     public DebeziumMySqlComponent() {

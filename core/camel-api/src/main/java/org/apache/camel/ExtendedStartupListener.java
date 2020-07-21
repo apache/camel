@@ -25,15 +25,4 @@ package org.apache.camel;
  */
 public interface ExtendedStartupListener extends StartupListener {
 
-    /**
-     * Callback invoked when the {@link CamelContext} has been fully started.
-     *
-     * @param context        the Camel context
-     * @param alreadyStarted whether or not the {@link CamelContext} already has been started. For example the context
-     *                       could already have been started, and then a service is added/started later which still
-     *                       triggers this callback to be invoked.
-     * @throws Exception     can be thrown in case of errors to fail the startup process and have the application
-     *                       fail on startup.
-     */
-    void onCamelContextFullyStarted(CamelContext context, boolean alreadyStarted) throws Exception;
 }

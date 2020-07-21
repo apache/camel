@@ -71,8 +71,8 @@ public class NatsConfiguration {
     private String maxMessages;
     @UriParam(label = "consumer", defaultValue = "10")
     private int poolSize = 10;
-    @UriParam(label = "common", defaultValue = "false")
-    private boolean flushConnection;
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean flushConnection = true;
     @UriParam(label = "common", defaultValue = "1000")
     private int flushTimeout = 1000;
     @UriParam(label = "security")
@@ -126,7 +126,7 @@ public class NatsConfiguration {
     }
 
     /**
-     * Whether or not running in pedantic mode (this affects performace)
+     * Whether or not running in pedantic mode (this affects performance)
      */
     public boolean isPedantic() {
         return pedantic;

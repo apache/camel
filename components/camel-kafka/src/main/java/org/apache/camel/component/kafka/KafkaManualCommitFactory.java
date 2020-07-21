@@ -22,13 +22,14 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 
 /**
- * Factory to create a new {@link KafkaManualCommit} to store on the {@link Exchange}.
+ * Factory to create a new {@link KafkaManualCommit} to store on the
+ * {@link Exchange}.
  */
 public interface KafkaManualCommitFactory {
 
     /**
      * Creates a new instance
      */
-    KafkaManualCommit newInstance(Exchange exchange, KafkaConsumer consumer, String topicName, String threadId,
-                                  StateRepository<String, String> offsetRepository, TopicPartition partition, long recordOffset);
+    KafkaManualCommit newInstance(Exchange exchange, KafkaConsumer consumer, String topicName, String threadId, StateRepository<String, String> offsetRepository,
+                                  TopicPartition partition, long recordOffset);
 }

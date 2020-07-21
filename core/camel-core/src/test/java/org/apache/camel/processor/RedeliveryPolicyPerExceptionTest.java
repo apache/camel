@@ -24,8 +24,10 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
     protected MockEndpoint a;
@@ -40,7 +42,8 @@ public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(a, b);
 
         List<Exchange> list = a.getReceivedExchanges();
-        assertTrue("List should not be empty!", !list.isEmpty());
+        boolean b1 = !list.isEmpty();
+        assertTrue(b1, "List should not be empty!");
         Exchange exchange = list.get(0);
         Message in = exchange.getIn();
         log.info("Found message with headers: " + in.getHeaders());
@@ -59,7 +62,8 @@ public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(a, b);
 
         List<Exchange> list = b.getReceivedExchanges();
-        assertTrue("List should not be empty!", !list.isEmpty());
+        boolean b1 = !list.isEmpty();
+        assertTrue(b1, "List should not be empty!");
         Exchange exchange = list.get(0);
         Message in = exchange.getIn();
         log.info("Found message with headers: " + in.getHeaders());
@@ -70,7 +74,7 @@ public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         a = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);

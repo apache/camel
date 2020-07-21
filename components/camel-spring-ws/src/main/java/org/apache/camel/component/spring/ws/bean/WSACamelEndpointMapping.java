@@ -58,16 +58,16 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
         for (EndpointMappingKey key : endpoints.keySet()) {
             String compositeOrSimpleKey = null;
             switch (key.getType()) {
-            case ACTION:
-                compositeOrSimpleKey = getActionCompositeLookupKey(map);
-                break;
-            case TO:
-                compositeOrSimpleKey = getToCompositeLookupKey(map);
-                break;
-            default:
-                throw new RuntimeCamelException(
-                                                "Invalid mapping type specified. Supported types are: spring-ws:action:<WS-Addressing Action>(optional:<WS-Addressing To>?<params...>\n)"
-                                                    + "spring-ws:to:<WS-Addressing To>(optional:<WS-Addressing Action>?<params...>)");
+                case ACTION:
+                    compositeOrSimpleKey = getActionCompositeLookupKey(map);
+                    break;
+                case TO:
+                    compositeOrSimpleKey = getToCompositeLookupKey(map);
+                    break;
+                default:
+                    throw new RuntimeCamelException(
+                            "Invalid mapping type specified. Supported types are: spring-ws:action:<WS-Addressing Action>(optional:<WS-Addressing To>?<params...>\n)"
+                                    + "spring-ws:to:<WS-Addressing To>(optional:<WS-Addressing Action>?<params...>)");
             }
             // lookup for specific endpoint
             if (compositeOrSimpleKey != null && key.getLookupKey().equals(compositeOrSimpleKey)) {
@@ -75,25 +75,25 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
                 return endpoints.get(key);
             }
         }
-        
+
         // look up for the simple key
         for (EndpointMappingKey key : endpoints.keySet()) {
             String simpleKey = null;
             switch (key.getType()) {
-            case ACTION:
-                if (map.getAction() != null) {
-                    simpleKey = map.getAction().toString();
-                }
-                break;
-            case TO:
-                if (map.getTo() != null) {
-                    simpleKey = map.getTo().toString();
-                }
-                break;
-            default:
-                throw new RuntimeCamelException(
-                                                "Invalid mapping type specified. Supported types are: spring-ws:action:<WS-Addressing Action>(optional:<WS-Addressing To>?<params...>\n)"
-                                                    + "spring-ws:to:<WS-Addressing To>(optional:<WS-Addressing Action>?<params...>)");
+                case ACTION:
+                    if (map.getAction() != null) {
+                        simpleKey = map.getAction().toString();
+                    }
+                    break;
+                case TO:
+                    if (map.getTo() != null) {
+                        simpleKey = map.getTo().toString();
+                    }
+                    break;
+                default:
+                    throw new RuntimeCamelException(
+                            "Invalid mapping type specified. Supported types are: spring-ws:action:<WS-Addressing Action>(optional:<WS-Addressing To>?<params...>\n)"
+                                    + "spring-ws:to:<WS-Addressing To>(optional:<WS-Addressing Action>?<params...>)");
             }
             // look up for less specific endpoint
             if (simpleKey != null && key.getLookupKey().equals(simpleKey)) {
@@ -111,7 +111,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
      * <li>wsaAction</li>
      * <li>wsaAction:wsaGetTo</li>
      * </ul>
-     * 
+     *
      * @param map
      * @return
      */
@@ -136,7 +136,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
      * <li>wsaGetTo</li>
      * <li>wsaGetTo:wsaAction</li>
      * </ul>
-     * 
+     *
      * @param map
      * @return
      */
@@ -259,7 +259,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
     /**
      * Sets the suffix to add to request <code>Action</code>s for reply
      * messages.
-     * 
+     *
      * @see #DEFAULT_OUTPUT_ACTION_SUFFIX
      */
     public void setOutputActionSuffix(String outputActionSuffix) {
@@ -278,7 +278,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
     /**
      * Sets the suffix to add to request <code>Action</code>s for reply fault
      * messages.
-     * 
+     *
      * @see #DEFAULT_FAULT_ACTION_SUFFIX
      */
     public void setFaultActionSuffix(String faultActionSuffix) {

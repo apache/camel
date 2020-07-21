@@ -28,8 +28,7 @@ import org.junit.jupiter.api.Test;
 public class FromFtpMoveFileRecursiveTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&recursive=true&binary=false"
-                + "&move=.done/${file:name}.old&initialDelay=2500&delay=5000";
+        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&recursive=true&binary=false" + "&move=.done/${file:name}.old&initialDelay=2500&delay=5000";
     }
 
     @Override
@@ -49,7 +48,7 @@ public class FromFtpMoveFileRecursiveTest extends FtpServerTestSupport {
 
         mock.assertIsSatisfied();
     }
-    
+
     private void prepareFtpServer() throws Exception {
         template.sendBodyAndHeader(getFtpUrl(), "Hello", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader(getFtpUrl(), "Bye", Exchange.FILE_NAME, "bye/bye.txt");

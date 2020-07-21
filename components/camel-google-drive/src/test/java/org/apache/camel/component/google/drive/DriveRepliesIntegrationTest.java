@@ -25,9 +25,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
 import org.apache.camel.component.google.drive.internal.DriveRepliesApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Replies APIs.
@@ -87,7 +89,7 @@ public class DriveRepliesIntegrationTest extends AbstractGoogleDriveTestSupport 
 
         final com.google.api.services.drive.model.CommentReplyList result = requestBodyAndHeaders("direct://LIST", null, headers);
 
-        assertNotNull("list result", result);
+        assertNotNull(result, "list result");
         LOG.debug("list: " + result);
 
     }

@@ -24,7 +24,6 @@ import io.apicurio.datamodels.openapi.models.OasDocument;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
 
-
 public class BeanConfig {
     String[] schemes;
     String title;
@@ -122,7 +121,11 @@ public class BeanConfig {
     }
 
     private void configureOas30(Oas30Document openApi) {
-        openApi.info = info;
+        if (info != null) {
+            openApi.info = info;
+            info._ownerDocument = openApi;
+            info._parent = openApi;
+        }
         Server server = openApi.createServer();
         String serverUrl = new StringBuilder().append(this.schemes[0]).append("://").append(this.host).append(this.basePath).toString();
         server.url = serverUrl;
@@ -138,7 +141,11 @@ public class BeanConfig {
                 openApi.schemes.add(scheme);
             }
         }
-        openApi.info = info;
+        if (info != null) {
+            openApi.info = info;
+            info._ownerDocument = openApi;
+            info._parent = openApi;
+        }
         openApi.host = host;
         openApi.basePath = basePath;
     }

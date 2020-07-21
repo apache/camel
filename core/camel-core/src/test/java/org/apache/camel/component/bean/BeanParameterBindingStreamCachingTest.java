@@ -21,7 +21,7 @@ import java.io.ByteArrayInputStream;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.simple.Simple;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class BeanParameterBindingStreamCachingTest extends ContextTestSupport {
 

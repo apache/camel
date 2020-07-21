@@ -18,6 +18,7 @@ package org.apache.camel.component.stax;
 
 import org.xml.sax.ContentHandler;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Metadata;
@@ -27,9 +28,9 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ProcessorEndpoint;
 
 /**
- * The stax component allows messages to be process through a SAX ContentHandler.
+ * Process XML payloads by a SAX ContentHandler.
  */
-@UriEndpoint(firstVersion = "2.9.0", scheme = "stax", title = "StAX", syntax = "stax:contentHandlerClass", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "2.9.0", scheme = "stax", title = "StAX", syntax = "stax:contentHandlerClass", producerOnly = true, category = {Category.TRANSFORMATION})
 public class StAXEndpoint extends ProcessorEndpoint {
 
     @UriPath @Metadata(required = true)
@@ -51,8 +52,8 @@ public class StAXEndpoint extends ProcessorEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         Processor target;
         if (EndpointHelper.isReferenceParameter(contentHandlerClass)) {

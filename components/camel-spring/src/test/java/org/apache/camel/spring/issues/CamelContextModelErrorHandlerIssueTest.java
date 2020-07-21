@@ -25,15 +25,18 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.spring.CamelContextFactoryBean;
 import org.apache.camel.spring.SpringModelJAXBContextFactory;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
-public class CamelContextModelErrorHandlerIssueTest extends Assert {
+public class CamelContextModelErrorHandlerIssueTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelContextModelErrorHandlerIssueTest.class);
 
@@ -57,7 +60,7 @@ public class CamelContextModelErrorHandlerIssueTest extends Assert {
 
         String s = writer.getBuffer().toString();
         LOG.info(s);
-        assertTrue("Should have error handler", s.contains("<errorHandler"));
-        assertTrue("Should have redelivery policy", s.contains("<redeliveryPolicy"));
+        assertTrue(s.contains("<errorHandler"), "Should have error handler");
+        assertTrue(s.contains("<redeliveryPolicy"), "Should have redelivery policy");
     }
 }

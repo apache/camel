@@ -270,7 +270,7 @@ public class MethodInfo {
                 }
 
                 //If it's Java 8 async result
-                if (CompletionStage.class.isAssignableFrom(getMethod().getReturnType())) {
+                if (CompletionStage.class.isAssignableFrom(method.getReturnType())) {
                     CompletionStage<?> completionStage = (CompletionStage<?>) result;
 
                     completionStage
@@ -286,7 +286,7 @@ public class MethodInfo {
                 }
 
                 // if the method returns something then set the value returned on the Exchange
-                if (!getMethod().getReturnType().equals(Void.TYPE) && result != Void.TYPE) {
+                if (result != Void.TYPE && !method.getReturnType().equals(Void.TYPE)) {
                     fillResult(exchange, result);
                 }
 
@@ -310,7 +310,7 @@ public class MethodInfo {
         LOG.trace("Setting bean invocation result : {}", result);
 
         // the bean component forces OUT if the MEP is OUT capable
-        boolean out = ExchangeHelper.isOutCapable(exchange) || exchange.hasOut();
+        boolean out = exchange.hasOut() || ExchangeHelper.isOutCapable(exchange);
         Message old;
         if (out) {
             old = exchange.getOut();

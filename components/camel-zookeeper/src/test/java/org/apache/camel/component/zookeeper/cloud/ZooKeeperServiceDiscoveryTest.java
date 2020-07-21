@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.cloud.ServiceDefinition;
+import org.apache.camel.component.zookeeper.ZooKeeperContainer;
 import org.apache.camel.component.zookeeper.ZooKeeperCuratorConfiguration;
 import org.apache.camel.component.zookeeper.ZooKeeperCuratorHelper;
-import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
@@ -41,16 +41,15 @@ public class ZooKeeperServiceDiscoveryTest {
     public void testServiceDiscovery() throws Exception {
         ZooKeeperCuratorConfiguration configuration  = new ZooKeeperCuratorConfiguration();
         ServiceDiscovery<ZooKeeperServiceDiscovery.MetaData> zkDiscovery = null;
-        ZooKeeperTestSupport.TestZookeeperServer server = null;
-        int port = AvailablePortFinder.getNextAvailable();
+        ZooKeeperContainer container = null;
 
         try {
-            server = new ZooKeeperTestSupport.TestZookeeperServer(port, true);
-            ZooKeeperTestSupport.waitForServerUp("localhost:" + port, 1000);
+            container = new ZooKeeperContainer();
+            container.start();
 
             configuration.setBasePath("/camel");
             configuration.setCuratorFramework(CuratorFrameworkFactory.builder()
-                .connectString("localhost:" + port)
+                .connectString(container.getConnectionString())
                 .retryPolicy(new ExponentialBackoffRetry(1000, 3))
                 .build()
             );
@@ -103,8 +102,8 @@ public class ZooKeeperServiceDiscoveryTest {
             CloseableUtils.closeQuietly(zkDiscovery);
             CloseableUtils.closeQuietly(configuration.getCuratorFramework());
 
-            if (server != null) {
-                server.shutdown();
+            if (container != null) {
+                container.stop();
             }
         }
     }

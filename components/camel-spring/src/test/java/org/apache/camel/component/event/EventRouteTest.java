@@ -19,10 +19,13 @@ package org.apache.camel.component.event;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class EventRouteTest extends SpringTestSupport {
 
@@ -50,7 +53,7 @@ public class EventRouteTest extends SpringTestSupport {
         log.info("Received body: " + body);
         CamelEvent event = assertIsInstanceOf(CamelEvent.class, body);
         Object actualBody = event.getExchange().getIn().getBody();
-        assertEquals("Received event body", expectedBody, actualBody);
+        assertEquals(expectedBody, actualBody, "Received event body");
     }
 
     @Override

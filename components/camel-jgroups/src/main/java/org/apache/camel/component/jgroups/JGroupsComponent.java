@@ -30,7 +30,9 @@ import org.jgroups.JChannel;
 @Component("jgroups")
 public class JGroupsComponent extends DefaultComponent {
 
+    @Metadata
     private JChannel channel;
+    @Metadata
     private String channelProperties;
     @Metadata(label = "consumer")
     private boolean enableViewMessages;
@@ -40,7 +42,9 @@ public class JGroupsComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String clusterName, Map<String, Object> parameters) throws Exception {
-        return new JGroupsEndpoint(uri, this, channel, clusterName, channelProperties, enableViewMessages);
+        JGroupsEndpoint endpoint = new JGroupsEndpoint(uri, this, channel, clusterName, channelProperties, enableViewMessages);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
     public JChannel getChannel() {

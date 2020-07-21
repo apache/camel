@@ -34,13 +34,24 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.impl.LongStringHelper;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.rabbitmq.integration.RabbitMQDeadLetterRoutingKeyIntTest;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RabbitMQEndpointTest extends CamelTestSupport {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQDeadLetterRoutingKeyIntTest.class);
 
     private Envelope envelope = Mockito.mock(Envelope.class);
     private AMQP.BasicProperties properties = Mockito.mock(AMQP.BasicProperties.class);
@@ -91,10 +102,10 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
     @Test
     public void testExchangeNameIsOptional() throws Exception {
         RabbitMQEndpoint endpoint1 = context.getEndpoint("rabbitmq:localhost/", RabbitMQEndpoint.class);
-        assertEquals("Get a wrong exchange name", "", endpoint1.getExchangeName());
+        assertEquals("", endpoint1.getExchangeName(), "Get a wrong exchange name");
 
         RabbitMQEndpoint endpoint2 = context.getEndpoint("rabbitmq:localhost/exchange", RabbitMQEndpoint.class);
-        assertEquals("Get a wrong exchange name", "exchange", endpoint2.getExchangeName());
+        assertEquals("exchange", endpoint2.getExchangeName(), "Get a wrong exchange name");
     }
 
     @Test
@@ -119,9 +130,9 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         customHeaders.put("byteArrayHeader", "foo".getBytes());
         customHeaders.put("longStringHeader", LongStringHelper.asLongString("Some really long string"));
         customHeaders.put("timestampHeader", new Timestamp(4200));
-        customHeaders.put("byteHeader", new Byte((byte)0));
-        customHeaders.put("floatHeader", new Float(42.4242));
-        customHeaders.put("longHeader", new Long(420000000000000000L));
+        customHeaders.put("byteHeader", (byte) 0);
+        customHeaders.put("floatHeader", (float) 42.4242);
+        customHeaders.put("longHeader", 420000000000000000L);
         Mockito.when(properties.getHeaders()).thenReturn(customHeaders);
 
         byte[] body = new byte[20];
@@ -138,9 +149,9 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         assertArrayEquals("foo".getBytes(), (byte[])exchange.getIn().getHeader("byteArrayHeader"));
         assertEquals("Some really long string", exchange.getIn().getHeader("longStringHeader"));
         assertEquals(new Timestamp(4200), exchange.getIn().getHeader("timestampHeader"));
-        assertEquals(new Byte((byte)0), exchange.getIn().getHeader("byteHeader"));
-        assertEquals(new Float(42.4242), exchange.getIn().getHeader("floatHeader"));
-        assertEquals(new Long(420000000000000000L), exchange.getIn().getHeader("longHeader"));
+        assertEquals((byte) 0, exchange.getIn().getHeader("byteHeader"));
+        assertEquals((float) 42.4242, exchange.getIn().getHeader("floatHeader"));
+        assertEquals(420000000000000000L, exchange.getIn().getHeader("longHeader"));
         assertEquals(body, exchange.getIn().getBody());
     }
 
@@ -167,20 +178,23 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
 
     @Test
     public void testMultiArgsPopulateCorrectEndpointProperties() throws Exception {
-        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?arg.exchange.e1=v1&arg.exchange.e2=v2&arg.queue.q1=v3&arg.binding.b1=v4",
+        RabbitMQEndpoint endpoint = context.getEndpoint(
+                "rabbitmq:localhost/exchange?arg.exchange.e1=v1&arg.exchange.e2=v2&arg.queue.q1=v3&arg.binding.b1=v4&arg.dlq.queue.dq1=v5&arg.dlq.binding.db1=v6",
                                                         RabbitMQEndpoint.class);
-        assertEquals("Wrong number of args", 4, endpoint.getArgs().size());
-        assertEquals("Wrong number of args", 1, endpoint.getBindingArgs().size());
-        assertEquals("Wrong number of args", 2, endpoint.getExchangeArgs().size());
-        assertEquals("Wrong number of args", 1, endpoint.getQueueArgs().size());
+        assertEquals(6, endpoint.getArgs().size(), "Wrong number of args");
+        assertEquals(1, endpoint.getBindingArgs().size(), "Wrong number of args (binding)");
+        assertEquals(2, endpoint.getExchangeArgs().size(), "Wrong number of args (exchange)");
+        assertEquals(1, endpoint.getQueueArgs().size(), "Wrong number of args (queue)");
+        assertEquals(1, endpoint.getDlqArgs().size(), "Wrong number of args (dlq.queue)");
+        assertEquals(1, endpoint.getDlqBindingArgs().size(), "Wrong number of args (dlq.binding)");
     }
 
     @Test
     public void brokerEndpointAddressesSettings() throws Exception {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?addresses=server1:12345,server2:12345", RabbitMQEndpoint.class);
-        assertEquals("Wrong size of endpoint addresses.", 2, endpoint.parseAddresses().length);
-        assertEquals("Get a wrong endpoint address.", new Address("server1", 12345), endpoint.parseAddresses()[0]);
-        assertEquals("Get a wrong endpoint address.", new Address("server2", 12345), endpoint.parseAddresses()[1]);
+        assertEquals(2, endpoint.parseAddresses().length, "Wrong size of endpoint addresses.");
+        assertEquals(new Address("server1", 12345), endpoint.parseAddresses()[0], "Get a wrong endpoint address.");
+        assertEquals(new Address("server2", 12345), endpoint.parseAddresses()[1], "Get a wrong endpoint address.");
     }
 
     private ConnectionFactory createConnectionFactory(String uri) throws TimeoutException {
@@ -189,7 +203,7 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
             endpoint.connect(Executors.newSingleThreadExecutor());
         } catch (IOException ioExc) {
             // Doesn't matter if RabbitMQ is not available
-            log.debug("RabbitMQ not available", ioExc);
+            LOGGER.debug("RabbitMQ not available", ioExc);
         }
         return endpoint.getConnectionFactory();
     }

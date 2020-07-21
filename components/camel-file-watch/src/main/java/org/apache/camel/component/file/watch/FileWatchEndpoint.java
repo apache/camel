@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import io.methvin.watcher.hashing.FileHasher;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
@@ -33,10 +34,10 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The file-watch is used to monitor file events in directory using {@link java.nio.file.WatchService}
+ * Get notified about file events in a directory using {@link java.nio.file.WatchService}.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "file-watch", title = "file-watch", syntax = "file-watch:path",
-label = "file", consumerOnly = true)
+@UriEndpoint(firstVersion = "3.0.0", scheme = "file-watch", title = "File Watch", syntax = "file-watch:path",
+category = {Category.FILE}, consumerOnly = true)
 public class FileWatchEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     @UriPath(label = "consumer", description = "Path of directory to consume events from.")
     @Metadata(required = true)

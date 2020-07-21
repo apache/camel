@@ -42,6 +42,9 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 @Component("olingo2")
 public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Olingo2Configuration, Olingo2ApiCollection> implements SSLContextParametersAware {
 
+    @Metadata
+    Olingo2Configuration configuration;
+
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
@@ -81,7 +84,10 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
 
         final Olingo2Configuration endpointConfiguration = createEndpointConfiguration(Olingo2ApiName.DEFAULT);
         final Endpoint endpoint = createEndpoint(uri, methodName, Olingo2ApiName.DEFAULT, endpointConfiguration);
+
+        // configure endpoint properties and initialize state
         setProperties(endpoint, parameters);
+
         return endpoint;
     }
 

@@ -33,7 +33,12 @@ import org.apache.camel.spi.HeadersMapFactory;
 public interface Message {
 
     /**
-     * Returns the id of the message
+     * Returns the id of the message.
+     * <p/>
+     * By default the message uses the same id as {@link Exchange#getExchangeId()} as messages are associated with the exchange
+     * and using different IDs does not offer much value. Another reason is to optimize for performance to avoid generating new IDs.
+     * <p/>
+     * A few Camel components do provide their own message IDs such as the JMS components.
      *
      * @return the message id
      */

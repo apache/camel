@@ -23,6 +23,8 @@ import io.undertow.util.URLUtils;
 
 /**
  * Custom root handler to enable hot swapping individual handlers assigned for each path template and/or HTTP method.
+ *
+ * @see RestRootHandler
  */
 public class CamelRootHandler implements HttpHandler {
     private CamelPathHandler pathHandler;

@@ -22,9 +22,12 @@ import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionFactory;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.cloud.ServiceChooser;
 import org.apache.camel.cloud.ServiceChooserAware;
 import org.apache.camel.cloud.ServiceDiscovery;
@@ -38,7 +41,6 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinitionConstants;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
@@ -60,10 +62,10 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
     // *****************************
 
     @Override
-    public Processor doCreateProcessor(RouteContext routeContext, ServiceCallDefinition definition) throws Exception {
+    public Processor doCreateProcessor(Route route, ServiceCallDefinition definition) throws Exception {
         this.definition = definition;
 
-        final CamelContext camelContext = routeContext.getCamelContext();
+        final CamelContext camelContext = route.getCamelContext();
         final ServiceDiscovery serviceDiscovery = retrieveServiceDiscovery(camelContext);
         final ServiceFilter serviceFilter = retrieveServiceFilter(camelContext);
         final ServiceChooser serviceChooser = retrieveServiceChooser(camelContext);
@@ -124,9 +126,14 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
 
         endpointScheme = ThrowingHelper.applyIfNotEmpty(endpointScheme, camelContext::resolvePropertyPlaceholders, () -> ServiceCallDefinitionConstants.DEFAULT_COMPONENT);
         endpointUri = ThrowingHelper.applyIfNotEmpty(endpointUri, camelContext::resolvePropertyPlaceholders, () -> null);
+        ExchangePattern pattern = CamelContextHelper.parse(camelContext, ExchangePattern.class, definition.getPattern());
 
-        return new DefaultServiceCallProcessor(camelContext, camelContext.resolvePropertyPlaceholders(definition.getName()), endpointScheme, endpointUri, definition.getPattern(),
-                                               loadBalancer, retrieveExpression(camelContext, endpointScheme));
+        Expression expression = retrieveExpression(camelContext, endpointScheme);
+        if (expression instanceof ExpressionFactory) {
+            expression = ((ExpressionFactory) expression).createExpression(camelContext);
+        }
+        return new DefaultServiceCallProcessor(camelContext, camelContext.resolvePropertyPlaceholders(definition.getName()), endpointScheme, endpointUri, pattern,
+                                               loadBalancer, expression);
     }
 
     // *****************************

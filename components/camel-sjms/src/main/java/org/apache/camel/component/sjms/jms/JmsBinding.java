@@ -526,46 +526,46 @@ public class JmsBinding {
      */
     protected Message createJmsMessageForType(Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context, JmsMessageType type) throws JMSException {
         switch (type) {
-        case Text: {
-            TextMessage message = session.createTextMessage();
-            if (body != null) {
-                String payload = context.getTypeConverter().convertTo(String.class, exchange, body);
-                message.setText(payload);
-            }
-            return message;
-        }
-        case Bytes: {
-            BytesMessage message = session.createBytesMessage();
-            if (body != null) {
-                byte[] payload = context.getTypeConverter().convertTo(byte[].class, exchange, body);
-                message.writeBytes(payload);
-            }
-            return message;
-        }
-        case Map: {
-            MapMessage message = session.createMapMessage();
-            if (body != null) {
-                Map<?, ?> payload = context.getTypeConverter().convertTo(Map.class, exchange, body);
-                populateMapMessage(message, payload, context);
-            }
-            return message;
-        }
-        case Object:
-            ObjectMessage message = session.createObjectMessage();
-            if (body != null) {
-                try {
-                    Serializable payload = context.getTypeConverter().mandatoryConvertTo(Serializable.class, exchange, body);
-                    message.setObject(payload);
-                } catch (NoTypeConversionAvailableException e) {
-                    // cannot convert to serializable then thrown an exception to avoid sending a null message
-                    JMSException cause = new MessageFormatException(e.getMessage());
-                    cause.initCause(e);
-                    throw cause;
+            case Text: {
+                TextMessage message = session.createTextMessage();
+                if (body != null) {
+                    String payload = context.getTypeConverter().convertTo(String.class, exchange, body);
+                    message.setText(payload);
                 }
+                return message;
             }
-            return message;
-        default:
-            break;
+            case Bytes: {
+                BytesMessage message = session.createBytesMessage();
+                if (body != null) {
+                    byte[] payload = context.getTypeConverter().convertTo(byte[].class, exchange, body);
+                    message.writeBytes(payload);
+                }
+                return message;
+            }
+            case Map: {
+                MapMessage message = session.createMapMessage();
+                if (body != null) {
+                    Map<?, ?> payload = context.getTypeConverter().convertTo(Map.class, exchange, body);
+                    populateMapMessage(message, payload, context);
+                }
+                return message;
+            }
+            case Object:
+                ObjectMessage message = session.createObjectMessage();
+                if (body != null) {
+                    try {
+                        Serializable payload = context.getTypeConverter().mandatoryConvertTo(Serializable.class, exchange, body);
+                        message.setObject(payload);
+                    } catch (NoTypeConversionAvailableException e) {
+                        // cannot convert to serializable then thrown an exception to avoid sending a null message
+                        JMSException cause = new MessageFormatException(e.getMessage());
+                        cause.initCause(e);
+                        throw cause;
+                    }
+                }
+                return message;
+            default:
+                break;
         }
         return null;
     }

@@ -1,12 +1,17 @@
 [[kudu-component]]
 = Kudu Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-kudu/src/main/docs/kudu-component.adoc
+:docTitle: Kudu
+:artifactId: camel-kudu
+:description: Interact with Apache Kudu, a free and open source column-oriented data store of the Apache Hadoop ecosystem.
+:since: 3.0
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 3.0*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 *Since Camel 3.0*
 
@@ -26,8 +31,8 @@ The Kudu component supports 2 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -46,9 +51,9 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *host* | Kudu master to connect to |  | String
-| *port* | Port where kudu service is listening |  | String
-| *tableName* | The name of the table where the rows are stored |  | String
+| *host* | Host of the server to connect to |  | String
+| *port* | Port of the server to connect to |  | String
+| *tableName* | Table to connect to |  | String
 |===
 
 
@@ -59,7 +64,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | What kind of operation is to be performed in the table |  | KuduOperations
+| *operation* (producer) | Operation to perform. The value can be one of: INSERT, CREATE_TABLE, SCAN |  | KuduOperations
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
@@ -103,7 +108,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-kudu-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -121,8 +126,10 @@ To use this feature, add the following dependencies to your spring boot pom.xml 
 [source,xml]
 ----
 <dependency>
-    <groupId>org.apache.camel</groupId>
+    <groupId>org.apache.camel.springboot</groupId>
     <artifactId>camel-kudu-starter</artifactId>
     <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
 </dependency>
 ----
+
+include::camel-spring-boot::page$kudu-starter.adoc[]

@@ -36,6 +36,8 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.curator.framework.CuratorFramework;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link org.apache.camel.spi.RoutePolicy} to run the route in master/slave mode.
@@ -46,6 +48,8 @@ import org.apache.curator.framework.CuratorFramework;
  */
 @ManagedResource(description = "Managed MasterRoutePolicy")
 public class MasterRoutePolicy extends RoutePolicySupport implements CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MasterRoutePolicy.class);
 
     private CuratorFramework curator;
     private int maximumConnectionTimeout = 10 * 1000;
@@ -221,7 +225,7 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
         this.groupListener.setZooKeeperPassword(zooKeeperPassword);
         ServiceHelper.startService(groupListener);
 
-        log.info("Attempting to become master for endpoint: " + route.getEndpoint() + " in " + getCamelContext() + " with singletonID: " + getGroupName());
+        LOG.info("Attempting to become master for endpoint: " + route.getEndpoint() + " in " + getCamelContext() + " with singletonID: " + getGroupName());
         thisNodeState = createNodeState();
         groupListener.updateState(thisNodeState);
     }
@@ -239,7 +243,7 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
             if (masterConsumer.compareAndSet(false, true)) {
                 try {
                     // ensure endpoint is also started
-                    log.info("Elected as master. Starting consumer: {}", route.getEndpoint());
+                    LOG.info("Elected as master. Starting consumer: {}", route.getEndpoint());
                     startConsumer(route.getConsumer());
 
                     // Lets show we are starting the consumer.
@@ -247,10 +251,10 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
                     thisNodeState.setStarted(true);
                     groupListener.updateState(thisNodeState);
                 } catch (Exception e) {
-                    log.error("Failed to start master consumer for: {}", route.getEndpoint(), e);
+                    LOG.error("Failed to start master consumer for: {}", route.getEndpoint(), e);
                 }
 
-                log.info("Elected as master. Consumer started: {}", route.getEndpoint());
+                LOG.info("Elected as master. Consumer started: {}", route.getEndpoint());
             }
         };
     }
@@ -261,7 +265,7 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
             try {
                 stopConsumer(route.getConsumer());
             } catch (Exception e) {
-                log.warn("Failed to stop master consumer: {}", route.getEndpoint(), e);
+                LOG.warn("Failed to stop master consumer: {}", route.getEndpoint(), e);
             }
         };
     }

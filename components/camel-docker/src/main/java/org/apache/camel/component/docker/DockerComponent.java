@@ -32,9 +32,10 @@ import org.apache.camel.support.DefaultComponent;
 @Component("docker")
 public class DockerComponent extends DefaultComponent {
 
-    @Metadata(label = "advanced")
-    private DockerConfiguration configuration = new DockerConfiguration();
     private Map<DockerClientProfile, DockerClient> clients = new HashMap<>();
+
+    @Metadata
+    private DockerConfiguration configuration = new DockerConfiguration();
 
     public DockerComponent() {
     }
@@ -50,7 +51,7 @@ public class DockerComponent extends DefaultComponent {
         // a copy of the configuration
         DockerConfiguration configuration = getConfiguration().copy();
 
-        String normalizedRemaining = remaining.replaceAll("/", "");
+        String normalizedRemaining = remaining.replace("/", "");
 
         DockerOperation operation = DockerOperation.getDockerOperation(normalizedRemaining);
 
@@ -75,7 +76,7 @@ public class DockerComponent extends DefaultComponent {
     /**
      * To use the shared docker configuration
      */
-    protected DockerConfiguration getConfiguration() {
+    public DockerConfiguration getConfiguration() {
         return configuration;
     }
 

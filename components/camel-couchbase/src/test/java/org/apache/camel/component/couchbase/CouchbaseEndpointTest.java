@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.couchbase;
 
-import org.apache.camel.Exchange;
+import com.couchbase.client.core.error.InvalidArgumentException;
 import org.apache.camel.Processor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_COUCHBASE_PORT;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CouchbaseEndpointTest {
 
@@ -32,9 +33,10 @@ public class CouchbaseEndpointTest {
         assertTrue(endpoint.isSingleton());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testBucketRequired() throws Exception {
-        new CouchbaseEndpoint("couchbase:http://localhost:80", "http://localhost:80", new CouchbaseComponent());
+        assertThrows(IllegalArgumentException.class,
+            () -> new CouchbaseEndpoint("couchbase:http://localhost:80", "http://localhost:80", new CouchbaseComponent()));
     }
 
     @Test
@@ -43,14 +45,16 @@ public class CouchbaseEndpointTest {
         assertEquals(DEFAULT_COUCHBASE_PORT, endpoint.getPort());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testHostnameRequired() throws Exception {
-        new CouchbaseEndpoint("couchbase:http://:80/bucket", "couchbase://:80/bucket", new CouchbaseComponent());
+        assertThrows(IllegalArgumentException.class,
+            () -> new CouchbaseEndpoint("couchbase:http://:80/bucket", "couchbase://:80/bucket", new CouchbaseComponent()));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testSchemeRequired() throws Exception {
-        new CouchbaseEndpoint("couchbase:localhost:80/bucket", "localhost:80/bucket", new CouchbaseComponent());
+        assertThrows(IllegalArgumentException.class,
+            () -> new CouchbaseEndpoint("couchbase:localhost:80/bucket", "localhost:80/bucket", new CouchbaseComponent()));
     }
 
     @Test
@@ -58,9 +62,10 @@ public class CouchbaseEndpointTest {
         new CouchbaseEndpoint();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCouchbaseEndpointWithoutProtocol() throws Exception {
-        new CouchbaseEndpoint("localhost:80/bucket", "localhost:80/bucket", new CouchbaseComponent());
+        assertThrows(IllegalArgumentException.class,
+            () -> new CouchbaseEndpoint("localhost:80/bucket", "localhost:80/bucket", new CouchbaseComponent()));
     }
 
     @Test
@@ -68,19 +73,19 @@ public class CouchbaseEndpointTest {
         new CouchbaseEndpoint("couchbase:localhost:80/bucket", new CouchbaseComponent());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCouchbaseEndpointCreateProducer() throws Exception {
-        new CouchbaseEndpoint("couchbase:localhost:80/bucket", new CouchbaseComponent()).createProducer();
+        assertThrows(InvalidArgumentException.class,
+            () -> new CouchbaseEndpoint("couchbase:localhost:80/bucket", new CouchbaseComponent()).createProducer());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCouchbaseEndpointCreateConsumer() throws Exception {
-        new CouchbaseEndpoint("couchbase:localhost:80/bucket", new CouchbaseComponent()).createConsumer(new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                // Nothing to do
-            }
-        });
+        Processor p = exchange -> {
+            // Nothing to do
+        };
+        assertThrows(InvalidArgumentException.class,
+            () -> new CouchbaseEndpoint("couchbase:localhost:80/bucket", new CouchbaseComponent()).createConsumer(p));
     }
 
     @Test
@@ -88,73 +93,58 @@ public class CouchbaseEndpointTest {
         CouchbaseEndpoint endpoint = new CouchbaseEndpoint();
 
         endpoint.setProtocol("couchbase");
-        assertTrue(endpoint.getProtocol().equals("couchbase"));
+        assertEquals("couchbase", endpoint.getProtocol());
 
         endpoint.setBucket("bucket");
-        assertTrue(endpoint.getBucket().equals("bucket"));
+        assertEquals("bucket", endpoint.getBucket());
+
+        endpoint.setCollection("collection");
+        assertEquals("collection", endpoint.getCollection());
+
+        endpoint.setScope("scope");
+        assertEquals("scope", endpoint.getScope());
 
         endpoint.setHostname("localhost");
-        assertTrue(endpoint.getHostname().equals("localhost"));
+        assertEquals("localhost", endpoint.getHostname());
 
         endpoint.setPort(80);
-        assertTrue(endpoint.getPort() == 80);
+        assertEquals(80, endpoint.getPort());
 
         endpoint.setOperation("PUT");
-        assertTrue(endpoint.getOperation().equals("PUT"));
+        assertEquals("PUT", endpoint.getOperation());
 
         endpoint.setStartingIdForInsertsFrom(1L);
-        assertTrue(endpoint.getStartingIdForInsertsFrom() == 1L);
+        assertEquals(1L, endpoint.getStartingIdForInsertsFrom());
 
         endpoint.setProducerRetryAttempts(5);
-        assertTrue(endpoint.getProducerRetryAttempts() == 5);
+        assertEquals(5, endpoint.getProducerRetryAttempts());
 
         endpoint.setProducerRetryPause(1);
-        assertTrue(endpoint.getProducerRetryPause() == 1);
+        assertEquals(1, endpoint.getProducerRetryPause());
 
         endpoint.setDesignDocumentName("beer");
-        assertTrue(endpoint.getDesignDocumentName().equals("beer"));
+        assertEquals("beer", endpoint.getDesignDocumentName());
 
         endpoint.setViewName("brewery_beers");
-        assertTrue(endpoint.getViewName().equals("brewery_beers"));
+        assertEquals("brewery_beers", endpoint.getViewName());
 
         endpoint.setLimit(1);
-        assertTrue(endpoint.getLimit() == 1);
+        assertEquals(1, endpoint.getLimit());
 
         endpoint.setSkip(1);
-        assertTrue(endpoint.getSkip() == 1);
+        assertEquals(1, endpoint.getSkip());
 
         endpoint.setRangeStartKey("");
-        assertTrue(endpoint.getRangeStartKey().equals(""));
+        assertEquals("", endpoint.getRangeStartKey());
 
         endpoint.setRangeEndKey("");
-        assertTrue(endpoint.getRangeEndKey().equals(""));
+        assertEquals("", endpoint.getRangeEndKey());
 
         endpoint.setConsumerProcessedStrategy("delete");
-        assertTrue(endpoint.getConsumerProcessedStrategy().equals("delete"));
+        assertEquals("delete", endpoint.getConsumerProcessedStrategy());
 
-        endpoint.setOpTimeOut(1L);
-        assertTrue(endpoint.getOpTimeOut() == 1L);
-
-        endpoint.setTimeoutExceptionThreshold(1);
-        assertTrue(endpoint.getTimeoutExceptionThreshold() == 1);
-
-        endpoint.setReadBufferSize(1);
-        assertTrue(endpoint.getReadBufferSize() == 1);
-
-        endpoint.setShouldOptimize(true);
-        assertTrue(endpoint.isShouldOptimize());
-
-        endpoint.setMaxReconnectDelay(1L);
-        assertTrue(endpoint.getMaxReconnectDelay() == 1L);
-
-        endpoint.setOpQueueMaxBlockTime(1L);
-        assertTrue(endpoint.getOpQueueMaxBlockTime() == 1L);
-
-        endpoint.setObsPollInterval(1L);
-        assertTrue(endpoint.getObsPollInterval() == 1L);
-
-        endpoint.setObsTimeout(1L);
-        assertTrue(endpoint.getObsTimeout() == 1L);
+        endpoint.setQueryTimeout(1L);
+        assertEquals(1L, endpoint.getQueryTimeout());
 
         endpoint.setDescending(false);
     }

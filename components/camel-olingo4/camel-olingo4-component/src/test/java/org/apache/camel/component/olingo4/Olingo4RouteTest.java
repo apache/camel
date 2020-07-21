@@ -18,9 +18,12 @@ package org.apache.camel.component.olingo4;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class Olingo4RouteTest extends CamelTestSupport {
     protected static final String TEST_SERVICE_BASE_URL = "http://services.odata.org/TripPinRESTierService";

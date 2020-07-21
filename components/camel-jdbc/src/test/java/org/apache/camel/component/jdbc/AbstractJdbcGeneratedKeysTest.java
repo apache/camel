@@ -24,6 +24,10 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupport {
 
     @SuppressWarnings("unchecked")
@@ -47,14 +51,13 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
         assertNotNull(out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT));
 
         List<Map<String, Object>> generatedKeys = out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_DATA, List.class);
-        assertNotNull("out body could not be converted to an ArrayList - was: "
-            + out.getOut().getBody(), generatedKeys);
+        assertNotNull(generatedKeys, "out body could not be converted to an ArrayList - was: " + out.getOut().getBody());
         assertEquals(1, generatedKeys.size());
 
         Map<String, Object> row = generatedKeys.get(0);
-        assertEquals("auto increment value should be 2", BigDecimal.valueOf(2), row.get("1"));
+        assertEquals(BigDecimal.valueOf(2), row.get("1"), "auto increment value should be 2");
 
-        assertEquals("generated keys row count should be one", 1, out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT));
+        assertEquals(1, out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT), "generated keys row count should be one");
     }
 
     protected void testRetrieveGeneratedKeys(String query) throws Exception {
@@ -84,14 +87,13 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
         assertNotNull(out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT));
 
         List<Map<String, Object>> generatedKeys = out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_DATA, List.class);
-        assertNotNull("out body could not be converted to an ArrayList - was: "
-            + out.getOut().getBody(), generatedKeys);
+        assertNotNull(generatedKeys, "out body could not be converted to an ArrayList - was: " + out.getOut().getBody());
         assertEquals(1, generatedKeys.size());
 
         Map<String, Object> row = generatedKeys.get(0);
-        assertEquals("auto increment value should be 2", BigDecimal.valueOf(2), row.get("1"));
+        assertEquals(BigDecimal.valueOf(2), row.get("1"), "auto increment value should be 2");
 
-        assertEquals("generated keys row count should be one", 1, out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT));
+        assertEquals(1, out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT), "generated keys row count should be one");
     }
 
     protected void testRetrieveGeneratedKeysWithStringGeneratedColumns(String query) throws Exception {
@@ -121,14 +123,13 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
         assertNotNull(out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT));
 
         List<Map<String, Object>> generatedKeys = out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_DATA, List.class);
-        assertNotNull("out body could not be converted to an ArrayList - was: "
-            + out.getOut().getBody(), generatedKeys);
+        assertNotNull(generatedKeys, "out body could not be converted to an ArrayList - was: " + out.getOut().getBody());
         assertEquals(1, generatedKeys.size());
 
         Map<String, Object> row = generatedKeys.get(0);
-        assertEquals("auto increment value should be 2", BigDecimal.valueOf(2), row.get("1"));
+        assertEquals(BigDecimal.valueOf(2), row.get("1"), "auto increment value should be 2");
 
-        assertEquals("generated keys row count should be one", 1, out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT));
+        assertEquals(1, out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT), "generated keys row count should be one");
     }
 
     protected void testRetrieveGeneratedKeysWithIntGeneratedColumns(String query) throws Exception {

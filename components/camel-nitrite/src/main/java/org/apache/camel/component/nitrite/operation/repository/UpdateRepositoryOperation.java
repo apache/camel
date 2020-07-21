@@ -33,7 +33,6 @@ public class UpdateRepositoryOperation extends AbstractPayloadAwareOperation imp
     private ObjectFilter filter;
 
     public UpdateRepositoryOperation(ObjectFilter filter) {
-        super();
         this.filter = filter;
     }
 

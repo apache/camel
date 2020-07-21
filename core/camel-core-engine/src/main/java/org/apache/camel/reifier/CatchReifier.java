@@ -19,26 +19,25 @@ package org.apache.camel.reifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.processor.CatchProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class CatchReifier extends ProcessorReifier<CatchDefinition> {
 
-    public CatchReifier(ProcessorDefinition<?> definition) {
-        super(CatchDefinition.class.cast(definition));
+    public CatchReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, CatchDefinition.class.cast(definition));
     }
 
     @Override
-    public CatchProcessor createProcessor(RouteContext routeContext) throws Exception {
+    public CatchProcessor createProcessor() throws Exception {
         // create and load exceptions if not done
         if (definition.getExceptionClasses() == null) {
-            definition.setExceptionClasses(createExceptionClasses(routeContext.getCamelContext()));
+            definition.setExceptionClasses(createExceptionClasses());
         }
 
         // must have at least one exception
@@ -52,17 +51,17 @@ public class CatchReifier extends ProcessorReifier<CatchDefinition> {
         }
 
         // do catch does not mandate a child processor
-        Processor childProcessor = this.createChildProcessor(routeContext, false);
+        Processor childProcessor = this.createChildProcessor(false);
 
         Predicate when = null;
         if (definition.getOnWhen() != null) {
-            when = definition.getOnWhen().getExpression().createPredicate(routeContext);
+            when = createPredicate(definition.getOnWhen().getExpression());
         }
 
         return new CatchProcessor(definition.getExceptionClasses(), childProcessor, when, null);
     }
 
-    protected List<Class<? extends Throwable>> createExceptionClasses(CamelContext context) throws ClassNotFoundException {
+    protected List<Class<? extends Throwable>> createExceptionClasses() throws ClassNotFoundException {
         // must use the class resolver from CamelContext to load classes to
         // ensure it can
         // be loaded in all kind of environments such as JEE servers and OSGi
@@ -70,7 +69,7 @@ public class CatchReifier extends ProcessorReifier<CatchDefinition> {
         List<String> list = definition.getExceptions();
         List<Class<? extends Throwable>> answer = new ArrayList<>(list.size());
         for (String name : list) {
-            Class<Throwable> type = context.getClassResolver().resolveMandatoryClass(name, Throwable.class);
+            Class<Throwable> type = camelContext.getClassResolver().resolveMandatoryClass(name, Throwable.class);
             answer.add(type);
         }
         return answer;

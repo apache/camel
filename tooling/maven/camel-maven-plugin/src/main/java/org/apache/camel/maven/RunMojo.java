@@ -314,7 +314,7 @@ public class RunMojo extends AbstractExecMojo {
     private Properties originalSystemProperties;
 
     private String extraPluginDependencyArtifactId;
-    
+
 
     /**
      * Execute goal.
@@ -405,9 +405,7 @@ public class RunMojo extends AbstractExecMojo {
             extraPluginDependencyArtifactId = "camel-cdi";
             getLog().info("Using " + mainClass + " to initiate a CamelContext");
         } else if (usingBlueprintMain) {
-            mainClass = "org.apache.camel.test.blueprint.Main";
-            // must include plugin dependencies for blueprint
-            extraPluginDependencyArtifactId = "camel-test-blueprint";
+            mainClass = "org.apache.camel.blueprint.Main";
             // set the configAdmin pid
             if (configAdminPid != null) {
                 args.add("-pid");
@@ -418,7 +416,7 @@ public class RunMojo extends AbstractExecMojo {
                 args.add("-pf");
                 args.add(configAdminFileName);
             }
-            getLog().info("Using org.apache.camel.test.blueprint.Main to initiate a CamelContext");
+            getLog().info("Using org.apache.camel.blueprint.Main to initiate a CamelContext");
         } else if (mainClass != null) {
             getLog().info("Using custom " + mainClass + " to initiate a CamelContext");
         } else {
@@ -446,6 +444,11 @@ public class RunMojo extends AbstractExecMojo {
 
         final ClassLoader loader = getClassLoader();
         IsolatedThreadGroup threadGroup = new IsolatedThreadGroup(mainClass /* name */);
+
+        if (usingBlueprintMain && !detectBlueprintMainOnClassPath()) {
+            throw new MojoFailureException("Cannot run OSGi Blueprint Main because camel-blueprint-main JAR is not available on classpath");
+        }
+
         final Thread bootstrapThread = new Thread(threadGroup, new Runnable() {
             public void run() {
                 try {
@@ -702,6 +705,18 @@ public class RunMojo extends AbstractExecMojo {
         return false;
     }
 
+    @SuppressWarnings("unchecked")
+    private boolean detectBlueprintMainOnClassPath() {
+        List<Dependency> deps = project.getCompileDependencies();
+        for (Dependency dep : deps) {
+            if ("org.apache.camel.karaf".equals(dep.getGroupId()) && "camel-blueprint-main".equals(dep.getArtifactId())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Set up a classloader for the execution of the main class.
      *
@@ -777,7 +792,6 @@ public class RunMojo extends AbstractExecMojo {
         try {
             Set<Artifact> artifacts = new HashSet<>(this.pluginDependencies);
             for (Artifact artifact : artifacts) {
-                // must
                 if (artifact.getArtifactId().equals(extraPluginDependencyArtifactId)
                         || artifact.getArtifactId().equals(extendedPluginDependencyArtifactId)) {
                     getLog().debug("Adding extra plugin dependency artifact: " + artifact.getArtifactId()

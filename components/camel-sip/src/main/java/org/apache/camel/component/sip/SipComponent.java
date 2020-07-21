@@ -35,7 +35,7 @@ public class SipComponent extends DefaultComponent {
         config.initialize(new URI(uri), parameters, this);
         
         SipEndpoint sipEndpoint = new SipEndpoint(uri, this, config);
-        setProperties(sipEndpoint.getConfiguration(), parameters);
+        setProperties(sipEndpoint, parameters);
         return sipEndpoint;
     }
 }

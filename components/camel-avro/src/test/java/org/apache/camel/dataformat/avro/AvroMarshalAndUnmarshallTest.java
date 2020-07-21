@@ -17,11 +17,14 @@
 package org.apache.camel.dataformat.avro;
 
 import org.apache.camel.CamelException;
-import org.apache.camel.avro.generated.Value;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.dataformat.avro.example.Value;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AvroMarshalAndUnmarshallTest extends CamelTestSupport {
 

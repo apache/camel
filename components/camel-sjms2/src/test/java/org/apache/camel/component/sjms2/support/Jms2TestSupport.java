@@ -47,13 +47,19 @@ import org.apache.camel.component.sjms2.Sjms2Component;
 import org.apache.camel.component.sjms2.jms.Jms2ObjectFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
  * A support class that builds up and tears down an ActiveMQ Artemis instance to be used
  * for unit testing.
  */
 public class Jms2TestSupport extends CamelTestSupport {
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Produce
     protected ProducerTemplate template;
@@ -132,7 +138,7 @@ public class Jms2TestSupport extends CamelTestSupport {
     }
 
     /*
-     * @see org.apache.camel.test.junit4.CamelTestSupport#createCamelContext()
+     * @see org.apache.camel.test.junit5.CamelTestSupport#createCamelContext()
      * @return
      * @throws Exception
      */
@@ -157,10 +163,10 @@ public class Jms2TestSupport extends CamelTestSupport {
         //and CORE so its not possible to write protocol agnostic tests but in the future releases
         //of artemis we may be able test against them in an agnostic way.
         switch (protocol) {
-        case "OPENWIRE":
-            return new ActiveMQConnectionFactory(brokerUri);
-        default:
-            return ActiveMQJMSClient.createConnectionFactory(brokerUri, "test");
+            case "OPENWIRE":
+                return new ActiveMQConnectionFactory(brokerUri);
+            default:
+                return ActiveMQJMSClient.createConnectionFactory(brokerUri, "test");
         }
     }
 

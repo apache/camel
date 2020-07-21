@@ -21,7 +21,9 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SimpleBuilderTest extends TestSupport {
 

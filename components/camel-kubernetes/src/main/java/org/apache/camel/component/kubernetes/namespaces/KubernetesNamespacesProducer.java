@@ -59,28 +59,28 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_NAMESPACE_OPERATION:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_NAMESPACE_OPERATION:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_NAMESPACE_BY_LABELS_OPERATION:
-            doListNamespaceByLabel(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_NAMESPACE_BY_LABELS_OPERATION:
+                doListNamespaceByLabel(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_NAMESPACE_OPERATION:
-            doGetNamespace(exchange, operation);
-            break;
+            case KubernetesOperations.GET_NAMESPACE_OPERATION:
+                doGetNamespace(exchange, operation);
+                break;
 
-        case KubernetesOperations.CREATE_NAMESPACE_OPERATION:
-            doCreateNamespace(exchange, operation);
-            break;
+            case KubernetesOperations.CREATE_NAMESPACE_OPERATION:
+                doCreateNamespace(exchange, operation);
+                break;
 
-        case KubernetesOperations.DELETE_NAMESPACE_OPERATION:
-            doDeleteNamespace(exchange, operation);
-            break;
+            case KubernetesOperations.DELETE_NAMESPACE_OPERATION:
+                doDeleteNamespace(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 

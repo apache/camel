@@ -30,6 +30,10 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <deltaspike-version>1.9.0</deltaspike-version>
+    <weld3-version>3.0.5.Final</weld3-version>
+    <log4j2-version>2.13.3</log4j2-version>
+    <cdi-api-version>2.0</cdi-api-version>
   </properties>
 
   <dependencyManagement>
@@ -37,7 +41,7 @@
       <!-- Camel BOM -->
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-parent</artifactId>
+        <artifactId>camel-bom</artifactId>
         <version>${camel-version}</version>
         <scope>import</scope>
         <type>pom</type>
@@ -68,18 +72,9 @@
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j-impl</artifactId>
       <scope>runtime</scope>
+      <version>${log4j2-version}</version>
     </dependency>
 
     <!-- testing -->

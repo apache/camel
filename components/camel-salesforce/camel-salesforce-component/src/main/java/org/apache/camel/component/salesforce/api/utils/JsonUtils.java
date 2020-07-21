@@ -97,11 +97,11 @@ public abstract class JsonUtils {
 
         // get non-abstract extensions of AbstractDTOBase
         schemaClasses.addAll(packageScanClassResolver.findByFilter(type -> !Modifier.isAbstract(type.getModifiers()) && AbstractDTOBase.class.isAssignableFrom(type),
-                                                                   "org.apache.camel.component.salesforce.api.dto"));
+                "org.apache.camel.component.salesforce.api.dto"));
 
         // get non-abstract extensions of AbstractDTOBase
         schemaClasses.addAll(packageScanClassResolver.findByFilter(type -> !Modifier.isAbstract(type.getModifiers()) && AbstractDTOBase.class.isAssignableFrom(type),
-                                                                   "org.apache.camel.component.salesforce.api.dto"));
+                "org.apache.camel.component.salesforce.api.dto"));
 
         Set<JsonSchema> allSchemas = new HashSet<>();
         for (Class<?> aClass : schemaClasses) {
@@ -148,7 +148,7 @@ public abstract class JsonUtils {
     }
 
     public static Set<JsonSchema> getSObjectJsonSchema(ObjectMapper objectMapper, SObjectDescription description, String idPrefix, boolean addQuerySchema)
-        throws JsonProcessingException {
+            throws JsonProcessingException {
         Set<JsonSchema> allSchemas = new HashSet<>();
 
         // generate SObject schema from description
@@ -165,84 +165,84 @@ public abstract class JsonUtils {
             String soapType = field.getSoapType();
 
             switch (soapType.substring(soapType.indexOf(':') + 1)) {
-            case "ID": // mapping for tns:ID SOAP type
-            case "string":
-            case "base64Binary":
-                // Salesforce maps any types like string, picklist, reference,
-                // etc. to string
-            case "anyType":
-                fieldSchema = new StringSchema();
-                break;
+                case "ID": // mapping for tns:ID SOAP type
+                case "string":
+                case "base64Binary":
+                    // Salesforce maps any types like string, picklist, reference,
+                    // etc. to string
+                case "anyType":
+                    fieldSchema = new StringSchema();
+                    break;
 
-            case "integer":
-            case "int":
-            case "long":
-            case "short":
-            case "byte":
-            case "unsignedInt":
-            case "unsignedShort":
-            case "unsignedByte":
-                fieldSchema = new IntegerSchema();
-                break;
+                case "integer":
+                case "int":
+                case "long":
+                case "short":
+                case "byte":
+                case "unsignedInt":
+                case "unsignedShort":
+                case "unsignedByte":
+                    fieldSchema = new IntegerSchema();
+                    break;
 
-            case "decimal":
-            case "float":
-            case "double":
-                fieldSchema = new NumberSchema();
-                break;
+                case "decimal":
+                case "float":
+                case "double":
+                    fieldSchema = new NumberSchema();
+                    break;
 
-            case "boolean":
-                fieldSchema = new BooleanSchema();
-                break;
+                case "boolean":
+                    fieldSchema = new BooleanSchema();
+                    break;
 
-            case "date":
-                fieldSchema = new StringSchema();
-                ((StringSchema)fieldSchema).setFormat(JsonValueFormat.DATE);
-                break;
-            case "dateTime":
-            case "g":
-                fieldSchema = new StringSchema();
-                ((StringSchema)fieldSchema).setFormat(JsonValueFormat.DATE_TIME);
-                break;
-            case "time":
-                fieldSchema = new StringSchema();
-                ((StringSchema)fieldSchema).setFormat(JsonValueFormat.TIME);
-                break;
+                case "date":
+                    fieldSchema = new StringSchema();
+                    ((StringSchema)fieldSchema).setFormat(JsonValueFormat.DATE);
+                    break;
+                case "dateTime":
+                case "g":
+                    fieldSchema = new StringSchema();
+                    ((StringSchema)fieldSchema).setFormat(JsonValueFormat.DATE_TIME);
+                    break;
+                case "time":
+                    fieldSchema = new StringSchema();
+                    ((StringSchema)fieldSchema).setFormat(JsonValueFormat.TIME);
+                    break;
 
-            case "address":
-                if (addressSchema == null) {
-                    addressSchema = getSchemaFromClass(objectMapper, Address.class);
-                }
-                fieldSchema = addressSchema;
-                break;
+                case "address":
+                    if (addressSchema == null) {
+                        addressSchema = getSchemaFromClass(objectMapper, Address.class);
+                    }
+                    fieldSchema = addressSchema;
+                    break;
 
-            case "location":
-                if (geoLocationSchema == null) {
-                    geoLocationSchema = getSchemaFromClass(objectMapper, GeoLocation.class);
-                }
-                fieldSchema = geoLocationSchema;
-                break;
+                case "location":
+                    if (geoLocationSchema == null) {
+                        geoLocationSchema = getSchemaFromClass(objectMapper, GeoLocation.class);
+                    }
+                    fieldSchema = geoLocationSchema;
+                    break;
 
-            default:
-                throw new IllegalArgumentException("Unsupported type " + soapType);
+                default:
+                    throw new IllegalArgumentException("Unsupported type " + soapType);
             }
 
             List<PickListValue> picklistValues = field.getPicklistValues();
             switch (field.getType()) {
-            case "picklist":
-                fieldSchema.asStringSchema()
-                    .setEnums(picklistValues == null ? Collections.emptySet() : picklistValues.stream().map(PickListValue::getValue).distinct().collect(Collectors.toSet()));
-                break;
+                case "picklist":
+                    fieldSchema.asStringSchema()
+                            .setEnums(picklistValues == null ? Collections.emptySet() : picklistValues.stream().map(PickListValue::getValue).distinct().collect(Collectors.toSet()));
+                    break;
 
-            case "multipicklist":
-                // TODO regex needs more work to not allow values not separated
-                // by ','
-                fieldSchema.asStringSchema()
-                    .setPattern(picklistValues == null ? "" : picklistValues.stream().map(val -> "(,?(" + val.getValue() + "))").distinct().collect(joining("|", "(", ")")));
-                break;
+                case "multipicklist":
+                    // TODO regex needs more work to not allow values not separated
+                    // by ','
+                    fieldSchema.asStringSchema()
+                            .setPattern(picklistValues == null ? "" : picklistValues.stream().map(val -> "(,?(" + val.getValue() + "))").distinct().collect(joining("|", "(", ")")));
+                    break;
 
-            default:
-                // nothing to fix
+                default:
+                    // nothing to fix
             }
 
             // additional field properties
@@ -253,9 +253,9 @@ public abstract class JsonUtils {
             }
 
             final String descriptionText = Arrays
-                .asList(new Object[] {"unique", field.isUnique()}, new Object[] {"idLookup", field.isIdLookup()}, new Object[] {"autoNumber", field.isAutoNumber()},
-                        new Object[] {"calculated", field.isCalculated()})
-                .stream().filter(ary -> Boolean.TRUE.equals(ary[1])).map(ary -> String.valueOf(ary[0])).collect(Collectors.joining(","));
+                    .asList(new Object[] {"unique", field.isUnique()}, new Object[] {"idLookup", field.isIdLookup()}, new Object[] {"autoNumber", field.isAutoNumber()},
+                            new Object[] {"calculated", field.isCalculated()})
+                    .stream().filter(ary -> Boolean.TRUE.equals(ary[1])).map(ary -> String.valueOf(ary[0])).collect(Collectors.joining(","));
             // JSON schema currently does not support the above attributes so
             // we'll store this information
             // in the description

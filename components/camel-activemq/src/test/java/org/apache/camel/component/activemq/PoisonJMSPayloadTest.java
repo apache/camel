@@ -22,10 +22,12 @@ import javax.jms.ObjectMessage;
 import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class PoisonJMSPayloadTest extends CamelSpringTestSupport {
 
@@ -51,7 +53,7 @@ public class PoisonJMSPayloadTest extends CamelSpringTestSupport {
 
         // bean should not be invoked
         boolean invoked = context.getRegistry().lookupByNameAndType("myBean", MyBean.class).isInvoked();
-        assertFalse("Bean should not be invoked", invoked);
+        assertFalse(invoked, "Bean should not be invoked");
 
         assertMockEndpointsSatisfied();
     }

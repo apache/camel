@@ -876,85 +876,85 @@ public class RestConfigurationDefinition {
     // -------------------------------------------------------------------------
 
     /**
-     * Creates a {@link org.apache.camel.spi.RestConfiguration} instance based
+     * Configured an instance of a {@link org.apache.camel.spi.RestConfiguration} instance based
      * on the definition
      *
      * @param context the camel context
+     * @param target the {@link org.apache.camel.spi.RestConfiguration} target
      * @return the configuration
      * @throws Exception is thrown if error creating the configuration
      */
-    public RestConfiguration asRestConfiguration(CamelContext context) throws Exception {
-        RestConfiguration answer = new RestConfiguration();
+    public RestConfiguration asRestConfiguration(CamelContext context, RestConfiguration target) throws Exception {
         if (component != null) {
-            answer.setComponent(CamelContextHelper.parseText(context, component));
+            target.setComponent(CamelContextHelper.parseText(context, component));
         }
         if (apiComponent != null) {
-            answer.setApiComponent(CamelContextHelper.parseText(context, apiComponent));
+            target.setApiComponent(CamelContextHelper.parseText(context, apiComponent));
         }
         if (producerComponent != null) {
-            answer.setProducerComponent(CamelContextHelper.parseText(context, producerComponent));
+            target.setProducerComponent(CamelContextHelper.parseText(context, producerComponent));
         }
         if (scheme != null) {
-            answer.setScheme(CamelContextHelper.parseText(context, scheme));
+            target.setScheme(CamelContextHelper.parseText(context, scheme));
         }
         if (host != null) {
-            answer.setHost(CamelContextHelper.parseText(context, host));
+            target.setHost(CamelContextHelper.parseText(context, host));
         }
         if (useXForwardHeaders != null) {
-            answer.setUseXForwardHeaders(useXForwardHeaders);
+            target.setUseXForwardHeaders(useXForwardHeaders);
         }
         if (apiHost != null) {
-            answer.setApiHost(CamelContextHelper.parseText(context, apiHost));
+            target.setApiHost(CamelContextHelper.parseText(context, apiHost));
         }
         if (port != null) {
-            answer.setPort(CamelContextHelper.parseInteger(context, port));
+            target.setPort(CamelContextHelper.parseInteger(context, port));
         }
         if (producerApiDoc != null) {
-            answer.setProducerApiDoc(CamelContextHelper.parseText(context, producerApiDoc));
+            target.setProducerApiDoc(CamelContextHelper.parseText(context, producerApiDoc));
         }
         if (apiContextPath != null) {
-            answer.setApiContextPath(CamelContextHelper.parseText(context, apiContextPath));
+            target.setApiContextPath(CamelContextHelper.parseText(context, apiContextPath));
         }
         if (apiContextRouteId != null) {
-            answer.setApiContextRouteId(CamelContextHelper.parseText(context, apiContextRouteId));
+            target.setApiContextRouteId(CamelContextHelper.parseText(context, apiContextRouteId));
         }
         if (apiContextIdPattern != null) {
             // special to allow #name# to refer to itself
             if ("#name#".equals(apiComponent)) {
-                answer.setApiContextIdPattern(context.getName());
+                target.setApiContextIdPattern(context.getName());
             } else {
-                answer.setApiContextIdPattern(CamelContextHelper.parseText(context, apiContextIdPattern));
+                target.setApiContextIdPattern(CamelContextHelper.parseText(context, apiContextIdPattern));
             }
         }
         if (apiContextListing != null) {
-            answer.setApiContextListing(apiContextListing);
+            target.setApiContextListing(apiContextListing);
         }
         if (apiVendorExtension != null) {
-            answer.setApiVendorExtension(apiVendorExtension);
+            target.setApiVendorExtension(apiVendorExtension);
         }
         if (contextPath != null) {
-            answer.setContextPath(CamelContextHelper.parseText(context, contextPath));
+            target.setContextPath(CamelContextHelper.parseText(context, contextPath));
         }
         if (hostNameResolver != null) {
-            answer.setHostNameResolver(hostNameResolver.name());
+            target.setHostNameResolver(hostNameResolver.name());
         }
         if (bindingMode != null) {
-            answer.setBindingMode(bindingMode.name());
+            target.setBindingMode(bindingMode.name());
         }
         if (skipBindingOnErrorCode != null) {
-            answer.setSkipBindingOnErrorCode(skipBindingOnErrorCode);
+            target.setSkipBindingOnErrorCode(skipBindingOnErrorCode);
         }
         if (clientRequestValidation != null) {
-            answer.setClientRequestValidation(clientRequestValidation);
+            target.setClientRequestValidation(clientRequestValidation);
         }
         if (enableCORS != null) {
-            answer.setEnableCORS(enableCORS);
+            target.setEnableCORS(enableCORS);
         }
         if (jsonDataFormat != null) {
-            answer.setJsonDataFormat(jsonDataFormat);
+            target.setJsonDataFormat(jsonDataFormat);
         }
         if (xmlDataFormat != null) {
-            answer.setXmlDataFormat(xmlDataFormat);
+            target.setXmlDataFormat(xmlDataFormat);
         }
         if (!componentProperties.isEmpty()) {
             Map<String, Object> props = new HashMap<>();
@@ -963,7 +963,7 @@ public class RestConfigurationDefinition {
                 String value = CamelContextHelper.parseText(context, prop.getValue());
                 props.put(key, value);
             }
-            answer.setComponentProperties(props);
+            target.setComponentProperties(props);
         }
         if (!endpointProperties.isEmpty()) {
             Map<String, Object> props = new HashMap<>();
@@ -972,7 +972,7 @@ public class RestConfigurationDefinition {
                 String value = CamelContextHelper.parseText(context, prop.getValue());
                 props.put(key, value);
             }
-            answer.setEndpointProperties(props);
+            target.setEndpointProperties(props);
         }
         if (!consumerProperties.isEmpty()) {
             Map<String, Object> props = new HashMap<>();
@@ -981,7 +981,7 @@ public class RestConfigurationDefinition {
                 String value = CamelContextHelper.parseText(context, prop.getValue());
                 props.put(key, value);
             }
-            answer.setConsumerProperties(props);
+            target.setConsumerProperties(props);
         }
         if (!dataFormatProperties.isEmpty()) {
             Map<String, Object> props = new HashMap<>();
@@ -990,7 +990,7 @@ public class RestConfigurationDefinition {
                 String value = CamelContextHelper.parseText(context, prop.getValue());
                 props.put(key, value);
             }
-            answer.setDataFormatProperties(props);
+            target.setDataFormatProperties(props);
         }
         if (!apiProperties.isEmpty()) {
             Map<String, Object> props = new HashMap<>();
@@ -999,7 +999,7 @@ public class RestConfigurationDefinition {
                 String value = CamelContextHelper.parseText(context, prop.getValue());
                 props.put(key, value);
             }
-            answer.setApiProperties(props);
+            target.setApiProperties(props);
         }
         if (!corsHeaders.isEmpty()) {
             Map<String, String> props = new HashMap<>();
@@ -1008,9 +1008,9 @@ public class RestConfigurationDefinition {
                 String value = CamelContextHelper.parseText(context, prop.getValue());
                 props.put(key, value);
             }
-            answer.setCorsHeaders(props);
+            target.setCorsHeaders(props);
         }
-        return answer;
+        return target;
     }
 
 }

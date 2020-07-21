@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model.dataformat;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,14 +26,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.PropertyDescriptionsAdapter;
+import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Any23 data format is used for parsing data to RDF.
+ * Extract RDF data from HTML documents.
  */
 @Metadata(firstVersion = "3.0.0", label = "dataformat,transformation", title = "Any23")
 @XmlRootElement(name = "any23")
@@ -41,10 +42,12 @@ public class Any23DataFormat extends DataFormatDefinition {
 
     @XmlAttribute
     @Metadata(defaultValue = "RDF4JMODEL", enums = "NTRIPLES,TURTLE,NQUADS,RDFXML,JSONLD,RDFJSON,RDF4JMODEL",
-              javaType = "org.apache.camel.model.dataformat.Any23Type")
+              javaType = "org.apache.camel.dataformat.any23.Any23OutputFormat")
     private String outputFormat;
-    @XmlJavaTypeAdapter(PropertyDescriptionsAdapter.class)
-    private Map<String, String> configuration = new HashMap<>();
+    @XmlElement(name = "configuration")
+    private List<PropertyDefinition> configuration;
+    @XmlTransient
+    private Map<String, String> configurations;
     @XmlElement
     private List<String> extractors;
     @XmlAttribute
@@ -67,13 +70,13 @@ public class Any23DataFormat extends DataFormatDefinition {
     public Any23DataFormat(String baseuri, Any23Type outputFormat, Map<String, String> configurations) {
         this(baseuri, outputFormat);
         this.outputFormat = outputFormat.name();
-        this.configuration = configurations;
+        this.configurations = configurations;
     }
 
     public Any23DataFormat(String baseuri, Any23Type outputFormat, Map<String, String> configurations, List<String> extractors) {
         this(baseuri, outputFormat, configurations);
         this.outputFormat = outputFormat.name();
-        this.configuration = configurations;
+        this.configurations = configurations;
         this.extractors = extractors;
     }
 
@@ -89,7 +92,19 @@ public class Any23DataFormat extends DataFormatDefinition {
         this.outputFormat = outputFormat;
     }
 
-    public Map<String, String> getConfiguration() {
+    public Map<String, String> getConfigurationAsMap() {
+        if (configurations == null && configuration != null) {
+            configurations = new HashMap<>();
+        }
+        if (configuration != null) {
+            for (PropertyDefinition def : configuration) {
+                configurations.put(def.getKey(), def.getValue());
+            }
+        }
+        return configurations;
+    }
+
+    public List<PropertyDefinition> getConfiguration() {
         return configuration;
     }
 
@@ -100,8 +115,20 @@ public class Any23DataFormat extends DataFormatDefinition {
      * "https://github.com/apache/any23/blob/master/api/src/main/resources/default-configuration.properties">here</a>.
      * If not provided, a default configuration is used.
      */
-    public void setConfiguration(Map<String, String> configurations) {
-        this.configuration = configurations;
+    public void setConfiguration(List<PropertyDefinition> configuration) {
+        this.configuration = configuration;
+    }
+
+    /**
+     * Configurations for Apache Any23 as key-value pairs in order to customize
+     * the extraction process. The list of supported parameters can be found
+     * <a href=
+     * "https://github.com/apache/any23/blob/master/api/src/main/resources/default-configuration.properties">here</a>.
+     * If not provided, a default configuration is used.
+     */
+    public void setConfiguration(Map<String, String> configuration) {
+        this.configuration = new ArrayList<>();
+        configuration.forEach((k, v) -> this.configuration.add(new PropertyDefinition(k, v)));
     }
 
     public List<String> getExtractors() {

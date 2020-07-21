@@ -32,11 +32,13 @@ import org.apache.http.localserver.ResponseBasicUnauthorized;
 import org.apache.http.protocol.HttpProcessor;
 import org.apache.http.protocol.ImmutableHttpProcessor;
 import org.apache.http.protocol.ResponseContent;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.eclipse.jetty.http.HttpMethod.GET;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestCamelComponentVerifierTest extends BaseHttpTest {
 
@@ -44,7 +46,7 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
     private Map<String, Object> parameters;
     private ComponentVerifierExtension verifier;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -65,7 +67,7 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
         parameters.put("path", "verify");
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();

@@ -18,6 +18,7 @@ package org.apache.camel.component.ignite.idgen;
 
 import java.util.Map;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -28,14 +29,19 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.ignite.IgniteAtomicSequence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * The Ignite ID Generator endpoint is one of camel-ignite endpoints which allows you to interact with
- * <a href="https://apacheignite.readme.io/docs/id-generator">Ignite Atomic Sequences and ID Generators</a>.
+ * Interact with <a href="https://apacheignite.readme.io/docs/id-generator">Ignite Atomic Sequences and ID Generators
+ * </a>.
+ *
  * This endpoint only supports producers.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-idgen", title = "Ignite ID Generator", syntax = "ignite-idgen:name", label = "nosql,cache,compute", producerOnly = true)
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-idgen", title = "Ignite ID Generator", syntax = "ignite-idgen:name", category = {Category.COMPUTE}, producerOnly = true)
 public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(IgniteIdGenEndpoint.class);
 
     @UriPath
     @Metadata(required = true)
@@ -63,7 +69,7 @@ public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
 
         if (atomicSeq == null) {
             atomicSeq = ignite().atomicSequence(name, initialValue, true);
-            log.info("Created AtomicSequence of ID Generator with name {}.", name);
+            LOG.info("Created AtomicSequence of ID Generator with name {}.", name);
         }
 
         if (batchSize != null) {

@@ -43,7 +43,7 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
     static final String DEFAULT_CLASS_NAME = "RestDslRoute";
 
     static final String DEFAULT_PACKAGE_NAME = "rest.dsl.generated";
-    
+
     private static final String DEFAULT_INDENT = "    ";
 
     private Function<OasDocument, String> classNameGenerator = RestDslSourceCodeGenerator::generateClassName;
@@ -56,8 +56,8 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
 
     private boolean sourceCodeTimestamps;
 
-    RestDslSourceCodeGenerator(final OasDocument openapi) {
-        super(openapi);
+    RestDslSourceCodeGenerator(final OasDocument document) {
+        super(document);
     }
 
     public abstract void generate(T destination) throws IOException;
@@ -94,7 +94,7 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
         return this;
     }
 
-    MethodSpec generateConfigureMethod(final OasDocument openapi) {
+    MethodSpec generateConfigureMethod(final OasDocument document) {
         final MethodSpec.Builder configure = MethodSpec.methodBuilder("configure").addModifiers(Modifier.PUBLIC)
             .returns(void.class).addJavadoc("Defines Apache Camel routes using REST DSL fluent API.\n");
 
@@ -112,10 +112,10 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
             configure.addCode(";\n\n");
         }
 
-        String basePath = RestDslGenerator.getBasePathFromOasDocument(openapi); 
-            
+        final String basePath = RestDslGenerator.determineBasePathFrom(document);
+
         final PathVisitor<MethodSpec> restDslStatement = new PathVisitor<>(basePath, emitter, filter, destinationGenerator());
-        openapi.paths.getItems().forEach(restDslStatement::visit);
+        document.paths.getItems().forEach(restDslStatement::visit);
         return emitter.result();
     }
 
@@ -124,9 +124,9 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
     }
 
     JavaFile generateSourceCode() {
-        final MethodSpec methodSpec = generateConfigureMethod(openapi);
+        final MethodSpec methodSpec = generateConfigureMethod(document);
 
-        final String classNameToUse = classNameGenerator.apply(openapi);
+        final String classNameToUse = classNameGenerator.apply(document);
 
         final AnnotationSpec.Builder generatedAnnotation = AnnotationSpec.builder(Generated.class).addMember("value",
             "$S", getClass().getName());
@@ -134,7 +134,7 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
             generatedAnnotation.addMember("date", "$S", generated());
         }
 
-        TypeSpec.Builder builder = TypeSpec.classBuilder(classNameToUse).superclass(RouteBuilder.class)
+        final TypeSpec.Builder builder = TypeSpec.classBuilder(classNameToUse).superclass(RouteBuilder.class)
             .addModifiers(Modifier.PUBLIC, Modifier.FINAL).addMethod(methodSpec)
             .addAnnotation(generatedAnnotation.build())
             .addJavadoc("Generated from OpenApi specification by Camel REST DSL generator.\n");
@@ -142,9 +142,9 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
             final AnnotationSpec.Builder springAnnotation = AnnotationSpec.builder(ClassName.bestGuess("org.springframework.stereotype.Component"));
             builder.addAnnotation(springAnnotation.build());
         }
-        TypeSpec generatedRouteBuilder = builder.build();
+        final TypeSpec generatedRouteBuilder = builder.build();
 
-        final String packageNameToUse = packageNameGenerator.apply(openapi);
+        final String packageNameToUse = packageNameGenerator.apply(document);
 
         return JavaFile.builder(packageNameToUse, generatedRouteBuilder).indent(indent).build();
     }
@@ -155,8 +155,8 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
         return this;
     }
 
-    static String generateClassName(final OasDocument openapi) {
-        final OasInfo info = (OasInfo)openapi.info;
+    static String generateClassName(final OasDocument document) {
+        final OasInfo info = (OasInfo) document.info;
         if (info == null) {
             return DEFAULT_CLASS_NAME;
         }
@@ -177,9 +177,8 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
         return className;
     }
 
-    static String generatePackageName(final OasDocument openapi) {
-        String host = RestDslGenerator.getHostFromOasDocument(openapi);
-        
+    static String generatePackageName(final OasDocument document) {
+        final String host = RestDslGenerator.determineHostFrom(document);
 
         if (ObjectHelper.isNotEmpty(host)) {
             final StringBuilder packageName = new StringBuilder();

@@ -64,6 +64,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.xmlsecurity.api.KeyAccessor;
@@ -197,7 +198,8 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
 
     private final XmlSignerConfiguration config;
     
-    public XmlSignerProcessor(XmlSignerConfiguration config) {
+    public XmlSignerProcessor(CamelContext context, XmlSignerConfiguration config) {
+        super(context);
         this.config = config;
     }
 
@@ -207,7 +209,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception { //NOPMD
+    public void process(Exchange exchange) throws Exception {
 
         try {
             LOG.debug("XML signature generation started using algorithm {} and canonicalization method {}", getConfiguration()
@@ -234,7 +236,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         }
     }
 
-    protected Document sign(final Message out) throws Exception { //NOPMD
+    protected Document sign(final Message out) throws Exception {
 
         try {
             XMLSignatureFactory fac;
@@ -387,7 +389,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         return result;
     }
 
-    protected XmlSignatureProperties.Output getSignatureProperties(XmlSignatureProperties.Input input) throws Exception { //NOPMD
+    protected XmlSignatureProperties.Output getSignatureProperties(XmlSignatureProperties.Input input) throws Exception {
         XmlSignatureProperties propGetter = getConfiguration().getProperties();
         XmlSignatureProperties.Output propsOutput = null;
         if (propGetter != null) {
@@ -421,7 +423,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         return omitXmlDeclaration;
     }
 
-    protected SignedInfo createSignedInfo(XMLSignatureFactory fac, List<? extends Reference> refs) throws Exception { //NOPMD
+    protected SignedInfo createSignedInfo(XMLSignatureFactory fac, List<? extends Reference> refs) throws Exception {
         return fac.newSignedInfo(fac.newCanonicalizationMethod(getConfiguration().getCanonicalizationMethod().getAlgorithm(),
                 (C14NMethodParameterSpec) getConfiguration().getCanonicalizationMethod().getParameterSpec()),
                 getSignatureMethod(getConfiguration().getSignatureAlgorithm(), fac), refs);
@@ -432,7 +434,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         return fac.newSignatureMethod(signatureAlgorithm, null);
     }
 
-    protected Node getMessageBodyNode(Message message) throws Exception { //NOPMD
+    protected Node getMessageBodyNode(Message message) throws Exception {
         InputStream is = message.getMandatoryBody(InputStream.class);
 
         Boolean isPlainText = isPlainText(message);
@@ -473,7 +475,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
     }
 
     protected Element getParentOfSignature(Message inMessage, Node messageBodyNode, String contentReferenceURI, SignatureType sigType)
-        throws Exception { //NOPMD
+        throws Exception {
         if (SignatureType.enveloping == sigType) {
             // enveloping case
             return null;
@@ -492,7 +494,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
 
     }
     
-    protected Element getParentForEnvelopedCase(Document doc, Message inMessage) throws Exception { //NOPMD
+    protected Element getParentForEnvelopedCase(Document doc, Message inMessage) throws Exception {
         if (getConfiguration().getParentXpath() != null) {
             XPathFilterParameterSpec xp = getConfiguration().getParentXpath();
             XPathExpression exp;
@@ -566,7 +568,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
     }
 
     protected List<? extends Reference> getReferences(XmlSignatureProperties.Input input, XmlSignatureProperties.Output properties,
-            String keyInfoId) throws Exception { //NOPMD
+            String keyInfoId) throws Exception {
 
         String referenceId = properties == null ? null : properties.getContentReferenceId();
         // Create Reference with URI="#<objectId>" for enveloping signature, URI="" for enveloped signature, and URI = <value from configuration> for detached signature and the transforms
@@ -589,7 +591,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
     }
 
     protected List<? extends XMLObject> getObjects(XmlSignatureProperties.Input input, XmlSignatureProperties.Output properties)
-        throws Exception { //NOPMD
+        throws Exception {
 
         if (SignatureType.enveloped == input.getSignatureType() || SignatureType.detached == input.getSignatureType()) {
             if (properties == null || properties.getObjects() == null) {
@@ -618,7 +620,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         IOHelper.copyAndCloseInput(is, bos);
         try {
-            String text = new String(bos.toByteArray(), encoding);
+            String text = bos.toString(encoding);
             return XmlSignatureHelper.newDocumentBuilder(true).newDocument().createTextNode(text);
         } catch (UnsupportedEncodingException e) {
             throw new XmlSignatureException(String.format("The message encoding %s is not supported.", encoding), e);
@@ -848,7 +850,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
                 "Digest algorithm missing for XML signature generation. Specify the digest algorithm in the configuration.");
     }
 
-    protected Reference createKeyInfoReference(XMLSignatureFactory fac, String keyInfoId, String digestAlgorithm) throws Exception { //NOPMD
+    protected Reference createKeyInfoReference(XMLSignatureFactory fac, String keyInfoId, String digestAlgorithm) throws Exception {
 
         if (keyInfoId == null) {
             return null;
@@ -868,7 +870,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         return fac.newReference("#" + keyInfoId, fac.newDigestMethod(digestAlgorithm, null), transforms, null, null);
     }
 
-    private String getKeyInfoId(KeyInfo keyInfo) throws Exception { //NOPMD
+    private String getKeyInfoId(KeyInfo keyInfo) throws Exception {
         if (keyInfo == null) {
             return null;
         }

@@ -26,11 +26,11 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicy;
 import org.jgroups.JChannel;
 import org.jgroups.raft.RaftHandle;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JGroupsRaftClusteredRoutePolicyTest extends JGroupsRaftClusterAbstractTest {
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsRaftClusteredRoutePolicyTest.class);
@@ -92,7 +92,7 @@ public class JGroupsRaftClusteredRoutePolicyTest extends JGroupsRaftClusterAbstr
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer:master?delay=1s&period=1s")
+                from("timer:master?delay=1000&period=1000")
                         .routeId("route-" + id)
                         .routePolicy(ClusteredRoutePolicy.forNamespace("jgr"))
                         .log("From ${routeId}");

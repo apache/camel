@@ -1,12 +1,17 @@
 [[thrift-component]]
 = Thrift Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-thrift/src/main/docs/thrift-component.adoc
+:docTitle: Thrift
+:artifactId: camel-thrift
+:description: Call and expose remote procedures (RPC) with Apache Thrift data format and serialization mechanism.
+:since: 2.20
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.20*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Thrift component allows you to call or expose Remote Procedure Call (RPC) services
 using https://thrift.apache.org/[Apache Thrift] binary communication protocol and serialization mechanism.
@@ -41,10 +46,10 @@ The Thrift component supports 4 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *useGlobalSslContext Parameters* (security) | Determine if the thrift component is using global SSL context parameters | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *useGlobalSslContextParameters* (security) | Determine if the thrift component is using global SSL context parameters | false | boolean
 |===
 // component options: END
 
@@ -75,56 +80,22 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *compressionType* (common) | Protocol compression mechanism type | NONE | ThriftCompressionType
-| *exchangeProtocol* (common) | Exchange protocol serialization type | BINARY | ThriftExchangeProtocol
+| *compressionType* (common) | Protocol compression mechanism type. The value can be one of: NONE, ZLIB | NONE | ThriftCompressionType
+| *exchangeProtocol* (common) | Exchange protocol serialization type. The value can be one of: BINARY, JSON, SJSON, COMPACT | BINARY | ThriftExchangeProtocol
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *clientTimeout* (consumer) | Client timeout for consumers |  | int
 | *maxPoolSize* (consumer) | The Thrift server consumer max thread pool size | 10 | int
 | *poolSize* (consumer) | The Thrift server consumer initial thread pool size | 1 | int
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *method* (producer) | The Thrift invoked method name |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *negotiationType* (security) | Security negotiation type | PLAINTEXT | ThriftNegotiationType
+| *negotiationType* (security) | Security negotiation type. The value can be one of: PLAINTEXT, SSL, SASL | PLAINTEXT | ThriftNegotiationType
 | *sslParameters* (security) | Configuration parameters for SSL/TLS security negotiation |  | SSLContextParameters
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-thrift-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 9 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.thrift.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.thrift.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.thrift.enabled* | Whether to enable auto configuration of the thrift component. This is enabled by default. |  | Boolean
-| *camel.component.thrift.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-| *camel.component.thrift.use-global-ssl-context-parameters* | Determine if the thrift component is using global SSL context parameters | false | Boolean
-| *camel.dataformat.thrift.content-type-format* | Defines a content type format in which thrift message will be serialized/deserialized from(to) the Java been. The format can either be native or json for either native binary thrift, json or simple json fields representation. The default value is binary. | binary | String
-| *camel.dataformat.thrift.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
-| *camel.dataformat.thrift.enabled* | Whether to enable auto configuration of the thrift data format. This is enabled by default. |  | Boolean
-| *camel.dataformat.thrift.instance-class* | Name of class to use when unarmshalling |  | String
-|===
-// spring-boot-auto-configure options: END
 
 
 == Thrift method parameters mapping
@@ -200,3 +171,5 @@ It's possible to automate Java code generation for .thrift files using *thrift-m
 https://github.com/apache/thrift/[Thrift project GitHub]
 https://thrift.apache.org/tutorial/java [Apache Thrift Java tutorial]
 
+
+include::camel-spring-boot::page$thrift-starter.adoc[]

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.printer;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -25,7 +26,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The printer component is used for sending messages to printers as print jobs.
+ * Send print jobs to printers.
  *
  * Obviously the payload has to be a formatted piece of payload in order for the component to appropriately print it.
  * The objective is to be able to direct specific payloads as jobs to a line printer in a camel flow.
@@ -33,9 +34,9 @@ import org.apache.camel.support.DefaultEndpoint;
  * The functionality allows for the payload to be printed on a default printer, named local, remote or wirelessly
  * linked printer using the javax printing API under the covers.
  */
-@UriEndpoint(firstVersion = "2.1.0", scheme = "lpr", title = "Printer", syntax = "lpr:hostname:port/printername", producerOnly = true, label = "printing")
+@UriEndpoint(firstVersion = "2.1.0", scheme = "lpr", title = "Printer", syntax = "lpr:hostname:port/printername", producerOnly = true, category = {Category.PRINTING})
 public class PrinterEndpoint extends DefaultEndpoint {
-    
+
     public static final String JOB_NAME = "PrinterJobName";
 
     @UriParam
@@ -65,6 +66,6 @@ public class PrinterEndpoint extends DefaultEndpoint {
 
     public void setConfig(PrinterConfiguration config) {
         this.config = config;
-    }    
+    }
 
 }

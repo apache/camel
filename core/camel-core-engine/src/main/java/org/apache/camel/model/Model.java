@@ -99,6 +99,74 @@ public interface Model {
     void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception;
 
     /**
+     * Returns a list of the current route template definitions
+     *
+     * @return list of the current route template definitions
+     */
+    List<RouteTemplateDefinition> getRouteTemplateDefinitions();
+
+    /**
+     * Gets the route template definition with the given id
+     *
+     * @param id id of the route template
+     * @return the route template definition or <tt>null</tt> if not found
+     */
+    RouteTemplateDefinition getRouteTemplateDefinition(String id);
+
+    /**
+     * Adds a collection of route template definitions to the context
+     * <p/>
+     * <b>Important: </b> Each route in the same {@link CamelContext} must have
+     * an <b>unique</b> route template id.
+     *
+     * @param routeTemplateDefinitions the route template(s) definition to add
+     * @throws Exception if the route template definitions could not be added for
+     *             whatever reason
+     */
+    void addRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception;
+
+    /**
+     * Add a route definition to the context
+     * <p/>
+     * <b>Important: </b> Each route template in the same {@link CamelContext} must have
+     * an <b>unique</b> route id.
+     *
+     * @param routeTemplateDefinition the route template definition to add
+     * @throws Exception if the route template definition could not be added for whatever
+     *             reason
+     */
+    void addRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception;
+
+    /**
+     * Removes a collection of route template definitions from the context
+     *
+     * @param routeTemplateDefinitions route template(s) definitions to remove
+     * @throws Exception if the route template definitions could not be removed for
+     *             whatever reason
+     */
+    void removeRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception;
+
+    /**
+     * Removes a route template definition from the context
+     *
+     * @param routeTemplateDefinition route template definition to remove
+     * @throws Exception if the route template definition could not be removed for
+     *             whatever reason
+     */
+    void removeRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception;
+
+    /**
+     * Adds a new route from a given route template
+     *
+     * @param routeId  the id of the new route to add (optional)
+     * @param routeTemplateId   the id of the route template (mandatory)
+     * @param parameters  parameters to use for the route template when creating the new route
+     * @return the id of the route added (for example when an id was auto assigned)
+     * @throws Exception is thrown if error creating and adding the new route
+     */
+    String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception;
+
+    /**
      * Returns a list of the current REST definitions
      *
      * @return list of the current REST definitions
@@ -147,7 +215,7 @@ public interface Model {
      * @param id id of the processor definition
      * @return the processor definition or <tt>null</tt> if not found
      */
-    ProcessorDefinition getProcessorDefinition(String id);
+    ProcessorDefinition<?> getProcessorDefinition(String id);
 
     /**
      * Gets the processor definition from any of the routes which with the given
@@ -158,7 +226,7 @@ public interface Model {
      * @return the processor definition or <tt>null</tt> if not found
      * @throws ClassCastException is thrown if the type is not correct type
      */
-    <T extends ProcessorDefinition> T getProcessorDefinition(String id, Class<T> type);
+    <T extends ProcessorDefinition<T>> T getProcessorDefinition(String id, Class<T> type);
 
     /**
      * Sets the validators that can be referenced in the routes.
@@ -234,6 +302,39 @@ public interface Model {
     void addResilience4jConfiguration(String id, Resilience4jConfigurationDefinition configuration);
 
     /**
+     * Gets the MicroProfile Fault Tolerance configuration by the given name. If no name is given the
+     * default configuration is returned, see <tt>setFaultToleranceConfigurationDefinition</tt>
+     *
+     * @param id id of the configuration, or <tt>null</tt> to return the default
+     *            configuration
+     * @return the configuration, or <tt>null</tt> if no configuration has been
+     *         registered
+     */
+    FaultToleranceConfigurationDefinition getFaultToleranceConfiguration(String id);
+
+    /**
+     * Sets the default MicroProfile Fault Tolerance configuration
+     *
+     * @param configuration the configuration
+     */
+    void setFaultToleranceConfiguration(FaultToleranceConfigurationDefinition configuration);
+
+    /**
+     * Sets the MicroProfile Fault Tolerance configurations
+     *
+     * @param configurations the configuration list
+     */
+    void setFaultToleranceConfigurations(List<FaultToleranceConfigurationDefinition> configurations);
+
+    /**
+     * Adds the MicroProfile Fault Tolerance configuration
+     *
+     * @param id name of the configuration
+     * @param configuration the configuration
+     */
+    void addFaultToleranceConfiguration(String id, FaultToleranceConfigurationDefinition configuration);
+
+    /**
      * Gets the validators that can be referenced in the routes.
      *
      * @return the validators available
@@ -287,11 +388,6 @@ public interface Model {
      * @param configuration the configuration
      */
     void addServiceCallConfiguration(String serviceName, ServiceCallConfigurationDefinition configuration);
-
-    /**
-     * Start all routes from this model.
-     */
-    void startRouteDefinitions() throws Exception;
 
     /**
      * Used for filtering routes routes matching the given pattern, which

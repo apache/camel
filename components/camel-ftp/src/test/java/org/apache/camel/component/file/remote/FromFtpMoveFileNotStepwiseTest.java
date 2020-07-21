@@ -17,14 +17,14 @@
 package org.apache.camel.component.file.remote;
 
 /**
- * Unit test to test both consumer.moveNamePrefix and consumer.moveNamePostfix options.
+ * Unit test to test both consumer.moveNamePrefix and consumer.moveNamePostfix
+ * options.
  */
 public class FromFtpMoveFileNotStepwiseTest extends FromFtpMoveFileTest {
 
     @Override
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false"
-                + "&move=done/sub2/${file:name}.old&delay=5000&stepwise=false";
+        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false" + "&move=done/sub2/${file:name}.old&delay=5000&stepwise=false";
     }
 
 }

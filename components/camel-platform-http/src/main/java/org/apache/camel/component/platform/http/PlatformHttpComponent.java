@@ -19,33 +19,48 @@ package org.apache.camel.component.platform.http;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.RestComponentHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Exposes HTTP endpoints leveraging the given platform's (SpringBoot, WildFly, Quarkus, ...) HTTP server.
  */
 @Component("platform-http")
 public class PlatformHttpComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlatformHttpComponent.class);
+
     @Metadata(label = "advanced", description = "An HTTP Server engine implementation to serve the requests")
-    private PlatformHttpEngine engine;
+    private volatile PlatformHttpEngine engine;
+
+    private volatile boolean localEngine;
+
+    private final Object lock;
 
     public PlatformHttpComponent() {
-        super();
+        this(null);
     }
 
     public PlatformHttpComponent(CamelContext context) {
         super(context);
+
+        this.lock = new Object();
     }
 
     @Override
@@ -68,8 +83,23 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
             String uriTemplate,
             String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
             throws Exception {
-        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration,
-                parameters, false);
+        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration, parameters, false);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        ServiceHelper.startService(getOrCreateEngine());
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        // Stop the platform-http engine only if it has been created through factory finder
+        if (localEngine) {
+            ServiceHelper.stopService(engine);
+        }
     }
 
     public PlatformHttpEngine getEngine() {
@@ -79,9 +109,8 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
     /**
      * Sets the {@link PlatformHttpEngine} to use.
      */
-    public PlatformHttpComponent setEngine(PlatformHttpEngine engine) {
+    public void setEngine(PlatformHttpEngine engine) {
         this.engine = engine;
-        return this;
     }
 
     private Consumer doCreateConsumer(CamelContext camelContext, Processor processor, String verb, String basePath,
@@ -103,21 +132,17 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
         // if no explicit port/host configured, then use port from rest configuration
         RestConfiguration config = configuration;
         if (config == null) {
-            config = camelContext.getRestConfiguration(PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME, true);
+            config = CamelContextHelper.getRestConfiguration(getCamelContext(), PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME);
         }
 
         Map<String, Object> map = RestComponentHelper.initRestEndpointProperties(PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME, config);
 
         boolean cors = config.isEnableCORS();
-        if (cors) {
-            // allow HTTP Options as we want to handle CORS in rest-dsl
-            map.put("optionsEnabled", "true");
-        }
-        
+
         if (api) {
             map.put("matchOnUriPrefix", "true");
         }
-        
+
         RestComponentHelper.addHttpRestrictParam(map, verb, cors);
 
         // do not append with context-path as the servlet path should be without context-path
@@ -125,7 +150,7 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
         String url = RestComponentHelper.createRestConsumerUrl("platform-http", path, map);
 
         PlatformHttpEndpoint endpoint = camelContext.getEndpoint(url, PlatformHttpEndpoint.class);
-        setProperties(camelContext, endpoint, parameters);
+        setProperties(endpoint, parameters);
         endpoint.setConsumes(consumes);
         endpoint.setProduces(produces);
 
@@ -136,5 +161,37 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
         }
 
         return consumer;
+    }
+
+    PlatformHttpEngine getOrCreateEngine() {
+        if (engine == null) {
+            synchronized (lock) {
+                if (engine == null) {
+                    LOGGER.debug("Lookup platform http engine from registry");
+
+                    engine = getCamelContext().getRegistry()
+                        .lookupByNameAndType(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_NAME, PlatformHttpEngine.class);
+
+                    if (engine == null) {
+                        LOGGER.debug("Lookup platform http engine from factory");
+
+                        engine = getCamelContext()
+                            .adapt(ExtendedCamelContext.class)
+                            .getFactoryFinder(FactoryFinder.DEFAULT_PATH)
+                            .newInstance(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_FACTORY, PlatformHttpEngine.class)
+                            .orElseThrow(() -> new IllegalStateException(
+                                "PlatformHttpEngine is neither set on this endpoint neither found in Camel Registry or FactoryFinder.")
+                            );
+
+                        localEngine = true;
+                    }
+                }
+            }
+        }
+
+        CamelContextAware.trySetCamelContext(engine, getCamelContext());
+        ServiceHelper.initService(engine);
+
+        return engine;
     }
 }

@@ -21,9 +21,9 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -62,7 +62,7 @@ public class JmsRouteTest extends CamelTestSupport {
 
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         startEndpointUri = componentName + ":queue:test.a";
 

@@ -100,6 +100,11 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     }
 
     @Override
+    public GenericFile<SftpRemoteFile> newGenericFile() {
+        return new RemoteFile<>();
+    }
+
+    @Override
     public synchronized boolean connect(RemoteFileConfiguration configuration, Exchange exchange) throws GenericFileOperationFailedException {
         if (isConnected()) {
             // already connected
@@ -396,39 +401,39 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         @Override
         public boolean isEnabled(int level) {
             switch (level) {
-            case FATAL:
-                // use ERROR as FATAL
-                return loggingLevel.isEnabled(LoggingLevel.ERROR) && LOG.isErrorEnabled();
-            case ERROR:
-                return loggingLevel.isEnabled(LoggingLevel.ERROR) && LOG.isErrorEnabled();
-            case WARN:
-                return loggingLevel.isEnabled(LoggingLevel.WARN) && LOG.isWarnEnabled();
-            case INFO:
-                return loggingLevel.isEnabled(LoggingLevel.INFO) && LOG.isInfoEnabled();
-            default:
-                return loggingLevel.isEnabled(LoggingLevel.DEBUG) && LOG.isDebugEnabled();
+                case FATAL:
+                    // use ERROR as FATAL
+                    return loggingLevel.isEnabled(LoggingLevel.ERROR) && LOG.isErrorEnabled();
+                case ERROR:
+                    return loggingLevel.isEnabled(LoggingLevel.ERROR) && LOG.isErrorEnabled();
+                case WARN:
+                    return loggingLevel.isEnabled(LoggingLevel.WARN) && LOG.isWarnEnabled();
+                case INFO:
+                    return loggingLevel.isEnabled(LoggingLevel.INFO) && LOG.isInfoEnabled();
+                default:
+                    return loggingLevel.isEnabled(LoggingLevel.DEBUG) && LOG.isDebugEnabled();
             }
         }
 
         @Override
         public void log(int level, String message) {
             switch (level) {
-            case FATAL:
-                // use ERROR as FATAL
-                LOG.error("JSCH -> {}", message);
-                break;
-            case ERROR:
-                LOG.error("JSCH -> {}", message);
-                break;
-            case WARN:
-                LOG.warn("JSCH -> {}", message);
-                break;
-            case INFO:
-                LOG.info("JSCH -> {}", message);
-                break;
-            default:
-                LOG.debug("JSCH -> {}", message);
-                break;
+                case FATAL:
+                    // use ERROR as FATAL
+                    LOG.error("JSCH -> {}", message);
+                    break;
+                case ERROR:
+                    LOG.error("JSCH -> {}", message);
+                    break;
+                case WARN:
+                    LOG.warn("JSCH -> {}", message);
+                    break;
+                case INFO:
+                    LOG.info("JSCH -> {}", message);
+                    break;
+                default:
+                    LOG.debug("JSCH -> {}", message);
+                    break;
             }
         }
     }
@@ -508,10 +513,19 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         // ignore absolute as all dirs are relative with FTP
         boolean success = false;
 
+        // whether to check for existing dir using CD or LS
+        boolean cdCheck = !this.endpoint.getConfiguration().isExistDirCheckUsingLs();
+        String originalDirectory = cdCheck ? getCurrentDirectory() : null;
+
         try {
             // maybe the full directory already exists
             try {
-                channel.ls(directory);
+                if (cdCheck) {
+                    channel.cd(directory);
+                } else {
+                    // just do a fast listing
+                    channel.ls(directory, entry -> ChannelSftp.LsEntrySelector.BREAK);
+                }
                 success = true;
             } catch (SftpException e) {
                 // ignore, we could not change directory so try to create it
@@ -533,6 +547,11 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             }
         } catch (IOException | SftpException e) {
             throw new GenericFileOperationFailedException("Cannot build directory: " + directory, e);
+        } finally {
+            // change back to original directory
+            if (originalDirectory != null) {
+                changeCurrentDirectory(originalDirectory);
+            }
         }
         return success;
     }
@@ -770,7 +789,6 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
 
                 target.setBody(bos.toByteArray());
             }
-
 
             createResultHeadersFromExchange(null, exchange);
             return true;
@@ -1152,12 +1170,13 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     }
 
     /**
-     * Helper method which gets result code and message from sftpException and puts it into header.
-     * In case that exception is null, it sets successfull response.
+     * Helper method which gets result code and message from sftpException and
+     * puts it into header. In case that exception is null, it sets successfull
+     * response.
      */
     private void createResultHeadersFromExchange(SftpException sftpException, Exchange exchange) {
 
-        //if exception is null, it means that result was ok
+        // if exception is null, it means that result was ok
         if (sftpException == null) {
             exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, OK_STATUS);
             exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, OK_MESSAGE);

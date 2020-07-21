@@ -25,7 +25,12 @@ import java.net.Socket;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class NettyTcpWithInOutUsingPlainSocketTest extends BaseNettyTest {
 
@@ -33,7 +38,7 @@ public class NettyTcpWithInOutUsingPlainSocketTest extends BaseNettyTest {
     public void testSendAndReceiveOnce() throws Exception {
         String response = sendAndReceive("World");
 
-        assertNotNull("Nothing received from Mina", response);
+        assertNotNull(response, "Nothing received from Mina");
         assertEquals("Hello World", response);
     }
 
@@ -42,8 +47,8 @@ public class NettyTcpWithInOutUsingPlainSocketTest extends BaseNettyTest {
         String london = sendAndReceive("London");
         String paris = sendAndReceive("Paris");
 
-        assertNotNull("Nothing received from Mina", london);
-        assertNotNull("Nothing received from Mina", paris);
+        assertNotNull(london, "Nothing received from Mina");
+        assertNotNull(paris, "Nothing received from Mina");
         assertEquals("Hello London", london);
         assertEquals("Hello Paris", paris);
     }
@@ -51,23 +56,23 @@ public class NettyTcpWithInOutUsingPlainSocketTest extends BaseNettyTest {
     @Test
     public void testReceiveNoResponseSinceOutBodyIsNull() throws Exception {
         String out = sendAndReceive("force-null-out-body");
-        assertNull("no data should be recieved", out);
+        assertNull(out, "no data should be received");
     }
 
     @Test
     public void testReceiveNoResponseSinceOutBodyIsNullTwice() throws Exception {
         String out = sendAndReceive("force-null-out-body");
-        assertNull("no data should be recieved", out);
+        assertNull(out, "no data should be received");
 
         out = sendAndReceive("force-null-out-body");
-        assertNull("no data should be recieved", out);
+        assertNull(out, "no data should be received");
     }
 
     @Test
     public void testExchangeFailedOutShouldBeNull() throws Exception {
         String out = sendAndReceive("force-exception");
-        assertTrue("out should not be the same as in when the exchange has failed", !"force-exception".equals(out));
-        assertEquals("should get the exception here", out, "java.lang.IllegalArgumentException: Forced exception");
+        assertFalse("force-exception".equals(out), "out should not be the same as in when the exchange has failed");
+        assertEquals(out, "java.lang.IllegalArgumentException: Forced exception", "should get the exception here");
     }
 
     private String sendAndReceive(String input) throws IOException {

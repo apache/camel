@@ -26,13 +26,15 @@ import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.Exchange.CONTENT_TYPE;
 import static org.apache.camel.Exchange.HTTP_METHOD;
 import static org.apache.camel.Exchange.HTTP_RESPONSE_CODE;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Based on user forum.
@@ -42,22 +44,22 @@ public class JmsHttpPostIssueTest extends CamelTestSupport {
     private int port;
 
     @Test
-    public void testJmsInOnlyHttpPostIssue() throws Exception {
+    void testJmsInOnlyHttpPostIssue() {
         NotifyBuilder notify = new NotifyBuilder(context).whenCompleted(1).from("jms*").create();
 
         template.sendBody("jms:queue:in", "Hello World");
 
-        assertTrue("Should complete the JMS route", notify.matchesMockWaitTime());
+        assertTrue(notify.matchesMockWaitTime(), "Should complete the JMS route");
     }
 
     @Test
-    public void testJmsInOutHttpPostIssue() throws Exception {
+    void testJmsInOutHttpPostIssue() {
         String out = template.requestBody("jms:queue:in", "Hello World", String.class);
-        assertEquals("OK", out);
+        assertEquals(out, "OK");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
@@ -71,13 +73,13 @@ public class JmsHttpPostIssueTest extends CamelTestSupport {
                 from("jetty:http://0.0.0.0:" + port + "/myservice")
                     .process(new Processor() {
                         @Override
-                        public void process(Exchange exchange) throws Exception {
+                        public void process(Exchange exchange) {
                             String body = exchange.getIn().getBody(String.class);
                             assertEquals("name=Hello World", body);
 
-                            exchange.getOut().setBody("OK");
-                            exchange.getOut().setHeader(CONTENT_TYPE, "text/plain");
-                            exchange.getOut().setHeader(HTTP_RESPONSE_CODE, 200);
+                            exchange.getMessage().setBody("OK");
+                            exchange.getMessage().setHeader(CONTENT_TYPE, "text/plain");
+                            exchange.getMessage().setHeader(HTTP_RESPONSE_CODE, 200);
                         }
                     });
             }
@@ -85,7 +87,7 @@ public class JmsHttpPostIssueTest extends CamelTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         // add ActiveMQ with embedded broker
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);

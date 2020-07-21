@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.5.0-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -34,18 +34,6 @@
     <description>The Camel Management API</description>
 
     <dependencies>
-
-        <!-- camel annotaions -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>spi-annotations</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>meta-annotations</artifactId>
-            <optional>true</optional>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -70,6 +58,7 @@
                         <link>http://download.oracle.com/javaee/7/api/</link>
                     </links>
                     <linksource>true</linksource>
+                    <isOffline>${camel.javadoc.offline}</isOffline>
                     <maxmemory>256m</maxmemory>
                     <groups>
                         <group>
@@ -156,6 +145,7 @@
                             </links>
                             <linksource>true</linksource>
                             <maxmemory>256m</maxmemory>
+                            <isOffline>${camel.javadoc.offline}</isOffline>
                             <groups>
                                 <group>
                                     <title>Camel API</title>
@@ -273,13 +263,6 @@
                 <jdk>[9,)</jdk>
             </activation>
             <dependencies>
-
-                <!-- enable the APT processor -->
-                <dependency>
-                    <groupId>org.apache.camel</groupId>
-                    <artifactId>apt</artifactId>
-                    <scope>provided</scope>
-                </dependency>
                 <!-- xmltokenizer using woodstox -->
                 <dependency>
                     <groupId>org.codehaus.woodstox</groupId>
@@ -306,18 +289,6 @@
                                 <FOO_SERVICE_PORT>8081</FOO_SERVICE_PORT>
                             </environmentVariables>
                         </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>jakarta.xml.bind</groupId>
-                                <artifactId>jakarta.xml.bind-api</artifactId>
-                                <version>${jakarta-jaxb-version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.glassfish.jaxb</groupId>
-                                <artifactId>jaxb-runtime</artifactId>
-                                <version>${glassfish-jaxb-runtime-version}</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>

@@ -21,16 +21,21 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.apache.camel.test.junit5.TestSupport.createDirectory;
 
 public class JettyHttpFileCacheTest extends CamelTestSupport {
     private static final String TEST_STRING = "This is a test string and it has enough" 
         + " aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ";
     
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -41,37 +46,34 @@ public class JettyHttpFileCacheTest extends CamelTestSupport {
     }
 
     @Test
-    public void testGetWithRelativePath() throws Exception {
+    void testGetWithRelativePath() throws Exception {
         
         String response = template.requestBody("http://localhost:8201/clipboard/download/file", "   ", String.class);
-        assertEquals("should get the right response", TEST_STRING, response);
+        assertEquals(TEST_STRING, response, "should get the right response");
         
         File file = new File("target/cachedir");
         String[] files = file.list();
-        assertTrue("There should not have any temp file", files.length == 0);
+        assertTrue(files.length == 0, "There should not have any temp file");
         
     }
     
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                
+            public void configure() {
 
                 from("jetty:http://localhost:8201/clipboard/download?chunked=true&matchOnUriPrefix=true")
                     .to("http://localhost:9101?bridgeEndpoint=true");
-                
+
                 from("jetty:http://localhost:9101?chunked=true&matchOnUriPrefix=true")
                     .process(new Processor() {
 
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getOut().setBody(TEST_STRING);
+                        public void process(Exchange exchange) {
+                            exchange.getMessage().setBody(TEST_STRING);
                         }
                         
                     });
-
-               
             }
         };
     }

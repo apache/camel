@@ -24,8 +24,9 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.log.ConsumingAppender;
 import org.apache.logging.log4j.Level;
-import org.junit.Before;
-import org.junit.Test;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -35,7 +36,7 @@ public class LogProcessorWithProvidedLoggerTest extends ContextTestSupport {
     // to capture the logs
     private static StringWriter sw;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -53,7 +54,7 @@ public class LogProcessorWithProvidedLoggerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertThat(sw.toString(), equalTo("org.apache.camel.customlogger INFO Got Bye World"));
+        MatcherAssert.assertThat(sw.toString(), equalTo("org.apache.camel.customlogger INFO Got Bye World"));
     }
 
     @Test
@@ -64,7 +65,7 @@ public class LogProcessorWithProvidedLoggerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertThat(sw.toString(), equalTo("org.apache.camel.customlogger INFO Also got Bye World"));
+        MatcherAssert.assertThat(sw.toString(), equalTo("org.apache.camel.customlogger INFO Also got Bye World"));
     }
 
     @Override

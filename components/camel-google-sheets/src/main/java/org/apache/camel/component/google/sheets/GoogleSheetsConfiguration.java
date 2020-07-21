@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.sheets;
 
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -26,6 +27,7 @@ import org.apache.camel.spi.UriPath;
  * Component configuration for GoogleSheets component.
  */
 @UriParams
+@Configurer
 public class GoogleSheetsConfiguration {
 
     @UriPath
@@ -39,13 +41,13 @@ public class GoogleSheetsConfiguration {
     @UriParam
     private String clientId;
 
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String clientSecret;
 
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessToken;
 
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String refreshToken;
 
     @UriParam

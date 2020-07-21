@@ -1,15 +1,20 @@
 [[mvel-component]]
 = MVEL Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-mvel/src/main/docs/mvel-component.adoc
+:docTitle: MVEL
+:artifactId: camel-mvel
+:description: Transform messages using an MVEL template.
+:since: 2.12
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.12*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The MVEL component allows you to process a message using an
-http://mvel.codehaus.org/[MVEL] template. This can be ideal when using
+http://mvel.documentnode.com/[MVEL] template. This can be ideal when using
 Templating to generate responses for requests.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -43,15 +48,17 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The MVEL component supports 2 options, which are listed below.
+The MVEL component supports 4 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *allowContextMapAll* (producer) | Sets whether the context map should allow access to all details. By default only the message body and headers can be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose a potential security risk as this opens access to the full power of CamelContext API. | false | boolean
+| *allowTemplateFromHeader* (producer) | Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -77,12 +84,14 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (5 parameters):
+=== Query Parameters (7 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *allowContextMapAll* (producer) | Sets whether the context map should allow access to all details. By default only the message body and headers can be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose a potential security risk as this opens access to the full power of CamelContext API. | false | boolean
+| *allowTemplateFromHeader* (producer) | Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care. | false | boolean
 | *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
 | *encoding* (producer) | Character encoding of the resource content. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
@@ -90,37 +99,6 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-mvel-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 6 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.mvel.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.mvel.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.mvel.enabled* | Whether to enable auto configuration of the mvel component. This is enabled by default. |  | Boolean
-| *camel.component.mvel.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-| *camel.language.mvel.enabled* | Whether to enable auto configuration of the mvel language. This is enabled by default. |  | Boolean
-| *camel.language.mvel.trim* | Whether to trim the value to remove leading and trailing whitespaces and line breaks | true | Boolean
-|===
-// spring-boot-auto-configure options: END
 
 
 
@@ -209,7 +187,7 @@ header, so for example:
 -------------------------------------------------------------------------
 from("direct:in").
   setHeader("CamelMvelResourceUri").constant("path/to/my/template.mvel").
-  to("mvel:dummy");
+  to("mvel:dummy?allowTemplateFromHeader=true");
 -------------------------------------------------------------------------
 
 To specify a template directly as a header the component should use
@@ -219,6 +197,8 @@ dynamically via a header, so for example:
 ------------------------------------------------------------------------------------------
 from("direct:in").
   setHeader("CamelMvelTemplate").constant("@{\"The result is \" + request.body * 3}\" }").
-  to("velocity:dummy");
+  to("velocity:dummy?allowTemplateFromHeader=true");
 ------------------------------------------------------------------------------------------
 
+
+include::camel-spring-boot::page$mvel-starter.adoc[]

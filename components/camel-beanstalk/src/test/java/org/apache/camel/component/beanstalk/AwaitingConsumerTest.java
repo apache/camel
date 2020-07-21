@@ -21,7 +21,9 @@ import com.surftools.BeanstalkClient.Job;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.atLeast;
@@ -30,6 +32,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@DisabledOnOs(OS.WINDOWS)
 public class AwaitingConsumerTest extends BeanstalkMockTestSupport {
 
     @EndpointInject("beanstalk:tube")
@@ -38,10 +41,7 @@ public class AwaitingConsumerTest extends BeanstalkMockTestSupport {
     private String testMessage = "hello, world";
 
     @Test
-    public void testReceive() throws Exception {
-        if (!canTest()) {
-            return;
-        }
+    void testReceive() throws Exception {
 
         final Job jobMock = mock(Job.class);
         final long jobId = 111;
@@ -65,10 +65,7 @@ public class AwaitingConsumerTest extends BeanstalkMockTestSupport {
     }
 
     @Test
-    public void testBeanstalkException() throws Exception {
-        if (!canTest()) {
-            return;
-        }
+    void testBeanstalkException() throws Exception {
 
         final Job jobMock = mock(Job.class);
         final long jobId = 111;

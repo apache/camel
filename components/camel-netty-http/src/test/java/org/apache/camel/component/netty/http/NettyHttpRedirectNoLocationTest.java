@@ -17,10 +17,16 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class NettyHttpRedirectNoLocationTest extends BaseNettyTest {
 
@@ -34,9 +40,9 @@ public class NettyHttpRedirectNoLocationTest extends BaseNettyTest {
         } catch (RuntimeCamelException e) {
             NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
             assertEquals(302, cause.getStatusCode());
-            assertEquals(true, cause.isRedirectError());
-            assertEquals(false, cause.hasRedirectLocation());
-            assertEquals(null, cause.getRedirectLocation());
+            assertTrue(cause.isRedirectError());
+            assertFalse(cause.hasRedirectLocation());
+            assertNull(cause.getRedirectLocation());
         }
     }
 
@@ -48,11 +54,7 @@ public class NettyHttpRedirectNoLocationTest extends BaseNettyTest {
                 nextPort = getNextPort();
 
                 from("netty-http:http://localhost:" + nextPort + "/test")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 302);
-                            }
-                        });
+                        .process(exchange -> exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 302));
             }
         };
     }

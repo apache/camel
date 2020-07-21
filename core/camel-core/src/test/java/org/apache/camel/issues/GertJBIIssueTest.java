@@ -21,10 +21,13 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GertJBIIssueTest extends ContextTestSupport {
 
@@ -74,7 +77,7 @@ public class GertJBIIssueTest extends ContextTestSupport {
 
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
-                exchange.addOnCompletion(new SynchronizationAdapter() {
+                exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                     @Override
                     public void onDone(Exchange exchange) {
                         cause = exchange.getException();
@@ -86,7 +89,7 @@ public class GertJBIIssueTest extends ContextTestSupport {
 
         assertTrue(latch.await(10, TimeUnit.SECONDS));
 
-        assertNotNull("Should have failed", cause);
+        assertNotNull(cause, "Should have failed");
         assertIsInstanceOf(IllegalArgumentException.class, cause);
         assertEquals("Forced", cause.getMessage());
     }

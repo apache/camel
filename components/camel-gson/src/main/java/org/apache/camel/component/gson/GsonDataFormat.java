@@ -32,9 +32,13 @@ import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.LongSerializationPolicy;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -45,10 +49,13 @@ import org.apache.camel.util.IOHelper;
  * using <a href="http://code.google.com/p/google-gson/">Gson</a> to marshal to and from JSON.
  */
 @Dataformat("json-gson")
-public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+@Metadata(includeProperties = "unmarshalTypeName,prettyPrint,contentTypeHeader")
+public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 
+    private CamelContext camelContext;
     private Gson gson;
     private Class<?> unmarshalType;
+    private String unmarshalTypeName;
     private Type unmarshalGenericType;
     private List<ExclusionStrategy> exclusionStrategies;
     private LongSerializationPolicy longSerializationPolicy;
@@ -120,6 +127,16 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFo
     }
 
     @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
     public String getDataFormatName() {
         return "json-gson";
     }
@@ -144,11 +161,23 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFo
     public Object unmarshal(final Exchange exchange, final InputStream stream) throws Exception {
         try (final InputStreamReader isr = new InputStreamReader(stream, ExchangeHelper.getCharsetName(exchange));
              final BufferedReader reader = IOHelper.buffered(isr)) {
-            if (unmarshalGenericType == null) {
+
+            String type = exchange.getIn().getHeader(GsonConstants.UNMARSHAL_TYPE, String.class);
+            if (type != null) {
+                Class<?> clazz = exchange.getContext().getClassResolver().resolveMandatoryClass(type);
+                return gson.fromJson(reader, clazz);
+            } else if (unmarshalGenericType == null) {
                 return gson.fromJson(reader, unmarshalType);
             } else {
                 return gson.fromJson(reader, unmarshalGenericType);
             }
+        }
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        if (unmarshalTypeName != null && (unmarshalType == null || unmarshalType == Object.class)) {
+            unmarshalType = camelContext.getClassResolver().resolveClass(unmarshalTypeName);
         }
     }
 
@@ -196,6 +225,14 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
+    }
+
+    public String getUnmarshalTypeName() {
+        return unmarshalTypeName;
+    }
+
+    public void setUnmarshalTypeName(String unmarshalTypeName) {
+        this.unmarshalTypeName = unmarshalTypeName;
     }
 
     public Type getUnmarshalGenericType() {

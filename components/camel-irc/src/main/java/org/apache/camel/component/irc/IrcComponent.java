@@ -28,12 +28,16 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventListener;
 import org.schwering.irc.lib.ssl.SSLIRCConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Defines the <a href="http://camel.apache.org/irc.html">IRC Component</a>
  */
 @Component("irc,ircs")
 public class IrcComponent extends DefaultComponent implements SSLContextParametersAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(IrcComponent.class);
 
     private final transient Map<String, IRCConnection> connectionCache = new HashMap<>();
 
@@ -50,15 +54,15 @@ public class IrcComponent extends DefaultComponent implements SSLContextParamete
         config.configure(uri);
 
         IrcEndpoint endpoint = new IrcEndpoint(uri, this, config);
-        setProperties(endpoint.getConfiguration(), parameters);
+        setProperties(endpoint, parameters);
         return endpoint;
     }
 
     public synchronized IRCConnection getIRCConnection(IrcConfiguration configuration) {
         final IRCConnection connection;
         if (connectionCache.containsKey(configuration.getCacheKey())) {
-            if (log.isDebugEnabled()) {
-                log.debug("Returning Cached Connection to {}:{}", configuration.getHostname(), configuration.getNickname());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Returning Cached Connection to {}:{}", configuration.getHostname(), configuration.getNickname());
             }
             connection = connectionCache.get(configuration.getCacheKey());
         } else {
@@ -68,14 +72,22 @@ public class IrcComponent extends DefaultComponent implements SSLContextParamete
         return connection;
     }
 
+    public synchronized void closeIRCConnection(IrcConfiguration configuration) {
+        IRCConnection connection = connectionCache.get(configuration.getCacheKey());
+        if (connection != null) {
+            closeConnection(configuration.getCacheKey(), connection);
+            connectionCache.remove(configuration.getCacheKey());
+        }
+    }
+
     protected IRCConnection createConnection(IrcConfiguration configuration) {
         IRCConnection conn = null;
         IRCEventListener ircLogger;
 
         if (configuration.getUsingSSL()) {
 
-            if (log.isDebugEnabled()) {
-                log.debug("Creating SSL Connection to {} destination(s): {} nick: {} user: {}",
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Creating SSL Connection to {} destination(s): {} nick: {} user: {}",
                     new Object[]{configuration.getHostname(), configuration.getSpaceSeparatedChannelNames(), configuration.getNickname(), configuration.getUsername()});
             }
 
@@ -96,8 +108,8 @@ public class IrcComponent extends DefaultComponent implements SSLContextParamete
                 conn = sconn;
             }
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Creating Connection to {} destination(s): {} nick: {} user: {}",
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Creating Connection to {} destination(s): {} nick: {} user: {}",
                         new Object[]{configuration.getHostname(), configuration.getSpaceSeparatedChannelNames(), configuration.getNickname(), configuration.getUsername()});
             }
 
@@ -108,8 +120,8 @@ public class IrcComponent extends DefaultComponent implements SSLContextParamete
         conn.setColors(configuration.isColors());
         conn.setPong(true);
 
-        if (log.isDebugEnabled()) {
-            log.debug("Adding IRC event logging listener");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Adding IRC event logging listener");
             ircLogger = createIrcLogger(configuration.getHostname());
             conn.addIRCEventListener(ircLogger);
         }
@@ -127,7 +139,7 @@ public class IrcComponent extends DefaultComponent implements SSLContextParamete
             connection.doQuit();
             connection.close();
         } catch (Exception e) {
-            log.warn("Error during closing connection.", e);
+            LOG.warn("Error during closing connection.", e);
         }
     }
 
@@ -143,13 +155,7 @@ public class IrcComponent extends DefaultComponent implements SSLContextParamete
     }
 
     protected IRCEventListener createIrcLogger(String hostname) {
-        return new IrcLogger(log, hostname);
-    }
-
-    @Override
-    @Deprecated
-    protected String preProcessUri(String uri) {
-        return IrcConfiguration.sanitize(uri);
+        return new IrcLogger(LOG, hostname);
     }
 
     @Override

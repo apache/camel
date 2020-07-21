@@ -20,7 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.ExchangeHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpProxyRouteContentTypeTest extends BaseJettyTest {
 
@@ -29,7 +31,7 @@ public class HttpProxyRouteContentTypeTest extends BaseJettyTest {
 
         String out = template.requestBodyAndHeader("http://localhost:{{port}}/hello", "test", "Content-Type", "application/xml", String.class);
 
-        assertEquals("Get a wrong response ", "application/xml", out);
+        assertEquals("application/xml", out, "Get a wrong response ");
     }
 
     @Override

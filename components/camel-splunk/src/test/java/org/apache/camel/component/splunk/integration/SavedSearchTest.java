@@ -36,9 +36,9 @@ public class SavedSearchTest extends SplunkTest {
         searchMock.expectedMessageCount(1);
 
         assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
-        SplunkEvent recieved = searchMock.getReceivedExchanges().get(0).getIn().getBody(SplunkEvent.class);
-        assertNotNull(recieved);
-        Map<String, String> data = recieved.getEventData();
+        SplunkEvent received = searchMock.getReceivedExchanges().get(0).getIn().getBody(SplunkEvent.class);
+        assertNotNull(received);
+        Map<String, String> data = received.getEventData();
         assertEquals("value1", data.get("key1"));
         assertEquals("value2", data.get("key2"));
         assertEquals("value3", data.get("key3"));
@@ -51,7 +51,7 @@ public class SavedSearchTest extends SplunkTest {
                 from("direct:submit").to("splunk://submit?username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD + "&index=" + INDEX + "&sourceType=testSource&source=test")
                         .to("mock:submit-result");
 
-                from("splunk://savedsearch?delay=5s&username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD + "&initEarliestTime=-10s&latestTime=now" + "&savedSearch=junit")
+                from("splunk://savedsearch?delay=5000&username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD + "&initEarliestTime=-10s&latestTime=now" + "&savedSearch=junit")
                         .to("mock:search-saved");
             }
         };

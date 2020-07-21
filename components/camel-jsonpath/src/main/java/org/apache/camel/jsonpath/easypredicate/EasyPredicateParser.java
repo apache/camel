@@ -61,7 +61,7 @@ public class EasyPredicateParser {
             if (isOperator(op)) {
                 String before;
                 String after;
-                int pos = prev.lastIndexOf(".");
+                int pos = prev.lastIndexOf('.');
                 if (pos == -1) {
                     before = "..*";
                     after = prev;

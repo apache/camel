@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -45,16 +46,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cloud.ServiceRegistry;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.component.properties.PropertiesFunction;
 import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
-import org.apache.camel.health.HealthCheckService;
 import org.apache.camel.impl.engine.DefaultManagementStrategy;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.model.ContextScanDefinition;
+import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.GlobalOptionsDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
@@ -73,6 +73,10 @@ import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
+import org.apache.camel.model.RouteTemplateContainer;
+import org.apache.camel.model.RouteTemplateContextRefDefinition;
+import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
@@ -86,8 +90,6 @@ import org.apache.camel.model.validator.ValidatorsDefinition;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.reifier.transformer.TransformerReifier;
 import org.apache.camel.reifier.validator.ValidatorReifier;
-import org.apache.camel.runtimecatalog.JSonSchemaResolver;
-import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataType;
@@ -110,6 +112,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RouteController;
@@ -117,6 +120,7 @@ import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.Transformer;
@@ -138,7 +142,7 @@ import org.slf4j.LoggerFactory;
  * {@link org.apache.camel.builder.RouteBuilder}.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContext> extends IdentifiedType implements RouteContainer, RestContainer {
+public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContext> extends IdentifiedType implements RouteTemplateContainer, RouteContainer, RestContainer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelContextFactoryBean.class);
 
@@ -174,6 +178,13 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             throw new IllegalArgumentException("Id must be set");
         }
 
+        // set properties as early as possible
+        PropertiesComponent pc = getBeanForType(PropertiesComponent.class);
+        if (pc != null) {
+            LOG.debug("Using PropertiesComponent: {}", pc);
+            getContext().setPropertiesComponent(pc);
+        }
+
         // set the package scan resolver as soon as possible
         PackageScanClassResolver packageResolver = getBeanForType(PackageScanClassResolver.class);
         if (packageResolver != null) {
@@ -188,11 +199,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             getContext().setTypeConverterRegistry(tcr);
         }
 
-        // then properties component
-        PropertiesComponent pc = getBeanForType(PropertiesComponent.class);
-        if (pc != null) {
-            LOG.debug("Using PropertiesComponent: {}", pc);
-            getContext().setPropertiesComponent(pc);
+        // setup whether to load type converters as early as possible
+        if (getLoadTypeConverters() != null) {
+            String s = getContext().resolvePropertyPlaceholders(getLoadTypeConverters());
+            getContext().setLoadTypeConverters(Boolean.parseBoolean(s));
         }
 
         // then set custom properties
@@ -260,12 +270,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         HeadersMapFactory headersMapFactory = getBeanForType(HeadersMapFactory.class);
         if (headersMapFactory != null) {
             LOG.info("Using custom HeadersMapFactory: {}", headersMapFactory);
-            getContext().setHeadersMapFactory(headersMapFactory);
-        }
-        JSonSchemaResolver jsonSchemaResolver = getBeanForType(JSonSchemaResolver.class);
-        if (jsonSchemaResolver != null) {
-            LOG.info("Using custom JSonSchemaResolver: {}", jsonSchemaResolver);
-            getContext().getExtension(RuntimeCamelCatalog.class).setJSonSchemaResolver(jsonSchemaResolver);
+            getContext().adapt(ExtendedCamelContext.class).setHeadersMapFactory(headersMapFactory);
         }
         // custom type converters defined as <bean>s
         Map<String, TypeConverters> typeConverters = getContext().getRegistry().findByTypeWithName(TypeConverters.class);
@@ -366,26 +371,20 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             LOG.info("Using HealthCheckRegistry: {}", healthCheckRegistry);
             getContext().setExtension(HealthCheckRegistry.class, healthCheckRegistry);
         } else {
+            // okay attempt to inject this camel context into existing health check (if any)
             healthCheckRegistry = HealthCheckRegistry.get(getContext());
-        }
-        // Health check repository
-        Set<HealthCheckRepository> repositories = getContext().getRegistry().findByType(HealthCheckRepository.class);
-        if (org.apache.camel.util.ObjectHelper.isNotEmpty(repositories)) {
-            for (HealthCheckRepository repository: repositories) {
-                healthCheckRegistry.addRepository(repository);
+            if (healthCheckRegistry != null) {
+                healthCheckRegistry.setCamelContext(getContext());
             }
         }
-        // Health check service
-        HealthCheckService healthCheckService = getBeanForType(HealthCheckService.class);
-        if (healthCheckService != null) {
-            LOG.info("Using HealthCheckService: {}", healthCheckService);
-            getContext().addService(healthCheckService);
-        }
-        // Route controller
-        RouteController routeController = getBeanForType(RouteController.class);
-        if (routeController != null) {
-            LOG.info("Using RouteController: {}", routeController);
-            getContext().setRouteController(routeController);
+        if (healthCheckRegistry != null) {
+            // Health check repository
+            Set<HealthCheckRepository> repositories = getContext().getRegistry().findByType(HealthCheckRepository.class);
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(repositories)) {
+                for (HealthCheckRepository repository : repositories) {
+                    healthCheckRegistry.register(repository);
+                }
+            }
         }
         // UuidGenerator
         UuidGenerator uuidGenerator = getBeanForType(UuidGenerator.class);
@@ -417,7 +416,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         // init stream caching strategy
         initStreamCachingStrategy();
 
-        getContext().init();
+        // init route controller
+        initRouteController();
     }
     //CHECKSTYLE:ON
 
@@ -430,6 +430,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
             // mark that we are setting up routes
             getContext().adapt(ExtendedCamelContext.class).setupRoutes(false);
+
+            // init route templates
+            initRouteTemplateRefs();
 
             // must init route refs before we prepare the routes below
             initRouteRefs();
@@ -444,23 +447,23 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             getContext().addRestDefinitions(getRests(), false);
 
             // convert rests api-doc into routes so they are routes for runtime
-            for (RestConfiguration config : getContext().getRestConfigurations()) {
-                if (config.getApiContextPath() != null) {
-                    // avoid adding rest-api multiple times, in case multiple RouteBuilder classes is added
-                    // to the CamelContext, as we only want to setup rest-api once
-                    // so we check all existing routes if they have rest-api route already added
-                    boolean hasRestApi = false;
-                    for (RouteDefinition route : getContext().getRouteDefinitions()) {
-                        FromDefinition from = route.getInput();
-                        if (from.getUri() != null && from.getUri().startsWith("rest-api:")) {
-                            hasRestApi = true;
-                        }
+            RestConfiguration config = getContext().getRestConfiguration();
+
+            if (config.getApiContextPath() != null) {
+                // avoid adding rest-api multiple times, in case multiple RouteBuilder classes is added
+                // to the CamelContext, as we only want to setup rest-api once
+                // so we check all existing routes if they have rest-api route already added
+                boolean hasRestApi = false;
+                for (RouteDefinition route : getContext().getRouteDefinitions()) {
+                    FromDefinition from = route.getInput();
+                    if (from.getUri() != null && from.getUri().startsWith("rest-api:")) {
+                        hasRestApi = true;
                     }
-                    if (!hasRestApi) {
-                        RouteDefinition route = RestDefinition.asRouteApiDefinition(getContext(), config);
-                        LOG.debug("Adding routeId: {} as rest-api route", route.getId());
-                        getRoutes().add(route);
-                    }
+                }
+                if (!hasRestApi) {
+                    RouteDefinition route = RestDefinition.asRouteApiDefinition(getContext(), config);
+                    LOG.debug("Adding routeId: {} as rest-api route", route.getId());
+                    getRoutes().add(route);
                 }
             }
 
@@ -468,6 +471,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             for (RestDefinition rest : getContext().getRestDefinitions()) {
                 rest.asRouteDefinition(getContext()).forEach(r -> getRoutes().add(r));
             }
+
+            // add route templates
+            getContext().addRouteTemplateDefinitions(getRouteTemplates());
 
             // do special preparation for some concepts such as interceptors and policies
             // this is needed as JAXB does not build exactly the same model definition as Spring DSL would do
@@ -491,7 +497,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getTransformers() != null) {
             for (TransformerDefinition def : getTransformers().getTransformers()) {
                 // create and register transformers on transformer registry
-                Transformer transformer = TransformerReifier.reifier(def).createTransformer(getContext());
+                Transformer transformer = TransformerReifier.reifier(getContext(), def).createTransformer();
                 getContext().getTransformerRegistry().put(createTransformerKey(def), transformer);
             }
         }
@@ -505,7 +511,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getValidators() != null) {
             for (ValidatorDefinition def : getValidators().getValidators()) {
                 // create and register validators on validator registry
-                Validator validator = ValidatorReifier.reifier(def).createValidator(getContext());
+                Validator validator = ValidatorReifier.reifier(getContext(), def).createValidator();
                 getContext().getValidatorRegistry().put(createValidatorKey(def), validator);
             }
         }
@@ -545,29 +551,17 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
 
         if (disabled) {
-            LOG.info("JMXAgent disabled");
+            LOG.debug("JMXAgent disabled");
             // clear the existing lifecycle strategies define by the DefaultCamelContext constructor
             getContext().getLifecycleStrategies().clear();
             // no need to add a lifecycle strategy as we do not need one as JMX is disabled
             getContext().setManagementStrategy(new DefaultManagementStrategy());
         } else if (camelJMXAgent != null) {
-            LOG.info("JMXAgent enabled: {}", camelJMXAgent);
+            LOG.debug("JMXAgent enabled: {}", camelJMXAgent);
 
             Map<String, Object> properties = new HashMap<>();
-            if (camelJMXAgent.getConnectorPort() != null) {
-                properties.put("connectorPort", CamelContextHelper.parseInteger(getContext(), camelJMXAgent.getConnectorPort()));
-            }
-            if (camelJMXAgent.getCreateConnector() != null) {
-                properties.put("createConnector", CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getCreateConnector()));
-            }
             if (camelJMXAgent.getMbeanObjectDomainName() != null) {
                 properties.put("mbeanObjectDomainName", CamelContextHelper.parseText(getContext(), camelJMXAgent.getMbeanObjectDomainName()));
-            }
-            if (camelJMXAgent.getRegistryPort() != null) {
-                properties.put("registryPort", CamelContextHelper.parseInteger(getContext(), camelJMXAgent.getRegistryPort()));
-            }
-            if (camelJMXAgent.getServiceUrlPath() != null) {
-                properties.put("serviceUrlPath", CamelContextHelper.parseText(getContext(), camelJMXAgent.getServiceUrlPath()));
             }
             if (camelJMXAgent.getUsePlatformMBeanServer() != null) {
                 properties.put("usePlatformMBeanServer", CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getUsePlatformMBeanServer()));
@@ -660,6 +654,68 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
     }
 
+    protected void initRouteController() throws Exception {
+        // Route controller
+        RouteController routeController = getBeanForType(RouteController.class);
+        if (routeController != null) {
+            LOG.info("Using RouteController: {}", routeController);
+            getContext().setRouteController(routeController);
+            // we are using custom so dont attempt to use the default below
+            return;
+        }
+
+        CamelRouteControllerDefinition rc = getCamelRouteController();
+        if (rc == null) {
+            return;
+        }
+
+        SupervisingRouteController src = null;
+        Boolean enabled = CamelContextHelper.parseBoolean(getContext(), rc.getSupervising());
+        if (enabled != null) {
+            src = getContext().getRouteController().supervising();
+        }
+        String includeRoutes = CamelContextHelper.parseText(getContext(), rc.getIncludeRoutes());
+        if (includeRoutes != null && src != null) {
+            src.setIncludeRoutes(includeRoutes);
+        }
+        String excludeRoutes = CamelContextHelper.parseText(getContext(), rc.getExcludeRoutes());
+        if (excludeRoutes != null && src != null) {
+            src.setExcludeRoutes(excludeRoutes);
+        }
+        Integer threadPoolSize = CamelContextHelper.parseInteger(getContext(), rc.getThreadPoolSize());
+        if (threadPoolSize != null && src != null) {
+            src.setThreadPoolSize(threadPoolSize);
+        }
+        Long initialDelay = CamelContextHelper.parseLong(getContext(), rc.getInitialDelay());
+        if (initialDelay != null && src != null) {
+            src.setInitialDelay(initialDelay);
+        }
+        Long backoffDelay = CamelContextHelper.parseLong(getContext(), rc.getBackOffDelay());
+        if (backoffDelay != null && src != null) {
+            src.setBackOffDelay(backoffDelay);
+        }
+        Long backOffMaxDelay = CamelContextHelper.parseLong(getContext(), rc.getBackOffMaxDelay());
+        if (backOffMaxDelay != null && src != null) {
+            src.setBackOffMaxDelay(backOffMaxDelay);
+        }
+        Long backOffMaxElapsedTime = CamelContextHelper.parseLong(getContext(), rc.getBackOffMaxElapsedTime());
+        if (backOffMaxElapsedTime != null && src != null) {
+            src.setBackOffMaxElapsedTime(backOffMaxElapsedTime);
+        }
+        Long backOffMaxAttempts = CamelContextHelper.parseLong(getContext(), rc.getBackOffMaxAttempts());
+        if (backOffMaxAttempts != null && src != null) {
+            src.setBackOffMaxAttempts(backOffMaxAttempts);
+        }
+        Double backOffMultiplier = CamelContextHelper.parseDouble(getContext(), rc.getBackOffMultiplier());
+        if (backOffMultiplier != null && src != null) {
+            src.setBackOffMultiplier(backOffMultiplier);
+        }
+        Boolean unhealthyOnExhausted = CamelContextHelper.parseBoolean(getContext(), rc.getUnhealthyOnExhausted());
+        if (unhealthyOnExhausted != null && unhealthyOnExhausted) {
+            src.setUnhealthyOnExhausted(unhealthyOnExhausted);
+        }
+    }
+
     protected void initPropertyPlaceholder() throws Exception {
         if (getCamelPropertyPlaceholder() != null) {
             CamelPropertyPlaceholderDefinition def = getCamelPropertyPlaceholder();
@@ -691,16 +747,16 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                                                                              PropertiesParser.class);
                 pc.setPropertiesParser(parser);
             }
-            
+
             if (def.getDefaultFallbackEnabled() != null) {
                 pc.setDefaultFallbackEnabled(def.getDefaultFallbackEnabled());
             }
-            
+
             if (def.getFunctions() != null && !def.getFunctions().isEmpty()) {
                 for (CamelPropertyPlaceholderFunctionDefinition function : def.getFunctions()) {
                     String ref = function.getRef();
                     PropertiesFunction pf = CamelContextHelper.mandatoryLookup(getContext(), ref, PropertiesFunction.class);
-                    pc.addFunction(pf);
+                    pc.addPropertiesFunction(pf);
                 }
             }
 
@@ -719,6 +775,19 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                     // add in top as they are most likely to be common/shared
                     // which you may want to start first
                     getRoutes().add(0, def);
+                }
+            }
+        }
+    }
+
+    protected void initRouteTemplateRefs() throws Exception {
+        // add route template refs to existing route templates
+        if (getRouteTemplateRefs() != null) {
+            for (RouteTemplateContextRefDefinition ref : getRouteTemplateRefs()) {
+                List<RouteTemplateDefinition> defs = ref.lookupRouteTemplates(getContext());
+                for (RouteTemplateDefinition def : defs) {
+                    LOG.debug("Adding route template from {} -> {}", ref, def);
+                    getRouteTemplates().add(def);
                 }
             }
         }
@@ -753,6 +822,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     }
 
     public abstract T getContext(boolean create);
+
+    @Override
+    public abstract List<RouteTemplateDefinition> getRouteTemplates();
 
     @Override
     public abstract List<RouteDefinition> getRoutes();
@@ -816,15 +888,19 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract String getAllowUseOriginalMessage();
 
+    public abstract String getCaseInsensitiveHeaders();
+
     public abstract String getRuntimeEndpointRegistryEnabled();
 
     public abstract String getManagementNamePattern();
 
     public abstract String getThreadNamePattern();
 
-    public abstract Boolean getLoadTypeConverters();
+    public abstract String getLoadTypeConverters();
 
-    public abstract Boolean getTypeConverterStatisticsEnabled();
+    public abstract String getInflightRepositoryBrowseEnabled();
+
+    public abstract String getTypeConverterStatisticsEnabled();
 
     public abstract LoggingLevel getTypeConverterExistsLoggingLevel();
 
@@ -834,9 +910,13 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract CamelStreamCachingStrategyDefinition getCamelStreamCachingStrategy();
 
+    public abstract CamelRouteControllerDefinition getCamelRouteController();
+
     public abstract List<RouteBuilderDefinition> getBuilderRefs();
 
     public abstract List<RouteContextRefDefinition> getRouteRefs();
+
+    public abstract List<RouteTemplateContextRefDefinition> getRouteTemplateRefs();
 
     public abstract List<RestContextRefDefinition> getRestRefs();
 
@@ -875,6 +955,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     public abstract Resilience4jConfigurationDefinition getDefaultResilience4jConfiguration();
 
     public abstract List<Resilience4jConfigurationDefinition> getResilience4jConfigurations();
+
+    public abstract FaultToleranceConfigurationDefinition getDefaultFaultToleranceConfiguration();
+
+    public abstract List<FaultToleranceConfigurationDefinition> getFaultToleranceConfigurations();
 
     // Implementation methods
     // -------------------------------------------------------------------------
@@ -934,6 +1018,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getAllowUseOriginalMessage() != null) {
             context.setAllowUseOriginalMessage(CamelContextHelper.parseBoolean(context, getAllowUseOriginalMessage()));
         }
+        if (getCaseInsensitiveHeaders() != null) {
+            context.setCaseInsensitiveHeaders(CamelContextHelper.parseBoolean(context, getCaseInsensitiveHeaders()));
+        }
         if (getRuntimeEndpointRegistryEnabled() != null) {
             context.getRuntimeEndpointRegistry().setEnabled(CamelContextHelper.parseBoolean(context, getRuntimeEndpointRegistryEnabled()));
         }
@@ -959,7 +1046,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             context.setValidators(getValidators().getValidators());
         }
         if (getTypeConverterStatisticsEnabled() != null) {
-            context.setTypeConverterStatisticsEnabled(getTypeConverterStatisticsEnabled());
+            context.setTypeConverterStatisticsEnabled(CamelContextHelper.parseBoolean(context, getTypeConverterStatisticsEnabled()));
+        }
+        if (getInflightRepositoryBrowseEnabled() != null) {
+            context.getInflightRepository().setInflightBrowseEnabled(CamelContextHelper.parseBoolean(context, getInflightRepositoryBrowseEnabled()));
         }
         if (getTypeConverterExists() != null) {
             context.getTypeConverterRegistry().setTypeConverterExists(getTypeConverterExists());
@@ -968,7 +1058,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             context.getTypeConverterRegistry().setTypeConverterExistsLoggingLevel(getTypeConverterExistsLoggingLevel());
         }
         if (getRestConfiguration() != null) {
-            context.setRestConfiguration(getRestConfiguration().asRestConfiguration(context));
+            getRestConfiguration().asRestConfiguration(context, context.getRestConfiguration());
         }
         if (getDefaultServiceCallConfiguration() != null) {
             context.setServiceCallConfiguration(getDefaultServiceCallConfiguration());
@@ -992,6 +1082,14 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getResilience4jConfigurations() != null) {
             for (Resilience4jConfigurationDefinition bean : getResilience4jConfigurations()) {
                 context.addResilience4jConfiguration(bean.getId(), bean);
+            }
+        }
+        if (getDefaultFaultToleranceConfiguration() != null) {
+            context.setFaultToleranceConfiguration(getDefaultFaultToleranceConfiguration());
+        }
+        if (getFaultToleranceConfigurations() != null) {
+            for (FaultToleranceConfigurationDefinition bean : getFaultToleranceConfigurations()) {
+                context.addFaultToleranceConfiguration(bean.getId(), bean);
             }
         }
     }
@@ -1018,7 +1116,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         // use custom profiles defined in the CamelContext
         if (getThreadPoolProfiles() != null && !getThreadPoolProfiles().isEmpty()) {
             for (ThreadPoolProfileDefinition definition : getThreadPoolProfiles()) {
-                if (definition.isDefaultProfile()) {
+                Boolean defaultProfile = CamelContextHelper.parseBoolean(getContext(), definition.getDefaultProfile());
+                if (defaultProfile != null && defaultProfile) {
                     LOG.info("Using custom default ThreadPoolProfile with id: {} and implementation: {}", definition.getId(), definition);
                     context.getExecutorServiceManager().setDefaultThreadPoolProfile(asThreadPoolProfile(context, definition));
                     defaultIds.add(definition.getId());
@@ -1044,14 +1143,14 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     private ThreadPoolProfile asThreadPoolProfile(CamelContext context, ThreadPoolProfileDefinition definition) throws Exception {
         ThreadPoolProfile answer = new ThreadPoolProfile();
         answer.setId(definition.getId());
-        answer.setDefaultProfile(definition.getDefaultProfile());
+        answer.setDefaultProfile(CamelContextHelper.parseBoolean(context, definition.getDefaultProfile()));
         answer.setPoolSize(CamelContextHelper.parseInteger(context, definition.getPoolSize()));
         answer.setMaxPoolSize(CamelContextHelper.parseInteger(context, definition.getMaxPoolSize()));
         answer.setKeepAliveTime(CamelContextHelper.parseLong(context, definition.getKeepAliveTime()));
         answer.setMaxQueueSize(CamelContextHelper.parseInteger(context, definition.getMaxQueueSize()));
         answer.setAllowCoreThreadTimeOut(CamelContextHelper.parseBoolean(context, definition.getAllowCoreThreadTimeOut()));
         answer.setRejectedPolicy(CamelContextHelper.parse(context, ThreadPoolRejectedPolicy.class, definition.getRejectedPolicy()));
-        answer.setTimeUnit(definition.getTimeUnit());
+        answer.setTimeUnit(CamelContextHelper.parse(context, TimeUnit.class, definition.getTimeUnit()));
         return answer;
     }
 
@@ -1226,7 +1325,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         ReactiveExecutor reactiveExecutor = getBeanForType(ReactiveExecutor.class);
         if (reactiveExecutor != null) {
             // already logged in CamelContext
-            getContext().setReactiveExecutor(reactiveExecutor);
+            getContext().adapt(ExtendedCamelContext.class).setReactiveExecutor(reactiveExecutor);
         }
     }
 }

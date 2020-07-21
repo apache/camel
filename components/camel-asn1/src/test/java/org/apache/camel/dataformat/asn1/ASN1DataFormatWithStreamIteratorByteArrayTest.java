@@ -24,10 +24,12 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.io.FileUtils;
 import org.bouncycastle.asn1.ASN1Primitive;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ASN1DataFormatWithStreamIteratorByteArrayTest extends CamelTestSupport {
 
@@ -55,30 +57,30 @@ public class ASN1DataFormatWithStreamIteratorByteArrayTest extends CamelTestSupp
     }
 
     @Test
-    public void testUnmarshalReturnByteArray() throws Exception {
+    void testUnmarshalReturnByteArray() throws Exception {
         baseASN1DataFormatWithStreamIteratorByteArrayTest("mock:unmarshal", "direct:unmarshal");
     }
     
     @Test
-    public void testUnmarshalReturnByteArrayDsl() throws Exception {
+    void testUnmarshalReturnByteArrayDsl() throws Exception {
         baseASN1DataFormatWithStreamIteratorByteArrayTest("mock:unmarshaldsl", "direct:unmarshaldsl");
     }
 
     @Test
-    public void testUnmarshalMarshalReturnOutputStream() throws Exception {
+    void testUnmarshalMarshalReturnOutputStream() throws Exception {
         baseASN1DataFormatWithStreamIteratorByteArrayTest("mock:marshal", "direct:unmarshalthenmarshal");
     }
     
     @Test
-    public void testUnmarshalMarshalReturnOutputStreamDsl() throws Exception {
+    void testUnmarshalMarshalReturnOutputStreamDsl() throws Exception {
         baseASN1DataFormatWithStreamIteratorByteArrayTest("mock:marshaldsl", "direct:unmarshalthenmarshaldsl");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 asn1 = new ASN1DataFormat();
                 asn1.setUsingIterator(true);

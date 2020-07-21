@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -41,6 +40,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -49,16 +49,16 @@ import org.apache.camel.support.service.ServiceSupport;
  * An abstract class which implement <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link DataFormat}) interface which leverage the XStream library for XML or JSON's marshaling and unmarshaling
  */
-public abstract class AbstractXStreamWrapper extends ServiceSupport implements CamelContextAware, DataFormat, DataFormatName {
+public abstract class AbstractXStreamWrapper extends ServiceSupport implements CamelContextAware, DataFormat, DataFormatName, DataFormatContentTypeHeader {
     private static final String PERMISSIONS_PROPERTY_KEY = "org.apache.camel.xstream.permissions";
 
     private CamelContext camelContext;
     private XStream xstream;
     private HierarchicalStreamDriver xstreamDriver;
-    private List<String> converters;
+    private Map<String, String> converters;
     private Map<String, String> aliases;
-    private Map<String, String[]> omitFields;
-    private Map<String, String[]> implicitCollections;
+    private Map<String, String> omitFields;
+    private Map<String, String> implicitCollections;
     private String permissions;
     private String mode;
     private boolean contentTypeHeader = true;
@@ -130,8 +130,9 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
 
         try {
             if (this.implicitCollections != null) {
-                for (Entry<String, String[]> entry : this.implicitCollections.entrySet()) {
-                    for (String name : entry.getValue()) {
+                for (Entry<String, String> entry : this.implicitCollections.entrySet()) {
+                    String[] values = entry.getValue().split(",");
+                    for (String name : values) {
                         xstream.addImplicitCollection(resolver.resolveMandatoryClass(entry.getKey()), name);
                     }
                 }
@@ -146,16 +147,18 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
             }
 
             if (this.omitFields != null) {
-                for (Entry<String, String[]> entry : this.omitFields.entrySet()) {
-                    for (String name : entry.getValue()) {
+                for (Entry<String, String> entry : this.omitFields.entrySet()) {
+                    String[] values = entry.getValue().split(",");
+                    for (String name : values) {
                         xstream.omitField(resolver.resolveMandatoryClass(entry.getKey()), name);
                     }
                 }
             }
 
             if (this.converters != null) {
-                for (String name : this.converters) {
-                    Class<Converter> converterClass = resolver.resolveMandatoryClass(name, Converter.class);
+                for (Entry<String, String> entry : this.converters.entrySet()) {
+                    String fqn = entry.getValue();
+                    Class<Converter> converterClass = resolver.resolveMandatoryClass(fqn, Converter.class);
                     Converter converter;
 
                     Constructor<Converter> con = null;
@@ -184,7 +187,7 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
 
             addDefaultPermissions(xstream);
             if (this.permissions != null) {
-                // permissions ::= pterm (',' pterm)*   # consits of one or more terms
+                // permissions ::= pterm (',' pterm)*   # consists of one or more terms
                 // pterm       ::= aod? wterm           # each term preceded by an optional sign 
                 // aod         ::= '+' | '-'            # indicates allow or deny where allow if omitted
                 // wterm       ::= a class name with optional wildcard characters
@@ -261,11 +264,11 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
         return result;
     }
 
-    public List<String> getConverters() {
+    public Map<String, String> getConverters() {
         return converters;
     }
 
-    public void setConverters(List<String> converters) {
+    public void setConverters(Map<String, String> converters) {
         this.converters = converters;
     }
 
@@ -277,20 +280,20 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
         this.aliases = aliases;
     }
 
-    public Map<String, String[]> getImplicitCollections() {
-        return implicitCollections;
-    }
-
-    public void setImplicitCollections(Map<String, String[]> implicitCollections) {
-        this.implicitCollections = implicitCollections;
-    }
-
-    public Map<String, String[]> getOmitFields() {
+    public Map<String, String> getOmitFields() {
         return omitFields;
     }
 
-    public void setOmitFields(Map<String, String[]> omitFields) {
+    public void setOmitFields(Map<String, String> omitFields) {
         this.omitFields = omitFields;
+    }
+
+    public Map<String, String> getImplicitCollections() {
+        return implicitCollections;
+    }
+
+    public void setImplicitCollections(Map<String, String> implicitCollections) {
+        this.implicitCollections = implicitCollections;
     }
 
     public HierarchicalStreamDriver getXstreamDriver() {
@@ -316,7 +319,6 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
     public void setMode(String mode) {
         this.mode = mode;
     }
-
 
     public boolean isContentTypeHeader() {
         return contentTypeHeader;

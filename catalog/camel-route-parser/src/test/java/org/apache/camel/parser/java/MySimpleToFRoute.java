@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class MySimpleToFRoute extends RouteBuilder {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         from("direct:start")
             .toF("log:a?level=%s", "info");
     }

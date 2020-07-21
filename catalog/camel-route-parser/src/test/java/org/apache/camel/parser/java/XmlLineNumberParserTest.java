@@ -23,14 +23,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.parser.helper.XmlLineNumberParser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XmlLineNumberParserTest {
 
     @Test
-    public void testRespectNamespace() throws Exception {
+    void testRespectNamespace() throws Exception {
         InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/mycamel.xml");
         Document parsedXml = XmlLineNumberParser.parseXml(is);
         NodeList fromCamelWithNamespace = parsedXml.getElementsByTagNameNS("http://camel.apache.org/schema/spring", "from");

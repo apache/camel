@@ -24,12 +24,16 @@ import org.apache.camel.component.twitter.TwitterConstants;
 import org.apache.camel.component.twitter.TwitterEndpoint;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Status;
 import twitter4j.Twitter;
 
 public class SearchProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SearchProducer.class);
 
     private volatile long lastId;
     private TwitterEndpoint endpoint;
@@ -103,7 +107,7 @@ public class SearchProducer extends DefaultProducer {
         }
 
         Twitter twitter = endpoint.getProperties().getTwitter();
-        log.debug("Searching twitter with keywords: {}", keywords);
+        LOG.debug("Searching twitter with keywords: {}", keywords);
         QueryResult results = twitter.search(query);
         List<Status> list = results.getTweets();
 
@@ -111,7 +115,7 @@ public class SearchProducer extends DefaultProducer {
             if (!results.hasNext()) {
                 break;
             }
-            log.debug("Fetching page");
+            LOG.debug("Fetching page");
             results = twitter.search(results.nextQuery());
             list.addAll(results.getTweets());
         }

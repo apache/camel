@@ -26,6 +26,8 @@ import org.apache.camel.Suspendable;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.support.DefaultConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.support.JmsUtils;
 
@@ -37,6 +39,9 @@ import org.springframework.jms.support.JmsUtils;
  */
 @ManagedResource(description = "Managed JMS Consumer")
 public class JmsConsumer extends DefaultConsumer implements Suspendable {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JmsConsumer.class);
+
     private volatile AbstractMessageListenerContainer listenerContainer;
     private volatile EndpointMessageListener messageListener;
     private volatile boolean initialized;
@@ -104,9 +109,9 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
      * Can be used to start this consumer later if it was configured to not auto startup.
      */
     public void startListenerContainer() {
-        log.trace("Starting listener container {} on destination {}", listenerContainer, getDestinationName());
+        LOG.trace("Starting listener container {} on destination {}", listenerContainer, getDestinationName());
         listenerContainer.start();
-        log.debug("Started listener container {} on destination {}", listenerContainer, getDestinationName());
+        LOG.debug("Started listener container {} on destination {}", listenerContainer, getDestinationName());
     }
 
     /**
@@ -118,10 +123,10 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
      */
     protected void testConnectionOnStartup() throws FailedToCreateConsumerException {
         try {
-            log.debug("Testing JMS Connection on startup for destination: {}", getDestinationName());
+            LOG.debug("Testing JMS Connection on startup for destination: {}", getDestinationName());
             Connection con = listenerContainer.getConnectionFactory().createConnection();
             JmsUtils.closeConnection(con);
-            log.debug("Successfully tested JMS Connection on startup for destination: {}", getDestinationName());
+            LOG.debug("Successfully tested JMS Connection on startup for destination: {}", getDestinationName());
         } catch (Exception e) {
             String msg = "Cannot get JMS Connection on startup for destination " + getDestinationName();
             throw new FailedToCreateConsumerException(getEndpoint(), msg, e);
@@ -145,7 +150,7 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
                     try {
                         prepareAndStartListenerContainer();
                     } catch (Throwable e) {
-                        log.warn("Error starting listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                        LOG.warn("Error starting listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
                     }
                 }
 
@@ -208,7 +213,7 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
                         try {
                             stopAndDestroyListenerContainer();
                         } catch (Throwable e) {
-                            log.warn("Error stopping listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                            LOG.warn("Error stopping listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
                         }
                     }
 
@@ -241,7 +246,7 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
             if (listenerContainer != null) {
                 startListenerContainer();
             } else {
-                log.warn("The listenerContainer is not instantiated. Probably there was a timeout during the Suspend operation. Please restart your consumer route.");
+                LOG.warn("The listenerContainer is not instantiated. Probably there was a timeout during the Suspend operation. Please restart your consumer route.");
             }
         }
     }

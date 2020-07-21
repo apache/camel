@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
@@ -40,7 +41,6 @@ import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.model.rest.RestBindingDefinition;
 import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RoutePolicy;
@@ -53,10 +53,9 @@ import org.apache.camel.spi.RoutePolicy;
 @XmlType(propOrder = {"input", "inputType", "outputType", "outputs", "routeProperties"})
 @XmlAccessorType(XmlAccessType.PROPERTY)
 // must use XmlAccessType.PROPERTY as there is some custom logic needed to be executed in the setter methods
-public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implements OutputNode, NamedRoute {
+public class RouteDefinition extends OutputDefinition<RouteDefinition> implements NamedRoute {
     private final AtomicBoolean prepared = new AtomicBoolean(false);
     private FromDefinition input;
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
     private String group;
     private String streamCache;
     private String trace;
@@ -67,8 +66,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     private Integer startupOrder;
     private List<RoutePolicy> routePolicies;
     private String routePolicyRef;
-    private ShutdownRoute shutdownRoute;
-    private ShutdownRunningTask shutdownRunningTask;
+    private String shutdownRoute;
+    private String shutdownRunningTask;
     private String errorHandlerRef;
     private ErrorHandlerFactory errorHandlerFactory;
     // keep state whether the error handler is context scoped or not
@@ -76,11 +75,13 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     // configured)
     private boolean contextScopedErrorHandler = true;
     private Boolean rest;
+    private Boolean template;
     private RestDefinition restDefinition;
     private RestBindingDefinition restBindingDefinition;
     private InputTypeDefinition inputType;
     private OutputTypeDefinition outputType;
     private List<PropertyDefinition> routeProperties;
+    private Map<String, Object> templateParameters;
 
     public RouteDefinition() {
     }
@@ -97,14 +98,16 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * This route is created from the REST DSL.
      */
     public void fromRest(@AsEndpointUri String uri) {
-        from(uri);
+        if (uri != null) {
+            from(uri);
+        }
         rest = true;
     }
 
     /**
      * Check if the route has been prepared
      *
-     * @return wether the route has been prepared or not
+     * @return whether the route has been prepared or not
      * @see RouteDefinitionHelper#prepareRoute(ModelCamelContext,
      *      RouteDefinition)
      */
@@ -499,6 +502,16 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * @return the builder
      */
     public RouteDefinition shutdownRoute(ShutdownRoute shutdownRoute) {
+        return shutdownRoute(shutdownRoute.name());
+    }
+
+    /**
+     * Configures a shutdown route option.
+     *
+     * @param shutdownRoute the option to use when shutting down this route
+     * @return the builder
+     */
+    public RouteDefinition shutdownRoute(String shutdownRoute) {
         setShutdownRoute(shutdownRoute);
         return this;
     }
@@ -511,6 +524,17 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * @return the builder
      */
     public RouteDefinition shutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
+        return shutdownRunningTask(shutdownRunningTask.name());
+    }
+
+    /**
+     * Configures a shutdown running task option.
+     *
+     * @param shutdownRunningTask the option to use when shutting down and how
+     *            to act upon running tasks.
+     * @return the builder
+     */
+    public RouteDefinition shutdownRunningTask(String shutdownRunningTask) {
         setShutdownRunningTask(shutdownRunningTask);
         return this;
     }
@@ -666,6 +690,15 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
         return this;
     }
 
+    public Map<String, Object> getTemplateParameters() {
+        return templateParameters;
+    }
+
+    @XmlTransient
+    public void setTemplateParameters(Map<String, Object> templateParameters) {
+        this.templateParameters = templateParameters;
+    }
+
     // Properties
     // -----------------------------------------------------------------------
 
@@ -678,6 +711,9 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      */
     @XmlElementRef(required = false)
     public void setInput(FromDefinition input) {
+        if (this.input != null && input != null && this.input != input) {
+            throw new IllegalArgumentException("Only one input is allowed per route. Cannot accept input: " + input);
+        }
         // required = false: in rest-dsl you can embed an in-lined route which
         // does not have a <from> as its implied to be the rest endpoint
         this.input = input;
@@ -693,14 +729,9 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * route.
      */
     @XmlElementRef
+    @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
-        this.outputs = outputs;
-
-        if (outputs != null) {
-            for (ProcessorDefinition<?> output : outputs) {
-                configureChild(output);
-            }
-        }
+        super.setOutputs(outputs);
     }
 
     /**
@@ -735,6 +766,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * Whether stream caching is enabled on this route.
      */
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     public void setStreamCache(String streamCache) {
         this.streamCache = streamCache;
     }
@@ -750,6 +782,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * Whether tracing is enabled on this route.
      */
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     public void setTrace(String trace) {
         this.trace = trace;
     }
@@ -765,7 +798,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * Whether message history is enabled on this route.
      */
     @XmlAttribute
-    @Metadata(defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
     }
@@ -781,6 +814,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * Whether security mask for Logging is enabled on this route.
      */
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     public void setLogMask(String logMask) {
         this.logMask = logMask;
     }
@@ -796,6 +830,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * Whether to slow down processing messages by a given delay in msec.
      */
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Long")
     public void setDelayer(String delayer) {
         this.delayer = delayer;
     }
@@ -811,7 +846,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * Whether to auto start this route
      */
     @XmlAttribute
-    @Metadata(defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     public void setAutoStartup(String autoStartup) {
         this.autoStartup = autoStartup;
     }
@@ -827,6 +862,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * To configure the ordering of the routes being started
      */
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Integer")
     public void setStartupOrder(Integer startupOrder) {
         this.startupOrder = startupOrder;
     }
@@ -853,6 +889,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     /**
      * Sets the error handler if one is not already set
      */
+    @XmlTransient
     public void setErrorHandlerFactoryIfNull(ErrorHandlerFactory errorHandlerFactory) {
         if (this.errorHandlerFactory == null) {
             setErrorHandlerFactory(errorHandlerFactory);
@@ -887,7 +924,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
         this.routePolicies = routePolicies;
     }
 
-    public ShutdownRoute getShutdownRoute() {
+    public String getShutdownRoute() {
         return shutdownRoute;
     }
 
@@ -895,15 +932,15 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * To control how to shutdown the route.
      */
     @XmlAttribute
-    @Metadata(defaultValue = "Default")
-    public void setShutdownRoute(ShutdownRoute shutdownRoute) {
+    @Metadata(javaType = "org.apache.camel.ShutdownRoute", defaultValue = "Default", enums = "Default,Defer")
+    public void setShutdownRoute(String shutdownRoute) {
         this.shutdownRoute = shutdownRoute;
     }
 
     /**
      * To control how to shutdown the route.
      */
-    public ShutdownRunningTask getShutdownRunningTask() {
+    public String getShutdownRunningTask() {
         return shutdownRunningTask;
     }
 
@@ -911,8 +948,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * To control how to shutdown the route.
      */
     @XmlAttribute
-    @Metadata(defaultValue = "CompleteCurrentTaskOnly")
-    public void setShutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
+    @Metadata(javaType = "org.apache.camel.ShutdownRunningTask", defaultValue = "CompleteCurrentTaskOnly", enums = "CompleteCurrentTaskOnly,CompleteAllTasks")
+    public void setShutdownRunningTask(String shutdownRunningTask) {
         this.shutdownRunningTask = shutdownRunningTask;
     }
 
@@ -922,10 +959,9 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
         }
 
         // return a reference to the default error handler
-        return new ErrorHandlerBuilderRef(ErrorHandlerReifier.DEFAULT_ERROR_HANDLER_BUILDER);
+        return new ErrorHandlerBuilderRef(ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER);
     }
 
-    @XmlTransient
     public ErrorHandlerFactory getErrorHandlerFactory() {
         if (errorHandlerFactory == null) {
             errorHandlerFactory = createErrorHandlerBuilder();
@@ -936,13 +972,30 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     /**
      * Sets the error handler to use with processors created by this builder
      */
+    @XmlTransient
     public void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory) {
         this.errorHandlerFactory = errorHandlerFactory;
+    }
+
+    public void setRest(Boolean rest) {
+        this.rest = rest;
     }
 
     @XmlAttribute
     public Boolean isRest() {
         return rest;
+    }
+
+    /**
+     * This route is created from a route template.
+     */
+    public void setTemplate(Boolean template) {
+        this.template = template;
+    }
+
+    @XmlAttribute
+    public Boolean isTemplate() {
+        return template;
     }
 
     public RestDefinition getRestDefinition() {

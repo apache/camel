@@ -24,12 +24,12 @@ import com.amazonaws.services.sqs.model.GetQueueUrlResult;
 import com.amazonaws.services.sqs.model.ListQueuesResult;
 import com.amazonaws.services.sqs.model.QueueAttributeName;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SqsEndpointTest {
 
@@ -37,7 +37,7 @@ public class SqsEndpointTest {
     private AmazonSQSClient amazonSQSClient;
     private SqsConfiguration config;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         amazonSQSClient = Mockito.mock(AmazonSQSClient.class);
 

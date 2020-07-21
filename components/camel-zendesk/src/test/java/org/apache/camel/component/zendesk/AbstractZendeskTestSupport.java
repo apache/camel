@@ -22,7 +22,8 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.PropertyBindingSupport;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.TestInstance;
 
 /**
  * A base class for Zendesk integration tests.
@@ -33,6 +34,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
  * routes from the skeleton code into one of the subclass of this class.
  * </p>
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AbstractZendeskTestSupport extends CamelTestSupport {
     public static final String TEST_OPTIONS_PROPERTIES = "/test-options.properties";
     public static final String SYSPROP_ZENDESK_SERVER_URL = "zendesk.serverUrl";
@@ -83,12 +85,6 @@ public class AbstractZendeskTestSupport extends CamelTestSupport {
         context.addComponent("zendesk", component);
 
         return context;
-    }
-
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        // only create the context once for this class
-        return true;
     }
 
     @SuppressWarnings("unchecked")

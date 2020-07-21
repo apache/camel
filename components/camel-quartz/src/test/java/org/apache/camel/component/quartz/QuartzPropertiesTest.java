@@ -19,8 +19,11 @@ package org.apache.camel.component.quartz;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class QuartzPropertiesTest extends BaseQuartzTest {
 
@@ -32,7 +35,7 @@ public class QuartzPropertiesTest extends BaseQuartzTest {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         quartz.stop();
         super.tearDown();

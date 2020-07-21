@@ -20,7 +20,6 @@ import javax.management.openmbean.TabularData;
 
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
-import org.apache.camel.meta.Experimental;
 
 public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
 
@@ -126,11 +125,9 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Oldest inflight exchange id")
     String getOldestInflightExchangeId();
 
-    @Experimental
     @ManagedAttribute(description = "Route controller")
     Boolean getHasRouteController();
 
-    @Experimental
     @ManagedAttribute(description = "Last error")
     RouteError getLastError();
 }

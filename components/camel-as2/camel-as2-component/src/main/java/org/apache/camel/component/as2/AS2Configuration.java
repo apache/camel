@@ -25,6 +25,7 @@ import org.apache.camel.component.as2.api.AS2EncryptionAlgorithm;
 import org.apache.camel.component.as2.api.AS2MessageStructure;
 import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
 import org.apache.camel.component.as2.internal.AS2ApiName;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -35,6 +36,7 @@ import org.apache.http.entity.ContentType;
  * Component configuration for AS2 component.
  */
 @UriParams
+@Configurer
 public class AS2Configuration {
 
     @UriPath
@@ -215,17 +217,6 @@ public class AS2Configuration {
 
     public int getTargetPortNumber() {
         return targetPortNumber;
-    }
-
-    /**
-     * The port number of target host. -1 indicates the scheme default port.
-     */
-    public void setTargetPortNumber(String targetPortNumber) {
-        try {
-            this.targetPortNumber = Integer.valueOf(targetPortNumber);
-        } catch (NumberFormatException e) {
-            throw new RuntimeCamelException(String.format("Invalid target port number: %s", targetPortNumber));
-        }
     }
 
     /**

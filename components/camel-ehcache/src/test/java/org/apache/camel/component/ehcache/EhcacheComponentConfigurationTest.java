@@ -20,7 +20,7 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Component;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.ehcache.Cache;
 import org.ehcache.config.ResourcePools;
 import org.ehcache.config.ResourceType;
@@ -30,7 +30,10 @@ import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.config.units.EntryUnit;
 import org.ehcache.config.units.MemoryUnit;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class EhcacheComponentConfigurationTest extends CamelTestSupport {
     @EndpointInject("ehcache:myCache")
@@ -62,7 +65,7 @@ public class EhcacheComponentConfigurationTest extends CamelTestSupport {
     // *****************************
 
     @Test
-    public void testCacheManager() throws Exception {
+    void testCacheManager() throws Exception {
         assertEquals(
             context().getRegistry().lookupByNameAndType("ehcache", EhcacheComponent.class).getCacheManager(),
             endpoint.getManager().getCacheManager()
@@ -87,7 +90,7 @@ public class EhcacheComponentConfigurationTest extends CamelTestSupport {
     // ****************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:ehcache")

@@ -56,6 +56,8 @@ import org.eclipse.jetty.client.api.Authentication;
 import org.eclipse.jetty.client.util.BasicAuthentication;
 import org.eclipse.jetty.client.util.DigestAuthentication;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.salesforce.SalesforceLoginConfig.DEFAULT_LOGIN_URL;
 
@@ -79,11 +81,14 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     public static final String HTTP_PROXY_REALM = "httpProxyRealm";
     public static final String HTTP_CONNECTION_TIMEOUT = "httpConnectionTimeout";
     public static final String HTTP_IDLE_TIMEOUT = "httpIdleTimeout";
+    public static final String HTTP_MAX_CONTENT_LENGTH = "httpMaxContentLength";
 
     static final int CONNECTION_TIMEOUT = 60000;
     static final int IDLE_TIMEOUT = 10000;
     static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
     static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
+
+    private static final Logger LOG = LoggerFactory.getLogger(SalesforceComponent.class);
 
     @Metadata(description = "All authentication configuration in one nested bean, all properties set there can be set"
                             + " directly on the component as well", label = "common,security")
@@ -146,6 +151,9 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     @Metadata(description = "Connection timeout used by the HttpClient when connecting to the Salesforce server.", label = "common", defaultValue = "" + CONNECTION_TIMEOUT)
     private long httpClientConnectionTimeout = CONNECTION_TIMEOUT;
 
+    @Metadata(description = "Max content length of an HTTP response.", label = "common")
+    private Integer httpMaxContentLength;
+
     @Metadata(description = "Used to set any properties that can be configured on the underlying HTTP client. Have a"
                             + " look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options.", label = "common,advanced")
     private Map<String, Object> httpClientProperties;
@@ -167,10 +175,10 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     private Integer httpProxyPort;
 
     @Metadata(description = "If set to true the configures the HTTP proxy to use as a SOCKS4 proxy.", defaultValue = "false", label = "common,proxy")
-    private boolean isHttpProxySocks4;
+    private boolean httpProxySocks4;
 
     @Metadata(description = "If set to false disables the use of TLS when accessing the HTTP proxy.", defaultValue = "true", label = "common,proxy,security")
-    private boolean isHttpProxySecure = true;
+    private boolean httpProxySecure = true;
 
     @Metadata(description = "A list of addresses for which HTTP proxy server should be used.", label = "common,proxy")
     private Set<String> httpProxyIncludedAddresses;
@@ -230,7 +238,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         String topicName = null;
         String apexUrl = null;
         try {
-            log.debug("Creating endpoint for: {}", remaining);
+            LOG.debug("Creating endpoint for: {}", remaining);
             if (remaining.startsWith(APEX_CALL_PREFIX)) {
                 // extract APEX URL
                 apexUrl = remaining.substring(APEX_CALL_PREFIX.length());
@@ -294,6 +302,10 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         return result;
     }
 
+    public SalesforceHttpClient getHttpClient() {
+        return httpClient;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -311,9 +323,9 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
             loginConfig.setType(authenticationType);
             loginConfig.setUserName(userName);
 
-            log.debug("Created login configuration: {}", loginConfig);
+            LOG.debug("Created login configuration: {}", loginConfig);
         } else {
-            log.debug("Using shared login configuration: {}", loginConfig);
+            LOG.debug("Using shared login configuration: {}", loginConfig);
         }
 
         // create a Jetty HttpClient if not already set
@@ -325,6 +337,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
             sslContextFactory.setSslContext(contextParameters.createSSLContext(getCamelContext()));
 
             httpClient = createHttpClient(sslContextFactory);
+            getConfig().setHttpClient(httpClient);
         }
 
         if (httpClientProperties == null) {
@@ -352,10 +365,10 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         if (packages != null && packages.length > 0) {
             // parse the packages to create SObject name to class map
             classMap = parsePackages();
-            log.info("Found {} generated classes in packages: {}", classMap.size(), Arrays.asList(packages));
+            LOG.info("Found {} generated classes in packages: {}", classMap.size(), Arrays.asList(packages));
         } else {
             // use an empty map to avoid NPEs later
-            log.warn("Missing property packages, getSObject* operations will NOT work without property rawPayload=true");
+            LOG.warn("Missing property packages, getSObject* operations will NOT work without property rawPayload=true");
             classMap = new HashMap<>(0);
         }
 
@@ -420,6 +433,10 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
     public void setInstanceUrl(String instanceUrl) {
         this.instanceUrl = instanceUrl;
+    }
+
+    public String getInstanceUrl() {
+        return instanceUrl;
     }
 
     public String getLoginUrl() {
@@ -545,6 +562,14 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         this.httpClientConnectionTimeout = httpClientConnectionTimeout;
     }
 
+    public Integer getHttpMaxContentLength() {
+        return httpMaxContentLength;
+    }
+
+    public void setHttpMaxContentLength(Integer httpMaxContentLength) {
+        this.httpMaxContentLength = httpMaxContentLength;
+    }
+
     public String getHttpProxyHost() {
         return httpProxyHost;
     }
@@ -578,19 +603,19 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     }
 
     public boolean isHttpProxySocks4() {
-        return isHttpProxySocks4;
+        return httpProxySocks4;
     }
 
-    public void setIsHttpProxySocks4(boolean isHttpProxySocks4) {
-        this.isHttpProxySocks4 = isHttpProxySocks4;
+    public void setHttpProxySocks4(boolean isHttpProxySocks4) {
+        this.httpProxySocks4 = isHttpProxySocks4;
     }
 
     public boolean isHttpProxySecure() {
-        return isHttpProxySecure;
+        return httpProxySecure;
     }
 
-    public void setIsHttpProxySecure(boolean isHttpProxySecure) {
-        this.isHttpProxySecure = isHttpProxySecure;
+    public void setHttpProxySecure(boolean isHttpProxySecure) {
+        this.httpProxySecure = isHttpProxySecure;
     }
 
     public Set<String> getHttpProxyIncludedAddresses() {
@@ -666,7 +691,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         final String version = endpointConfig.getApiVersion();
         final PayloadFormat format = endpointConfig.getFormat();
 
-        return new DefaultRestClient(httpClient, version, format, session);
+        return new DefaultRestClient(httpClient, version, format, session, loginConfig);
     }
 
     RestClient createRestClient(final Map<String, Object> properties) throws Exception {
@@ -701,7 +726,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         final SalesforceSession session = new SalesforceSession(camelContext, httpClient, httpClient.getTimeout(), loginConfig);
         httpClient.setSession(session);
 
-        return new DefaultRestClient(httpClient, config.getApiVersion(), config.getFormat(), session);
+        return new DefaultRestClient(httpClient, config.getApiVersion(), config.getFormat(), session, loginConfig);
     }
 
     static SalesforceHttpClient createHttpClient(final SslContextFactory sslContextFactory) throws Exception {
@@ -729,6 +754,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
         final Long httpConnectionTimeout = typeConverter.convertTo(Long.class, httpClientProperties.get(HTTP_CONNECTION_TIMEOUT));
         final Long httpIdleTimeout = typeConverter.convertTo(Long.class, httpClientProperties.get(HTTP_IDLE_TIMEOUT));
+        final Integer maxContentLength = typeConverter.convertTo(Integer.class, httpClientProperties.get(HTTP_MAX_CONTENT_LENGTH));
 
         final String httpProxyHost = typeConverter.convertTo(String.class, httpClientProperties.get(HTTP_PROXY_HOST));
         final Integer httpProxyPort = typeConverter.convertTo(Integer.class, httpClientProperties.get(HTTP_PROXY_PORT));
@@ -750,6 +776,9 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         }
         if (httpConnectionTimeout != null) {
             httpClient.setConnectTimeout(httpConnectionTimeout);
+        }
+        if (maxContentLength != null) {
+            httpClient.setMaxContentLength(maxContentLength);
         }
 
         // set HTTP proxy settings
@@ -797,6 +826,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         putValueIfGivenTo(httpClientProperties, HTTP_PROXY_PASSWORD, salesforce::getHttpProxyPassword);
         putValueIfGivenTo(httpClientProperties, HTTP_PROXY_REALM, salesforce::getHttpProxyRealm);
         putValueIfGivenTo(httpClientProperties, HTTP_PROXY_AUTH_URI, salesforce::getHttpProxyAuthUri);
+        putValueIfGivenTo(httpClientProperties, HTTP_MAX_CONTENT_LENGTH, salesforce::getHttpMaxContentLength);
 
         if (ObjectHelper.isNotEmpty(salesforce.getHttpProxyHost())) {
             // let's not put `false` values in client properties if no proxy is

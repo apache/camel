@@ -16,55 +16,28 @@
  */
 package org.apache.camel.reifier.dataformat;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
-import org.apache.camel.spi.DataFormat;
-import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
 
 public class XStreamDataFormatReifier extends DataFormatReifier<XStreamDataFormat> {
 
-    public XStreamDataFormatReifier(DataFormatDefinition definition) {
-        super((XStreamDataFormat)definition);
+    public XStreamDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (XStreamDataFormat)definition);
     }
 
     @Override
-    protected DataFormat doCreateDataFormat(CamelContext camelContext) {
-        if ("json".equals(definition.getDriver())) {
-            definition.setDataFormatName("json-xstream");
-        }
-        DataFormat answer = super.doCreateDataFormat(camelContext);
-        // need to lookup the reference for the xstreamDriver
-        if (ObjectHelper.isNotEmpty(definition.getDriverRef())) {
-            setProperty(camelContext, answer, "xstreamDriver", CamelContextHelper.mandatoryLookup(camelContext, definition.getDriverRef()));
-        }
-        return answer;
-    }
-
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (definition.getPermissions() != null) {
-            setProperty(camelContext, dataFormat, "permissions", definition.getPermissions());
-        }
-        if (definition.getEncoding() != null) {
-            setProperty(camelContext, dataFormat, "encoding", definition.getEncoding());
-        }
-        if (definition.getConverters() != null) {
-            setProperty(camelContext, dataFormat, "converters", definition.getConverters());
-        }
-        if (definition.getAliases() != null) {
-            setProperty(camelContext, dataFormat, "aliases", definition.getAliases());
-        }
-        if (definition.getOmitFields() != null) {
-            setProperty(camelContext, dataFormat, "omitFields", definition.getOmitFields());
-        }
-        if (definition.getImplicitCollections() != null) {
-            setProperty(camelContext, dataFormat, "implicitCollections", definition.getImplicitCollections());
-        }
-        if (definition.getMode() != null) {
-            setProperty(camelContext, dataFormat, "mode", definition.getMode());
-        }
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("xstreamDriver", asRef(definition.getDriverRef()));
+        properties.put("permissions", definition.getPermissions());
+        properties.put("encoding", definition.getEncoding());
+        properties.put("converters", definition.getConvertersAsMap());
+        properties.put("aliases", definition.getAliasesAsMap());
+        properties.put("omitFields", definition.getOmitFieldsAsMap());
+        properties.put("implicitCollections", definition.getImplicitCollectionsAsMap());
+        properties.put("mode", definition.getMode());
     }
 
 }

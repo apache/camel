@@ -61,28 +61,28 @@ public class KubernetesSecretsProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_SECRETS:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_SECRETS:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_SECRETS_BY_LABELS_OPERATION:
-            doListSecretsByLabels(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_SECRETS_BY_LABELS_OPERATION:
+                doListSecretsByLabels(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_SECRET_OPERATION:
-            doGetSecret(exchange, operation);
-            break;
+            case KubernetesOperations.GET_SECRET_OPERATION:
+                doGetSecret(exchange, operation);
+                break;
 
-        case KubernetesOperations.CREATE_SECRET_OPERATION:
-            doCreateSecret(exchange, operation);
-            break;
+            case KubernetesOperations.CREATE_SECRET_OPERATION:
+                doCreateSecret(exchange, operation);
+                break;
 
-        case KubernetesOperations.DELETE_SECRET_OPERATION:
-            doDeleteSecret(exchange, operation);
-            break;
+            case KubernetesOperations.DELETE_SECRET_OPERATION:
+                doDeleteSecret(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 

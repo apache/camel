@@ -21,17 +21,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@CamelSpringTest
 @ContextConfiguration
-public class JettyJmsTwowayTest extends AbstractJUnit4SpringContextTests {
-    
+public class JettyJmsTwowayTest {
+
     private static int port = AvailablePortFinder.getNextAvailable();
     private static final String URL = "http://localhost:" + port + "/test";
     static {
@@ -45,17 +46,17 @@ public class JettyJmsTwowayTest extends AbstractJUnit4SpringContextTests {
     protected CamelContext camelContext;
 
     @Test
-    public void testSendingRequest() throws Exception {
-        assertNotNull("the camelContext should not be null", camelContext);
+    void testSendingRequest() {
+        assertNotNull(camelContext, "The camelContext should not be null");
         ProducerTemplate template = camelContext.createProducerTemplate();
         Exchange exchange = template.send(URL, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("<hello>Willem</hello>");
                 exchange.getIn().setHeader("Operation", "greetMe");
             }
 
         });
-        assertEquals("get result ", "<response><hello>Willem</hello></response>", exchange.getOut().getBody(String.class));
+        assertEquals("<response><hello>Willem</hello></response>", exchange.getMessage().getBody(String.class));
         template.stop();
     }
 }

@@ -27,8 +27,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**
- * JSon data format is used for unmarshal a JSon payload to POJO or to marshal
- * POJO back to JSon payload.
+ * Marshal POJOs to JSON and back.
  */
 @Metadata(label = "dataformat,transformation,json", title = "JSon")
 @XmlRootElement(name = "json")
@@ -37,10 +36,11 @@ public class JsonDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String objectMapper;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
-    private Boolean useDefaultObjectMapper;
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    private String useDefaultObjectMapper;
     @XmlAttribute
-    private Boolean prettyPrint;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String prettyPrint;
     @XmlAttribute
     @Metadata(defaultValue = "Jackson")
     private JsonLibrary library = JsonLibrary.Jackson;
@@ -53,15 +53,15 @@ public class JsonDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String include;
     @XmlAttribute
-    private Boolean allowJmsType;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String allowJmsType;
     @XmlAttribute
     private String collectionTypeName;
     @XmlTransient
     private Class<?> collectionType;
     @XmlAttribute
-    private Boolean useList;
-    @XmlAttribute
-    private Boolean enableJaxbAnnotationModule;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String useList;
     @XmlAttribute
     private String moduleClassNames;
     @XmlAttribute
@@ -73,12 +73,16 @@ public class JsonDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String permissions;
     @XmlAttribute
-    private Boolean allowUnmarshallType;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String allowUnmarshallType;
     @XmlAttribute
     private String timezone;
     @XmlAttribute
-    @Metadata(defaultValue = "false")
-    private Boolean autoDiscoverObjectMapper;
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
+    private String autoDiscoverObjectMapper;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
+    private String dropRootNode;
 
     public JsonDataFormat() {
         super("json");
@@ -100,18 +104,18 @@ public class JsonDataFormat extends DataFormatDefinition {
         this.objectMapper = objectMapper;
     }
 
-    public Boolean getUseDefaultObjectMapper() {
+    public String getUseDefaultObjectMapper() {
         return useDefaultObjectMapper;
     }
 
     /**
      * Whether to lookup and use default Jackson ObjectMapper from the registry.
      */
-    public void setUseDefaultObjectMapper(Boolean useDefaultObjectMapper) {
+    public void setUseDefaultObjectMapper(String useDefaultObjectMapper) {
         this.useDefaultObjectMapper = useDefaultObjectMapper;
     }
 
-    public Boolean getPrettyPrint() {
+    public String getPrettyPrint() {
         return prettyPrint;
     }
 
@@ -120,7 +124,7 @@ public class JsonDataFormat extends DataFormatDefinition {
      * <p/>
      * Is by default false.
      */
-    public void setPrettyPrint(Boolean prettyPrint) {
+    public void setPrettyPrint(String prettyPrint) {
         this.prettyPrint = prettyPrint;
     }
 
@@ -129,7 +133,7 @@ public class JsonDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Class name of the java type to use when unarmshalling
+     * Class name of the java type to use when unmarshalling
      */
     public void setUnmarshalTypeName(String unmarshalTypeName) {
         this.unmarshalTypeName = unmarshalTypeName;
@@ -140,7 +144,7 @@ public class JsonDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Class of the java type to use when unarmshalling
+     * Class of the java type to use when unmarshalling
      */
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
@@ -184,7 +188,7 @@ public class JsonDataFormat extends DataFormatDefinition {
         this.include = include;
     }
 
-    public Boolean getAllowJmsType() {
+    public String getAllowJmsType() {
         return allowJmsType;
     }
 
@@ -192,7 +196,7 @@ public class JsonDataFormat extends DataFormatDefinition {
      * Used for JMS users to allow the JMSType header from the JMS spec to
      * specify a FQN classname to use to unmarshal to.
      */
-    public void setAllowJmsType(Boolean allowJmsType) {
+    public void setAllowJmsType(String allowJmsType) {
         this.allowJmsType = allowJmsType;
     }
 
@@ -217,27 +221,15 @@ public class JsonDataFormat extends DataFormatDefinition {
         this.collectionType = collectionType;
     }
 
-    public Boolean getUseList() {
+    public String getUseList() {
         return useList;
     }
 
     /**
-     * To unarmshal to a List of Map or a List of Pojo.
+     * To unmarshal to a List of Map or a List of Pojo.
      */
-    public void setUseList(Boolean useList) {
+    public void setUseList(String useList) {
         this.useList = useList;
-    }
-
-    public Boolean getEnableJaxbAnnotationModule() {
-        return enableJaxbAnnotationModule;
-    }
-
-    /**
-     * Whether to enable the JAXB annotations module when using jackson. When
-     * enabled then JAXB annotations can be used by Jackson.
-     */
-    public void setEnableJaxbAnnotationModule(Boolean enableJaxbAnnotationModule) {
-        this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
     }
 
     public String getModuleClassNames() {
@@ -329,7 +321,7 @@ public class JsonDataFormat extends DataFormatDefinition {
 
     /**
      * To add permission for the given pojo classes.
-     * 
+     *
      * @param type the pojo class(es) xstream should use as allowed permission
      * @see #setPermissions(String)
      */
@@ -342,7 +334,7 @@ public class JsonDataFormat extends DataFormatDefinition {
         setPermissions(csb.toString());
     }
 
-    public Boolean getAllowUnmarshallType() {
+    public String getAllowUnmarshallType() {
         return allowUnmarshallType;
     }
 
@@ -352,7 +344,7 @@ public class JsonDataFormat extends DataFormatDefinition {
      * <p/>
      * This should only be enabled when desired to be used.
      */
-    public void setAllowUnmarshallType(Boolean allowUnmarshallType) {
+    public void setAllowUnmarshallType(String allowUnmarshallType) {
         this.allowUnmarshallType = allowUnmarshallType;
     }
 
@@ -369,7 +361,7 @@ public class JsonDataFormat extends DataFormatDefinition {
         this.timezone = timezone;
     }
 
-    public Boolean isAutoDiscoverObjectMapper() {
+    public String getAutoDiscoverObjectMapper() {
         return autoDiscoverObjectMapper;
     }
 
@@ -377,14 +369,164 @@ public class JsonDataFormat extends DataFormatDefinition {
      * If set to true then Jackson will lookup for an objectMapper into the
      * registry
      */
-    public void setAutoDiscoverObjectMapper(Boolean autoDiscoverObjectMapper) {
+    public void setAutoDiscoverObjectMapper(String autoDiscoverObjectMapper) {
         this.autoDiscoverObjectMapper = autoDiscoverObjectMapper;
+    }
+
+    public String getDropRootNode() {
+        return dropRootNode;
+    }
+
+    /**
+     * Whether XStream will drop the root node in the generated JSon.
+     * You may want to enable this when using POJOs; as then the written object will include the class name
+     * as root node, which is often not intended to be written in the JSON output.
+     */
+    public void setDropRootNode(String dropRootNode) {
+        this.dropRootNode = dropRootNode;
     }
 
     @Override
     public String getDataFormatName() {
         // json data format is special as the name can be from different bundles
         return "json-" + library.name().toLowerCase();
+    }
+
+    //
+    // Fluent builders
+    //
+
+    public JsonDataFormat objectMapper(String objectMapper) {
+        this.objectMapper = objectMapper;
+        return this;
+    }
+
+    public JsonDataFormat useDefaultObjectMapper(boolean useDefaultObjectMapper) {
+        return useDefaultObjectMapper(Boolean.toString(useDefaultObjectMapper));
+    }
+
+    public JsonDataFormat useDefaultObjectMapper(String useDefaultObjectMapper) {
+        this.useDefaultObjectMapper = useDefaultObjectMapper;
+        return this;
+    }
+
+    public JsonDataFormat prettyPrint(boolean prettyPrint) {
+        return prettyPrint(Boolean.toString(prettyPrint));
+    }
+
+    public JsonDataFormat prettyPrint(String prettyPrint) {
+        this.prettyPrint = prettyPrint;
+        return this;
+    }
+
+    public JsonDataFormat library(JsonLibrary library) {
+        this.library = library;
+        return this;
+    }
+
+    public JsonDataFormat unmarshalType(String unmarshalType) {
+        this.unmarshalTypeName = unmarshalType;
+        return this;
+    }
+
+    public JsonDataFormat unmarshalType(Class<?> unmarshalType) {
+        this.unmarshalType = unmarshalType;
+        return this;
+    }
+
+    public JsonDataFormat jsonView(Class<?> jsonView) {
+        this.jsonView = jsonView;
+        return this;
+    }
+
+    public JsonDataFormat include(String include) {
+        this.include = include;
+        return this;
+    }
+
+    public JsonDataFormat allowJmsType(boolean allowJmsType) {
+        return allowJmsType(Boolean.toString(allowJmsType));
+    }
+
+    public JsonDataFormat allowJmsType(String allowJmsType) {
+        this.allowJmsType = allowJmsType;
+        return this;
+    }
+
+    public JsonDataFormat collectionType(String collectionType) {
+        this.collectionTypeName = collectionType;
+        return this;
+    }
+
+    public JsonDataFormat collectionType(Class<?> collectionType) {
+        this.collectionType = collectionType;
+        return this;
+    }
+
+    public JsonDataFormat useList(boolean useList) {
+        return useList(Boolean.toString(useList));
+    }
+
+    public JsonDataFormat useList(String useList) {
+        this.useList = useList;
+        return this;
+    }
+
+    public JsonDataFormat moduleClassNames(String moduleClassNames) {
+        this.moduleClassNames = moduleClassNames;
+        return this;
+    }
+
+    public JsonDataFormat moduleRefs(String moduleRefs) {
+        this.moduleRefs = moduleRefs;
+        return this;
+    }
+
+    public JsonDataFormat enableFeatures(String enableFeatures) {
+        this.enableFeatures = enableFeatures;
+        return this;
+    }
+
+    public JsonDataFormat disableFeatures(String disableFeatures) {
+        this.disableFeatures = disableFeatures;
+        return this;
+    }
+
+    public JsonDataFormat permissions(String permissions) {
+        this.permissions = permissions;
+        return this;
+    }
+
+    public JsonDataFormat allowUnmarshallType(boolean allowUnmarshallType) {
+        return allowUnmarshallType(Boolean.toString(allowUnmarshallType));
+    }
+
+    public JsonDataFormat allowUnmarshallType(String allowUnmarshallType) {
+        this.allowUnmarshallType = allowUnmarshallType;
+        return this;
+    }
+
+    public JsonDataFormat timezone(String timezone) {
+        this.timezone = timezone;
+        return this;
+    }
+
+    public JsonDataFormat autoDiscoverObjectMapper(boolean autoDiscoverObjectMapper) {
+        return autoDiscoverObjectMapper(Boolean.toString(autoDiscoverObjectMapper));
+    }
+
+    public JsonDataFormat autoDiscoverObjectMapper(String autoDiscoverObjectMapper) {
+        this.autoDiscoverObjectMapper = autoDiscoverObjectMapper;
+        return this;
+    }
+
+    public JsonDataFormat dropRootNode(boolean dropRootNode) {
+        return dropRootNode(Boolean.toString(dropRootNode));
+    }
+
+    public JsonDataFormat dropRootNode(String dropRootNode) {
+        this.dropRootNode = dropRootNode;
+        return this;
     }
 
 }

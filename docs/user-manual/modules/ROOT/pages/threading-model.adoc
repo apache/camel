@@ -8,7 +8,7 @@ API which provides thread pools, named `ExecutorService`.
 
 Camel leverages thread pools in the following places:
 
-* several xref:enterprise-integration-patterns.adoc[EIP] patterns supports using thread pools for
+* several xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[EIP] patterns supports using thread pools for
 concurrency
 * xref:components::seda-component.adoc[SEDA] component for asynchronous connectivity
 * xref:async.adoc[Threads DSL] in the Camel route
@@ -24,12 +24,15 @@ default thread pool profile which is:
 [source,xml]
 --------------------------------------------------------------------------------------------------------
     <threadPoolProfile id="defaultThreadPoolProfile" defaultProfile="true"
-                       poolSize="10" maxPoolSize="20" maxQueueSize="1000" allowCoreThreadTimeOut="false"
+                       poolSize="10" maxPoolSize="20" maxQueueSize="1000" allowCoreThreadTimeOut="true"
                        rejectedPolicy="CallerRuns"/>
 --------------------------------------------------------------------------------------------------------
 
+NOTE: From Camel 3.4 onwards the default thread pool profile has `allowCoreThreadTimeOut=true` while
+it was `allowCoreThreadTimeOut=false` in older Camel versions.
+
 What that means is that for example when you use
-xref:multicast-eip.adoc[Multicast] with `parallelProcessing=true` enabled,
+xref:{eip-vc}:eips:multicast-eip.adoc[Multicast] with `parallelProcessing=true` enabled,
 then it would create a thread pool based on the profile above. The
 `rejectedPolicy` has four options:
 `Abort, CallerRuns, Discard, DiscardOldest` which corresponds to the
@@ -79,7 +82,7 @@ xref:registry.adoc[Registry] for a `ExecutorService` with the id =
 fooProfile. If none found it will fallback and see if there is a
 `ThreadPoolProfile` defined with that id. And in this example there is
 and so the profile is used for creating a new `ExecutorService` which is
-handed back to the xref:multicast-eip.adoc[Multicast] EIP to use in the
+handed back to the xref:{eip-vc}:eips:multicast-eip.adoc[Multicast] EIP to use in the
 route.
 
 [[ThreadingModel-Createcustomthreadpool]]

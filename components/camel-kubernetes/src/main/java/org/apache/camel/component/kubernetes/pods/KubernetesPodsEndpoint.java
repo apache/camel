@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kubernetes.pods;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -24,10 +25,9 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The Kubernetes Pods component provides a producer to execute kubernetes pod
- * operations and a consumer to consume pod events.
+ * Perform operations on Kubernetes Pods and get notified on Pod changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-pods", title = "Kubernetes Pods", syntax = "kubernetes-pods:masterUrl", label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-pods", title = "Kubernetes Pods", syntax = "kubernetes-pods:masterUrl", category = {Category.CONTAINER, Category.CLOUD, Category.PAAS})
 public class KubernetesPodsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesPodsEndpoint(String uri, KubernetesPodsComponent component, KubernetesConfiguration config) {

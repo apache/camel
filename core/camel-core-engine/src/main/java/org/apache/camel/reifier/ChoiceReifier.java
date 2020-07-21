@@ -22,24 +22,23 @@ import java.util.List;
 import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
 
-    public ChoiceReifier(ProcessorDefinition<?> definition) {
-        super(ChoiceDefinition.class.cast(definition));
+    public ChoiceReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, ChoiceDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         List<FilterProcessor> filters = new ArrayList<>();
         for (WhenDefinition whenClause : definition.getWhenClauses()) {
             ExpressionDefinition exp = whenClause.getExpression();
@@ -66,19 +65,12 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
                 exp = whenClause.getExpression();
             }
 
-            // also resolve properties and constant fields on embedded
-            // expressions in the when clauses
-            if (exp != null) {
-                // resolve properties before we create the processor
-                ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), exp);
-            }
-
-            FilterProcessor filter = (FilterProcessor)createProcessor(routeContext, whenClause);
+            FilterProcessor filter = (FilterProcessor)createProcessor(whenClause);
             filters.add(filter);
         }
         Processor otherwiseProcessor = null;
         if (definition.getOtherwise() != null) {
-            otherwiseProcessor = createProcessor(routeContext, definition.getOtherwise());
+            otherwiseProcessor = createProcessor(definition.getOtherwise());
         }
         return new ChoiceProcessor(filters, otherwiseProcessor);
     }

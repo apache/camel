@@ -19,7 +19,8 @@ package org.apache.camel.component.file.remote;
 import org.apache.commons.net.io.CopyStreamListener;
 
 /**
- * Listener that captures the activity of the FTP Client such as connecting, login, upload and download etc.
+ * Listener that captures the activity of the FTP Client such as connecting,
+ * login, upload and download etc.
  */
 public interface FtpClientActivityListener extends CopyStreamListener {
 

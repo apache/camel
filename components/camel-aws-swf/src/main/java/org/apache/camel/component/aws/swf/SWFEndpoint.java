@@ -26,6 +26,7 @@ import com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflow;
 import com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient;
 import com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClientBuilder;
 import com.amazonaws.services.simpleworkflow.flow.StartWorkflowOptions;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -34,15 +35,14 @@ import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-swf component is used for managing workflows from Amazon Simple Workflow.
+ * Manage workflows in the AWS Simple Workflow service.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "aws-swf", title = "AWS Simple Workflow", syntax = "aws-swf:type",
-    label = "cloud,workflow")
+@UriEndpoint(firstVersion = "2.13.0", scheme = "aws-swf", title = "AWS Simple Workflow (SWF)", syntax = "aws-swf:type",
+category = {Category.CLOUD, Category.WORKFLOW})
 public class SWFEndpoint extends DefaultEndpoint {
 
     private AmazonSimpleWorkflowClient amazonSWClient;

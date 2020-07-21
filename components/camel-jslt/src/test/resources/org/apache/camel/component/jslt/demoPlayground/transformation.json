@@ -1,0 +1,8 @@
+let idparts = split(.id, "-")
+let xxx = [for ($idparts) "x" * size(.)]
+
+{
+"id" : join($xxx, "-"),
+"type" : "Anonymized-View",
+* : .
+}

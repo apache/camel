@@ -30,14 +30,17 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.NamedNode;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultThreadPoolFactory;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
@@ -54,11 +57,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Base {@link org.apache.camel.spi.ExecutorServiceManager} which can be used for implementations
  */
-public abstract class BaseExecutorServiceManager extends ServiceSupport implements ExecutorServiceManager {
+public class BaseExecutorServiceManager extends ServiceSupport implements ExecutorServiceManager {
     private static final Logger LOG = LoggerFactory.getLogger(BaseExecutorServiceManager.class);
 
     private final CamelContext camelContext;
-    private ThreadPoolFactory threadPoolFactory = new DefaultThreadPoolFactory();
+    private ThreadPoolFactory threadPoolFactory;
     private final List<ExecutorService> executorServices = new CopyOnWriteArrayList<>();
     private String threadNamePattern;
     private long shutdownAwaitTermination = 10000;
@@ -76,7 +79,7 @@ public abstract class BaseExecutorServiceManager extends ServiceSupport implemen
         defaultProfile.setKeepAliveTime(60L);
         defaultProfile.setTimeUnit(TimeUnit.SECONDS);
         defaultProfile.setMaxQueueSize(1000);
-        defaultProfile.setAllowCoreThreadTimeOut(false);
+        defaultProfile.setAllowCoreThreadTimeOut(true);
         defaultProfile.setRejectedPolicy(ThreadPoolRejectedPolicy.CallerRuns);
 
         registerThreadPoolProfile(defaultProfile);
@@ -133,7 +136,7 @@ public abstract class BaseExecutorServiceManager extends ServiceSupport implemen
     @Override
     public void setThreadNamePattern(String threadNamePattern) {
         // must set camel id here in the pattern and let the other placeholders be resolved on demand
-        this.threadNamePattern = threadNamePattern.replaceFirst("#camelId#", this.camelContext.getName());
+        this.threadNamePattern = StringHelper.replaceAll(threadNamePattern, "#camelId#", this.camelContext.getName());
     }
 
     @Override
@@ -227,12 +230,16 @@ public abstract class BaseExecutorServiceManager extends ServiceSupport implemen
         profile.setPoolSize(poolSize);
         profile.setMaxPoolSize(poolSize);
         profile.setKeepAliveTime(0L);
+        profile.setAllowCoreThreadTimeOut(false);
         return newThreadPool(source, name, profile);
     }
 
     @Override
     public ScheduledExecutorService newSingleThreadScheduledExecutor(Object source, String name) {
-        return newScheduledThreadPool(source, name, 1);
+        ThreadPoolProfile profile = new ThreadPoolProfile(name);
+        profile.setPoolSize(1);
+        profile.setAllowCoreThreadTimeOut(false);
+        return newScheduledThreadPool(source, name, profile);
     }
     
     @Override
@@ -421,16 +428,30 @@ public abstract class BaseExecutorServiceManager extends ServiceSupport implemen
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
+
         if (threadNamePattern == null) {
             // set default name pattern which includes the camel context name
             threadNamePattern = "Camel (" + camelContext.getName() + ") thread ##counter# - #name#";
         }
+
+        // discover thread pool factory
+        if (threadPoolFactory == null) {
+            threadPoolFactory = new BaseServiceResolver<>(ThreadPoolFactory.FACTORY, ThreadPoolFactory.class)
+                    .resolve(camelContext)
+                    .orElseGet(DefaultThreadPoolFactory::new);
+        }
+        if (threadPoolFactory instanceof CamelContextAware) {
+            ((CamelContextAware) threadPoolFactory).setCamelContext(camelContext);
+        }
+        ServiceHelper.initService(threadPoolFactory);
     }
 
     @Override
-    protected void doStop() throws Exception {
-        // noop
+    protected void doStart() throws Exception {
+        super.doStart();
+        ServiceHelper.startService(threadPoolFactory);
     }
 
     @Override
@@ -478,6 +499,8 @@ public abstract class BaseExecutorServiceManager extends ServiceSupport implemen
                 it.remove();
             }
         }
+
+        ServiceHelper.stopAndShutdownServices(threadPoolFactory);
     }
 
     /**

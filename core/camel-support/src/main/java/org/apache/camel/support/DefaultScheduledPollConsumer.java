@@ -23,12 +23,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.support.service.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A default implementation of an event driven {@link org.apache.camel.Consumer} which uses the
  * {@link PollingConsumer}
  */
 public class DefaultScheduledPollConsumer extends ScheduledPollConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultScheduledPollConsumer.class);
+
     private PollingConsumer pollingConsumer;
     private int timeout;
 
@@ -59,7 +64,7 @@ public class DefaultScheduledPollConsumer extends ScheduledPollConsumer {
             }
 
             messagesPolled++;
-            log.trace("Polled {} {}", messagesPolled, exchange);
+            LOG.trace("Polled {} {}", messagesPolled, exchange);
 
             // prepare for processing where message should be IN
             ExchangeHelper.prepareOutToIn(exchange);

@@ -32,7 +32,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.builder.xml.StAX2SAXSource;
-import org.junit.Test;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 
@@ -59,7 +60,7 @@ public class StAX2SAXSourceTest extends ContextTestSupport {
         transformer.transform(staxSource, new StreamResult(baos));
         writer.flush();
         baos.flush();
-        assertThat(new String(baos.toByteArray()), equalTo(TEST_XML));
+        MatcherAssert.assertThat(new String(baos.toByteArray()), equalTo(TEST_XML));
     }
 
 }

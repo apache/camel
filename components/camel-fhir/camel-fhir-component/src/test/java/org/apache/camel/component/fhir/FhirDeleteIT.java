@@ -25,9 +25,13 @@ import org.apache.camel.component.fhir.api.ExtraParameters;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirDeleteApiMethod;
 import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirDelete} APIs.
@@ -45,7 +49,7 @@ public class FhirDeleteIT extends AbstractFhirTestSupport {
         IBaseOperationOutcome result = requestBody("direct://RESOURCE", this.patient);
 
         LOG.debug("resource: " + result);
-        assertNotNull("resource result", result);
+        assertNotNull(result, "resource result");
         assertFalse(patientExists());
     }
 
@@ -57,7 +61,7 @@ public class FhirDeleteIT extends AbstractFhirTestSupport {
         IBaseOperationOutcome result = requestBody("direct://RESOURCE_BY_ID", this.patient.getIdElement());
 
         LOG.debug("resourceById: " + result);
-        assertNotNull("resourceById result", result);
+        assertNotNull(result, "resourceById result");
         assertFalse(patientExists());
     }
 
@@ -74,7 +78,7 @@ public class FhirDeleteIT extends AbstractFhirTestSupport {
         IBaseOperationOutcome result = requestBodyAndHeaders("direct://RESOURCE_BY_STRING_ID", null, headers);
 
         LOG.debug("resourceById: " + result);
-        assertNotNull("resourceById result", result);
+        assertNotNull(result, "resourceById result");
         assertFalse(patientExists());
     }
 
@@ -85,7 +89,7 @@ public class FhirDeleteIT extends AbstractFhirTestSupport {
         IBaseOperationOutcome result = requestBody("direct://RESOURCE_CONDITIONAL_BY_URL", "Patient?given=Vincent&family=Freeman");
 
         LOG.debug("resourceConditionalByUrl: " + result);
-        assertNotNull("resourceConditionalByUrl result", result);
+        assertNotNull(result, "resourceConditionalByUrl result");
         assertFalse(patientExists());
     }
 
@@ -98,7 +102,7 @@ public class FhirDeleteIT extends AbstractFhirTestSupport {
         IBaseOperationOutcome result = requestBodyAndHeaders("direct://RESOURCE_CONDITIONAL_BY_URL", "Patient?given=Vincent&family=Freeman", headers);
 
         LOG.debug("resourceConditionalByUrl: " + result);
-        assertNotNull("resourceConditionalByUrl result", result);
+        assertNotNull(result, "resourceConditionalByUrl result");
         assertFalse(patientExists());
     }
 

@@ -37,12 +37,12 @@ public enum AS2DispositionType {
 
     public static AS2DispositionType parseDispositionType(String dispositionTypeString) {
         switch(dispositionTypeString) {
-        case "processed":
-            return PROCESSED;
-        case "failed":
-            return FAILED;
-        default:
-            return null;
+            case "processed":
+                return PROCESSED;
+            case "failed":
+                return FAILED;
+            default:
+                return null;
         }
     }
 }

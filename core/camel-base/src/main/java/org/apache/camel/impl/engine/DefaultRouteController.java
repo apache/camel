@@ -21,21 +21,34 @@ import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.LoggingLevel;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.meta.Experimental;
 import org.apache.camel.spi.RouteController;
+import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.service.ServiceSupport;
 
-@Experimental
-public class DefaultRouteController extends ServiceSupport implements RouteController  {
-    private AbstractCamelContext camelContext;
+/**
+ * A default {@link RouteController} that starts the routes in a fail-fast mode, which means
+ * if any of the routes fail to startup then this causes Camel to fail to startup as well.
+ *
+ * @see DefaultSupervisingRouteController
+ */
+public class DefaultRouteController extends ServiceSupport implements RouteController, NonManagedService {
+
+    // mark this as non managed service as its registered specially as a route controller
+
+    private CamelContext camelContext;
+
+    private LoggingLevel routeStartupLoggingLevel = LoggingLevel.INFO;
 
     public DefaultRouteController() {
         this(null);
     }
 
-    public DefaultRouteController(AbstractCamelContext camelContext) {
+    public DefaultRouteController(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
@@ -45,7 +58,7 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
 
     @Override
     public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = (AbstractCamelContext) camelContext;
+        this.camelContext = camelContext;
     }
 
     @Override
@@ -53,77 +66,95 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
         return camelContext;
     }
 
-    // ***************************************************
-    // Life cycle
-    // ***************************************************
-
     @Override
-    protected void doStart() throws Exception {
-        // noop
+    public LoggingLevel getRouteStartupLoggingLevel() {
+        return routeStartupLoggingLevel;
     }
 
     @Override
-    protected void doStop() throws Exception {
-        // noop
+    public void setRouteStartupLoggingLevel(LoggingLevel routeStartupLoggingLevel) {
+        this.routeStartupLoggingLevel = routeStartupLoggingLevel;
     }
 
     // ***************************************************
     // Route management
     // ***************************************************
 
+    protected RouteController getInternalRouteController() {
+        return camelContext.adapt(ExtendedCamelContext.class).getInternalRouteController();
+    }
+
     @Override
     public void startAllRoutes() throws Exception {
-        camelContext.startAllRoutes();
+        getInternalRouteController().startAllRoutes();
     }
 
     @Override
     public boolean isStartingRoutes() {
-        return camelContext.isStartingRoutes();
+        return getInternalRouteController().isStartingRoutes();
     }
 
     @Override
     public ServiceStatus getRouteStatus(String routeId) {
-        return camelContext.getRouteStatus(routeId);
+        return getInternalRouteController().getRouteStatus(routeId);
     }
 
     @Override
     public void startRoute(String routeId) throws Exception {
-        camelContext.startRoute(routeId);
+        getInternalRouteController().startRoute(routeId);
     }
 
     @Override
     public void stopRoute(String routeId) throws Exception {
-        camelContext.stopRoute(routeId);
+        getInternalRouteController().stopRoute(routeId);
     }
 
     @Override
     public void stopRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception {
-        camelContext.stopRoute(routeId, timeout, timeUnit);
+        getInternalRouteController().stopRoute(routeId, timeout, timeUnit);
     }
 
     @Override
     public boolean stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout) throws Exception {
-        return camelContext.stopRoute(routeId, timeout, timeUnit, abortAfterTimeout);
+        return getInternalRouteController().stopRoute(routeId, timeout, timeUnit, abortAfterTimeout);
     }
 
     @Override
     public void suspendRoute(String routeId) throws Exception {
-        camelContext.suspendRoute(routeId);
+        getInternalRouteController().suspendRoute(routeId);
     }
 
     @Override
     public void suspendRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception {
-        camelContext.suspendRoute(routeId, timeout, timeUnit);
+        getInternalRouteController().suspendRoute(routeId, timeout, timeUnit);
     }
 
     @Override
     public void resumeRoute(String routeId) throws Exception {
-        camelContext.resumeRoute(routeId);
+        getInternalRouteController().resumeRoute(routeId);
     }
 
     // ***************************************************
     //
     // ***************************************************
+
+    @Override
+    public <T extends RouteController> T adapt(Class<T> type) {
+        return type.cast(this);
+    }
+
+    @Override
+    public SupervisingRouteController supervising() {
+        if (this instanceof SupervisingRouteController) {
+            return (SupervisingRouteController) this;
+        } else {
+            // change current route controller to be supervising
+            SupervisingRouteController src = new DefaultSupervisingRouteController();
+            src.setCamelContext(camelContext);
+            camelContext.setRouteController(src);
+            return src;
+        }
+    }
 
     @Override
     public Collection<Route> getControlledRoutes() {

@@ -58,9 +58,7 @@ public class FromFileToFtpDeleteTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file:target/delete?delete=true")
-                    .to(getFtpUrl())
-                    .to("mock:result");
+                from("file:target/delete?delete=true").to(getFtpUrl()).to("mock:result");
             }
         };
     }

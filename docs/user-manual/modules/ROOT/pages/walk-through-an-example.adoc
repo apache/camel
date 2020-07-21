@@ -1,12 +1,12 @@
 = Walk through an Example Code
 
 This mini-guide takes you through the source code of a
-https://github.com/apache/camel/blob/master/examples/camel-example-jms-file/src/main/java/org/apache/camel/example/jmstofile/CamelJmsToFileExample.java[simple
+https://github.com/apache/camel-examples/blob/master/examples/camel-example-jms-file/src/main/java/org/apache/camel/example/jmstofile/CamelJmsToFileExample.java[simple
 example].
 
 Camel can be configured either by using xref:spring.adoc[Spring] or
 directly in Java - which
-https://github.com/apache/camel/blob/master/examples/camel-example-jms-file/src/main/java/org/apache/camel/example/jmstofile/CamelJmsToFileExample.java[this
+https://github.com/apache/camel-examples/blob/master/examples/camel-example-jms-file/src/main/java/org/apache/camel/example/jmstofile/CamelJmsToFileExample.java[this
 example does].
 
 We start with creating a xref:camelcontext.adoc[CamelContext] - which is
@@ -16,7 +16,7 @@ etc:
 
 [source,java]
 ----
-include::{examplesdir}/examples/camel-example-jms-file/src/main/java/org/apache/camel/example/jmstofile/CamelJmsToFileExample.java[tags=e1]
+ CamelContext context = new DefaultCamelContext();
 ----
 
 There is more than one way of adding a Component to the CamelContext. You can
@@ -26,14 +26,42 @@ xref:components::file-component.adoc[FileComponent]:
 
 [source,java]
 ----
-include::{examplesdir}/examples/camel-example-jms-file/src/main/java/org/apache/camel/example/jmstofile/CamelJmsToFileExample.java[tags=e3]
+context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("test-jms:queue:test.queue").to("file://test");
+            }
+        });
 ----
 
 or explicitly - as we do here when we add the JMS Component:
 
 [source,java]
 ----
-include::{examplesdir}/examples/camel-example-jms-file/src/main/java/org/apache/camel/example/jmstofile/CamelJmsToFileExample.java[tags=e2]
+ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
+        // Note we can explicit name the component
+        context.addComponent("test-jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
+----
+
+or explicitly using the Component DSL which allows you to configure the components using DSL APIs and register them to the camel context. First you will have the import the maven package for the Component DSL:
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-componentdsl</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+and the register the component like this:
+[source,java]
+----
+ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
+
+ComponentsBuilderFactory.jms()
+         .connectionFactory(connectionFactory)
+         .acknowledgementMode(1)
+         .register(context, "test-jms");
 ----
 
 The above works with any JMS provider. If we know we are using
@@ -51,7 +79,7 @@ configuration:
 
 [source,java]
 ----
-include::{examplesdir}/examples/camel-example-jms-file/src/main/java/org/apache/camel/example/jmstofile/CamelJmsToFileExample.java[tags=e4]
+ProducerTemplate template = context.createProducerTemplate();
 ----
 
 Next you *must* start the camel context. If you are using
@@ -72,7 +100,9 @@ camel:
 
 [source,java]
 ----
-include::{examplesdir}/examples/camel-example-jms-file/src/main/java/org/apache/camel/example/jmstofile/CamelJmsToFileExample.java[tags=e5]
+for (int i = 0; i < 10; i++) {
+    template.sendBody("test-jms:queue:test.queue", "Test Message: " + i);
+}
 ----
 
 == What happens?

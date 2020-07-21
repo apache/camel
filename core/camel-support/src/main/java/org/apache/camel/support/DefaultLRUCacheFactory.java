@@ -25,9 +25,13 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Default {@link LRUCacheFactory} which uses a {@link LinkedHashMap}.
+ * You can use camel-caffeine-lrucache instead which has a better LRUCache implementation.
+ */
 public class DefaultLRUCacheFactory extends LRUCacheFactory {
 
-    private final Logger log = LoggerFactory.getLogger(DefaultLRUCacheFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultLRUCacheFactory.class);
 
     /**
      * Constructs an empty <tt>LRUCache</tt> instance with the
@@ -38,7 +42,7 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
      */
     @Override
     public <K, V> Map<K, V> createLRUCache(int maximumCacheSize) {
-        log.trace("Creating LRUCache with maximumCacheSize: {}", maximumCacheSize);
+        LOG.trace("Creating LRUCache with maximumCacheSize: {}", maximumCacheSize);
         return new SimpleLRUCache<>(maximumCacheSize);
     }
 
@@ -51,7 +55,7 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
      */
     @Override
     public <K, V> Map<K, V> createLRUCache(int maximumCacheSize, Consumer<V> onEvict) {
-        log.trace("Creating LRUCache with maximumCacheSize: {}", maximumCacheSize);
+        LOG.trace("Creating LRUCache with maximumCacheSize: {}", maximumCacheSize);
         return new SimpleLRUCache<>(16, maximumCacheSize, onEvict);
     }
 
@@ -65,7 +69,7 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
      */
     @Override
     public <K, V> Map<K, V> createLRUCache(int initialCapacity, int maximumCacheSize) {
-        log.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}", initialCapacity, maximumCacheSize);
+        LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}", initialCapacity, maximumCacheSize);
         return new SimpleLRUCache<>(initialCapacity, maximumCacheSize);
     }
 
@@ -80,7 +84,7 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
      */
     @Override
     public <K, V> Map<K, V> createLRUCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
-        log.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity, maximumCacheSize, stopOnEviction);
+        LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity, maximumCacheSize, stopOnEviction);
         return new SimpleLRUCache<>(initialCapacity, maximumCacheSize, stopOnEviction);
     }
 
@@ -93,19 +97,19 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
      */
     @Override
     public <K, V> Map<K, V> createLRUSoftCache(int maximumCacheSize) {
-        log.trace("Creating LRUSoftCache with maximumCacheSize: {}", maximumCacheSize);
+        LOG.trace("Creating LRUSoftCache with maximumCacheSize: {}", maximumCacheSize);
         return new SimpleLRUCache<>(maximumCacheSize);
     }
 
     @Override
     public <K, V> Map<K, V> createLRUSoftCache(int initialCapacity, int maximumCacheSize) {
-        log.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}", initialCapacity, maximumCacheSize);
+        LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}", initialCapacity, maximumCacheSize);
         return new SimpleLRUCache<>(initialCapacity, maximumCacheSize);
     }
 
     @Override
     public <K, V> Map<K, V> createLRUSoftCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
-        log.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity, maximumCacheSize, stopOnEviction);
+        LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity, maximumCacheSize, stopOnEviction);
         return new SimpleLRUCache<>(initialCapacity, maximumCacheSize, stopOnEviction);
     }
 
@@ -118,19 +122,19 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
      */
     @Override
     public <K, V> Map<K, V> createLRUWeakCache(int maximumCacheSize) {
-        log.trace("Creating LRUWeakCache with maximumCacheSize: {}", maximumCacheSize);
+        LOG.trace("Creating LRUWeakCache with maximumCacheSize: {}", maximumCacheSize);
         return new SimpleLRUCache<>(maximumCacheSize);
     }
 
     @Override
     public <K, V> Map<K, V> createLRUWeakCache(int initialCapacity, int maximumCacheSize) {
-        log.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}", initialCapacity, maximumCacheSize);
+        LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}", initialCapacity, maximumCacheSize);
         return new SimpleLRUCache<>(initialCapacity, maximumCacheSize);
     }
 
     @Override
     public <K, V> Map<K, V> createLRUWeakCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
-        log.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity, maximumCacheSize, stopOnEviction);
+        LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity, maximumCacheSize, stopOnEviction);
         return new SimpleLRUCache<>(initialCapacity, maximumCacheSize, stopOnEviction);
     }
 
@@ -179,7 +183,7 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
             // stop service as its evicted from cache
             ServiceHelper.stopService(value);
         } catch (Exception e) {
-            log.warn("Error stopping service: {}. This exception will be ignored.", value, e);
+            LOG.warn("Error stopping service: {}. This exception will be ignored.", value, e);
         }
     }
 }

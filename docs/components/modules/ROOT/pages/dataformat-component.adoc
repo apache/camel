@@ -1,12 +1,18 @@
 [[dataformat-component]]
 = Data Format Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-dataformat/src/main/docs/dataformat-component.adoc
+:docTitle: Data Format
+:artifactId: camel-dataformat
+:description: Use a Camel Data Format as a regular Camel Component.
+:since: 2.12
+:supportLevel: Stable
+:component-header: Only producer is supported
+:core:
 
-*Since Camel 2.12*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Dataformat component allows to use xref:manual::data-format.adoc[Data
 Format] as a Camel Component.
@@ -35,8 +41,8 @@ The Data Format component supports 2 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -58,7 +64,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *name* | *Required* Name of data format |  | String
-| *operation* | *Required* Operation to use either marshal or unmarshal |  | String
+| *operation* | *Required* Operation to use either marshal or unmarshal. The value can be one of: marshal, unmarshal |  | String
 |===
 
 
@@ -74,39 +80,10 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-dataformat-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 4 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.dataformat.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.dataformat.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.dataformat.enabled* | Whether to enable auto configuration of the dataformat component. This is enabled by default. |  | Boolean
-| *camel.component.dataformat.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-|===
-// spring-boot-auto-configure options: END
 
 == Samples
 
-For example to use the xref:jaxb-dataformat.adoc[JAXB] xref:manual::data-format.adoc[Data
+For example to use the xref:dataformats:jaxb-dataformat.adoc[JAXB] xref:manual::data-format.adoc[Data
 Format] we can do as follows:
 
 [source,java]
@@ -128,3 +105,5 @@ And in XML DSL you do:
   </route>
 </camelContext>
 ----
+
+include::camel-spring-boot::page$dataformat-starter.adoc[]

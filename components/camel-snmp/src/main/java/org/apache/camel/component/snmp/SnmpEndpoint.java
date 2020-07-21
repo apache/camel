@@ -18,6 +18,7 @@ package org.apache.camel.component.snmp;
 
 import java.net.URI;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,21 +28,25 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultPollingEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snmp4j.CommandResponderEvent;
 import org.snmp4j.PDU;
 import org.snmp4j.mp.SnmpConstants;
 import org.snmp4j.security.SecurityLevel;
 
 /**
- * The snmp component gives you the ability to poll SNMP capable devices or receiving traps.
+ * Receive traps and poll SNMP (Simple Network Management Protocol) capable devices.
  */
-@UriEndpoint(firstVersion = "2.1.0", scheme = "snmp", title = "SNMP", syntax = "snmp:host:port", label = "monitoring")
+@UriEndpoint(firstVersion = "2.1.0", scheme = "snmp", title = "SNMP", syntax = "snmp:host:port", category = {Category.MONITORING})
 public class SnmpEndpoint extends DefaultPollingEndpoint {
 
     public static final String DEFAULT_COMMUNITY = "public";
     public static final int DEFAULT_SNMP_VERSION = SnmpConstants.version1;
     public static final int DEFAULT_SNMP_RETRIES = 2;
     public static final int DEFAULT_SNMP_TIMEOUT = 1500;
+
+    private static final Logger LOG = LoggerFactory.getLogger(SnmpEndpoint.class);
 
     private transient String address;
 
@@ -61,7 +66,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     private String snmpCommunity = DEFAULT_COMMUNITY;
     @UriParam
     private SnmpActionType type;
-    @UriParam(label = "consumer", defaultValue = "60000")
+    @UriParam(label = "consumer", defaultValue = "60000", javaType = "java.time.Duration")
     private long delay = 60000;
     @UriParam(defaultValue = "" + SecurityLevel.AUTH_PRIV, enums = "1,2,3", label = "security")
     private int securityLevel = SecurityLevel.AUTH_PRIV;
@@ -260,8 +265,8 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         URI uri = URI.create(getEndpointUri());
         String host = uri.getHost();
@@ -277,10 +282,9 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
             }
         }
 
-
         // set the address
         String address = String.format("%s:%s/%d", getProtocol(), host, port);
-        log.debug("Using snmp address {}", address);
+        LOG.debug("Using snmp address {}", address);
         setAddress(address);
     }
 

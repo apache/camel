@@ -25,6 +25,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -37,14 +38,16 @@ import org.apache.johnzon.mapper.reflection.JohnzonParameterizedType;
  * using <a href="http://johnzon.apache.org/">Johnzon</a> to marshal to and from JSON.
  */
 @Dataformat("json-johnzon")
+@Metadata(includeProperties = "unmarshalTypeName,objectMapper,prettyPrint")
 public class JohnzonDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private CamelContext camelContext;
     private Mapper objectMapper;
+    private String unmarshalTypeName;
     private Class<?> unmarshalType;
     private JohnzonParameterizedType parameterizedType;
     private Comparator<String> attributeOrder;
-    private boolean pretty;
+    private boolean prettyPrint;
     private String encoding;
     private boolean skipEmptyArray;
     private boolean skipNull;
@@ -126,6 +129,14 @@ public class JohnzonDataFormat extends ServiceSupport implements DataFormat, Dat
         this.unmarshalType = unmarshalType;
     }
 
+    public String getUnmarshalTypeName() {
+        return unmarshalTypeName;
+    }
+
+    public void setUnmarshalTypeName(String unmarshalTypeName) {
+        this.unmarshalTypeName = unmarshalTypeName;
+    }
+
     public JohnzonParameterizedType getParameterizedType() {
         return parameterizedType;
     }
@@ -134,12 +145,12 @@ public class JohnzonDataFormat extends ServiceSupport implements DataFormat, Dat
         this.parameterizedType = parameterizedType;
     }
 
-    public boolean isPretty() {
-        return pretty;
+    public boolean isPrettyPrint() {
+        return prettyPrint;
     }
 
-    public void setPretty(boolean pretty) {
-        this.pretty = pretty;
+    public void setPrettyPrint(boolean prettyPrint) {
+        this.prettyPrint = prettyPrint;
     }
 
     public String getEncoding() {
@@ -195,10 +206,17 @@ public class JohnzonDataFormat extends ServiceSupport implements DataFormat, Dat
     }
 
     @Override
+    protected void doInit() throws Exception {
+        if (unmarshalTypeName != null && (unmarshalType == null || unmarshalType == Object.class)) {
+            unmarshalType = camelContext.getClassResolver().resolveClass(unmarshalTypeName);
+        }
+    }
+
+    @Override
     protected void doStart() throws Exception {
         if (objectMapper == null) {
             MapperBuilder builder = new MapperBuilder();
-            builder.setPretty(pretty);
+            builder.setPretty(prettyPrint);
             builder.setSkipNull(skipNull);
             builder.setSkipEmptyArray(skipEmptyArray);
             if (ObjectHelper.isNotEmpty(encoding)) {

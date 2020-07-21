@@ -17,10 +17,12 @@
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class OptimisticLockRetryPolicyTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class OptimisticLockRetryPolicyTest {
 
     private static long precision = 100L; // give or take 100ms
 
@@ -65,15 +67,15 @@ public class OptimisticLockRetryPolicyTest extends Assert {
             long elapsed = doDelay(policy, i);
 
             switch (i) {
-            case 0:
-                assertDelay(50L, elapsed);
-                break;
-            case 1:
-                assertDelay(100L, elapsed);
-                break;
-            default:
-                assertDelay(100L, elapsed);
-                break;
+                case 0:
+                    assertDelay(50L, elapsed);
+                    break;
+                case 1:
+                    assertDelay(100L, elapsed);
+                    break;
+                default:
+                    assertDelay(100L, elapsed);
+                    break;
             }
         }
     }
@@ -104,12 +106,12 @@ public class OptimisticLockRetryPolicyTest extends Assert {
 
         for (int i = 0; i < 10; i++) {
             switch (i) {
-            case 0:
-            case 1:
-                assertTrue(policy.shouldRetry(i));
-                break;
-            default:
-                assertFalse(policy.shouldRetry(i));
+                case 0:
+                case 1:
+                    assertTrue(policy.shouldRetry(i));
+                    break;
+                default:
+                    assertFalse(policy.shouldRetry(i));
             }
         }
     }
@@ -123,10 +125,10 @@ public class OptimisticLockRetryPolicyTest extends Assert {
 
     private void assertDelay(long expectedDelay, long actualDelay) {
         String msg = String.format("%d <= %d", actualDelay, expectedDelay + precision);
-        assertTrue(msg, actualDelay <= expectedDelay + precision);
+        assertTrue(actualDelay <= expectedDelay + precision, msg);
 
         msg = String.format("%d >= %d", actualDelay, expectedDelay - precision);
-        assertTrue(msg, actualDelay >= expectedDelay - precision);
+        assertTrue(actualDelay >= expectedDelay - precision, msg);
     }
 
 }

@@ -25,8 +25,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit test for consuming files from a FTP Server to files where we want to use the filename
- * from the FTPServer instead of explicit setting a filename using the file headername option.
+ * Unit test for consuming files from a FTP Server to files where we want to use
+ * the filename from the FTPServer instead of explicit setting a filename using
+ * the file headername option.
  */
 public class FromFtpToFileNoFileNameHeaderTest extends FtpServerTestSupport {
 
@@ -52,7 +53,8 @@ public class FromFtpToFileNoFileNameHeaderTest extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want to unit
+        // prepares the FTP Server by creating a file on the server that we want
+        // to unit
         // test that we can pool and store as a local file
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
@@ -69,7 +71,8 @@ public class FromFtpToFileNoFileNameHeaderTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 String fileUrl = "file:target/ftptest/?fileExist=Override&noop=true";
-                // we do not set any filename in the header property so the filename should be the one
+                // we do not set any filename in the header property so the
+                // filename should be the one
                 // from the FTP server we downloaded
                 from(getFtpUrl()).convertBodyTo(String.class).to(fileUrl).to("mock:result");
             }

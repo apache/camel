@@ -19,6 +19,7 @@ package org.apache.camel.component.google.drive;
 import java.util.Map;
 
 import com.google.api.services.drive.Drive;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -33,10 +34,10 @@ import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 /**
- * The google-drive component provides access to Google Drive file storage service.
+ * Manage files in Google Drive.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "google-drive", title = "Google Drive", syntax = "google-drive:apiName/methodName",
-             consumerPrefix = "consumer", label = "api,cloud,file")
+        consumerPrefix = "consumer", category = {Category.FILE, Category.CLOUD, Category.API})
 public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName, GoogleDriveConfiguration> {
     private Object apiProxy;
 
@@ -47,7 +48,7 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
     private GoogleDriveClientFactory clientFactory;
 
     public GoogleDriveEndpoint(String uri, GoogleDriveComponent component,
-                         GoogleDriveApiName apiName, String methodName, GoogleDriveConfiguration endpointConfiguration) {
+                               GoogleDriveApiName apiName, String methodName, GoogleDriveConfiguration endpointConfiguration) {
         super(uri, component, apiName, methodName, GoogleDriveApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
         this.configuration = endpointConfiguration;
     }
@@ -71,61 +72,61 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
 
     @Override
     protected ApiMethodPropertiesHelper<GoogleDriveConfiguration> getPropertiesHelper() {
-        return GoogleDrivePropertiesHelper.getHelper();
+        return GoogleDrivePropertiesHelper.getHelper(getCamelContext());
     }
 
     @Override
     protected String getThreadProfileName() {
         return GoogleDriveConstants.THREAD_PROFILE_NAME;
     }
-    
+
     @Override
     protected void afterConfigureProperties() {
         switch (apiName) {
-        case DRIVE_FILES:
-            apiProxy = getClient().files();
-            break;
-        case DRIVE_ABOUT:
-            apiProxy = getClient().about();
-            break;
-        case DRIVE_APPS:
-            apiProxy = getClient().apps();
-            break;
-        case DRIVE_CHANNELS:
-            apiProxy = getClient().channels();
-            break;
-        case DRIVE_CHANGES:
-            apiProxy = getClient().changes();
-            break;
-        case DRIVE_COMMENTS:
-            apiProxy = getClient().comments();
-            break;
-        case DRIVE_PERMISSIONS:
-            apiProxy = getClient().permissions();
-            break;
-        case DRIVE_PROPERTIES:
-            apiProxy = getClient().properties();
-            break;
-        case DRIVE_REALTIME:
-            apiProxy = getClient().realtime();
-            break;
-        case DRIVE_REPLIES:
-            apiProxy = getClient().replies();
-            break;
-        case DRIVE_REVISIONS:
-            apiProxy = getClient().revisions();
-            break;
-        case DRIVE_CHILDREN:
-            apiProxy = getClient().children();
-            break;
-        case DRIVE_PARENTS:
-            apiProxy = getClient().parents();
-            break;
-        default:
-            throw new IllegalArgumentException("Invalid API name " + apiName);
-        } 
+            case DRIVE_FILES:
+                apiProxy = getClient().files();
+                break;
+            case DRIVE_ABOUT:
+                apiProxy = getClient().about();
+                break;
+            case DRIVE_APPS:
+                apiProxy = getClient().apps();
+                break;
+            case DRIVE_CHANNELS:
+                apiProxy = getClient().channels();
+                break;
+            case DRIVE_CHANGES:
+                apiProxy = getClient().changes();
+                break;
+            case DRIVE_COMMENTS:
+                apiProxy = getClient().comments();
+                break;
+            case DRIVE_PERMISSIONS:
+                apiProxy = getClient().permissions();
+                break;
+            case DRIVE_PROPERTIES:
+                apiProxy = getClient().properties();
+                break;
+            case DRIVE_REALTIME:
+                apiProxy = getClient().realtime();
+                break;
+            case DRIVE_REPLIES:
+                apiProxy = getClient().replies();
+                break;
+            case DRIVE_REVISIONS:
+                apiProxy = getClient().revisions();
+                break;
+            case DRIVE_CHILDREN:
+                apiProxy = getClient().children();
+                break;
+            case DRIVE_PARENTS:
+                apiProxy = getClient().parents();
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid API name " + apiName);
+        }
     }
-    
+
     public Drive getClient() {
         return ((GoogleDriveComponent)getComponent()).getClient(configuration);
     }

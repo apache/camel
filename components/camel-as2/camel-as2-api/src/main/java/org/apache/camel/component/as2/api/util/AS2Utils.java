@@ -105,7 +105,7 @@ public final class AS2Utils {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 PrintStream ps = new PrintStream(baos, true, "utf-8")) {
             printRequest(ps, request);
-            String content = new String(baos.toByteArray(), StandardCharsets.UTF_8);
+            String content = baos.toString(StandardCharsets.UTF_8.name());
             return content;
         }
     }
@@ -114,7 +114,7 @@ public final class AS2Utils {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 PrintStream ps = new PrintStream(baos, true, "utf-8")) {
             printMessage(ps, message);
-            String content = new String(baos.toByteArray(), StandardCharsets.UTF_8);
+            String content = baos.toString(StandardCharsets.UTF_8.name());
             return content;
         }
     }

@@ -24,16 +24,18 @@ import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.camel.component.feed.EntryFilter;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit test for UpdatedDateFilter
  */
-public class UpdatedDateFilterTest extends Assert {
+public class UpdatedDateFilterTest {
 
     @Test
-    public void testFilter() throws Exception {
+    void testFilter() throws Exception {
         Document<Feed> doc = AtomUtils.parseDocument("file:src/test/data/feed.atom");
         assertNotNull(doc);
 
@@ -51,9 +53,9 @@ public class UpdatedDateFilterTest extends Assert {
             boolean valid = filter.isValidEntry(null, doc, entry);
             // only the 3 last should be true
             if (i > 3) {
-                assertEquals("not valid", false, valid);
+                assertEquals(false, valid, "not valid");
             } else {
-                assertEquals("valid", true, valid);
+                assertEquals(true, valid, "valid");
             }
         }
     }

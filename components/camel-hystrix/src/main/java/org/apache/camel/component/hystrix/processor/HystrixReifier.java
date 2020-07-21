@@ -26,38 +26,36 @@ import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixCommandProperties;
 import com.netflix.hystrix.HystrixThreadPoolKey;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
-import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.BeanIntrospection;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.function.Suppliers;
 
-import static org.apache.camel.support.CamelContextHelper.lookup;
-import static org.apache.camel.support.CamelContextHelper.mandatoryLookup;
-
 public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
 
-    public HystrixReifier(CircuitBreakerDefinition definition) {
-        super(definition);
+    public HystrixReifier(Route route, CircuitBreakerDefinition definition) {
+        super(route, definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         // create the regular and fallback processors
-        Processor processor = createChildProcessor(routeContext, true);
+        Processor processor = createChildProcessor(true);
         Processor fallback = null;
         if (definition.getOnFallback() != null) {
-            fallback = ProcessorReifier.reifier(definition.getOnFallback()).createProcessor(routeContext);
+            fallback = createProcessor(definition.getOnFallback());
         }
 
-        final HystrixConfigurationDefinition config = buildHystrixConfiguration(routeContext.getCamelContext());
-        final String id = getId(definition, routeContext);
+        final HystrixConfigurationDefinition config = buildHystrixConfiguration();
+        final String id = getId(definition);
 
         // group and thread pool keys to use they can be configured on configRef and config, so look there first, and if none then use default
         String groupKey = config.getGroupKey();
@@ -94,7 +92,7 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
 
         // create setter for fallback via network
         HystrixCommand.Setter fallbackSetter = null;
-        boolean fallbackViaNetwork = definition.getOnFallback() != null && parseBoolean(routeContext, definition.getOnFallback().getFallbackViaNetwork());
+        boolean fallbackViaNetwork = definition.getOnFallback() != null && parseBoolean(definition.getOnFallback().getFallbackViaNetwork(), false);
         if (fallbackViaNetwork) {
             // use a different thread pool that is for fallback (should never use the same thread pool as the regular command)
             HystrixThreadPoolKey tpFallbackKey = HystrixThreadPoolKey.Factory.asKey(threadPoolKey + "-fallback");
@@ -119,91 +117,91 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
     private void configureHystrix(HystrixCommandProperties.Setter command, HystrixThreadPoolProperties.Setter threadPool, HystrixConfigurationDefinition config) {
         // command
         if (config.getCircuitBreakerEnabled() != null) {
-            command.withCircuitBreakerEnabled(Boolean.parseBoolean(config.getCircuitBreakerEnabled()));
+            command.withCircuitBreakerEnabled(parseBoolean(config.getCircuitBreakerEnabled()));
         }
         if (config.getCircuitBreakerErrorThresholdPercentage() != null) {
-            command.withCircuitBreakerErrorThresholdPercentage(Integer.parseInt(config.getCircuitBreakerErrorThresholdPercentage()));
+            command.withCircuitBreakerErrorThresholdPercentage(parseInt(config.getCircuitBreakerErrorThresholdPercentage()));
         }
         if (config.getCircuitBreakerForceClosed() != null) {
-            command.withCircuitBreakerForceClosed(Boolean.parseBoolean(config.getCircuitBreakerForceClosed()));
+            command.withCircuitBreakerForceClosed(parseBoolean(config.getCircuitBreakerForceClosed()));
         }
         if (config.getCircuitBreakerForceOpen() != null) {
-            command.withCircuitBreakerForceOpen(Boolean.parseBoolean(config.getCircuitBreakerForceOpen()));
+            command.withCircuitBreakerForceOpen(parseBoolean(config.getCircuitBreakerForceOpen()));
         }
         if (config.getCircuitBreakerRequestVolumeThreshold() != null) {
-            command.withCircuitBreakerRequestVolumeThreshold(Integer.parseInt(config.getCircuitBreakerRequestVolumeThreshold()));
+            command.withCircuitBreakerRequestVolumeThreshold(parseInt(config.getCircuitBreakerRequestVolumeThreshold()));
         }
         if (config.getCircuitBreakerSleepWindowInMilliseconds() != null) {
-            command.withCircuitBreakerSleepWindowInMilliseconds(Integer.parseInt(config.getCircuitBreakerSleepWindowInMilliseconds()));
+            command.withCircuitBreakerSleepWindowInMilliseconds(parseInt(config.getCircuitBreakerSleepWindowInMilliseconds()));
         }
         if (config.getExecutionIsolationSemaphoreMaxConcurrentRequests() != null) {
-            command.withExecutionIsolationSemaphoreMaxConcurrentRequests(Integer.parseInt(config.getExecutionIsolationSemaphoreMaxConcurrentRequests()));
+            command.withExecutionIsolationSemaphoreMaxConcurrentRequests(parseInt(config.getExecutionIsolationSemaphoreMaxConcurrentRequests()));
         }
         if (config.getExecutionIsolationStrategy() != null) {
-            command.withExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy.valueOf(config.getExecutionIsolationStrategy()));
+            command.withExecutionIsolationStrategy(parse(HystrixCommandProperties.ExecutionIsolationStrategy.class, config.getExecutionIsolationStrategy()));
         }
         if (config.getExecutionIsolationThreadInterruptOnTimeout() != null) {
-            command.withExecutionIsolationThreadInterruptOnTimeout(Boolean.parseBoolean(config.getExecutionIsolationThreadInterruptOnTimeout()));
+            command.withExecutionIsolationThreadInterruptOnTimeout(parseBoolean(config.getExecutionIsolationThreadInterruptOnTimeout()));
         }
         if (config.getExecutionTimeoutInMilliseconds() != null) {
-            command.withExecutionTimeoutInMilliseconds(Integer.parseInt(config.getExecutionTimeoutInMilliseconds()));
+            command.withExecutionTimeoutInMilliseconds(parseInt(config.getExecutionTimeoutInMilliseconds()));
         }
         if (config.getExecutionTimeoutEnabled() != null) {
-            command.withExecutionTimeoutEnabled(Boolean.parseBoolean(config.getExecutionTimeoutEnabled()));
+            command.withExecutionTimeoutEnabled(parseBoolean(config.getExecutionTimeoutEnabled()));
         }
         if (config.getFallbackIsolationSemaphoreMaxConcurrentRequests() != null) {
-            command.withFallbackIsolationSemaphoreMaxConcurrentRequests(Integer.parseInt(config.getFallbackIsolationSemaphoreMaxConcurrentRequests()));
+            command.withFallbackIsolationSemaphoreMaxConcurrentRequests(parseInt(config.getFallbackIsolationSemaphoreMaxConcurrentRequests()));
         }
         if (config.getFallbackEnabled() != null) {
-            command.withFallbackEnabled(Boolean.parseBoolean(config.getFallbackEnabled()));
+            command.withFallbackEnabled(parseBoolean(config.getFallbackEnabled()));
         }
         if (config.getMetricsHealthSnapshotIntervalInMilliseconds() != null) {
-            command.withMetricsHealthSnapshotIntervalInMilliseconds(Integer.parseInt(config.getMetricsHealthSnapshotIntervalInMilliseconds()));
+            command.withMetricsHealthSnapshotIntervalInMilliseconds(parseInt(config.getMetricsHealthSnapshotIntervalInMilliseconds()));
         }
         if (config.getMetricsRollingPercentileBucketSize() != null) {
-            command.withMetricsRollingPercentileBucketSize(Integer.parseInt(config.getMetricsRollingPercentileBucketSize()));
+            command.withMetricsRollingPercentileBucketSize(parseInt(config.getMetricsRollingPercentileBucketSize()));
         }
         if (config.getMetricsRollingPercentileEnabled() != null) {
-            command.withMetricsRollingPercentileEnabled(Boolean.parseBoolean(config.getMetricsRollingPercentileEnabled()));
+            command.withMetricsRollingPercentileEnabled(parseBoolean(config.getMetricsRollingPercentileEnabled()));
         }
         if (config.getMetricsRollingPercentileWindowInMilliseconds() != null) {
-            command.withMetricsRollingPercentileWindowInMilliseconds(Integer.parseInt(config.getMetricsRollingPercentileWindowInMilliseconds()));
+            command.withMetricsRollingPercentileWindowInMilliseconds(parseInt(config.getMetricsRollingPercentileWindowInMilliseconds()));
         }
         if (config.getMetricsRollingPercentileWindowBuckets() != null) {
-            command.withMetricsRollingPercentileWindowBuckets(Integer.parseInt(config.getMetricsRollingPercentileWindowBuckets()));
+            command.withMetricsRollingPercentileWindowBuckets(parseInt(config.getMetricsRollingPercentileWindowBuckets()));
         }
         if (config.getMetricsRollingStatisticalWindowInMilliseconds() != null) {
-            command.withMetricsRollingStatisticalWindowInMilliseconds(Integer.parseInt(config.getMetricsRollingStatisticalWindowInMilliseconds()));
+            command.withMetricsRollingStatisticalWindowInMilliseconds(parseInt(config.getMetricsRollingStatisticalWindowInMilliseconds()));
         }
         if (config.getMetricsRollingStatisticalWindowBuckets() != null) {
-            command.withMetricsRollingStatisticalWindowBuckets(Integer.parseInt(config.getMetricsRollingStatisticalWindowBuckets()));
+            command.withMetricsRollingStatisticalWindowBuckets(parseInt(config.getMetricsRollingStatisticalWindowBuckets()));
         }
         if (config.getRequestLogEnabled() != null) {
-            command.withRequestLogEnabled(Boolean.parseBoolean(config.getRequestLogEnabled()));
+            command.withRequestLogEnabled(parseBoolean(config.getRequestLogEnabled()));
         }
         if (config.getCorePoolSize() != null) {
-            threadPool.withCoreSize(Integer.parseInt(config.getCorePoolSize()));
+            threadPool.withCoreSize(parseInt(config.getCorePoolSize()));
         }
         if (config.getMaximumSize() != null) {
-            threadPool.withMaximumSize(Integer.parseInt(config.getMaximumSize()));
+            threadPool.withMaximumSize(parseInt(config.getMaximumSize()));
         }
         if (config.getKeepAliveTime() != null) {
-            threadPool.withKeepAliveTimeMinutes(Integer.parseInt(config.getKeepAliveTime()));
+            threadPool.withKeepAliveTimeMinutes(parseInt(config.getKeepAliveTime()));
         }
         if (config.getMaxQueueSize() != null) {
-            threadPool.withMaxQueueSize(Integer.parseInt(config.getMaxQueueSize()));
+            threadPool.withMaxQueueSize(parseInt(config.getMaxQueueSize()));
         }
         if (config.getQueueSizeRejectionThreshold() != null) {
-            threadPool.withQueueSizeRejectionThreshold(Integer.parseInt(config.getQueueSizeRejectionThreshold()));
+            threadPool.withQueueSizeRejectionThreshold(parseInt(config.getQueueSizeRejectionThreshold()));
         }
         if (config.getThreadPoolRollingNumberStatisticalWindowInMilliseconds() != null) {
-            threadPool.withMetricsRollingStatisticalWindowInMilliseconds(Integer.parseInt(config.getThreadPoolRollingNumberStatisticalWindowInMilliseconds()));
+            threadPool.withMetricsRollingStatisticalWindowInMilliseconds(parseInt(config.getThreadPoolRollingNumberStatisticalWindowInMilliseconds()));
         }
         if (config.getThreadPoolRollingNumberStatisticalWindowBuckets() != null) {
-            threadPool.withMetricsRollingStatisticalWindowBuckets(Integer.parseInt(config.getThreadPoolRollingNumberStatisticalWindowBuckets()));
+            threadPool.withMetricsRollingStatisticalWindowBuckets(parseInt(config.getThreadPoolRollingNumberStatisticalWindowBuckets()));
         }
         if (config.getAllowMaximumSizeToDivergeFromCoreSize() != null) {
-            threadPool.withAllowMaximumSizeToDivergeFromCoreSize(Boolean.parseBoolean(config.getAllowMaximumSizeToDivergeFromCoreSize()));
+            threadPool.withAllowMaximumSizeToDivergeFromCoreSize(parseBoolean(config.getAllowMaximumSizeToDivergeFromCoreSize()));
         }
     }
 
@@ -211,45 +209,62 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
     // Helpers
     // *******************************
 
-    HystrixConfigurationDefinition buildHystrixConfiguration(CamelContext camelContext) throws Exception {
+    HystrixConfigurationDefinition buildHystrixConfiguration() throws Exception {
         Map<String, Object> properties = new HashMap<>();
+
+        final PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class)
+                .getConfigurerResolver().resolvePropertyConfigurer(HystrixConfigurationDefinition.class.getSimpleName(), camelContext);
 
         // Extract properties from default configuration, the one configured on
         // camel context takes the precedence over those in the registry
-        loadProperties(camelContext, properties, Suppliers.firstNotNull(
+        loadProperties(properties, Suppliers.firstNotNull(
             () -> camelContext.getExtension(Model.class).getHystrixConfiguration(null),
-            () -> lookup(camelContext, HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, HystrixConfigurationDefinition.class))
-        );
+            () -> lookup(HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, HystrixConfigurationDefinition.class)),
+            configurer);
 
         // Extract properties from referenced configuration, the one configured
         // on camel context takes the precedence over those in the registry
         if (definition.getConfigurationRef() != null) {
-            final String ref = definition.getConfigurationRef();
+            final String ref = parseString(definition.getConfigurationRef());
 
-            loadProperties(camelContext, properties, Suppliers.firstNotNull(
+            loadProperties(properties, Suppliers.firstNotNull(
                 () -> camelContext.getExtension(Model.class).getHystrixConfiguration(ref),
-                () -> mandatoryLookup(camelContext, ref, HystrixConfigurationDefinition.class))
-            );
+                () -> mandatoryLookup(ref, HystrixConfigurationDefinition.class)),
+                configurer);
         }
 
         // Extract properties from local configuration
-        loadProperties(camelContext, properties, Optional.ofNullable(definition.getHystrixConfiguration()));
-
-        // Extract properties from definition
-        BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
-        beanIntrospection.getProperties(definition, properties, null, false);
-
-        HystrixConfigurationDefinition config = new HystrixConfigurationDefinition();
+        loadProperties(properties, Optional.ofNullable(definition.getHystrixConfiguration()), configurer);
 
         // Apply properties to a new configuration
-        PropertyBindingSupport.bindProperties(camelContext, config, properties);
+        HystrixConfigurationDefinition config = new HystrixConfigurationDefinition();
+        PropertyBindingSupport.build()
+                .withCamelContext(camelContext)
+                .withConfigurer(configurer)
+                .withProperties(properties)
+                .withTarget(config)
+                .bind();
 
         return config;
     }
 
-    private void loadProperties(CamelContext camelContext, Map<String, Object> properties, Optional<?> optional) {
+    private void loadProperties(Map<String, Object> properties, Optional<?> optional, PropertyConfigurer configurer) {
         BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
-        optional.ifPresent(bean -> beanIntrospection.getProperties(bean, properties, null, false));
+        optional.ifPresent(bean -> {
+            if (configurer instanceof PropertyConfigurerGetter) {
+                PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
+                Map<String, Object> types = getter.getAllOptions(bean);
+                types.forEach((k, t) -> {
+                    Object value = getter.getOptionValue(bean, k, true);
+                    if (value != null) {
+                        properties.put(k, value);
+                    }
+                });
+            } else {
+                // no configurer found so use bean introspection (reflection)
+                beanIntrospection.getProperties(bean, properties, null, false);
+            }
+        });
     }
 
 }

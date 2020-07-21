@@ -1,12 +1,17 @@
 [[cron-component]]
 = Cron Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-cron/src/main/docs/cron-component.adoc
+:docTitle: Cron
+:artifactId: camel-cron
+:description: A generic interface for triggering events at times specified through the Unix cron syntax.
+:since: 3.1
+:supportLevel: Stable
+:component-header: Only consumer is supported
 
-*Since Camel 3.1*
+*Since Camel {since}*
 
-// HEADER START
-*Only consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Cron component is a generic interface component that allows triggering events at specific time interval
 specified using the Unix cron syntax (e.g. `0/2 * * * * ?` to trigger an event every two seconds).
@@ -48,9 +53,9 @@ The Cron component supports 3 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *cronService* (advanced) | The id of the CamelCronService to use when multiple implementations are provided |  | String
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *cronService* (advanced) | The id of the CamelCronService to use when multiple implementations are provided |  | String
 |===
 // component options: END
 
@@ -86,7 +91,7 @@ with the following path and query parameters:
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *schedule* (consumer) | *Required* A cron expression that will be used to generate events |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
@@ -103,7 +108,7 @@ from("cron:tab?schedule=0/1+*+*+*+*+?")
 .log("${body}");
 ---------------------------------------------------------
 
-The schedule expression `0/3+10+*+*+*+?` can be also written as `0/3 10 * * * ?` and triggers an event every three seconds only in the tenth minute of each hour.
+The schedule expression `0/3{plus}10{plus}*{plus}*{plus}*{plus}?` can be also written as `0/3 10 * * * ?` and triggers an event every three seconds only in the tenth minute of each hour.
 
 Parts in the schedule expression means (in order):
 
@@ -134,3 +139,5 @@ Routes can also be written using the XML DSL.
     <to uri="log:info"/>
 </route>
 -------------
+
+include::camel-spring-boot::page$cron-starter.adoc[]

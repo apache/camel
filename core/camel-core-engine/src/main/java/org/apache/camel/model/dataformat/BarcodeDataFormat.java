@@ -25,8 +25,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The Barcode data format is used for creating barccode images (such as
- * QR-Code)
+ * Transform strings to various 1D/2D barcode bitmap formats and back.
  */
 @Metadata(firstVersion = "2.14.0", label = "dataformat,transformation", title = "Barcode")
 @XmlRootElement(name = "barcode")

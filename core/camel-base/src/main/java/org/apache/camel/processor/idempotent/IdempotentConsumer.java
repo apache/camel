@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.IdAware;
@@ -35,6 +36,8 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.service.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of the <a
@@ -45,6 +48,8 @@ import org.apache.camel.support.service.ServiceHelper;
  * @see org.apache.camel.spi.IdempotentRepository
  */
 public class IdempotentConsumer extends AsyncProcessorSupport implements CamelContextAware, Navigate<Processor>, IdAware, RouteIdAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(IdempotentConsumer.class);
 
     private CamelContext camelContext;
     private String id;
@@ -139,7 +144,7 @@ public class IdempotentConsumer extends AsyncProcessorSupport implements CamelCo
 
                 if (skipDuplicate) {
                     // if we should skip duplicate then we are done
-                    log.debug("Ignoring duplicate message with id: {} for exchange: {}", messageId, exchange);
+                    LOG.debug("Ignoring duplicate message with id: {} for exchange: {}", messageId, exchange);
                     callback.done(true);
                     return true;
                 }
@@ -149,7 +154,7 @@ public class IdempotentConsumer extends AsyncProcessorSupport implements CamelCo
             target = new IdempotentConsumerCallback(exchange, onCompletion, callback, completionEager);
             if (!completionEager) {
                 // the scope is to do the idempotent completion work as an unit of work on the exchange when its done being routed
-                exchange.addOnCompletion(onCompletion);
+                exchange.adapt(ExtendedExchange.class).addOnCompletion(onCompletion);
             }
         } catch (Exception e) {
             exchange.setException(e);

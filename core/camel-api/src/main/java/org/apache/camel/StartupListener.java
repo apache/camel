@@ -42,6 +42,19 @@ package org.apache.camel;
 public interface StartupListener {
 
     /**
+     * Callback invoked when the {@link CamelContext} is being started.
+     *
+     * @param context        the Camel context
+     * @param alreadyStarted whether or not the {@link CamelContext} already has been started. For example the context
+     *                       could already have been started, and then a service is added/started later which still
+     *                       triggers this callback to be invoked.
+     * @throws Exception     can be thrown in case of errors to fail the startup process and have the application
+     *                       fail on startup.
+     */
+    default void onCamelContextStarting(CamelContext context, boolean alreadyStarted) throws Exception {
+    }
+
+    /**
      * Callback invoked when the {@link CamelContext} is about to be fully started (not started yet).
      * Yes we are aware of the method name, but we can all have a bad-naming day.
      *
@@ -53,4 +66,18 @@ public interface StartupListener {
      *                       fail on startup.
      */
     void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception;
+
+    /**
+     * Callback invoked when the {@link CamelContext} has been fully started.
+     *
+     * @param context        the Camel context
+     * @param alreadyStarted whether or not the {@link CamelContext} already has been started. For example the context
+     *                       could already have been started, and then a service is added/started later which still
+     *                       triggers this callback to be invoked.
+     * @throws Exception     can be thrown in case of errors to fail the startup process and have the application
+     *                       fail on startup.
+     */
+    default void onCamelContextFullyStarted(CamelContext context, boolean alreadyStarted) throws Exception {
+    }
+
 }

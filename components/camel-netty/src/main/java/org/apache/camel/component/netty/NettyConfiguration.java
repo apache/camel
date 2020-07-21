@@ -209,7 +209,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
                 if ("udp".equalsIgnoreCase(protocol)) {
                     encoders.add(ChannelHandlerFactories.newDatagramPacketEncoder());
                 }
-                // are we textline or object?
+                // are we textline or byte array
                 if (isTextline()) {
                     Charset charset = getEncoding() != null ? Charset.forName(getEncoding()) : CharsetUtil.UTF_8;
                     encoders.add(ChannelHandlerFactories.newStringEncoder(charset, protocol));
@@ -225,11 +225,10 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
                     encoders.add(ChannelHandlerFactories.newByteArrayEncoder(protocol));
                     decoders.add(ChannelHandlerFactories.newByteArrayDecoder(protocol));
                 } else {
-                    // object serializable is then used
-                    encoders.add(ChannelHandlerFactories.newObjectEncoder(protocol));
-                    decoders.add(ChannelHandlerFactories.newObjectDecoder(protocol));
-
-                    LOG.debug("Using object encoders and decoders");
+                    // Fall back to allowing Strings to be serialized only
+                    Charset charset = getEncoding() != null ? Charset.forName(getEncoding()) : CharsetUtil.UTF_8;
+                    encoders.add(ChannelHandlerFactories.newStringEncoder(charset, protocol));
+                    decoders.add(ChannelHandlerFactories.newStringDecoder(charset, protocol));
                 }
                 if ("udp".equalsIgnoreCase(protocol)) {
                     decoders.add(ChannelHandlerFactories.newDatagramPacketDecoder());
@@ -300,7 +299,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     /**
      * Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec;
-     * if not specified or the value is false, then Object Serialization is assumed over TCP.
+     * if not specified or the value is false, then Object Serialization is assumed over TCP - however only Strings
+     * are allowed to be serialized by default.
      */
     public void setTextline(boolean textline) {
         this.textline = textline;
@@ -375,27 +375,19 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         this.encoders = encoders;
     }
 
-    public ChannelHandler getEncoder() {
-        return encoders.isEmpty() ? null : encoders.get(0);
-    }
-
     /**
-     * A custom ChannelHandler class that can be used to perform special marshalling of outbound payloads.
+     * Adds a custom ChannelHandler class that can be used to perform special marshalling of outbound payloads.
      */
-    public void setEncoder(ChannelHandler encoder) {
+    public void addEncoder(ChannelHandler encoder) {
         if (!encoders.contains(encoder)) {
             encoders.add(encoder);
         }
     }
 
-    public ChannelHandler getDecoder() {
-        return decoders.isEmpty() ? null : decoders.get(0);
-    }
-
     /**
-     * A custom ChannelHandler class that can be used to perform special marshalling of inbound payloads.
+     * Adds a custom ChannelHandler class that can be used to perform special marshalling of inbound payloads.
      */
-    public void setDecoder(ChannelHandler decoder) {
+    public void addDecoder(ChannelHandler decoder) {
         if (!decoders.contains(decoder)) {
             decoders.add(decoder);
         }

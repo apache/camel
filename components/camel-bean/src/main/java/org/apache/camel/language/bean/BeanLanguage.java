@@ -16,10 +16,13 @@
  */
 package org.apache.camel.language.bean;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -36,7 +39,7 @@ import org.apache.camel.util.StringHelper;
  * its classname or the bean itself.
  */
 @org.apache.camel.spi.annotations.Language("bean")
-public class BeanLanguage extends LanguageSupport {
+public class BeanLanguage extends LanguageSupport implements GeneratedPropertyConfigurer {
 
     private Object bean;
     private Class<?> beanType;
@@ -44,6 +47,26 @@ public class BeanLanguage extends LanguageSupport {
     private String method;
 
     public BeanLanguage() {
+    }
+
+    @Override
+    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+        if (target != this) {
+            throw new IllegalStateException("Can only configure our own instance !");
+        }
+        switch (ignoreCase ? name.toLowerCase() : name) {
+            case "bean":
+                setBean(PropertyConfigurerSupport.property(camelContext, Object.class, value)); return true;
+            case "beantype":
+            case "beanType":
+                setBeanType(PropertyConfigurerSupport.property(camelContext, Class.class, value)); return true;
+            case "ref":
+                setRef(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+            case "method":
+                setMethod(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+            default:
+                return false;
+        }
     }
 
     public Object getBean() {
@@ -106,7 +129,7 @@ public class BeanLanguage extends LanguageSupport {
             //first check case :: because of my.own.Bean::method
             int doubleColonIndex = expression.indexOf("::");
             //need to check that not inside params
-            int beginOfParameterDeclaration = expression.indexOf("(");
+            int beginOfParameterDeclaration = expression.indexOf('(');
             if (doubleColonIndex > 0 && (!expression.contains("(") || doubleColonIndex < beginOfParameterDeclaration)) {
                 beanName = expression.substring(0, doubleColonIndex);
                 method = expression.substring(doubleColonIndex + 2);

@@ -191,9 +191,9 @@ public final class CamelOpenMBeanTypes {
 
     public static CompositeType camelHealthDetailsCompositeType() throws OpenDataException {
         return new CompositeType("healthDetails", "Health Details",
-            new String[]{"id", "group", "state", "enabled", "interval", "failureThreshold"},
-            new String[]{"ID", "Group", "State", "Enabled", "Interval", "Failure Threshold"},
-            new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.LONG, SimpleType.INTEGER});
+            new String[]{"id", "group", "state", "enabled", "readiness", "liveness", "interval", "failureThreshold"},
+            new String[]{"ID", "Group", "State", "Enabled", "Readiness", "Liveness", "Interval", "Failure Threshold"},
+            new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.BOOLEAN, SimpleType.BOOLEAN, SimpleType.LONG, SimpleType.INTEGER});
     }
 
     public static TabularType camelHealthDetailsTabularType() throws OpenDataException {
@@ -212,4 +212,17 @@ public final class CamelOpenMBeanTypes {
         CompositeType ct = camelRoutePropertiesCompositeType();
         return new TabularType("routeProperties", "Route Properties", ct, new String[]{"key"});
     }
+
+    public static TabularType supervisingRouteControllerRouteStatusTabularType() throws OpenDataException {
+        CompositeType ct = supervisingRouteControllerRouteStatusCompositeType();
+        return new TabularType("routeStatus", "Lists detailed status about all the routes (incl failure details for routes failed to start)", ct, new String[]{"index"});
+    }
+
+    public static CompositeType supervisingRouteControllerRouteStatusCompositeType() throws OpenDataException {
+        return new CompositeType("routes", "Routes",
+                new String[]{"index", "routeId", "status", "supervising", "attempts", "elapsed", "last", "error", "stacktrace"},
+                new String[]{"Index", "Route Id", "Status", "Supervising", "Attempts", "Elapsed", "Since Last Attempt", "Error", "Stacktrace"},
+                new OpenType[]{SimpleType.INTEGER, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.LONG, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+    }
+
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.smpp;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -30,10 +31,10 @@ import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
 
 /**
- * To send and receive SMS using a SMSC (Short Message Service Center).
+ * Send and receive SMS messages using a SMSC (Short Message Service Center).
  */
 @UriEndpoint(firstVersion = "2.2.0", scheme = "smpp,smpps", title = "SMPP", syntax = "smpp:host:port",
-        label = "mobile", lenientProperties = true)
+        category = {Category.MOBILE}, lenientProperties = true)
 public class SmppEndpoint extends DefaultEndpoint {
 
     private SmppBinding binding;
@@ -49,7 +50,7 @@ public class SmppEndpoint extends DefaultEndpoint {
     protected String createEndpointUri() {
         return getConnectionString();
     }
-    
+
     @Override
     public boolean isLenientProperties() {
         return true;
@@ -76,7 +77,7 @@ public class SmppEndpoint extends DefaultEndpoint {
     public Exchange createOnAcceptAlertNotificationExchange(AlertNotification alertNotification) {
         return createOnAcceptAlertNotificationExchange(getExchangePattern(), alertNotification);
     }
-    
+
     /**
      * Create a new exchange for communicating with this endpoint from a SMSC
      * with the specified {@link ExchangePattern} such as whether its going
@@ -103,7 +104,7 @@ public class SmppEndpoint extends DefaultEndpoint {
     public Exchange createOnAcceptDeliverSmExchange(DeliverSm deliverSm) throws Exception {
         return createOnAcceptDeliverSmExchange(getExchangePattern(), deliverSm);
     }
-    
+
     /**
      * Create a new exchange for communicating with this endpoint from a SMSC
      * with the specified {@link ExchangePattern} such as whether its going
@@ -120,7 +121,7 @@ public class SmppEndpoint extends DefaultEndpoint {
         exchange.setIn(getBinding().createSmppMessage(getCamelContext(), deliverSm));
         return exchange;
     }
-    
+
     /**
      * Create a new exchange for communicating with this endpoint from a SMSC
      *
@@ -131,7 +132,7 @@ public class SmppEndpoint extends DefaultEndpoint {
     public Exchange createOnAcceptDataSm(DataSm dataSm, String smppMessageId) {
         return createOnAcceptDataSm(getExchangePattern(), dataSm, smppMessageId);
     }
-    
+
     /**
      * Create a new exchange for communicating with this endpoint from a SMSC
      * with the specified {@link ExchangePattern} such as whether its going
@@ -152,7 +153,7 @@ public class SmppEndpoint extends DefaultEndpoint {
     /**
      * Returns the connection string for the current connection which has the form:
      * smpp://<user>@<host>:<port>
-     * 
+     *
      * @return the connection string
      */
     public String getConnectionString() {
@@ -164,7 +165,7 @@ public class SmppEndpoint extends DefaultEndpoint {
 
     /**
      * Returns the smpp configuration
-     * 
+     *
      * @return the configuration
      */
     public SmppConfiguration getConfiguration() {

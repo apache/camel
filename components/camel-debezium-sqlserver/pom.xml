@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-debezium-sqlserver</artifactId>
@@ -48,17 +48,7 @@
         <!-- test -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
+            <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -91,9 +81,7 @@
                     <dependency>
                         <groupId>io.debezium</groupId>
                         <artifactId>debezium-connector-sqlserver</artifactId>
-                        <!-- Only for the maven plugin, we will use 1.0.0.Beta2 to generate the config due to missing configs on 0.10 -->
-                        <!-- Once we have 1.0.0.Final, we will change this back to ${debezium-version} -->
-                        <version>1.0.0.Beta2</version>
+                        <version>${debezium-version}</version>
                         <scope>runtime</scope>
                     </dependency>
                 </dependencies>
@@ -108,43 +96,8 @@
                         <field>database.password</field>
                         <field>database.server.name</field>
                     </requiredFields>
+                    <generatedSrcDir>${project.basedir}/src/generated/java</generatedSrcDir>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>add-generated-configurations-sources</id>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/generated-sources/connector-configurations</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <!-- This used to copy EmbeddedDebeziumConfiguration source in order to generate the metadata via APT plugin-->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>src-dependencies</id>
-                        <goals>
-                            <goal>unpack-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>sources</classifier>
-                            <includeArtifactIds>camel-debezium-common</includeArtifactIds>
-                            <includes>**/*EmbeddedDebeziumConfiguration.java</includes>
-                            <outputDirectory>${project.build.directory}/generated-sources/connector-configurations</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

@@ -25,7 +25,9 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
-import org.junit.rules.ExternalResource;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +36,8 @@ import org.slf4j.LoggerFactory;
  *
  * The client can be configured to simulate a large number of error conditions.
  */
-public class MllpClientResource extends ExternalResource {
+public class MllpClientResource implements BeforeEachCallback, AfterEachCallback {
+
     static final char START_OF_BLOCK = 0x0b;
     static final char END_OF_BLOCK = 0x1c;
     static final char END_OF_DATA = 0x0d;
@@ -77,17 +80,14 @@ public class MllpClientResource extends ExternalResource {
     }
 
     @Override
-    protected void before() throws Throwable {
+    public void beforeEach(ExtensionContext context) throws Exception {
         if (0 < mllpPort) {
             this.connect();
         }
-
-        super.before();
     }
 
     @Override
-    protected void after() {
-        super.after();
+    public void afterEach(ExtensionContext context) throws Exception {
         this.close();
     }
 
@@ -347,18 +347,18 @@ public class MllpClientResource extends ExternalResource {
             while (readingMessage) {
                 int nextByte = inputStream.read();
                 switch (nextByte) {
-                case -1:
-                    throw new MllpJUnitResourceCorruptFrameException("Reached end of stream before END_OF_BLOCK");
-                case START_OF_BLOCK:
-                    throw new MllpJUnitResourceCorruptFrameException("Received START_OF_BLOCK before END_OF_BLOCK");
-                case END_OF_BLOCK:
-                    if (END_OF_DATA != inputStream.read()) {
-                        throw new MllpJUnitResourceCorruptFrameException("END_OF_BLOCK was not followed by END_OF_DATA");
-                    }
-                    readingMessage = false;
-                    break;
-                default:
-                    acknowledgement.append((char) nextByte);
+                    case -1:
+                        throw new MllpJUnitResourceCorruptFrameException("Reached end of stream before END_OF_BLOCK");
+                    case START_OF_BLOCK:
+                        throw new MllpJUnitResourceCorruptFrameException("Received START_OF_BLOCK before END_OF_BLOCK");
+                    case END_OF_BLOCK:
+                        if (END_OF_DATA != inputStream.read()) {
+                            throw new MllpJUnitResourceCorruptFrameException("END_OF_BLOCK was not followed by END_OF_DATA");
+                        }
+                        readingMessage = false;
+                        break;
+                    default:
+                        acknowledgement.append((char) nextByte);
                 }
             }
         } catch (SocketTimeoutException timeoutEx) {

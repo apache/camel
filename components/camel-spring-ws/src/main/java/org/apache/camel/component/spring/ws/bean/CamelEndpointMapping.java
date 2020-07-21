@@ -73,7 +73,7 @@ import org.springframework.xml.xpath.XPathExpression;
  * Equivalent to endpoint mappings specified through
  * {@link org.springframework.ws.server.endpoint.mapping.XPathPayloadEndpointMapping}
  * </ul>
- * 
+ *
  * @see org.springframework.ws.server.endpoint.mapping.AbstractEndpointMapping
  * @see org.springframework.ws.server.endpoint.mapping.PayloadRootQNameEndpointMapping
  * @see org.springframework.ws.server.endpoint.mapping.UriEndpointMapping
@@ -107,32 +107,32 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
         for (EndpointMappingKey key : endpoints.keySet()) {
             String messageKey;
             switch (key.getType()) {
-            case ROOT_QNAME:
-                messageKey = getRootQName(messageContext);
-                break;
-            case SOAP_ACTION:
-                messageKey = getSoapAction(messageContext);
-                break;
-            case XPATHRESULT:
-                messageKey = getXPathResult(messageContext, key.getExpression());
-                break;
-            case URI:
-                messageKey = getUri();
-                break;
-            case URI_PATH:
-                messageKey = getUriPath();
+                case ROOT_QNAME:
+                    messageKey = getRootQName(messageContext);
+                    break;
+                case SOAP_ACTION:
+                    messageKey = getSoapAction(messageContext);
+                    break;
+                case XPATHRESULT:
+                    messageKey = getXPathResult(messageContext, key.getExpression());
+                    break;
+                case URI:
+                    messageKey = getUri();
+                    break;
+                case URI_PATH:
+                    messageKey = getUriPath();
 
-                if (messageKey != null && key.getLookupKey().endsWith(URI_PATH_WILDCARD)) {
-                    String lookupKey = key.getLookupKey().substring(0, key.getLookupKey().length() - 1);
+                    if (messageKey != null && key.getLookupKey().endsWith(URI_PATH_WILDCARD)) {
+                        String lookupKey = key.getLookupKey().substring(0, key.getLookupKey().length() - 1);
 
-                    if (messageKey.startsWith(lookupKey)) {
-                        return endpoints.get(key);
+                        if (messageKey.startsWith(lookupKey)) {
+                            return endpoints.get(key);
+                        }
                     }
-                }
 
-                break;
-            default:
-                throw new RuntimeCamelException("Invalid mapping type specified. Supported types are: root QName, SOAP action, XPath expression and URI");
+                    break;
+                default:
+                    throw new RuntimeCamelException("Invalid mapping type specified. Supported types are: root QName, SOAP action, XPath expression and URI");
             }
             if (key.getLookupKey().equals(messageKey)) {
                 return endpoints.get(key);

@@ -17,8 +17,14 @@
 package org.apache.camel.impl.engine;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
+import org.apache.camel.BeanConfigInject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consume;
@@ -38,8 +44,10 @@ import org.apache.camel.ProxyInstantiationException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.spi.BeanProxyFactory;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -238,9 +246,6 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                     try {
                         // use proxy service
                         BeanProxyFactory factory = endpoint.getCamelContext().adapt(ExtendedCamelContext.class).getBeanProxyFactory();
-                        if (factory == null) {
-                            throw new IllegalArgumentException("Cannot find BeanProxyFactory. Make sure camel-bean is on the classpath.");
-                        }
                         return factory.createProxy(endpoint, binding, type);
                     } catch (Exception e) {
                         throw createProxyInstantiationRuntimeException(type, endpoint, e);
@@ -288,8 +293,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     public Object getInjectionBeanValue(Class<?> type, String name) {
         if (ObjectHelper.isEmpty(name)) {
             // is it camel context itself?
-            if (type.isAssignableFrom(camelContext.getClass())) {
-                return camelContext;
+            if (getCamelContext() != null && type.isAssignableFrom(getCamelContext().getClass())) {
+                return getCamelContext();
             }
             Set<?> found = getCamelContext().getRegistry().findByType(type);
             if (found == null || found.isEmpty()) {
@@ -303,6 +308,90 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         } else {
             return CamelContextHelper.mandatoryLookup(getCamelContext(), name, type);
         }
+    }
+
+    public Object getInjectionBeanConfigValue(Class<?> type, String name) {
+        ExtendedCamelContext ecc = (ExtendedCamelContext) getCamelContext();
+
+        // is it a map or properties
+        boolean mapType = false;
+        Map map = null;
+        if (type.isAssignableFrom(Map.class)) {
+            map = new LinkedHashMap();
+            mapType = true;
+        } else if (type.isAssignableFrom(Properties.class)) {
+            map = new Properties();
+            mapType = true;
+        }
+
+        // create an instance of type
+        Object bean = null;
+        if (map == null) {
+            Set<?> instances = ecc.getRegistry().findByType(type);
+            if (instances.size() == 1) {
+                bean = instances.iterator().next();
+            } else if (instances.size() > 1) {
+                return null;
+            } else {
+                // attempt to create a new instance
+                try {
+                    bean = ecc.getInjector().newInstance(type);
+                } catch (Throwable e) {
+                    // ignore
+                    return null;
+                }
+            }
+        }
+
+        // root key
+        String rootKey = name;
+        // clip trailing dot
+        if (rootKey.endsWith(".")) {
+            rootKey = rootKey.substring(0, rootKey.length() - 1);
+        }
+        String uRootKey = rootKey.toUpperCase(Locale.US);
+
+                // get all properties and transfer to map
+        Properties props = ecc.getPropertiesComponent().loadProperties();
+        if (map == null) {
+            map = new LinkedHashMap<>();
+        }
+        for (String key : props.stringPropertyNames()) {
+            String uKey = key.toUpperCase(Locale.US);
+            // need to ignore case
+            if (uKey.startsWith(uRootKey)) {
+                // strip prefix
+                String sKey = key.substring(rootKey.length());
+                if (sKey.startsWith(".")) {
+                    sKey = sKey.substring(1);
+                }
+                map.put(sKey, props.getProperty(key));
+            }
+        }
+        if (mapType) {
+            return map;
+        }
+
+        // lookup configurer if there is any
+        // use FQN class name first, then simple name, and root key last
+        GeneratedPropertyConfigurer configurer = null;
+        String[] names = new String[]{type.getName() + "-configurer", type.getSimpleName() + "-configurer", rootKey + "-configurer"};
+        for (String n : names) {
+            configurer = ecc.getConfigurerResolver().resolvePropertyConfigurer(n, ecc);
+            if (configurer != null) {
+                break;
+            }
+        }
+
+        new PropertyBindingSupport.Builder()
+                .withCamelContext(ecc)
+                .withIgnoreCase(true)
+                .withTarget(bean)
+                .withConfigurer(configurer)
+                .withProperties(map)
+                .bind();
+
+        return bean;
     }
 
     /**

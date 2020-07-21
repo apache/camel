@@ -20,10 +20,13 @@ import java.util.concurrent.TimeUnit;
 
 import io.opentracing.mock.MockTracer;
 import org.apache.camel.builder.NotifyBuilder;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpringOpenTracingSimpleRouteTest extends CamelSpringTestSupport {
 
@@ -44,7 +47,7 @@ public class SpringOpenTracingSimpleRouteTest extends CamelSpringTestSupport {
 
         MockTracer tracer = (MockTracer) context().getRegistry().lookupByName("mockTracer");
 
-        // Four spans per invocation, one for client, two for dude route (server and client to), one for car route
-        assertEquals(20, tracer.finishedSpans().size());
+        // Two spans per invocation, one for server dude route, one for car route
+        assertEquals(10, tracer.finishedSpans().size());
     }
 }

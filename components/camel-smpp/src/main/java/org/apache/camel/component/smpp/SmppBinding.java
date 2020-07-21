@@ -153,7 +153,7 @@ public class SmppBinding {
                 if (SmppUtils.is8Bit(alphabet)) {
                     smppMessage.setBody(deliverSm.getShortMessage());
                 } else {
-                    smppMessage.setBody(String.valueOf(new String(deliverSm.getShortMessage(), configuration.getEncoding())));
+                    smppMessage.setBody(new String(deliverSm.getShortMessage(), configuration.getEncoding()));
                 }
             } else if (messagePayload != null) {
                 smppMessage.setBody(messagePayload);

@@ -45,20 +45,20 @@ In the example above we have a single route, which pickup files,
 
 [source,java]
 ---------------------------------------
-        from("file:src/data?noop=true")
+from("file:src/data?noop=true")
 ---------------------------------------
 
-Then we use the Content Based Router (eg
-the choice) to route the message depending if the person is from London
+Then we use the `Content Based Router` (for ex: 
+ the choice) to route the message depending if the person is from London
 or not.
 
 [source,java]
 -------------------------------------------------------
-            .choice()
-                .when(xpath("/person/city = 'London'"))
-                    .to("file:target/messages/uk")
-                .otherwise()
-                    .to("file:target/messages/others");
+.choice()
+    .when(xpath("/person/city = 'London'"))
+        .to("file:target/messages/uk")
+    .otherwise()
+        .to("file:target/messages/others");
 -------------------------------------------------------
 
 [[JavaDSL-Routes]]

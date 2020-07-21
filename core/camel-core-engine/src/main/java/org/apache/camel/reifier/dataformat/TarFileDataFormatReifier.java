@@ -16,25 +16,22 @@
  */
 package org.apache.camel.reifier.dataformat;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class TarFileDataFormatReifier extends DataFormatReifier<TarFileDataFormat> {
 
-    public TarFileDataFormatReifier(DataFormatDefinition definition) {
-        super((TarFileDataFormat)definition);
+    public TarFileDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (TarFileDataFormat)definition);
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (definition.getUsingIterator() != null) {
-            setProperty(camelContext, dataFormat, "usingIterator", definition.getUsingIterator());
-        }
-        if (definition.getPreservePathElements() != null) {
-            setProperty(camelContext, dataFormat, "preservePathElements", definition.getPreservePathElements());
-        }
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("usingIterator", definition.getUsingIterator());
+        properties.put("preservePathElements", definition.getPreservePathElements());
     }
 
 }

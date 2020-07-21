@@ -34,7 +34,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultPollingConsumerPollStrategy;
 import org.apache.camel.support.ScheduledPollConsumer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FacebookComponentConsumerTest extends CamelFacebookTestSupport {
     public static final String APACHE_FOUNDATION_PAGE_ID = "6538157161";
@@ -78,7 +81,7 @@ public class FacebookComponentConsumerTest extends CamelFacebookTestSupport {
 
         final String rawJSON = mock.getExchanges().get(0).getIn().getHeader(FacebookConstants.RAW_JSON_HEADER, String.class);
         assertNotNull("Null rawJSON", rawJSON);
-        assertFalse("Empty rawJSON", rawJSON.isEmpty());
+        assertFalse(rawJSON.isEmpty(), "Empty rawJSON");
     }
 
     @Test

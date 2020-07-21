@@ -1,0 +1,13 @@
+{
+  "name": {
+    "firstname": "foo"
+  },
+  "list": [
+    {
+      "value": 1
+    },
+    {
+      "value": 2
+    }
+  ]
+}

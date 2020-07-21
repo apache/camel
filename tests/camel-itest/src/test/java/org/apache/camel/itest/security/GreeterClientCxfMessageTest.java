@@ -16,8 +16,10 @@
  */
 package org.apache.camel.itest.security;
 
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.springframework.test.context.ContextConfiguration;
 
+@CamelSpringTest
 @ContextConfiguration(locations = {"CxfMessageCamelContext.xml"})
 public class GreeterClientCxfMessageTest extends GreeterClientTest {
 

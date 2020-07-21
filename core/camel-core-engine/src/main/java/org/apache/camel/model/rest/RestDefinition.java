@@ -38,13 +38,11 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -462,7 +460,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         }
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setType(classType.getCanonicalName());
+        verb.setType(asTypeName(classType));
         return this;
     }
 
@@ -473,24 +471,24 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         }
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setOutType(classType.getCanonicalName());
+        verb.setOutType(asTypeName(classType));
         return this;
     }
 
     public RestDefinition bindingMode(RestBindingMode mode) {
-        if (getVerbs().isEmpty()) {
-            this.bindingMode = mode.name();
-        } else {
-            // add on last verb as that is how the Java DSL works
-            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-            verb.setBindingMode(mode.name());
-        }
-
-        return this;
+        return bindingMode(mode.name());
     }
 
     public RestDefinition bindingMode(String mode) {
-        return bindingMode(mode.toLowerCase());
+        if (getVerbs().isEmpty()) {
+            this.bindingMode = mode.toLowerCase();
+        } else {
+            // add on last verb as that is how the Java DSL works
+            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+            verb.setBindingMode(mode.toLowerCase());
+        }
+
+        return this;
     }
 
     public RestDefinition skipBindingOnErrorCode(boolean skipBindingOnErrorCode) {
@@ -678,23 +676,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         validateUniquePaths();
 
         List<RouteDefinition> answer = new ArrayList<>();
-        if (camelContext.getRestConfigurations().isEmpty()) {
-            // make sure to initialize a rest configuration when its empty
-            // lookup a global which may have been setup via camel-spring-boot
-            // etc
-            RestConfiguration conf = CamelContextHelper.lookup(camelContext, RestConstants.DEFAULT_REST_CONFIGURATION_ID, RestConfiguration.class);
-            if (conf == null) {
-                conf = CamelContextHelper.findByType(camelContext, RestConfiguration.class);
-            }
-            if (conf != null) {
-                camelContext.setRestConfiguration(conf);
-            } else {
-                camelContext.setRestConfiguration(new RestConfiguration());
-            }
-        }
-        for (RestConfiguration config : camelContext.getRestConfigurations()) {
-            addRouteDefinition(camelContext, answer, config.getComponent(), config.getProducerComponent());
-        }
+
+        RestConfiguration config = camelContext.getRestConfiguration();
+
+        addRouteDefinition(camelContext, answer, config.getComponent(), config.getProducerComponent());
+
         return answer;
     }
 
@@ -709,6 +695,33 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 throw new IllegalArgumentException("Duplicate verb detected in rest-dsl: " + path);
             }
         }
+    }
+
+    protected String asTypeName(Class<?> classType) {
+        // Workaround for https://issues.apache.org/jira/browse/CAMEL-15199
+        //
+        // The VerbDefinition::setType and VerbDefinition::setOutType require
+        // the class to be expressed as canonical with an optional [] to mark
+        // the type is an array but this i wrong as the canonical name can not
+        // be dynamically be loaded by the classloader thus this workaround
+        // that for nested classes generates a class name that does not respect
+        // any JLS convention.
+        //
+        // TODO: this probably need to be revisited
+
+        String type;
+
+        if (!classType.isPrimitive()) {
+            if (classType.isArray()) {
+                type = StringHelper.between(classType.getName(), "[L", ";") + "[]";
+            } else {
+                type = classType.getName();
+            }
+        } else {
+            type = classType.getCanonicalName();
+        }
+
+        return type;
     }
 
     /**
@@ -773,21 +786,13 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 route.getOutputs().add(def);
             }
 
-            // ensure property placeholders is resolved on the verb
-            try {
-                ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, verb);
-                for (RestOperationParamDefinition param : verb.getParams()) {
-                    ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, param);
-                }
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-
             // add the binding
             RestBindingDefinition binding = new RestBindingDefinition();
             binding.setComponent(component);
             binding.setType(verb.getType());
+            binding.setTypeClass(verb.getTypeClass());
             binding.setOutType(verb.getOutType());
+            binding.setOutTypeClass(verb.getOutTypeClass());
             // verb takes precedence over configuration on rest
             if (verb.getConsumes() != null) {
                 binding.setConsumes(verb.getConsumes());
@@ -820,17 +825,20 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 binding.setEnableCORS(getEnableCORS());
             }
             for (RestOperationParamDefinition param : verb.getParams()) {
-                // register all the default values for the query parameters
-                if (RestParamType.query == param.getType() && ObjectHelper.isNotEmpty(param.getDefaultValue())) {
+                // register all the default values for the query and header parameters
+                RestParamType type = param.getType();
+                if ((RestParamType.query == type || RestParamType.header == type)
+                        && ObjectHelper.isNotEmpty(param.getDefaultValue())) {
                     binding.addDefaultValue(param.getName(), param.getDefaultValue());
                 }
                 // register which parameters are required
-                if (param.getRequired()) {
-                    if (RestParamType.query == param.getType()) {
+                Boolean required = param.getRequired();
+                if (required != null && required) {
+                    if (RestParamType.query == type) {
                         binding.addRequiredQueryParameter(param.getName());
-                    } else if (RestParamType.header == param.getType()) {
+                    } else if (RestParamType.header == type) {
                         binding.addRequiredHeader(param.getName());
-                    } else if (RestParamType.body == param.getType()) {
+                    } else if (RestParamType.body == type) {
                         binding.setRequiredBody(true);
                     }
                 }

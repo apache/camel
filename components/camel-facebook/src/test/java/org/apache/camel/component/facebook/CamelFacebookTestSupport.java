@@ -25,7 +25,7 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.facebook.config.FacebookConfiguration;
 import org.apache.camel.support.PropertyBindingSupport;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 
 public abstract class CamelFacebookTestSupport extends CamelTestSupport {
 

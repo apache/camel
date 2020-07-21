@@ -23,8 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.FileUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Verify the standard file url paths on windows that are interpreted as the
@@ -34,7 +34,7 @@ public class FileRouteOnDosWithNoVolTest extends ContextTestSupport {
     private String path;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         File dir = new File("target/data/reports/dosnovol");
         deleteDirectory(dir);

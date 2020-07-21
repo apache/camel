@@ -26,9 +26,9 @@ import java.util.Map;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.johnzon.mapper.reflection.JohnzonParameterizedType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JohnzonDataFormatTest {
     
@@ -61,20 +61,26 @@ public class JohnzonDataFormatTest {
             new ArrayList<>(Collections.singletonList(Collections.emptyList())), null, type);
     }
 
-    private void testJson(String json, Object expected, Class<?> unmarshalType, 
-        JohnzonParameterizedType parameterizedType) throws Exception {
+    private void testJson(String json, Object expected, Class<?> unmarshalType, JohnzonParameterizedType parameterizedType) throws Exception {
         Object unmarshalled;
-        JohnzonDataFormat johnzonDataFormat;
-        if (unmarshalType != null) {
-            johnzonDataFormat = new JohnzonDataFormat(unmarshalType);
-        } else {
-            johnzonDataFormat = new JohnzonDataFormat(parameterizedType);
+        JohnzonDataFormat johnzonDataFormat = null;
+
+        try {
+            if (unmarshalType != null) {
+                johnzonDataFormat = new JohnzonDataFormat(unmarshalType);
+            } else {
+                johnzonDataFormat = new JohnzonDataFormat(parameterizedType);
+            }
+            johnzonDataFormat.setSkipEmptyArray(true);
+            johnzonDataFormat.doStart();
+            try (InputStream in = new ByteArrayInputStream(json.getBytes())) {
+                unmarshalled = johnzonDataFormat.unmarshal(new DefaultExchange(new DefaultCamelContext()), in);
+            }
+            assertEquals(expected, unmarshalled);
+        } finally {
+            if (johnzonDataFormat != null) {
+                johnzonDataFormat.close();
+            }
         }
-        johnzonDataFormat.setSkipEmptyArray(true);
-        johnzonDataFormat.doStart();
-        try (InputStream in = new ByteArrayInputStream(json.getBytes())) {
-            unmarshalled = johnzonDataFormat.unmarshal(new DefaultExchange(new DefaultCamelContext()), in);
-        }
-        assertEquals(expected, unmarshalled);
     }
 }

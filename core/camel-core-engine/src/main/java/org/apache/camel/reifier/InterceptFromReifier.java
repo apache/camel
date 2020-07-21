@@ -18,21 +18,21 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ExpressionAdapter;
 
 public class InterceptFromReifier extends InterceptReifier<InterceptFromDefinition> {
 
-    public InterceptFromReifier(ProcessorDefinition<?> definition) {
-        super(definition);
+    public InterceptFromReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, definition);
     }
 
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         // insert a set header definition so we can set the intercepted endpoint
         // uri as a header
         // this allows us to use the same header for both the interceptFrom and
@@ -52,7 +52,7 @@ public class InterceptFromReifier extends InterceptReifier<InterceptFromDefiniti
         });
         definition.getOutputs().add(0, headerDefinition);
 
-        return this.createChildProcessor(routeContext, true);
+        return this.createChildProcessor(true);
     }
 
 }

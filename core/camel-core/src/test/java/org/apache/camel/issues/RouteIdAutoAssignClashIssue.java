@@ -19,6 +19,9 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class RouteIdAutoAssignClashIssue extends ContextTestSupport {
 
     public void testRouteIdAutoAssignClash() throws Exception {

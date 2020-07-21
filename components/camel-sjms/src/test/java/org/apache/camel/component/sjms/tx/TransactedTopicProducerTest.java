@@ -27,8 +27,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.jms.ConnectionFactoryResource;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class TransactedTopicProducerTest extends CamelTestSupport {
 
@@ -62,7 +64,7 @@ public class TransactedTopicProducerTest extends CamelTestSupport {
 
 
     /*
-     * @see org.apache.camel.test.junit4.CamelTestSupport#createCamelContext()
+     * @see org.apache.camel.test.junit5.CamelTestSupport#createCamelContext()
      * @return
      * @throws Exception
      */
@@ -81,7 +83,7 @@ public class TransactedTopicProducerTest extends CamelTestSupport {
     }
 
     /*
-     * @see org.apache.camel.test.junit4.CamelTestSupport#createRouteBuilder()
+     * @see org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
      * @return
      * @throws Exception
      */

@@ -30,12 +30,24 @@ import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.Message;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class CxfHeaderHelperTest extends Assert {
-    private DefaultCamelContext context = new DefaultCamelContext();
-    
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class CxfHeaderHelperTest {
+
+    private DefaultCamelContext context;
+
+    @BeforeEach
+    protected void setUp() throws Exception {
+        context = new DefaultCamelContext();
+        context.start();
+    }
+
     @Test
     public void testPropagateCamelToCxf() {
         Exchange exchange = new DefaultExchange(context);
@@ -158,14 +170,14 @@ public class CxfHeaderHelperTest extends Assert {
 
     private void verifyHeader(Map<String, List<String>> headers, String name, List<String> value) {
         List<String> values = headers.get(name);
-        assertTrue("The entry must be available", values != null && values.size() == ((List<?>)value).size());
-        assertEquals("The value must match", value, values);
+        assertTrue(values != null && values.size() == ((List<?>)value).size(), "The entry must be available");
+        assertEquals(value, values, "The value must match");
     }
 
     private void verifyHeader(Map<String, List<String>> headers, String name, String value) {
         List<String> values = headers.get(name);
-        assertTrue("The entry must be available", values != null && values.size() == 1);
-        assertEquals("The value must match", value, values.get(0));
+        assertTrue(values != null && values.size() == 1, "The entry must be available");
+        assertEquals(value, values.get(0), "The value must match");
     }
 
 }

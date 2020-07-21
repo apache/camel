@@ -20,7 +20,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EndpointRegistryKeepRouteEndpointsTest extends ContextTestSupport {
 
@@ -64,7 +66,7 @@ public class EndpointRegistryKeepRouteEndpointsTest extends ContextTestSupport {
                 assertTrue(context.getEndpointRegistry().isDynamic(uri));
             }
         }
-        assertEquals("Should only be 20 dynamic endpoints in the cache", 20, count);
+        assertEquals(20, count, "Should only be 20 dynamic endpoints in the cache");
 
         // we should have 4 static, 20 dynamic and 24 in total
         assertEquals(4, context.getEndpointRegistry().staticSize());

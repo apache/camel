@@ -20,18 +20,22 @@ import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.Route;
 import org.apache.camel.spi.Policy;
-import org.apache.camel.spi.RouteContext;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("foo", new MyPolicy("foo"));
         return jndi;
     }
@@ -44,12 +48,13 @@ public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
     @Test
     public void testLoadRouteFromXmlWitPolicy() throws Exception {
         InputStream is = getClass().getResourceAsStream("barPolicyRoute.xml");
-        RoutesDefinition routes = ModelHelper.loadRoutesDefinition(context, is);
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
         context.addRouteDefinitions(routes.getRoutes());
         context.start();
 
-        assertNotNull("Loaded foo route should be there", context.getRoute("foo"));
-        assertNotNull("Loaded bar route should be there", context.getRoute("bar"));
+        assertNotNull(context.getRoute("foo"), "Loaded foo route should be there");
+        assertNotNull(context.getRoute("bar"), "Loaded bar route should be there");
         assertEquals(2, context.getRoutes().size());
 
         // test that loaded route works
@@ -68,7 +73,7 @@ public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
 
         MyPolicy foo = context.getRegistry().lookupByNameAndType("foo", MyPolicy.class);
 
-        assertEquals("Should only be invoked 1 time", 1, foo.getInvoked());
+        assertEquals(1, foo.getInvoked(), "Should only be invoked 1 time");
     }
 
     public static class MyPolicy implements Policy {
@@ -81,12 +86,12 @@ public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
         }
 
         @Override
-        public void beforeWrap(RouteContext routeContext, NamedNode definition) {
+        public void beforeWrap(Route route, NamedNode definition) {
             // no need to modify the route
         }
 
         @Override
-        public Processor wrap(RouteContext routeContext, final Processor processor) {
+        public Processor wrap(Route route, final Processor processor) {
             return new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     invoked++;

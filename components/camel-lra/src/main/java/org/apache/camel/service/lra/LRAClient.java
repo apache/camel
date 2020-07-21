@@ -16,6 +16,8 @@
  */
 package org.apache.camel.service.lra;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -39,13 +41,10 @@ import static org.apache.camel.service.lra.LRAConstants.HEADER_TIME_LIMIT;
 import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPENSATE;
 import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPLETE;
 
-public class LRAClient {
-
+public class LRAClient implements Closeable {
 
     private final LRASagaService sagaService;
-
     private final Client client;
-
     private final WebTarget target;
 
     public LRAClient(LRASagaService sagaService) {
@@ -187,4 +186,10 @@ public class LRAClient {
         }
     }
 
+    @Override
+    public void close() throws IOException {
+        if (client != null) {
+            client.close();
+        }
+    }
 }

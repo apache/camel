@@ -17,7 +17,8 @@
 package org.apache.camel.component.file;
 
 /**
- * Represent the kinds of options when writing a file and what to do in case of an existing file exists.
+ * Represent the kinds of options when writing a file and what to do in case of
+ * an existing file exists.
  */
 public enum GenericFileExist {
 

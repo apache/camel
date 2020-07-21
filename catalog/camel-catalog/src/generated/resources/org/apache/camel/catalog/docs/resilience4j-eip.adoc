@@ -1,0 +1,149 @@
+[[resilience4j-eip]]
+= Resilience4j EIP
+
+This component supports the Circuit Breaker EIP with the Resilience4j library.
+
+[NOTE]
+====
+Camel provides the Circuit Breaker EIP in the route model, which allows to plugin different implementations.
+Resilience4j is one such implementation.
+====
+
+Maven users will need to add the following dependency to their pom.xml to use this EIP:
+
+[source]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-resilience4j</artifactId>
+    <version>x.x.x</version><!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== Configuration options
+
+// eip options: START
+The Resilience4j EIP supports 2 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resilienceConfiguration* | Configures the Resilience EIP Use end when configuration is complete, to return back to the Resilience EIP. |  | Resilience4jConfigurationDefinition
+| *resilienceConfigurationRef* | Refers to a Resilience configuration to use for configuring the Resilience EIP. |  | String
+|===
+// eip options: END
+
+See xref:resilience4jConfiguration-eip.adoc[Resilience4j Configuration] for all the configuration options on Resilience Circuit Breaker.
+
+== Samples
+
+Below is an example route showing a Resilience endpoint that protects against a downstream HTTP operation by falling back to the in-lined fallback route.
+[source,java]
+----
+from("direct:start")
+    .circuitBreaker()
+        .to("http://fooservice.com/faulty")
+    .onFallback()
+        .transform().constant("Fallback message")
+    .end()
+    .to("mock:result");
+----
+
+And in XML DSL:
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <circuitBreaker>
+      <to uri="http://fooservice.com/faulty"/>
+      <onFallback>
+        <transform>
+          <constant>Fallback message</constant>
+        </transform>
+      </onFallback>
+    </circuitBreaker>
+    <to uri="mock:result"/>
+  </route>
+</camelContext>
+----
+
+== Configuring Resilience4j
+
+You can fine-tune Resilience4j by the many xref:resilience4jConfiguration-eip.adoc[Resilience4j Configuration] options.
+
+For example to use a 2 second execution timeout, you can do as follows:
+
+[source,java]
+----
+from("direct:start")
+    .circuitBreaker()
+        // use 2 second timeout
+        .resilience4jConfiguration().timeoutEnabled(true).timeoutDuration(2000).end()
+        .log("Resilience processing start: ${threadName}")
+        .toD("direct:${body}")
+        .log("Resilience processing end: ${threadName}")
+    .end()
+    .log("After Resilience ${body}");
+----
+
+And in XML:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <circuitBreaker>
+    <resilience4jConfiguration timeoutEnabled="true" timeoutDuration="2000"/>
+    <log message="Resilience processing start: ${threadName}"/>
+    <toD uri="direct:${body}"/>
+    <log message="Resilience processing end: ${threadName}"/>
+  </circuitBreaker>
+  <log message="After Resilience: ${body}"/>
+</route>
+----
+
+== Fallback
+
+See xref:onFallback-eip.adoc[onFallback].
+
+== Other examples
+
+You can find an example with the source code: https://github.com/apache/camel-spring-boot-examples/tree/master/camel-example-spring-boot-resilience4j[camel-example-spring-boot-resilience4j].
+
+== Using Resilience4j with Spring Boot
+
+See the xref:components:others:resilience4j.adoc[Resilience4j Component].
+
+== Camel's Error Handler and Circuit Breaker EIP
+
+By default the Circuit Breaker EIP handles errors by itself. This means if the circuit breaker is open and
+the message fails, then Camel's error handler is not reacting also.
+However, you can enable Camels error handler with circuit breaker by enabling the `inheritErrorHandler` option, as shown:
+
+[source,java]
+----
+// Camel's error handler that will attempt to redeliver the message 3 times
+errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(3).redeliveryDelay(0));
+
+from("direct:start")
+    .to("log:start")
+    // turn on Camel's error handler on circuit breaker so Camel can do redeliveries
+    .circuitBreaker().inheritErrorHandler(true)
+        .to("mock:a")
+        .throwException(new IllegalArgumentException("Forced"))
+    .end()
+    .to("log:result")
+    .to("mock:result");
+----
+
+This example is from an unit test, where you can see the Circuit Breaker EIP block has been hardcoded
+to always fail by throwing an exception. Because the `inheritErrorHandler` has been enabled,
+then Camel's error handler will attempt to call the Circuit Breaker EIP block again.
+
+That means the `mock:a` endpoint will receive the message again, and a total of 1 + 3 = 4 message
+(first time + 3 redeliveries).
+
+If we turn off the `inheritErrorHandler` option (default) then the Circuit Breaker EIP will only be
+executed once because it handled the error itself.
+

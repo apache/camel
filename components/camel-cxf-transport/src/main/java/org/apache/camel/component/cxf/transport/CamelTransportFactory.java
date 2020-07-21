@@ -59,7 +59,7 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
     public CamelTransportFactory() {
         CxfHeaderFilterStrategy defaultHeaderFilterStrategy = new CxfHeaderFilterStrategy();
         // Doesn't filter the camel relates headers by default
-        defaultHeaderFilterStrategy.setOutFilterPattern(null);
+        defaultHeaderFilterStrategy.setOutFilterPattern("");
         headerFilterStrategy = defaultHeaderFilterStrategy;
     }
     public CamelTransportFactory(Bus b) {
@@ -69,7 +69,7 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
 
         CxfHeaderFilterStrategy defaultHeaderFilterStrategy = new CxfHeaderFilterStrategy();
         // Doesn't filter the camel relates headers by default
-        defaultHeaderFilterStrategy.setOutFilterPattern(null);
+        defaultHeaderFilterStrategy.setOutFilterPattern("");
         headerFilterStrategy = defaultHeaderFilterStrategy;
     }
 

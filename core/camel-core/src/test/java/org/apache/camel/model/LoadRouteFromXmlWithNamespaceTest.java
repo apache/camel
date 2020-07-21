@@ -19,21 +19,25 @@ package org.apache.camel.model;
 import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class LoadRouteFromXmlWithNamespaceTest extends ContextTestSupport {
 
     @Test
     public void testLoadRouteWithNamespaceFromXml() throws Exception {
         InputStream is = getClass().getResourceAsStream("routeWithNamespace.xml");
-        RoutesDefinition routes = ModelHelper.loadRoutesDefinition(context, is);
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
         context.addRouteDefinitions(routes.getRoutes());
         context.start();
 
         Route routeWithNamespace = context.getRoute("routeWithNamespace");
-        assertNotNull("Expected to find route with id: routeWithNamespace", routeWithNamespace);
+        assertNotNull(routeWithNamespace, "Expected to find route with id: routeWithNamespace");
 
         MockEndpoint bar = context.getEndpoint("mock:bar", MockEndpoint.class);
         bar.expectedBodiesReceived("Hello from foo");

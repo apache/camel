@@ -16,14 +16,15 @@
  */
 package org.apache.camel.component.debezium;
 
+import org.apache.camel.Category;
 import org.apache.camel.component.debezium.configuration.PostgresConnectorEmbeddedDebeziumConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * Represents a Debezium PostgresSQL endpoint which is used to capture changes in PostgresSQL database so that that applications can see those changes and respond to them.
+ * Capture changes from a PostgresSQL database.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-postgres", title = "Debezium PostgresSQL Connector", syntax = "debezium-postgres:name", label = "database,sql,postgres", consumerOnly = true)
+@UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-postgres", title = "Debezium PostgresSQL Connector", syntax = "debezium-postgres:name", category = {Category.DATABASE, Category.SQL}, consumerOnly = true)
 public final class DebeziumPostgresEndpoint extends DebeziumEndpoint<PostgresConnectorEmbeddedDebeziumConfiguration> {
 
     @UriParam

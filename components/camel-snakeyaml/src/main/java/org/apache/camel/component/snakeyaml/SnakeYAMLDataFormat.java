@@ -33,17 +33,18 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.snakeyaml.custom.CustomClassLoaderConstructor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.BaseConstructor;
 import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
@@ -68,6 +69,9 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     private boolean prettyFlow;
     private boolean allowAnyType;
     private List<TypeFilter> typeFilters;
+    private int maxAliasesForCollections = 50;
+    private boolean allowRecursiveKeys;
+
 
     public SnakeYAMLDataFormat() {
         this(null);
@@ -129,10 +133,15 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
         }
 
         if (yaml == null) {
+            LoaderOptions options = new LoaderOptions();
+            options.setAllowRecursiveKeys(allowRecursiveKeys);
+            options.setMaxAliasesForCollections(maxAliasesForCollections);
+
             yaml = new Yaml(
                 this.constructor.apply(context),
                 this.representer.apply(context),
                 this.dumperOptions.apply(context),
+                options,
                 this.resolver.apply(context)
             );
 
@@ -335,29 +344,54 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
         this.allowAnyType = allowAnyType;
     }
 
+    public int getMaxAliasesForCollections() {
+        return maxAliasesForCollections;
+    }
+
+    /**
+     * Set the maximum amount of aliases allowed for collections.
+     */
+    public void setMaxAliasesForCollections(int maxAliasesForCollections) {
+        this.maxAliasesForCollections = maxAliasesForCollections;
+    }
+
+    public boolean isAllowRecursiveKeys() {
+        return allowRecursiveKeys;
+    }
+
+    /**
+     * Set whether recursive keys are allowed.
+     */
+    public void setAllowRecursiveKeys(boolean allowRecursiveKeys) {
+        this.allowRecursiveKeys = allowRecursiveKeys;
+    }
+
     // ***************************
     // Defaults
     // ***************************
 
     private BaseConstructor defaultConstructor(CamelContext context) {
-        ClassLoader yamlClassLoader = this.classLoader;
         Collection<TypeFilter> yamlTypeFilters = this.typeFilters;
-
-        if (yamlClassLoader == null && useApplicationContextClassLoader) {
-            yamlClassLoader = context.getApplicationContextClassLoader();
-        }
-
         if (allowAnyType) {
             yamlTypeFilters = Collections.singletonList(TypeFilters.allowAll());
         }
 
+        LoaderOptions options = new LoaderOptions();
+        options.setAllowRecursiveKeys(allowRecursiveKeys);
+        options.setMaxAliasesForCollections(maxAliasesForCollections);
+
         BaseConstructor yamlConstructor;
         if (yamlTypeFilters != null) {
+            ClassLoader yamlClassLoader = this.classLoader;
+            if (yamlClassLoader == null && useApplicationContextClassLoader) {
+                yamlClassLoader = context.getApplicationContextClassLoader();
+            }
+
             yamlConstructor = yamlClassLoader != null
-                ? typeFilterConstructor(yamlClassLoader, yamlTypeFilters)
-                : typeFilterConstructor(yamlTypeFilters);
+                ? typeFilterConstructor(yamlClassLoader, yamlTypeFilters, options)
+                : typeFilterConstructor(yamlTypeFilters, options);
         } else {
-            yamlConstructor = new SafeConstructor();
+            yamlConstructor = new SafeConstructor(options);
         }
 
         if (typeDescriptions != null && yamlConstructor instanceof Constructor) {
@@ -396,8 +430,8 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     // Constructors
     // ***************************
 
-    private static Constructor typeFilterConstructor(final Collection<TypeFilter> typeFilters) {
-        return new Constructor() {
+    private static Constructor typeFilterConstructor(final Collection<TypeFilter> typeFilters, LoaderOptions options) {
+        Constructor constructor = new Constructor(options) {
             @Override
             protected Class<?> getClassForName(String name) throws ClassNotFoundException {
                 if (typeFilters.stream().noneMatch(f -> f.test(name))) {
@@ -407,10 +441,12 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
                 return super.getClassForName(name);
             }
         };
+        return constructor;
     }
 
-    private static Constructor typeFilterConstructor(final ClassLoader classLoader, final Collection<TypeFilter> typeFilters) {
-        return new CustomClassLoaderConstructor(classLoader) {
+    private static Constructor typeFilterConstructor(final ClassLoader classLoader, final Collection<TypeFilter> typeFilters,
+                                                     LoaderOptions options) {
+        CustomClassLoaderConstructor constructor = new CustomClassLoaderConstructor(classLoader, options) {
             @Override
             protected Class<?> getClassForName(String name) throws ClassNotFoundException {
                 if (typeFilters.stream().noneMatch(f -> f.test(name))) {
@@ -420,5 +456,6 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
                 return super.getClassForName(name);
             }
         };
+        return constructor;
     }
 }

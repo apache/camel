@@ -38,7 +38,10 @@ public class StompCustomHeadersTest extends StompBaseTest {
         props.setProperty("ack", "auto");
 
         map.put("customHeaders", props);
-        
+
+        // ensure component is initialized
+        context.getComponent("stomp").init();
+
         StompEndpoint endpoint = (StompEndpoint) context.getEndpoint("stomp:test", map);
         assertNotNull(endpoint.getConfiguration().getCustomHeaders().getProperty("ack"));
     }

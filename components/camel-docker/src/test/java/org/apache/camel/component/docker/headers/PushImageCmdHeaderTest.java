@@ -23,7 +23,7 @@ import com.github.dockerjava.core.command.PushImageResultCallback;
 import org.apache.camel.component.docker.DockerClientProfile;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -49,7 +49,7 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
     private String tag = "1.0";
 
     @Test
-    public void pushImageHeaderTest() {
+    void pushImageHeaderTest() {
 
 
         Map<String, Object> headers = getDefaultParameters();

@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.docker;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DockerHelperTest {
 
     @Test
-    public void transformHeaderTestFromHeader() {
+    void transformHeaderTestFromHeader() {
         String headerField = DockerHelper.transformFromHeaderName(DockerConstants.DOCKER_REGISTRY);
         assertEquals("registry", headerField);
     }

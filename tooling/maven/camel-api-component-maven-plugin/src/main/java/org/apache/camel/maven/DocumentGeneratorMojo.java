@@ -193,7 +193,7 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
         final String simpleName = apiMethod.getSimpleName();
         StringBuilder builder = new StringBuilder(componentPackage);
         builder.append(".");
-        builder.append(simpleName.substring(0, simpleName.indexOf("ApiMethod")));
+        builder.append(simpleName, 0, simpleName.indexOf("ApiMethod"));
         builder.append("EndpointConfiguration");
         return builder.toString();
     }

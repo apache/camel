@@ -21,12 +21,14 @@ import java.io.InputStream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.Model;
-import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 public class HipchatXmlDefinedComponentProducerTest extends CamelTestSupport {
@@ -48,17 +50,14 @@ public class HipchatXmlDefinedComponentProducerTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         final CamelContext context = super.createCamelContext();
-        HipchatComponent component = new HipchatComponent(context) {
-            @Override
-            protected HipchatEndpoint getHipchatEndpoint(String uri) {
-                return new HipchatEPSuccessTestSupport(uri, this, null, null);
-            }
-        };
+        HipchatComponent component = new HipchatTestComponent(context);
+        component.init();
         context.addComponent("hipchat", component);
 
         // This test is all about ensuring the endpoint is configured correctly when using the XML DSL so this
         try (InputStream routes = getClass().getResourceAsStream("HipchatXmlDefinedComponentProducerTest-route.xml")) {
-            RoutesDefinition routesDefinition = ModelHelper.loadRoutesDefinition(context, routes);
+            ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+            RoutesDefinition routesDefinition = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, routes);
             context.getExtension(Model.class).addRouteDefinition(routesDefinition.getRoutes().get(0));
         }
 

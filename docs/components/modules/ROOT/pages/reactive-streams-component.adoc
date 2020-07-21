@@ -1,12 +1,17 @@
 [[reactive-streams-component]]
 = Reactive Streams Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-reactive-streams/src/main/docs/reactive-streams-component.adoc
+:docTitle: Reactive Streams
+:artifactId: camel-reactive-streams
+:description: Exchange messages with reactive stream processing libraries compatible with the reactive streams standard.
+:since: 2.19
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.19*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Reactive Streams component allows you to exchange messages with reactive
 stream processing libraries compatible with the
@@ -50,19 +55,22 @@ external stream processing systems.
 
 
 // component options: START
-The Reactive Streams component supports 6 options, which are listed below.
+The Reactive Streams component supports 9 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *internalEngine Configuration* (advanced) | Configures the internal engine for Reactive Streams. |  | ReactiveStreamsEngineConfiguration
-| *backpressureStrategy* (producer) | The backpressure strategy to use when pushing events to a slow subscriber. | BUFFER | ReactiveStreamsBackpressureStrategy
-| *serviceType* (advanced) | Set the type of the underlying reactive streams implementation to use. The implementation is looked up from the registry or using a ServiceLoader, the default implementation is DefaultCamelReactiveStreamsService |  | String
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *threadPoolMaxSize* (common) | The maximum number of threads used by the reactive streams internal engine. | 10 | int
+| *threadPoolMinSize* (common) | The minimum number of threads used by the reactive streams internal engine. |  | int
+| *threadPoolName* (common) | The name of the thread pool used by the reactive streams internal engine. | CamelReactiveStreamsWorker | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *backpressureStrategy* (producer) | The backpressure strategy to use when pushing events to a slow subscriber. The value can be one of: BUFFER, OLDEST, LATEST | BUFFER | ReactiveStreamsBackpressureStrategy
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *reactiveStreamsEngine Configuration* (advanced) | To use an existing reactive stream engine configuration. |  | ReactiveStreamsEngineConfiguration
+| *serviceType* (advanced) | Set the type of the underlying reactive streams implementation to use. The implementation is looked up from the registry or using a ServiceLoader, the default implementation is DefaultCamelReactiveStreamsService |  | String
 |===
 // component options: END
 
@@ -102,47 +110,13 @@ with the following path and query parameters:
 | *forwardOnError* (consumer) | Determines if onError events should be pushed to the Camel route. Exceptions will be set as message body. | false | boolean
 | *maxInflightExchanges* (consumer) | Maximum number of exchanges concurrently being processed by Camel. This parameter controls backpressure on the stream. Setting a non-positive value will disable backpressure. | 128 | Integer
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *backpressureStrategy* (producer) | The backpressure strategy to use when pushing events to a slow subscriber. |  | ReactiveStreamsBackpressureStrategy
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *backpressureStrategy* (producer) | The backpressure strategy to use when pushing events to a slow subscriber. The value can be one of: BUFFER, OLDEST, LATEST |  | ReactiveStreamsBackpressureStrategy
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-reactive-streams-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 9 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.reactive-streams.backpressure-strategy* | The backpressure strategy to use when pushing events to a slow subscriber. |  | ReactiveStreamsBackpressureStrategy
-| *camel.component.reactive-streams.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.reactive-streams.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.reactive-streams.enabled* | Whether to enable auto configuration of the reactive-streams component. This is enabled by default. |  | Boolean
-| *camel.component.reactive-streams.internal-engine-configuration.thread-pool-max-size* | The maximum number of threads used by the reactive streams internal engine. |  | Integer
-| *camel.component.reactive-streams.internal-engine-configuration.thread-pool-min-size* | The minimum number of threads used by the reactive streams internal engine. |  | Integer
-| *camel.component.reactive-streams.internal-engine-configuration.thread-pool-name* | The name of the thread pool used by the reactive streams internal engine. |  | String
-| *camel.component.reactive-streams.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-| *camel.component.reactive-streams.service-type* | Set the type of the underlying reactive streams implementation to use. The implementation is looked up from the registry or using a ServiceLoader, the default implementation is DefaultCamelReactiveStreamsService |  | String
-|===
-// spring-boot-auto-configure options: END
 
 
 
@@ -447,10 +421,12 @@ To use the starter, add the following to your spring boot pom.xml file:
 [source,xml]
 ------------------------------------------------------
 <dependency>
-    <groupId>org.apache.camel</groupId>
+    <groupId>org.apache.camel.springboot</groupId>
     <artifactId>camel-reactive-streams-starter</artifactId>
     <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
 </dependency>
 ------------------------------------------------------
 
 
+
+include::camel-spring-boot::page$reactive-streams-starter.adoc[]

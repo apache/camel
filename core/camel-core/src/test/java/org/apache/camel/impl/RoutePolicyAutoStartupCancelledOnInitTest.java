@@ -22,22 +22,23 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.RoutePolicySupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RoutePolicyAutoStartupCancelledOnInitTest extends ContextTestSupport {
 
     private RoutePolicy policy = new RoutePolicySupport() {
         @Override
         public void onInit(Route route) {
-            route.getRouteContext().setAutoStartup(false);
+            route.setAutoStartup(false);
         }
     };
 
     @Test
     public void test() {
         ServiceStatus status = context.getRouteController().getRouteStatus("foo");
-        Assert.assertEquals(ServiceStatus.Stopped, status);
+        assertEquals(ServiceStatus.Stopped, status);
     }
 
     @Override

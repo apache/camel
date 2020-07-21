@@ -25,15 +25,17 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * A simple request/reply using custom reply to header.
@@ -55,12 +57,10 @@ public class JmsSimpleRequestCustomReplyToTest extends CamelTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
 
-        Exchange out = template.request("activemq:queue:hello", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.setPattern(ExchangePattern.InOnly);
-                exchange.getIn().setHeader("MyReplyQeueue", "foo");
-                exchange.getIn().setBody("Hello World");
-            }
+        Exchange out = template.request("activemq:queue:hello", exchange -> {
+            exchange.setPattern(ExchangePattern.InOnly);
+            exchange.getIn().setHeader("MyReplyQeueue", "foo");
+            exchange.getIn().setBody("Hello World");
         });
 
         result.assertIsSatisfied();
@@ -69,12 +69,10 @@ public class JmsSimpleRequestCustomReplyToTest extends CamelTestSupport {
 
         // get the reply from the special reply queue
         Endpoint end = context.getEndpoint(componentName + ":" + myReplyTo);
-        final Consumer consumer = end.createConsumer(new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                assertEquals("Late reply", exchange.getIn().getBody());
-                latch.countDown();
+        final Consumer consumer = end.createConsumer(exchange -> {
+            assertEquals("Late reply", exchange.getIn().getBody());
+            latch.countDown();
 
-            }
         });
         // reset latch
         latch = new CountDownLatch(1);
@@ -99,11 +97,9 @@ public class JmsSimpleRequestCustomReplyToTest extends CamelTestSupport {
             }
 
             LOG.debug("Sending late reply");
-            template.send(componentName + ":" + myReplyTo, new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    exchange.setPattern(ExchangePattern.InOnly);
-                    exchange.getIn().setBody("Late reply");
-                }
+            template.send(componentName + ":" + myReplyTo, exchange -> {
+                exchange.setPattern(ExchangePattern.InOnly);
+                exchange.getIn().setBody("Late reply");
             });
         }
     }
@@ -125,16 +121,14 @@ public class JmsSimpleRequestCustomReplyToTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(componentName + ":queue:hello").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        assertEquals("Hello World", exchange.getIn().getBody());
+                from(componentName + ":queue:hello").process(exchange -> {
+                    assertEquals("Hello World", exchange.getIn().getBody());
 
-                        myReplyTo = exchange.getIn().getHeader("MyReplyQeueue", String.class);
-                        LOG.debug("ReplyTo: " + myReplyTo);
+                    myReplyTo = exchange.getIn().getHeader("MyReplyQeueue", String.class);
+                    LOG.debug("ReplyTo: " + myReplyTo);
 
-                        LOG.debug("Ahh I cannot send a reply. Someone else must do it.");
-                        latch.countDown();
-                    }
+                    LOG.debug("Ahh I cannot send a reply. Someone else must do it.");
+                    latch.countDown();
                 }).to("mock:result");
             }
         };

@@ -193,7 +193,7 @@ public final class SshHelper {
 
         while (!channel.isClosed()) {
 
-            String response = new String(output.toByteArray(), "UTF-8");
+            String response = output.toString("UTF-8");
             if (response.trim().endsWith(endpoint.getShellPrompt())) {
                 output.reset();
                 return SshShellOutputStringHelper.betweenBeforeLast(response, System.lineSeparator(), System.lineSeparator());

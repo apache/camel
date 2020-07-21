@@ -21,9 +21,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConstants;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscriber;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RxJavaStreamsServiceEventTypeTest extends RxJavaStreamsServiceTestSupport {
 
@@ -93,7 +94,7 @@ public class RxJavaStreamsServiceEventTypeTest extends RxJavaStreamsServiceTestS
         endpoint.assertIsSatisfied();
 
         Exchange ex = endpoint.getExchanges().get(0);
-        Assert.assertEquals(1, ex.getIn().getBody());
+        assertEquals(1, ex.getIn().getBody());
     }
 
     @Test
@@ -128,7 +129,7 @@ public class RxJavaStreamsServiceEventTypeTest extends RxJavaStreamsServiceTestS
         endpoint.assertIsSatisfied();
 
         Exchange exch = endpoint.getExchanges().get(0);
-        Assert.assertEquals(ex, exch.getIn().getBody());
+        assertEquals(ex, exch.getIn().getBody());
     }
 
     @Test

@@ -32,7 +32,6 @@ public interface EtcdConstants {
     String ETCD_KEYS_ACTION_DELETE_DIR = "deleteDir";
     String ETCD_KEYS_ACTION_GET        = "get";
 
-
     String ETCD_LEADER_STATS_PATH  = "/leader";
     String ETCD_SELF_STATS_PATH    = "/self";
     String ETCD_STORE_STATS_PATH   = "/store";

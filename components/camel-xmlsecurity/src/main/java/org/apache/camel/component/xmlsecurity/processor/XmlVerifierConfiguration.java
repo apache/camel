@@ -18,7 +18,6 @@ package org.apache.camel.component.xmlsecurity.processor;
 
 import javax.xml.crypto.KeySelector;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.xmlsecurity.api.DefaultValidationFailedHandler;
 import org.apache.camel.component.xmlsecurity.api.DefaultXmlSignature2Message;
@@ -31,25 +30,21 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
 
-    @UriParam(label = "verify")
+    @UriParam
     private KeySelector keySelector;
-    private String keySelectorName;
-    @UriParam(label = "verify")
+    @UriParam
     private XmlSignatureChecker xmlSignatureChecker;
-    private String xmlSignatureCheckerName;
-    @UriParam(label = "verify")
+    @UriParam
     private XmlSignature2Message xmlSignature2Message = new DefaultXmlSignature2Message();
-    private String xmlSignature2MessageName;
-    @UriParam(label = "verify")
+    @UriParam
     private ValidationFailedHandler validationFailedHandler = new DefaultValidationFailedHandler();
-    private String validationFailedHandlerName;
-    @UriParam(label = "verify", javaType = "java.lang.String")
+    @UriParam
     private Object outputNodeSearch;
-    @UriParam(label = "verify", defaultValue = DefaultXmlSignature2Message.OUTPUT_NODE_SEARCH_TYPE_DEFAULT)
+    @UriParam(defaultValue = DefaultXmlSignature2Message.OUTPUT_NODE_SEARCH_TYPE_DEFAULT)
     private String outputNodeSearchType = DefaultXmlSignature2Message.OUTPUT_NODE_SEARCH_TYPE_DEFAULT;
-    @UriParam(label = "verify", defaultValue = "false")
+    @UriParam(defaultValue = "false")
     private Boolean removeSignatureElements = Boolean.FALSE;
-    @UriParam(label = "verify", defaultValue = "true")
+    @UriParam(defaultValue = "true")
     private Boolean secureValidation = Boolean.TRUE;
 
     public XmlVerifierConfiguration() {
@@ -63,15 +58,6 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
         }
     }
 
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        super.setCamelContext(camelContext);
-        setKeySelector(keySelectorName);
-        setXmlSignatureChecker(xmlSignatureCheckerName);
-        setXmlSignature2Message(xmlSignature2MessageName);
-        setValidationFailedHandler(validationFailedHandlerName);
-    }
-
     /**
      * Provides the key for validating the XML signature.
      */
@@ -81,22 +67,6 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
 
     public KeySelector getKeySelector() {
         return keySelector;
-    }
-
-    /**
-     * Sets the reference name for a KeySelector that can be found in the registry.
-     */
-    public void setKeySelector(String keySelectorName) {
-        if (getCamelContext() != null && keySelectorName != null) {
-            KeySelector selector = getCamelContext().getRegistry()
-                .lookupByNameAndType(keySelectorName, KeySelector.class);
-            if (selector != null) {
-                setKeySelector(selector);
-            }
-        }
-        if (keySelectorName != null) {
-            this.keySelectorName = keySelectorName;
-        }
     }
 
     public XmlSignatureChecker getXmlSignatureChecker() {
@@ -109,23 +79,6 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
      */
     public void setXmlSignatureChecker(XmlSignatureChecker xmlSignatureChecker) {
         this.xmlSignatureChecker = xmlSignatureChecker;
-    }
-
-    /**
-     * Sets the reference name for a application checker that can be found in the registry.
-     */
-    public void setXmlSignatureChecker(String xmlSignatureCheckerName) {
-        if (getCamelContext() != null && xmlSignatureCheckerName != null) {
-            XmlSignatureChecker checker = getCamelContext().getRegistry()
-                .lookupByNameAndType(xmlSignatureCheckerName,
-                                     XmlSignatureChecker.class);
-            if (checker != null) {
-                setXmlSignatureChecker(checker);
-            }
-        }
-        if (xmlSignatureCheckerName != null) {
-            this.xmlSignatureCheckerName = xmlSignatureCheckerName;
-        }
     }
 
     public XmlSignature2Message getXmlSignature2Message() {
@@ -151,24 +104,6 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
         this.xmlSignature2Message = xmlSignature2Message;
     }
 
-    /**
-     * Sets the reference name for the to-message instance that can be found in
-     * the registry.
-     */
-    public void setXmlSignature2Message(String xmlSignature2Message) {
-        if (getCamelContext() != null && xmlSignature2Message != null) {
-            XmlSignature2Message maper = getCamelContext().getRegistry()
-                .lookupByNameAndType(xmlSignature2Message,
-                                     XmlSignature2Message.class);
-            if (maper != null) {
-                setXmlSignature2Message(maper);
-            }
-        }
-        if (xmlSignature2Message != null) {
-            this.xmlSignature2MessageName = xmlSignature2Message;
-        }
-    }
-
     public ValidationFailedHandler getValidationFailedHandler() {
         return validationFailedHandler;
     }
@@ -182,20 +117,6 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
      */
     public void setValidationFailedHandler(ValidationFailedHandler validationFailedHandler) {
         this.validationFailedHandler = validationFailedHandler;
-    }
-
-    public void setValidationFailedHandler(String validationFailedHandlerName) {
-        if (getCamelContext() != null && validationFailedHandlerName != null) {
-            ValidationFailedHandler vailFailedHandler = getCamelContext()
-                .getRegistry().lookupByNameAndType(validationFailedHandlerName,
-                            ValidationFailedHandler.class);
-            if (vailFailedHandler != null) {
-                setValidationFailedHandler(vailFailedHandler);
-            }
-        }
-        if (validationFailedHandlerName != null) {
-            this.validationFailedHandlerName = validationFailedHandlerName;
-        }
     }
 
     public Object getOutputNodeSearch() {
@@ -256,15 +177,4 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
         this.secureValidation = secureValidation;
     }
 
-    public String getValidationFailedHandlerName() {
-        return validationFailedHandlerName;
-    }
-
-    /**
-     * Name of handler to
-     * @param validationFailedHandlerName
-     */
-    public void setValidationFailedHandlerName(String validationFailedHandlerName) {
-        this.validationFailedHandlerName = validationFailedHandlerName;
-    }
 }

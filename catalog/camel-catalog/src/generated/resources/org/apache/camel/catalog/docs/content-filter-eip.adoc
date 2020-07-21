@@ -1,0 +1,64 @@
+[[ContentFilter-eip]]
+= Content Filter
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/ContentFilter.html[Content
+Filter] from the
+xref:enterprise-integration-patterns.adoc[EIP patterns]
+using one of the following mechanisms in the routing logic to transform
+content from the inbound message.
+
+* xref:message-translator.adoc[Message Translator]
+* invoking a xref:latest@manual:ROOT:bean-integration.adoc[Java bean]
+* xref:latest@manual:ROOT:processor.adoc[Processor] object
+
+image::eip/ContentFilter.gif[image]
+
+A common way to filter messages is to use an
+xref:latest@manual:ROOT:expression.adoc[Expression] in the xref:latest@manual:ROOT:dsl.adoc[DSL] like
+xref:components:languages:xquery-language.adoc[XQuery].
+
+== Using the xref:latest@manual:ROOT:fluent-builders.adoc[Fluent Builders]
+
+Here is a simple example using the xref:latest@manual:ROOT:dsl.adoc[DSL] directly
+
+In this example we add our own xref:latest@manual:ROOT:processor.adoc[Processor]
+
+For further examples of this pattern in use you could look at one of the
+JUnit tests
+
+* https://github.com/apache/camel/blob/master/core/camel-core/src/test/java/org/apache/camel/processor/TransformTest.java[TransformTest]
+* https://github.com/apache/camel/blob/master/core/camel-core/src/test/java/org/apache/camel/processor/TransformViaDSLTest.java[TransformViaDSLTest]
+
+== Using Spring XML
+
+[source,xml]
+----
+<route>
+  <from uri="activemq:Input"/>
+  <bean ref="myBeanName" method="doTransform"/>
+  <to uri="activemq:Output"/>
+</route>
+----
+
+You can also use XPath to filter out part of the message you are
+interested in:
+
+[source,xml]
+----
+<route>
+  <from uri="activemq:Input"/>
+  <setBody><xpath resultType="org.w3c.dom.Document">//foo:bar</xpath></setBody>
+  <to uri="activemq:Output"/>
+</route> 
+----
+
+[[ContentFilter-UsingThisPattern]]
+== Using This Pattern
+
+If you would like to use this EIP Pattern then please read the
+xref:latest@manual:ROOT:getting-started.adoc[Getting Started], you may also find the
+xref:latest@manual:ROOT:architecture.adoc[Architecture] useful particularly the description
+of xref:latest@manual:ROOT:endpoint.adoc[Endpoint] and xref:latest@manual:ROOT:uris.adoc[URIs]. Then you could
+try out some of the xref:latest@manual:ROOT:examples.adoc[Examples] first before trying
+this pattern out.

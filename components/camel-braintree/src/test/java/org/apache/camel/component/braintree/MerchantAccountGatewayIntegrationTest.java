@@ -27,13 +27,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.BraintreeConstants;
 import org.apache.camel.component.braintree.internal.MerchantAccountGatewayApiMethod;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MerchantAccountGatewayIntegrationTest extends AbstractBraintreeTestSupport {
     private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(MerchantAccountGatewayApiMethod.class).getName();
 
-    @Ignore
+    @Disabled
     @Test
     public void testCreate() throws Exception {
         final String merchantId = UUID.randomUUID().toString();
@@ -50,21 +53,21 @@ public class MerchantAccountGatewayIntegrationTest extends AbstractBraintreeTest
             Result.class
         );
 
-        assertNotNull("create result", result);
+        assertNotNull(result, "create result");
         assertTrue(result.isSuccess());
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testFind() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
         headers.put(BraintreeConstants.PROPERTY_PREFIX + "id", System.getenv("CAMEL_BRAINTREE_MERCHANT_ACCOUNT_ID"));
         final MerchantAccount result = requestBodyAndHeaders("direct://FIND", null, headers, MerchantAccount.class);
 
-        assertNotNull("find result", result);
+        assertNotNull(result, "find result");
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testUpdate() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
@@ -80,7 +83,7 @@ public class MerchantAccountGatewayIntegrationTest extends AbstractBraintreeTest
             headers,
             Result.class);
 
-        assertNotNull("update result", result);
+        assertNotNull(result, "update result");
         assertTrue(result.isSuccess());
     }
 

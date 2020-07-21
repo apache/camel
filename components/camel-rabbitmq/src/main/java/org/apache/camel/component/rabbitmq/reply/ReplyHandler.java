@@ -26,15 +26,15 @@ public interface ReplyHandler {
     /**
      * The reply message was received
      *
-     * @param correlationId  the correlation id
-     * @param reply  the reply message
+     * @param correlationId the correlation id
+     * @param reply the reply message
      */
     void onReply(String correlationId, AMQP.BasicProperties properties, byte[] reply);
 
     /**
      * The reply message was not received and a timeout triggered
      *
-     * @param correlationId  the correlation id
+     * @param correlationId the correlation id
      */
     void onTimeout(String correlationId);
 }

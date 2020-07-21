@@ -30,7 +30,9 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SamplingThrottlerTest extends ContextTestSupport {
 
@@ -146,8 +148,8 @@ public class SamplingThrottlerTest extends ContextTestSupport {
     private void validateDroppedExchanges(List<Exchange> sentExchanges, int expectedNotDroppedCount) {
         int notDropped = 0;
         for (Exchange e : sentExchanges) {
-            Boolean stopped = e.getProperty(Exchange.ROUTE_STOP, Boolean.class);
-            if (stopped == null) {
+            boolean stopped = e.isRouteStop();
+            if (!stopped) {
                 notDropped++;
             }
         }

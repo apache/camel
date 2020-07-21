@@ -97,7 +97,9 @@ public class SoroushBotWS {
                     eventBuilder.data(SoroushMessage.class, getSoroushMessage(i, withFile));
                     eventBuilder.mediaType(MediaType.APPLICATION_JSON_TYPE);
                     final OutboundEvent event = eventBuilder.build();
-                    sink.send(event);
+                    if (!sink.isClosed()) {
+                        sink.send(event);
+                    }
 //                    eventOutput.write(event);
                     Thread.sleep(delay);
                 }
@@ -105,7 +107,7 @@ public class SoroushBotWS {
                     sink.close();
                 }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                // ignore
             }
         }).start();
     }

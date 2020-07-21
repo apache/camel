@@ -38,21 +38,25 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PollEnrichDefinition extends ExpressionNode {
     @XmlAttribute
-    @Metadata(defaultValue = "-1")
+    @Metadata(javaType = "java.time.Duration", defaultValue = "-1")
     private String timeout;
     @XmlAttribute(name = "strategyRef")
     private String aggregationStrategyRef;
     @XmlAttribute(name = "strategyMethodName")
     private String aggregationStrategyMethodName;
     @XmlAttribute(name = "strategyMethodAllowNull")
+    @Metadata(javaType = "java.lang.Boolean")
     private String aggregationStrategyMethodAllowNull;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String aggregateOnException;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Integer")
     private String cacheSize;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Integer")
     private String ignoreInvalidEndpoint;
 
     public PollEnrichDefinition() {
@@ -172,12 +176,52 @@ public class PollEnrichDefinition extends ExpressionNode {
      * {@link org.apache.camel.spi.ConsumerCache} which is used to cache and
      * reuse consumers when uris are reused.
      *
+     * Beware that when using dynamic endpoints then it affects how well the cache can be utilized.
+     * If each dynamic endpoint is unique then its best to turn of caching by setting this to -1, which
+     * allows Camel to not cache both the producers and endpoints; they are regarded as prototype scoped
+     * and will be stopped and discarded after use. This reduces memory usage as otherwise producers/endpoints
+     * are stored in memory in the caches.
+     *
+     * However if there are a high degree of dynamic endpoints that have been used before, then it can
+     * benefit to use the cache to reuse both producers and endpoints and therefore the cache size
+     * can be set accordingly or rely on the default size (1000).
+     *
+     * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size
+     * can help reduce memory usage to avoid storing too many non frequent used producers.
+     *
      * @param cacheSize the cache size, use <tt>0</tt> for default cache size,
      *            or <tt>-1</tt> to turn cache off.
      * @return the builder
      */
     public PollEnrichDefinition cacheSize(int cacheSize) {
         setCacheSize(Integer.toString(cacheSize));
+        return this;
+    }
+
+    /**
+     * Sets the maximum size used by the
+     * {@link org.apache.camel.spi.ConsumerCache} which is used to cache and
+     * reuse consumers when uris are reused.
+     *
+     * Beware that when using dynamic endpoints then it affects how well the cache can be utilized.
+     * If each dynamic endpoint is unique then its best to turn of caching by setting this to -1, which
+     * allows Camel to not cache both the producers and endpoints; they are regarded as prototype scoped
+     * and will be stopped and discarded after use. This reduces memory usage as otherwise producers/endpoints
+     * are stored in memory in the caches.
+     *
+     * However if there are a high degree of dynamic endpoints that have been used before, then it can
+     * benefit to use the cache to reuse both producers and endpoints and therefore the cache size
+     * can be set accordingly or rely on the default size (1000).
+     *
+     * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size
+     * can help reduce memory usage to avoid storing too many non frequent used producers.
+     *
+     * @param cacheSize the cache size, use <tt>0</tt> for default cache size,
+     *            or <tt>-1</tt> to turn cache off.
+     * @return the builder
+     */
+    public PollEnrichDefinition cacheSize(String cacheSize) {
+        setCacheSize(cacheSize);
         return this;
     }
 

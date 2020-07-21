@@ -23,9 +23,15 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfConsumerProviderTest extends CamelTestSupport {
     
     
@@ -46,10 +52,6 @@ public class CxfConsumerProviderTest extends CamelTestSupport {
         + "?serviceClass=org.apache.camel.component.cxf.ServiceProvider";
     
     
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -75,8 +77,8 @@ public class CxfConsumerProviderTest extends CamelTestSupport {
         // call the service with right post message
         
         String response = template.requestBody(simpleEndpointAddress, REQUEST_MESSAGE, String.class);
-        assertTrue("Get a wrong response ", response.startsWith(RESPONSE_MESSAGE_BEGINE));
-        assertTrue("Get a wrong response ", response.endsWith(RESPONSE_MESSAGE_END));
+        assertTrue(response.startsWith(RESPONSE_MESSAGE_BEGINE), "Get a wrong response");
+        assertTrue(response.endsWith(RESPONSE_MESSAGE_END), "Get a wrong response");
         try {
             template.requestBody(simpleEndpointAddress, null, String.class);
             fail("Excpetion to get exception here");
@@ -85,8 +87,8 @@ public class CxfConsumerProviderTest extends CamelTestSupport {
         }
        
         response = template.requestBody(simpleEndpointAddress, REQUEST_MESSAGE, String.class);
-        assertTrue("Get a wrong response ", response.startsWith(RESPONSE_MESSAGE_BEGINE));
-        assertTrue("Get a wrong response ", response.endsWith(RESPONSE_MESSAGE_END));
+        assertTrue(response.startsWith(RESPONSE_MESSAGE_BEGINE), "Get a wrong response");
+        assertTrue(response.endsWith(RESPONSE_MESSAGE_END), "Get a wrong response");
     }
 
     

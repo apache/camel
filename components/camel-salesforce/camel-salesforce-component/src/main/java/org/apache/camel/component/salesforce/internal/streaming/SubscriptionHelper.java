@@ -57,7 +57,7 @@ import static org.cometd.bayeux.Message.SUBSCRIPTION_FIELD;
 
 public class SubscriptionHelper extends ServiceSupport {
 
-    static final CometDReplayExtension REPLAY_EXTENSION = new CometDReplayExtension();
+    static final ReplayExtension REPLAY_EXTENSION = new ReplayExtension();
 
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionHelper.class);
 
@@ -332,6 +332,7 @@ public class SubscriptionHelper extends ServiceSupport {
         }
 
         client = null;
+        LOG.debug("Stopped the helper and destroyed the client");
     }
 
     static BayeuxClient createClient(final SalesforceComponent component) throws SalesforceException {
@@ -347,8 +348,7 @@ public class SubscriptionHelper extends ServiceSupport {
 
         final SalesforceSession session = component.getSession();
         // check login access token
-        if (session.getAccessToken() == null) {
-            // lazy login here!
+        if (session.getAccessToken() == null && !component.getLoginConfig().isLazyLogin()) {
             session.login(null);
         }
 
@@ -357,9 +357,16 @@ public class SubscriptionHelper extends ServiceSupport {
             protected void customize(Request request) {
                 super.customize(request);
 
-                // add current security token obtained from session
-                // replace old token
-                request.getHeaders().put(HttpHeader.AUTHORIZATION, "OAuth " + session.getAccessToken());
+                //accessToken might be null due to lazy login
+                String accessToken = session.getAccessToken();
+                if (accessToken == null) {
+                    try {
+                        accessToken = session.login(null);
+                    } catch (SalesforceException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                request.getHeaders().put(HttpHeader.AUTHORIZATION, "OAuth " + accessToken);
             }
         };
 
@@ -436,7 +443,7 @@ public class SubscriptionHelper extends ServiceSupport {
                             }
                         }
 
-                        if (abort) {
+                        if (abort && client != null) {
                             consumer.handleException(msg, new SalesforceException(msg, failure));
                         }
                     } else {
@@ -449,7 +456,12 @@ public class SubscriptionHelper extends ServiceSupport {
                     }
 
                     // remove this subscription listener
-                    client.getChannel(META_SUBSCRIBE).removeListener(this);
+                    if (client != null) {
+                        client.getChannel(META_SUBSCRIBE).removeListener(this);
+                    } else {
+                        LOG.warn("Trying to handle a subscription message but the client is already destroyed");
+                    }
+
                 }
             }
         };

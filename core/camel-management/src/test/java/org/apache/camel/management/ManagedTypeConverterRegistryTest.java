@@ -24,7 +24,13 @@ import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
 
@@ -55,7 +61,7 @@ public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
                 break;
             }
         }
-        assertNotNull("Cannot find DefaultTypeConverter", name);
+        assertNotNull(name, "Cannot find DefaultTypeConverter");
 
         // is disabled by default
         Boolean enabled = (Boolean) mbeanServer.getAttribute(name, "StatisticsEnabled");
@@ -108,17 +114,17 @@ public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
 
         // we have more than 150 converters out of the box
         Integer converters = (Integer) mbeanServer.getAttribute(name, "NumberOfTypeConverters");
-        assertTrue("Should be more than 150 converters, was: " + converters, converters >= 150);
+        assertTrue(converters >= 150, "Should be more than 150 converters, was: " + converters);
 
         Boolean has = (Boolean) mbeanServer.invoke(name, "hasTypeConverter", new Object[]{"String", "java.io.InputStream"}, new String[]{"java.lang.String", "java.lang.String"});
-        assertTrue("Should have type converter", has.booleanValue());
+        assertTrue(has.booleanValue(), "Should have type converter");
 
         has = (Boolean) mbeanServer.invoke(name, "hasTypeConverter", new Object[]{"java.math.BigInteger", "int"}, new String[]{"java.lang.String", "java.lang.String"});
-        assertFalse("Should not have type converter", has.booleanValue());
+        assertFalse(has.booleanValue(), "Should not have type converter");
 
         // we have more than 150 converters out of the box
         TabularData data = (TabularData) mbeanServer.invoke(name, "listTypeConverters", null, null);
-        assertTrue("Should be more than 150 converters, was: " + data.size(), data.size() >= 150);
+        assertTrue(data.size() >= 150, "Should be more than 150 converters, was: " + data.size());
     }
 
     @Override

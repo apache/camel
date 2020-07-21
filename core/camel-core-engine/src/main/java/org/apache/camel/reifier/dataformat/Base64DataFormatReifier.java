@@ -16,30 +16,23 @@
  */
 package org.apache.camel.reifier.dataformat;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.Base64DataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class Base64DataFormatReifier extends DataFormatReifier<Base64DataFormat> {
 
-    public Base64DataFormatReifier(DataFormatDefinition definition) {
-        super((Base64DataFormat)definition);
+    public Base64DataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (Base64DataFormat)definition);
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (definition.getLineLength() != null) {
-            setProperty(camelContext, dataFormat, "lineLength", definition.getLineLength());
-        }
-        if (definition.getUrlSafe() != null) {
-            setProperty(camelContext, dataFormat, "urlSafe", definition.getUrlSafe());
-        }
-        if (definition.getLineSeparator() != null) {
-            // line separator must be a byte[]
-            byte[] bytes = definition.getLineSeparator().getBytes();
-            setProperty(camelContext, dataFormat, "lineSeparator", bytes);
-        }
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("lineLength", definition.getLineLength());
+        properties.put("urlSafe", definition.getUrlSafe());
+        properties.put("lineSeparator", definition.getLineSeparator());
     }
 
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.grpc;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -26,13 +27,13 @@ import org.apache.camel.support.SynchronousDelegateProducer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The gRPC component allows to call and expose remote procedures via HTTP/2 with protobuf dataformat
+ * Expose gRPC endpoints and access external gRPC endpoints.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "grpc", title = "gRPC", syntax = "grpc:host:port/service", label = "rpc")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "grpc", title = "gRPC", syntax = "grpc:host:port/service", category = {Category.RPC})
 public class GrpcEndpoint extends DefaultEndpoint {
     @UriParam
     protected final GrpcConfiguration configuration;
-    
+
     private String serviceName;
     private String servicePackage;
 

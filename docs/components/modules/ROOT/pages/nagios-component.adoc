@@ -1,12 +1,17 @@
 [[nagios-component]]
 = Nagios Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-nagios/src/main/docs/nagios-component.adoc
+:docTitle: Nagios
+:artifactId: camel-nagios
+:description: Send passive checks to Nagios using JSendNSCA.
+:since: 2.3
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.3*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The xref:nagios-component.adoc[Nagios] component allows you to send passive checks
 to http://nagios.org[Nagios].
@@ -44,16 +49,20 @@ you to send notifications to Nagios.
 
 
 // component options: START
-The Nagios component supports 3 options, which are listed below.
+The Nagios component supports 7 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (advanced) | To use a shared NagiosConfiguration |  | NagiosConfiguration
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *connectionTimeout* (producer) | Connection timeout in millis. | 5000 | int
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *timeout* (producer) | Sending timeout in millis. | 5000 | int
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *configuration* (advanced) | To use a shared NagiosConfiguration |  | NagiosConfiguration
+| *encryption* (security) | To specify an encryption method. The value can be one of: NONE, TRIPLE_DES, XOR, RIJNDAEL128, RIJNDAEL192, RIJNDAEL256, BLOWFISH |  | Encryption
+| *password* (security) | Password to be authenticated when sending checks to Nagios. |  | String
 |===
 // component options: END
 
@@ -95,46 +104,10 @@ with the following path and query parameters:
 | *timeout* (producer) | Sending timeout in millis. | 5000 | int
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *encryption* (security) | To specify an encryption method. |  | Encryption
+| *encryption* (security) | To specify an encryption method. The value can be one of: NONE, TRIPLE_DES, XOR, RIJNDAEL128, RIJNDAEL192, RIJNDAEL256, BLOWFISH |  | Encryption
 | *password* (security) | Password to be authenticated when sending checks to Nagios. |  | String
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-nagios-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 11 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.nagios.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.nagios.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.nagios.configuration.connection-timeout* | Connection timeout in millis. | 5000 | Integer
-| *camel.component.nagios.configuration.encryption* | To specify an encryption method. |  | Encryption
-| *camel.component.nagios.configuration.host* | This is the address of the Nagios host where checks should be send. |  | String
-| *camel.component.nagios.configuration.nagios-settings* | Returns a copy of this configuration |  | NagiosSettings
-| *camel.component.nagios.configuration.password* | Password to be authenticated when sending checks to Nagios. |  | String
-| *camel.component.nagios.configuration.port* | The port number of the host. |  | Integer
-| *camel.component.nagios.configuration.timeout* | Sending timeout in millis. | 5000 | Integer
-| *camel.component.nagios.enabled* | Whether to enable auto configuration of the nagios component. This is enabled by default. |  | Boolean
-| *camel.component.nagios.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-|===
-// spring-boot-auto-configure options: END
 
 
 
@@ -189,3 +162,5 @@ In Spring XML its just a matter of defining a Spring bean with the type
 xref:manual::advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
 configuration of CamelContext using Spring].
 
+
+include::camel-spring-boot::page$nagios-starter.adoc[]

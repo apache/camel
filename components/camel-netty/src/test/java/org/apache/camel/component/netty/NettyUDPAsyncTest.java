@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class NettyUDPAsyncTest extends BaseNettyTest {
 
@@ -42,7 +42,7 @@ public class NettyUDPAsyncTest extends BaseNettyTest {
         mock.expectedMessageCount(1);
         mock.message(0).body().startsWith("Song Of A Dream".getBytes());
 
-        sendFile("netty:udp://localhost:{{port}}?sync=false");
+        sendFile("netty:udp://localhost:{{port}}?sync=false&udpByteArrayCodec=true");
 
         mock.assertIsSatisfied();
     }

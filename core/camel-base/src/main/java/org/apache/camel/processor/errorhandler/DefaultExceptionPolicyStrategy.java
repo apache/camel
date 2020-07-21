@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,8 +132,8 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
             // if ExceptionPolicy is route scoped then the current route (Exchange) must match
             // so we will not pick an ExceptionPolicy from another route
             String typeRoute = type.getRouteId();
-            if (exchange != null && exchange.getUnitOfWork() != null && ObjectHelper.isNotEmpty(typeRoute)) {
-                String route = exchange.getUnitOfWork().getRouteContext() != null ? exchange.getUnitOfWork().getRouteContext().getRouteId() : null;
+            if (exchange != null && ObjectHelper.isNotEmpty(typeRoute)) {
+                String route = ExchangeHelper.getRouteId(exchange);
                 if (route != null && !route.equals(typeRoute)) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("The type is scoped for route: {} however Exchange is at route: {}", typeRoute, route);

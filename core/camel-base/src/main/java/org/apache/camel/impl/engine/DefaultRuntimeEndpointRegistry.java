@@ -27,22 +27,24 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
 import org.apache.camel.spi.CamelEvent.RouteAddedEvent;
 import org.apache.camel.spi.CamelEvent.RouteRemovedEvent;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
-import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport implements CamelContextAware, RuntimeEndpointRegistry {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultRuntimeEndpointRegistry.class);
 
     private CamelContext camelContext;
 
@@ -184,7 +186,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         ObjectHelper.notNull(camelContext, "camelContext", this);
 
         if (inputs == null) {
@@ -201,10 +203,15 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             outputUtilization = new DefaultEndpointUtilizationStatistics(limit);
         }
         if (extended) {
-            log.info("Runtime endpoint registry is in extended mode gathering usage statistics of all incoming and outgoing endpoints (cache limit: {})", limit);
+            LOG.info("Runtime endpoint registry is in extended mode gathering usage statistics of all incoming and outgoing endpoints (cache limit: {})", limit);
         } else {
-            log.info("Runtime endpoint registry is in normal mode gathering information of all incoming and outgoing endpoints (cache limit: {})", limit);
+            LOG.info("Runtime endpoint registry is in normal mode gathering information of all incoming and outgoing endpoints (cache limit: {})", limit);
         }
+        ServiceHelper.initService(inputUtilization, outputUtilization);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
         ServiceHelper.startService(inputUtilization, outputUtilization);
     }
 
@@ -256,7 +263,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         } else if (event instanceof ExchangeSendingEvent) {
             ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
             Endpoint endpoint = ese.getEndpoint();
-            String routeId = getRouteId(ese.getExchange());
+            String routeId = ExchangeHelper.getRouteId(ese.getExchange());
             String uri = endpoint.getEndpointUri();
 
             Map<String, String> uris = outputs.get(routeId);
@@ -270,20 +277,6 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
                 }
             }
         }
-    }
-
-    private String getRouteId(Exchange exchange) {
-        String answer = null;
-        UnitOfWork uow = exchange.getUnitOfWork();
-        RouteContext rc = uow != null ? uow.getRouteContext() : null;
-        if (rc != null) {
-            answer = rc.getRouteId();
-        }
-        if (answer == null) {
-            // fallback and get from route id on the exchange
-            answer = exchange.getFromRouteId();
-        }
-        return answer;
     }
 
     @Override

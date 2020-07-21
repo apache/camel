@@ -25,8 +25,11 @@ import java.nio.file.Paths;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -37,7 +40,7 @@ public class FileProducerCharsetUTFtoISOConfiguredTest extends ContextTestSuppor
     private byte[] iso;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // use utf-8 as original payload with 00e6 which is a danish ae letter
         utf = "ABC\u00e6".getBytes("utf-8");
@@ -69,13 +72,13 @@ public class FileProducerCharsetUTFtoISOConfiguredTest extends ContextTestSuppor
         oneExchangeDone.matchesMockWaitTime();
 
         File file = new File("target/data/charset/output.txt");
-        assertTrue("File should exist", file.exists());
+        assertTrue(file.exists(), "File should exist");
 
         InputStream fis = Files.newInputStream(Paths.get(file.getAbsolutePath()));
         byte[] buffer = new byte[100];
 
         int len = fis.read(buffer);
-        assertTrue("Should read data: " + len, len != -1);
+        assertTrue(len != -1, "Should read data: " + len);
         byte[] data = new byte[len];
         System.arraycopy(buffer, 0, data, 0, len);
         fis.close();

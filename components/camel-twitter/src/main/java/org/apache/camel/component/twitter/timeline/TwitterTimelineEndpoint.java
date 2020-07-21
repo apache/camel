@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.twitter.timeline;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -30,10 +31,10 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * The Twitter Timeline component consumes twitter timeline or update the status of specific user.
+ * Send tweets and receive tweets from user's timeline.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "twitter-timeline", title = "Twitter Timeline", syntax = "twitter-timeline:timelineType",
-    label = "api,social")
+        category = {Category.API, Category.CLOUD, Category.SOCIAL})
 public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
 
     @UriPath(description = "The timeline type to produce/consume.")
@@ -62,11 +63,11 @@ public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         switch (timelineType) {
-        case USER:
-            return new UserProducer(this);
-        default:
-            throw new IllegalArgumentException("Cannot create any producer with uri " + getEndpointUri()
-                                               + ". A producer type was not provided (or an incorrect pairing was used).");
+            case USER:
+                return new UserProducer(this);
+            default:
+                throw new IllegalArgumentException("Cannot create any producer with uri " + getEndpointUri()
+                        + ". A producer type was not provided (or an incorrect pairing was used).");
         }
     }
 
@@ -74,31 +75,31 @@ public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         AbstractTwitterConsumerHandler handler = null;
         switch (timelineType) {
-        case HOME:
-            handler = new HomeConsumerHandler(this);
-            break;
-        case MENTIONS:
-            handler = new MentionsConsumerHandler(this);
-            break;
-        case RETWEETSOFME:
-            handler = new RetweetsConsumerHandler(this);
-            break;
-        case USER:
-            if (user == null || user.trim().isEmpty()) {
-                throw new IllegalArgumentException("Fetch type set to USER TIMELINE but no user was set.");
-            } else {
-                handler = new UserConsumerHandler(this, user);
+            case HOME:
+                handler = new HomeConsumerHandler(this);
                 break;
-            }
-        default:
-            break;
+            case MENTIONS:
+                handler = new MentionsConsumerHandler(this);
+                break;
+            case RETWEETSOFME:
+                handler = new RetweetsConsumerHandler(this);
+                break;
+            case USER:
+                if (user == null || user.trim().isEmpty()) {
+                    throw new IllegalArgumentException("Fetch type set to USER TIMELINE but no user was set.");
+                } else {
+                    handler = new UserConsumerHandler(this, user);
+                    break;
+                }
+            default:
+                break;
         }
         if (handler != null) {
             return TwitterHelper.createConsumer(processor, this, handler);
         }
         throw new IllegalArgumentException("Cannot create any consumer with uri " + getEndpointUri()
-                                           + ". A consumer type was not provided (or an incorrect pairing was used).");
-        
+                + ". A consumer type was not provided (or an incorrect pairing was used).");
+
     }
 
     public TimelineType getTimelineType() {

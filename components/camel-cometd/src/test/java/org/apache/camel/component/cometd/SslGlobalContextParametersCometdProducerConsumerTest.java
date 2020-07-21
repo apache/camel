@@ -28,9 +28,11 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit testing for using a CometdProducer and a CometdConsumer
@@ -41,7 +43,7 @@ public class SslGlobalContextParametersCometdProducerConsumerTest extends CamelT
     private String uri;
     
     @Test
-    public void testProducer() throws Exception {
+    void testProducer() {
         Person person = new Person("David", "Greco");
         template.requestBody("direct:input", person);
         MockEndpoint ep = context.getEndpoint("mock:test", MockEndpoint.class);
@@ -54,7 +56,7 @@ public class SslGlobalContextParametersCometdProducerConsumerTest extends CamelT
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
         uri = "cometds://127.0.0.1:" + port + "/service/test?baseResource=file:./target/test-classes/webapp&"
@@ -64,10 +66,10 @@ public class SslGlobalContextParametersCometdProducerConsumerTest extends CamelT
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("direct:input").to(uri);
 

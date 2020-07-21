@@ -55,12 +55,9 @@ public class FtpProducerToDMoveExistingTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .toD(getFtpUrl())
-                    .to("mock:result");
+                from("direct:start").toD(getFtpUrl()).to("mock:result");
             }
         };
     }
-
 
 }

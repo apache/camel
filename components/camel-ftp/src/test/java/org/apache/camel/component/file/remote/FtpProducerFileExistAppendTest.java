@@ -48,7 +48,7 @@ public class FtpProducerFileExistAppendTest extends FtpServerTestSupport {
             expectBody = "Hello World\r\nBye World";
         }
         mock.expectedBodiesReceived(expectBody);
-        mock.expectedFileExists(FTP_ROOT_DIR + "/exist/hello.txt", expectBody);       
+        mock.expectedFileExists(FTP_ROOT_DIR + "/exist/hello.txt", expectBody);
         template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();

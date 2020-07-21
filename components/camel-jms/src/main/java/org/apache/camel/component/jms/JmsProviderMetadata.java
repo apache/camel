@@ -16,13 +16,10 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.JMSException;
-import javax.jms.Session;
 import javax.jms.TemporaryQueue;
 import javax.jms.TemporaryTopic;
 
 import org.springframework.jms.core.JmsOperations;
-import org.springframework.jms.core.SessionCallback;
 
 /**
  * A class which represents some metadata about the underlying JMS provider
@@ -83,18 +80,16 @@ public class JmsProviderMetadata {
         if (template == null) {
             throw new IllegalArgumentException("No JmsTemplate supplied!");
         }
-        template.execute(new SessionCallback<Object>() {
-            public Object doInJms(Session session) throws JMSException {
-                TemporaryQueue queue = session.createTemporaryQueue();
-                setTemporaryQueueType(queue.getClass());
+        template.execute(session -> {
+            TemporaryQueue queue = session.createTemporaryQueue();
+            setTemporaryQueueType(queue.getClass());
 
-                TemporaryTopic topic = session.createTemporaryTopic();
-                setTemporaryTopicType(topic.getClass());
+            TemporaryTopic topic = session.createTemporaryTopic();
+            setTemporaryTopicType(topic.getClass());
 
-                queue.delete();
-                topic.delete();
-                return null;
-            }
+            queue.delete();
+            topic.delete();
+            return null;
         });
     }
 }

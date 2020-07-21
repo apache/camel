@@ -284,7 +284,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
         try {
             breakpoint.beforeProcess(exchange, processor, definition);
         } catch (Throwable e) {
-            log.warn("Exception occurred in breakpoint: " + breakpoint + ". This exception will be ignored.", e);
+            // ignore
         }
     }
 
@@ -292,7 +292,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
         try {
             breakpoint.afterProcess(exchange, processor, definition, timeTaken);
         } catch (Throwable e) {
-            log.warn("Exception occurred in breakpoint: " + breakpoint + ". This exception will be ignored.", e);
+            // ignore
         }
     }
 
@@ -306,7 +306,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
         try {
             breakpoint.onEvent(exchange, event, definition);
         } catch (Throwable e) {
-            log.warn("Exception occurred in breakpoint: " + breakpoint + ". This exception will be ignored.", e);
+            // ignore
         }
     }
 
@@ -331,12 +331,23 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
 
+        // must have message history enabled when using this debugger
+        if (!camelContext.isMessageHistory()) {
+            camelContext.setMessageHistory(true);
+        }
+
         // register our event notifier
-        ServiceHelper.startService(debugEventNotifier);
         camelContext.getManagementStrategy().addEventNotifier(debugEventNotifier);
+
+        ServiceHelper.initService(debugEventNotifier);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(debugEventNotifier);
     }
 
     @Override

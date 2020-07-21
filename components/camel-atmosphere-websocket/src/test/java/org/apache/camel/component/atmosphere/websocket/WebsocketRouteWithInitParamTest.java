@@ -24,7 +24,10 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithInitParamTestSupport {
 
@@ -33,21 +36,21 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
     private static Map<String, String> connectionKeyUserMap = new HashMap<>();
 
     @Test
-    public void testWebsocketEventsResendingEnabled() throws Exception {
+    void testWebsocketEventsResendingEnabled() throws Exception {
         TestClient wsclient = new TestClient("ws://localhost:" + PORT + "/hola");
         wsclient.connect();
         wsclient.close();
     }
 
     @Test
-    public void testPassParametersWebsocketOnOpen() throws Exception {
+    void testPassParametersWebsocketOnOpen() throws Exception {
         TestClient wsclient = new TestClient("ws://localhost:" + PORT + "/hola1?param1=value1&param2=value2");
         wsclient.connect();
         wsclient.close();
     }
 
     @Test
-    public void testWebsocketSingleClientBroadcastMultipleClients() throws Exception {
+    void testWebsocketSingleClientBroadcastMultipleClients() throws Exception {
         final int awaitTime = 5;
         connectionKeyUserMap.clear();
 
@@ -94,7 +97,7 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
     }
 
     @Test
-    public void testWebsocketSingleClientBroadcastMultipleClientsGuaranteeDelivery() throws Exception {
+    void testWebsocketSingleClientBroadcastMultipleClientsGuaranteeDelivery() throws Exception {
         final int awaitTime = 5;
         connectionKeyUserMap.clear();
 
@@ -146,14 +149,14 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
             public void configure() {
                 // route for events resending enabled
                 from("atmosphere-websocket:///hola").to("log:info").process(new Processor() {
-                    public void process(final Exchange exchange) throws Exception {
+                    public void process(final Exchange exchange) {
                         checkEventsResendingEnabled(exchange);
                     }
                 });
 
                 // route for events resending enabled
                 from("atmosphere-websocket:///hola1").to("log:info").process(new Processor() {
-                    public void process(final Exchange exchange) throws Exception {
+                    public void process(final Exchange exchange) {
                         checkPassedParameters(exchange);
                     }
                 });
@@ -163,25 +166,25 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
                         .choice()
                         .when(header(WebsocketConstants.EVENT_TYPE).isEqualTo(WebsocketConstants.ONOPEN_EVENT_TYPE))
                         .process(new Processor() {
-                            public void process(final Exchange exchange) throws Exception {
+                            public void process(final Exchange exchange) {
                                 createExternalConnectionRegister(exchange);
                             }
                         })
                         .when(header(WebsocketConstants.EVENT_TYPE).isEqualTo(WebsocketConstants.ONCLOSE_EVENT_TYPE))
                         .process(new Processor() {
-                            public void process(final Exchange exchange) throws Exception {
+                            public void process(final Exchange exchange) {
                                 removeExternalConnectionRegister(exchange);
                             }
                         })
                         .when(header(WebsocketConstants.EVENT_TYPE).isEqualTo(WebsocketConstants.ONERROR_EVENT_TYPE))
                         .process(new Processor() {
-                            public void process(final Exchange exchange) throws Exception {
+                            public void process(final Exchange exchange) {
                                 removeExternalConnectionRegister(exchange);
                             }
                         })
                         .otherwise()
                         .process(new Processor() {
-                            public void process(final Exchange exchange) throws Exception {
+                            public void process(final Exchange exchange) {
                                 createBroadcastMultipleClientsResponse(exchange);
                             }
                         }).to("atmosphere-websocket:///hola2");
@@ -191,31 +194,31 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
                         .choice()
                         .when(header(WebsocketConstants.EVENT_TYPE).isEqualTo(WebsocketConstants.ONOPEN_EVENT_TYPE))
                         .process(new Processor() {
-                            public void process(final Exchange exchange) throws Exception {
+                            public void process(final Exchange exchange) {
                                 createExternalConnectionRegister(exchange);
                             }
                         })
                         .when(header(WebsocketConstants.EVENT_TYPE).isEqualTo(WebsocketConstants.ONCLOSE_EVENT_TYPE))
                         .process(new Processor() {
-                            public void process(final Exchange exchange) throws Exception {
+                            public void process(final Exchange exchange) {
                                 removeExternalConnectionRegister(exchange);
                             }
                         })
                         .when(header(WebsocketConstants.EVENT_TYPE).isEqualTo(WebsocketConstants.ONERROR_EVENT_TYPE))
                         .process(new Processor() {
-                            public void process(final Exchange exchange) throws Exception {
+                            public void process(final Exchange exchange) {
                                 removeExternalConnectionRegister(exchange);
                             }
                         })
                         .when(header(WebsocketConstants.ERROR_TYPE).isEqualTo(WebsocketConstants.MESSAGE_NOT_SENT_ERROR_TYPE))
                         .process(new Processor() {
-                            public void process(final Exchange exchange) throws Exception {
+                            public void process(final Exchange exchange) {
                                 handleNotDeliveredMessage(exchange);
                             }
                         })
                         .otherwise()
                         .process(new Processor() {
-                            public void process(final Exchange exchange) throws Exception {
+                            public void process(final Exchange exchange) {
                                 createBroadcastMultipleClientsResponse(exchange);
                             }
                         }).to("atmosphere-websocket:///hola3");

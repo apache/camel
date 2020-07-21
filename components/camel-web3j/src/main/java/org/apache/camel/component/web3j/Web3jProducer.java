@@ -92,7 +92,6 @@ import org.web3j.quorum.methods.response.QuorumNodeInfo;
 import org.web3j.quorum.methods.response.Vote;
 import org.web3j.quorum.methods.response.Voter;
 
-
 import static org.apache.camel.component.web3j.Web3jHelper.toDefaultBlockParameter;
 
 public class Web3jProducer extends HeaderSelectorProducer {

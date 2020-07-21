@@ -23,15 +23,15 @@ import javax.validation.spi.ValidationProvider;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.hibernate.validator.HibernateValidator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static java.util.Arrays.asList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static java.util.Arrays.asList;
 
 public class CustomValidationProviderResolverTest extends CamelTestSupport {
 
@@ -60,7 +60,7 @@ public class CustomValidationProviderResolverTest extends CamelTestSupport {
     // Tests
 
     @Test
-    public void shouldResolveCustomValidationProviderResolver() {
+    void shouldResolveCustomValidationProviderResolver() {
         verify(validationProviderResolver, atLeastOnce()).getValidationProviders();
     }
 

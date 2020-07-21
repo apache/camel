@@ -55,7 +55,7 @@ public class DefaultXAdESSignatureProperties
     }
 
     @Override
-    protected X509Certificate getSigningCertificate() throws Exception { //NOPMD
+    protected X509Certificate getSigningCertificate() throws Exception {
         if (keyStoreAndAlias.getKeyStore() == null) {
             throw new XmlSignatureException("No keystore has been configured");
         }
@@ -69,7 +69,7 @@ public class DefaultXAdESSignatureProperties
     }
 
     @Override
-    protected X509Certificate[] getSigningCertificateChain() throws Exception { //NOPMD
+    protected X509Certificate[] getSigningCertificateChain() throws Exception {
         return null;
     }
 

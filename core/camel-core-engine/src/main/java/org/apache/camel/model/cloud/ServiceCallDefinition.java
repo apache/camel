@@ -50,7 +50,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     @Metadata(defaultValue = ServiceCallDefinitionConstants.DEFAULT_COMPONENT)
     private String component;
     @XmlAttribute
-    private ExchangePattern pattern;
+    @Metadata(required = true, javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut,InOptionalOut")
+    private String pattern;
     @XmlAttribute
     private String configurationRef;
     @XmlAttribute
@@ -131,14 +132,14 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         this.name = name;
     }
 
-    public ExchangePattern getPattern() {
+    public String getPattern() {
         return pattern;
     }
 
     /**
      * Sets the optional {@link ExchangePattern} used to invoke this endpoint
      */
-    public void setPattern(ExchangePattern pattern) {
+    public void setPattern(String pattern) {
         this.pattern = pattern;
     }
 
@@ -338,6 +339,13 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
      * Sets the optional {@link ExchangePattern} used to invoke this endpoint
      */
     public ServiceCallDefinition pattern(ExchangePattern pattern) {
+        return pattern(pattern.name());
+    }
+
+    /**
+     * Sets the optional {@link ExchangePattern} used to invoke this endpoint
+     */
+    public ServiceCallDefinition pattern(String pattern) {
         setPattern(pattern);
         return this;
     }

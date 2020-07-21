@@ -1,12 +1,17 @@
 [[smpp-component]]
 = SMPP Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-smpp/src/main/docs/smpp-component.adoc
+:docTitle: SMPP
+:artifactId: camel-smpp
+:description: Send and receive SMS messages using a SMSC (Short Message Service Center).
+:since: 2.2
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.2*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 This component provides access to an SMSC (Short Message Service Center)
 over the http://smsforum.net/SMPP_v3_4_Issue1_2.zip[SMPP] protocol to
@@ -92,26 +97,15 @@ find:
 * the data coding specified in the endpoint configuration (URI
 parameter)
 
-Older versions of Camel had bugs in support for international character
-sets.  This feature only worked when a single encoding was used for all
-messages and was troublesome when users wanted to change it on a
-per-message basis.  Users who require this to work should ensure their
-version of Camel includes the fix for 
-
-JIRA Issues Macro: com.atlassian.sal.api.net.ResponseStatusException:
-Unexpected response received. Status code: 404
-
-.
-
 In addition to trying to send the data coding value to the SMSC, the
-Camel component also tries to analyze the message body, convert it to a
-Java String (Unicode) and convert that to a byte array in the
-corresponding alphabet  When deciding which alphabet to use in the byte
+Camel component also tries to analyze the message body, converts it to a
+Java String (Unicode) and converts that to a byte array in the
+corresponding alphabet. When deciding which alphabet to use in the byte
 array, the Camel SMPP component does not consider the data coding value
 (header or configuration), it only considers the specified alphabet
 (from either the header or endpoint parameter).
 
-If some characters in the String can't be represented in the chosen
+If some characters in the String can not be represented in the chosen
 alphabet, they may be replaced by the question mark ( ? ) symbol.  Users
 of the API may want to consider checking if their message body can be
 converted to ISO-8859-1 before passing it to the component and if not,
@@ -173,17 +167,51 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The SMPP component supports 4 options, which are listed below.
+The SMPP component supports 38 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (advanced) | To use the shared SmppConfiguration as configuration. |  | SmppConfiguration
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *initialReconnectDelay* (common) | Defines the initial delay in milliseconds after the consumer/producer tries to reconnect to the SMSC, after the connection was lost. | 5000 | long
+| *maxReconnect* (common) | Defines the maximum number of attempts to reconnect to the SMSC, if SMSC returns a negative bind response | 2147483647 | int
+| *reconnectDelay* (common) | Defines the interval in milliseconds between the reconnect attempts, if the connection to the SMSC was lost and the previous was not succeed. | 5000 | long
+| *splittingPolicy* (common) | You can specify a policy for handling long messages: ALLOW - the default, long messages are split to 140 bytes per message TRUNCATE - long messages are split and only the first fragment will be sent to the SMSC. Some carriers drop subsequent fragments so this reduces load on the SMPP connection sending parts of a message that will never be delivered. REJECT - if a message would need to be split, it is rejected with an SMPP NegativeResponseException and the reason code signifying the message is too long. The value can be one of: ALLOW, REJECT, TRUNCATE | ALLOW | SmppSplittingPolicy
+| *systemType* (common) | This parameter is used to categorize the type of ESME (External Short Message Entity) that is binding to the SMSC (max. 13 characters). |  | String
+| *addressRange* (consumer) | You can specify the address range for the SmppConsumer as defined in section 5.2.7 of the SMPP 3.4 specification. The SmppConsumer will receive messages only from SMSC's which target an address (MSISDN or IP address) within this range. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *destAddr* (producer) | Defines the destination SME address. For mobile terminated messages, this is the directory number of the recipient MS. Only for SubmitSm, SubmitMulti, CancelSm and DataSm. | 1717 | String
+| *destAddrNpi* (producer) | Defines the type of number (TON) to be used in the SME destination address parameters. Only for SubmitSm, SubmitMulti, CancelSm and DataSm. The following NPI values are defined: 0: Unknown 1: ISDN (E163/E164) 2: Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined by WAP Forum). The value can be one of: 0, 1, 2, 3, 6, 8, 9, 10, 13, 18 |  | byte
+| *destAddrTon* (producer) | Defines the type of number (TON) to be used in the SME destination address parameters. Only for SubmitSm, SubmitMulti, CancelSm and DataSm. The following TON values are defined: 0: Unknown 1: International 2: National 3: Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated. The value can be one of: 0, 1, 2, 3, 4, 5, 6 |  | byte
+| *lazySessionCreation* (producer) | Sessions can be lazily created to avoid exceptions, if the SMSC is not available when the Camel producer is started. Camel will check the in message headers 'CamelSmppSystemId' and 'CamelSmppPassword' of the first exchange. If they are present, Camel will use these data to connect to the SMSC. | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *numberingPlanIndicator* (producer) | Defines the numeric plan indicator (NPI) to be used in the SME. The following NPI values are defined: 0: Unknown 1: ISDN (E163/E164) 2: Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined by WAP Forum). The value can be one of: 0, 1, 2, 3, 6, 8, 9, 10, 13, 18 |  | byte
+| *priorityFlag* (producer) | Allows the originating SME to assign a priority level to the short message. Only for SubmitSm and SubmitMulti. Four Priority Levels are supported: 0: Level 0 (lowest) priority 1: Level 1 priority 2: Level 2 priority 3: Level 3 (highest) priority. The value can be one of: 0, 1, 2, 3 |  | byte
+| *protocolId* (producer) | The protocol id |  | byte
+| *registeredDelivery* (producer) | Is used to request an SMSC delivery receipt and/or SME originated acknowledgements. The following values are defined: 0: No SMSC delivery receipt requested. 1: SMSC delivery receipt requested where final delivery outcome is success or failure. 2: SMSC delivery receipt requested where the final delivery outcome is delivery failure. The value can be one of: 0, 1, 2 |  | byte
+| *replaceIfPresentFlag* (producer) | Used to request the SMSC to replace a previously submitted message, that is still pending delivery. The SMSC will replace an existing message provided that the source address, destination address and service type match the same fields in the new message. The following replace if present flag values are defined: 0: Don't replace 1: Replace. The value can be one of: 0, 1 |  | byte
+| *serviceType* (producer) | The service type parameter can be used to indicate the SMS Application service associated with the message. The following generic service_types are defined: CMT: Cellular Messaging CPT: Cellular Paging VMN: Voice Mail Notification VMA: Voice Mail Alerting WAP: Wireless Application Protocol USSD: Unstructured Supplementary Services Data. The value can be one of: CMT, CPT, VMN, VMA, WAP, USSD |  | String
+| *sourceAddr* (producer) | Defines the address of SME (Short Message Entity) which originated this message. | 1616 | String
+| *sourceAddrNpi* (producer) | Defines the numeric plan indicator (NPI) to be used in the SME originator address parameters. The following NPI values are defined: 0: Unknown 1: ISDN (E163/E164) 2: Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined by WAP Forum). The value can be one of: 0, 1, 2, 3, 6, 8, 9, 10, 13, 18 |  | byte
+| *sourceAddrTon* (producer) | Defines the type of number (TON) to be used in the SME originator address parameters. The following TON values are defined: 0: Unknown 1: International 2: National 3: Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated. The value can be one of: 0, 1, 2, 3, 4, 5, 6 |  | byte
+| *typeOfNumber* (producer) | Defines the type of number (TON) to be used in the SME. The following TON values are defined: 0: Unknown 1: International 2: National 3: Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated. The value can be one of: 0, 1, 2, 3, 4, 5, 6 |  | byte
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *configuration* (advanced) | To use the shared SmppConfiguration as configuration. |  | SmppConfiguration
+| *enquireLinkTimer* (advanced) | Defines the interval in milliseconds between the confidence checks. The confidence check is used to test the communication path between an ESME and an SMSC. | 5000 | Integer
+| *sessionStateListener* (advanced) | You can refer to a org.jsmpp.session.SessionStateListener in the Registry to receive callbacks when the session state changed. |  | SessionStateListener
+| *transactionTimer* (advanced) | Defines the maximum period of inactivity allowed after a transaction, after which an SMPP entity may assume that the session is no longer active. This timer may be active on either communicating SMPP entity (i.e. SMSC or ESME). | 10000 | Integer
+| *alphabet* (codec) | Defines encoding of data according the SMPP 3.4 specification, section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2 Alphabet. The value can be one of: 0, 4, 8 |  | byte
+| *dataCoding* (codec) | Defines the data coding according the SMPP 3.4 specification, section 5.2.19. Example data encodings are: 0: SMSC Default Alphabet 3: Latin 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2 (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990) |  | byte
+| *encoding* (codec) | Defines the encoding scheme of the short message user data. Only for SubmitSm, ReplaceSm and SubmitMulti. | ISO-8859-1 | String
+| *httpProxyHost* (proxy) | If you need to tunnel SMPP through a HTTP proxy, set this attribute to the hostname or ip address of your HTTP proxy. |  | String
+| *httpProxyPassword* (proxy) | If your HTTP proxy requires basic authentication, set this attribute to the password required for your HTTP proxy. |  | String
+| *httpProxyPort* (proxy) | If you need to tunnel SMPP through a HTTP proxy, set this attribute to the port of your HTTP proxy. | 3128 | Integer
+| *httpProxyUsername* (proxy) | If your HTTP proxy requires basic authentication, set this attribute to the username required for your HTTP proxy. |  | String
+| *proxyHeaders* (proxy) | These headers will be passed to the proxy server while establishing the connection. |  | Map
+| *password* (security) | The password for connecting to SMSC server. |  | String
+| *systemId* (security) | The system id (username) for connecting to SMSC server. | smppclient | String
+| *usingSSL* (security) | Whether using SSL with the smpps protocol | false | boolean
 |===
 // component options: END
 
@@ -221,33 +249,33 @@ with the following path and query parameters:
 | *initialReconnectDelay* (common) | Defines the initial delay in milliseconds after the consumer/producer tries to reconnect to the SMSC, after the connection was lost. | 5000 | long
 | *maxReconnect* (common) | Defines the maximum number of attempts to reconnect to the SMSC, if SMSC returns a negative bind response | 2147483647 | int
 | *reconnectDelay* (common) | Defines the interval in milliseconds between the reconnect attempts, if the connection to the SMSC was lost and the previous was not succeed. | 5000 | long
-| *splittingPolicy* (common) | You can specify a policy for handling long messages: ALLOW - the default, long messages are split to 140 bytes per message TRUNCATE - long messages are split and only the first fragment will be sent to the SMSC. Some carriers drop subsequent fragments so this reduces load on the SMPP connection sending parts of a message that will never be delivered. REJECT - if a message would need to be split, it is rejected with an SMPP NegativeResponseException and the reason code signifying the message is too long. | ALLOW | SmppSplittingPolicy
+| *splittingPolicy* (common) | You can specify a policy for handling long messages: ALLOW - the default, long messages are split to 140 bytes per message TRUNCATE - long messages are split and only the first fragment will be sent to the SMSC. Some carriers drop subsequent fragments so this reduces load on the SMPP connection sending parts of a message that will never be delivered. REJECT - if a message would need to be split, it is rejected with an SMPP NegativeResponseException and the reason code signifying the message is too long. The value can be one of: ALLOW, REJECT, TRUNCATE | ALLOW | SmppSplittingPolicy
 | *systemType* (common) | This parameter is used to categorize the type of ESME (External Short Message Entity) that is binding to the SMSC (max. 13 characters). |  | String
 | *addressRange* (consumer) | You can specify the address range for the SmppConsumer as defined in section 5.2.7 of the SMPP 3.4 specification. The SmppConsumer will receive messages only from SMSC's which target an address (MSISDN or IP address) within this range. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *destAddr* (producer) | Defines the destination SME address. For mobile terminated messages, this is the directory number of the recipient MS. Only for SubmitSm, SubmitMulti, CancelSm and DataSm. | 1717 | String
-| *destAddrNpi* (producer) | Defines the type of number (TON) to be used in the SME destination address parameters. Only for SubmitSm, SubmitMulti, CancelSm and DataSm. The following NPI values are defined: 0: Unknown 1: ISDN (E163/E164) 2: Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined by WAP Forum) |  | byte
-| *destAddrTon* (producer) | Defines the type of number (TON) to be used in the SME destination address parameters. Only for SubmitSm, SubmitMulti, CancelSm and DataSm. The following TON values are defined: 0: Unknown 1: International 2: National 3: Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated |  | byte
+| *destAddrNpi* (producer) | Defines the type of number (TON) to be used in the SME destination address parameters. Only for SubmitSm, SubmitMulti, CancelSm and DataSm. The following NPI values are defined: 0: Unknown 1: ISDN (E163/E164) 2: Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined by WAP Forum). The value can be one of: 0, 1, 2, 3, 6, 8, 9, 10, 13, 18 |  | byte
+| *destAddrTon* (producer) | Defines the type of number (TON) to be used in the SME destination address parameters. Only for SubmitSm, SubmitMulti, CancelSm and DataSm. The following TON values are defined: 0: Unknown 1: International 2: National 3: Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated. The value can be one of: 0, 1, 2, 3, 4, 5, 6 |  | byte
 | *lazySessionCreation* (producer) | Sessions can be lazily created to avoid exceptions, if the SMSC is not available when the Camel producer is started. Camel will check the in message headers 'CamelSmppSystemId' and 'CamelSmppPassword' of the first exchange. If they are present, Camel will use these data to connect to the SMSC. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *numberingPlanIndicator* (producer) | Defines the numeric plan indicator (NPI) to be used in the SME. The following NPI values are defined: 0: Unknown 1: ISDN (E163/E164) 2: Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined by WAP Forum) |  | byte
-| *priorityFlag* (producer) | Allows the originating SME to assign a priority level to the short message. Only for SubmitSm and SubmitMulti. Four Priority Levels are supported: 0: Level 0 (lowest) priority 1: Level 1 priority 2: Level 2 priority 3: Level 3 (highest) priority |  | byte
+| *numberingPlanIndicator* (producer) | Defines the numeric plan indicator (NPI) to be used in the SME. The following NPI values are defined: 0: Unknown 1: ISDN (E163/E164) 2: Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined by WAP Forum). The value can be one of: 0, 1, 2, 3, 6, 8, 9, 10, 13, 18 |  | byte
+| *priorityFlag* (producer) | Allows the originating SME to assign a priority level to the short message. Only for SubmitSm and SubmitMulti. Four Priority Levels are supported: 0: Level 0 (lowest) priority 1: Level 1 priority 2: Level 2 priority 3: Level 3 (highest) priority. The value can be one of: 0, 1, 2, 3 |  | byte
 | *protocolId* (producer) | The protocol id |  | byte
-| *registeredDelivery* (producer) | Is used to request an SMSC delivery receipt and/or SME originated acknowledgements. The following values are defined: 0: No SMSC delivery receipt requested. 1: SMSC delivery receipt requested where final delivery outcome is success or failure. 2: SMSC delivery receipt requested where the final delivery outcome is delivery failure. |  | byte
-| *replaceIfPresentFlag* (producer) | Used to request the SMSC to replace a previously submitted message, that is still pending delivery. The SMSC will replace an existing message provided that the source address, destination address and service type match the same fields in the new message. The following replace if present flag values are defined: 0: Don't replace 1: Replace |  | byte
-| *serviceType* (producer) | The service type parameter can be used to indicate the SMS Application service associated with the message. The following generic service_types are defined: CMT: Cellular Messaging CPT: Cellular Paging VMN: Voice Mail Notification VMA: Voice Mail Alerting WAP: Wireless Application Protocol USSD: Unstructured Supplementary Services Data |  | String
+| *registeredDelivery* (producer) | Is used to request an SMSC delivery receipt and/or SME originated acknowledgements. The following values are defined: 0: No SMSC delivery receipt requested. 1: SMSC delivery receipt requested where final delivery outcome is success or failure. 2: SMSC delivery receipt requested where the final delivery outcome is delivery failure. The value can be one of: 0, 1, 2 |  | byte
+| *replaceIfPresentFlag* (producer) | Used to request the SMSC to replace a previously submitted message, that is still pending delivery. The SMSC will replace an existing message provided that the source address, destination address and service type match the same fields in the new message. The following replace if present flag values are defined: 0: Don't replace 1: Replace. The value can be one of: 0, 1 |  | byte
+| *serviceType* (producer) | The service type parameter can be used to indicate the SMS Application service associated with the message. The following generic service_types are defined: CMT: Cellular Messaging CPT: Cellular Paging VMN: Voice Mail Notification VMA: Voice Mail Alerting WAP: Wireless Application Protocol USSD: Unstructured Supplementary Services Data. The value can be one of: CMT, CPT, VMN, VMA, WAP, USSD |  | String
 | *sourceAddr* (producer) | Defines the address of SME (Short Message Entity) which originated this message. | 1616 | String
-| *sourceAddrNpi* (producer) | Defines the numeric plan indicator (NPI) to be used in the SME originator address parameters. The following NPI values are defined: 0: Unknown 1: ISDN (E163/E164) 2: Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined by WAP Forum) |  | byte
-| *sourceAddrTon* (producer) | Defines the type of number (TON) to be used in the SME originator address parameters. The following TON values are defined: 0: Unknown 1: International 2: National 3: Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated |  | byte
-| *typeOfNumber* (producer) | Defines the type of number (TON) to be used in the SME. The following TON values are defined: 0: Unknown 1: International 2: National 3: Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated |  | byte
+| *sourceAddrNpi* (producer) | Defines the numeric plan indicator (NPI) to be used in the SME originator address parameters. The following NPI values are defined: 0: Unknown 1: ISDN (E163/E164) 2: Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined by WAP Forum). The value can be one of: 0, 1, 2, 3, 6, 8, 9, 10, 13, 18 |  | byte
+| *sourceAddrTon* (producer) | Defines the type of number (TON) to be used in the SME originator address parameters. The following TON values are defined: 0: Unknown 1: International 2: National 3: Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated. The value can be one of: 0, 1, 2, 3, 4, 5, 6 |  | byte
+| *typeOfNumber* (producer) | Defines the type of number (TON) to be used in the SME. The following TON values are defined: 0: Unknown 1: International 2: National 3: Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated. The value can be one of: 0, 1, 2, 3, 4, 5, 6 |  | byte
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *enquireLinkTimer* (advanced) | Defines the interval in milliseconds between the confidence checks. The confidence check is used to test the communication path between an ESME and an SMSC. | 5000 | Integer
 | *sessionStateListener* (advanced) | You can refer to a org.jsmpp.session.SessionStateListener in the Registry to receive callbacks when the session state changed. |  | SessionStateListener
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *transactionTimer* (advanced) | Defines the maximum period of inactivity allowed after a transaction, after which an SMPP entity may assume that the session is no longer active. This timer may be active on either communicating SMPP entity (i.e. SMSC or ESME). | 10000 | Integer
-| *alphabet* (codec) | Defines encoding of data according the SMPP 3.4 specification, section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2 Alphabet |  | byte
+| *alphabet* (codec) | Defines encoding of data according the SMPP 3.4 specification, section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2 Alphabet. The value can be one of: 0, 4, 8 |  | byte
 | *dataCoding* (codec) | Defines the data coding according the SMPP 3.4 specification, section 5.2.19. Example data encodings are: 0: SMSC Default Alphabet 3: Latin 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2 (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990) |  | byte
 | *encoding* (codec) | Defines the encoding scheme of the short message user data. Only for SubmitSm, ReplaceSm and SubmitMulti. | ISO-8859-1 | String
 | *httpProxyHost* (proxy) | If you need to tunnel SMPP through a HTTP proxy, set this attribute to the hostname or ip address of your HTTP proxy. |  | String
@@ -260,71 +288,6 @@ with the following path and query parameters:
 | *usingSSL* (security) | Whether using SSL with the smpps protocol | false | boolean
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-smpp-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 40 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.smpp.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.smpp.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.smpp.configuration.address-range* | You can specify the address range for the SmppConsumer as defined in section 5.2.7 of the SMPP 3.4 specification. The SmppConsumer will receive messages only from SMSC's which target an address (MSISDN or IP address) within this range. |  | String
-| *camel.component.smpp.configuration.alphabet* | Defines encoding of data according the SMPP 3.4 specification, section 5.2.19. <ul> <li>0: SMSC Default Alphabet <li>4: 8 bit Alphabet</li> <li>8: UCS2 Alphabet</li></li> </ul> |  | Byte
-| *camel.component.smpp.configuration.data-coding* | Defines the data coding according the SMPP 3.4 specification, section 5.2.19. Example data encodings are: <ul> <li>0: SMSC Default Alphabet</li> <li>3: Latin 1 (ISO-8859-1)</li> <li>4: Octet unspecified (8-bit binary)</li> <li>8: UCS2 (ISO/IEC-10646)</li> <li>13: Extended Kanji JIS(X 0212-1990)</li> </ul> |  | Byte
-| *camel.component.smpp.configuration.dest-addr* | Defines the destination SME address. For mobile terminated messages, this is the directory number of the recipient MS. Only for SubmitSm, SubmitMulti, CancelSm and DataSm. | 1717 | String
-| *camel.component.smpp.configuration.dest-addr-npi* | Defines the type of number (TON) to be used in the SME destination address parameters. Only for SubmitSm, SubmitMulti, CancelSm and DataSm. The following NPI values are defined: <ul> <li>0: Unknown</li> <li>1: ISDN (E163/E164)</li> <li>2: Data (X.121)</li> <li>3: Telex (F.69)</li> <li>6: Land Mobile (E.212)</li> <li>8: National</li> <li>9: Private</li> <li>10: ERMES</li> <li>13: Internet (IP)</li> <li>18: WAP Client Id (to be defined by WAP Forum)</li> </ul> |  | Byte
-| *camel.component.smpp.configuration.dest-addr-ton* | Defines the type of number (TON) to be used in the SME destination address parameters. Only for SubmitSm, SubmitMulti, CancelSm and DataSm. The following TON values are defined: <ul> <li>0: Unknown</li> <li>1: International</li> <li>2: National</li> <li>3: Network Specific</li> <li>4: Subscriber Number</li> <li>5: Alphanumeric</li> <li>6: Abbreviated</li> </ul> |  | Byte
-| *camel.component.smpp.configuration.encoding* | Defines the encoding scheme of the short message user data. Only for SubmitSm, ReplaceSm and SubmitMulti. | ISO-8859-1 | String
-| *camel.component.smpp.configuration.enquire-link-timer* | Defines the interval in milliseconds between the confidence checks. The confidence check is used to test the communication path between an ESME and an SMSC. | 5000 | Integer
-| *camel.component.smpp.configuration.host* | Hostname for the SMSC server to use. | localhost | String
-| *camel.component.smpp.configuration.http-proxy-host* | If you need to tunnel SMPP through a HTTP proxy, set this attribute to the hostname or ip address of your HTTP proxy. |  | String
-| *camel.component.smpp.configuration.http-proxy-password* | If your HTTP proxy requires basic authentication, set this attribute to the password required for your HTTP proxy. |  | String
-| *camel.component.smpp.configuration.http-proxy-port* | If you need to tunnel SMPP through a HTTP proxy, set this attribute to the port of your HTTP proxy. | 3128 | Integer
-| *camel.component.smpp.configuration.http-proxy-username* | If your HTTP proxy requires basic authentication, set this attribute to the username required for your HTTP proxy. |  | String
-| *camel.component.smpp.configuration.initial-reconnect-delay* | Defines the initial delay in milliseconds after the consumer/producer tries to reconnect to the SMSC, after the connection was lost. | 5000 | Long
-| *camel.component.smpp.configuration.lazy-session-creation* | Sessions can be lazily created to avoid exceptions, if the SMSC is not available when the Camel producer is started. Camel will check the in message headers 'CamelSmppSystemId' and 'CamelSmppPassword' of the first exchange. If they are present, Camel will use these data to connect to the SMSC. | false | Boolean
-| *camel.component.smpp.configuration.max-reconnect* | Defines the maximum number of attempts to reconnect to the SMSC, if SMSC returns a negative bind response | 2147483647 | Integer
-| *camel.component.smpp.configuration.numbering-plan-indicator* | Defines the numeric plan indicator (NPI) to be used in the SME. The following NPI values are defined: <ul> <li>0: Unknown</li> <li>1: ISDN (E163/E164)</li> <li>2: Data (X.121)</li> <li>3: Telex (F.69)</li> <li>6: Land Mobile (E.212)</li> <li>8: National</li> <li>9: Private</li> <li>10: ERMES</li> <li>13: Internet (IP)</li> <li>18: WAP Client Id (to be defined by WAP Forum)</li> </ul> |  | Byte
-| *camel.component.smpp.configuration.password* | Defines the encoding scheme of the short message user data. Only for SubmitSm, ReplaceSm and SubmitMulti. |  | String
-| *camel.component.smpp.configuration.port* | Port number for the SMSC server to use. | 2775 | Integer
-| *camel.component.smpp.configuration.priority-flag* | Allows the originating SME to assign a priority level to the short message. Only for SubmitSm and SubmitMulti. Four Priority Levels are supported: <ul> <li>0: Level 0 (lowest) priority</li> <li>1: Level 1 priority</li> <li>2: Level 2 priority</li> <li>3: Level 3 (highest) priority</li> </ul> |  | Byte
-| *camel.component.smpp.configuration.protocol-id* | The protocol id |  | Byte
-| *camel.component.smpp.configuration.proxy-headers* | These headers will be passed to the proxy server while establishing the connection. |  | Map
-| *camel.component.smpp.configuration.reconnect-delay* | Defines the interval in milliseconds between the reconnect attempts, if the connection to the SMSC was lost and the previous was not succeed. | 5000 | Long
-| *camel.component.smpp.configuration.registered-delivery* | Is used to request an SMSC delivery receipt and/or SME originated acknowledgements. The following values are defined: <ul> <li>0: No SMSC delivery receipt requested.</li> <li>1: SMSC delivery receipt requested where final delivery outcome is success or failure.</li> <li>2: SMSC delivery receipt requested where the final delivery outcome is delivery failure.</li> </ul> |  | Byte
-| *camel.component.smpp.configuration.replace-if-present-flag* | Used to request the SMSC to replace a previously submitted message, that is still pending delivery. The SMSC will replace an existing message provided that the source address, destination address and service type match the same fields in the new message. The following replace if present flag values are defined: <ul> <li>0: Don't replace</li> <li>1: Replace</li> </ul> |  | Byte
-| *camel.component.smpp.configuration.service-type* | The service type parameter can be used to indicate the SMS Application service associated with the message. The following generic service_types are defined: <ul> <li>CMT: Cellular Messaging</li> <li>CPT: Cellular Paging</li> <li>VMN: Voice Mail Notification</li> <li>VMA: Voice Mail Alerting</li> <li>WAP: Wireless Application Protocol</li> <li>USSD: Unstructured Supplementary Services Data</li> </ul> |  | String
-| *camel.component.smpp.configuration.session-state-listener* | You can refer to a org.jsmpp.session.SessionStateListener in the Registry to receive callbacks when the session state changed. |  | SessionStateListener
-| *camel.component.smpp.configuration.source-addr* | Defines the address of SME (Short Message Entity) which originated this message. | 1616 | String
-| *camel.component.smpp.configuration.source-addr-npi* | Defines the numeric plan indicator (NPI) to be used in the SME originator address parameters. The following NPI values are defined: <ul> <li>0: Unknown</li> <li>1: ISDN (E163/E164)</li> <li>2: Data (X.121)</li> <li>3: Telex (F.69)</li> <li>6: Land Mobile (E.212)</li> <li>8: National</li> <li>9: Private</li> <li>10: ERMES</li> <li>13: Internet (IP)</li> <li>18: WAP Client Id (to be defined by WAP Forum)</li> </ul> |  | Byte
-| *camel.component.smpp.configuration.source-addr-ton* | Defines the type of number (TON) to be used in the SME originator address parameters. The following TON values are defined: <ul> <li>0: Unknown</li> <li>1: International</li> <li>2: National</li> <li>3: Network Specific</li> <li>4: Subscriber Number</li> <li>5: Alphanumeric</li> <li>6: Abbreviated</li> </ul> |  | Byte
-| *camel.component.smpp.configuration.splitting-policy* | You can specify a policy for handling long messages: <ul> <li>ALLOW - the default, long messages are split to 140 bytes per message</li> <li>TRUNCATE - long messages are split and only the first fragment will be sent to the SMSC. Some carriers drop subsequent fragments so this reduces load on the SMPP connection sending parts of a message that will never be delivered.</li> <li>REJECT - if a message would need to be split, it is rejected with an SMPP NegativeResponseException and the reason code signifying the message is too long.</li> </ul> |  | SmppSplittingPolicy
-| *camel.component.smpp.configuration.system-id* | The system id (username) for connecting to SMSC server. | smppclient | String
-| *camel.component.smpp.configuration.system-type* | This parameter is used to categorize the type of ESME (External Short Message Entity) that is binding to the SMSC (max. 13 characters). |  | String
-| *camel.component.smpp.configuration.transaction-timer* | Defines the maximum period of inactivity allowed after a transaction, after which an SMPP entity may assume that the session is no longer active. This timer may be active on either communicating SMPP entity (i.e. SMSC or ESME). | 10000 | Integer
-| *camel.component.smpp.configuration.type-of-number* | Defines the type of number (TON) to be used in the SME. The following TON values are defined: <ul> <li>0: Unknown</li> <li>1: International</li> <li>2: National</li> <li>3: Network Specific</li> <li>4: Subscriber Number</li> <li>5: Alphanumeric</li> <li>6: Abbreviated</li> </ul> |  | Byte
-| *camel.component.smpp.configuration.using-s-s-l* | Whether using SSL with the smpps protocol | false | Boolean
-| *camel.component.smpp.enabled* | Whether to enable auto configuration of the smpp component. This is enabled by default. |  | Boolean
-| *camel.component.smpp.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-|===
-// spring-boot-auto-configure options: END
 
 
 
@@ -347,7 +310,7 @@ SMPP producer
 
 |`CamelSmppDestAddr` |`List`/`String` |*only for SubmitSm, SubmitMulti, CancelSm and DataSm* Defines the
 destination SME address(es). For mobile terminated messages, this is the
-directory number of the recipient MS. Is must be a `List<String>` for
+directory number of the recipient MS. It must be a `List<String>` for
 SubmitMulti and a `String` otherwise.
 
 |`CamelSmppDestAddrTon` |`Byte` |*only for SubmitSm, SubmitMulti, CancelSm and DataSm* Defines the type
@@ -690,3 +653,5 @@ configuration:
 log4j.logger.org.apache.camel.component.smpp=DEBUG
 --------------------------------------------------
 
+
+include::camel-spring-boot::page$smpp-starter.adoc[]

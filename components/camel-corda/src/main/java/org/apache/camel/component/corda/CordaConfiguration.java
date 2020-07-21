@@ -36,29 +36,50 @@ public class CordaConfiguration implements Cloneable {
     private transient String host;
     private transient int port;
 
-    @UriPath @Metadata(required = true)
+    @UriPath @Metadata(required = true, description = "The url for the corda node")
     private String node;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", description = "Operation to use")
     private String operation;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", secret = true, description = "Username for login")
     private String username;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", secret = true, description = "Password for login")
     private String password;
-    @Metadata(label = "consumer", defaultValue = "true")
+    @UriParam(label = "consumer", defaultValue = "true", description = "Whether to process snapshots or not")
     private boolean processSnapshot = true;
 
-    private Class<FlowLogic<?>> flowLociClass;
-    private Object [] arguments;
+    @UriParam(label = "consumer,advanced",
+            description = "Start the given flow with the given arguments, returning an Observable with a single observation of the"
+                    + " result of running the flow. The flowLogicClass must be annotated with net.corda.core.flows.StartableByRPC.")
+    private Class<FlowLogic<?>> flowLogicClass;
+    @UriParam(label = "consumer,advanced",
+            description = "Start the given flow with the given arguments, returning an Observable with a single observation of the"
+                    + " result of running the flow. The flowLogicClass must be annotated with net.corda.core.flows.StartableByRPC.")
+    private Object[] flowLogicArguments;
+    @UriParam(label = "consumer,advanced",
+            description = "A contract state (or just state) contains opaque data used by a contract program. It can be thought of as a disk"
+            + " file that the program can use to persist data across transactions. States are immutable: once created they are never"
+            + " updated, instead, any changes must generate a new successor state. States can be updated (consumed) only once: the"
+            + " notary is responsible for ensuring there is no \"double spending\" by only signing a transaction if the input states are all free.")
     private Class<ContractState> contractStateClass;
+    @UriParam(label = "consumer,advanced", description = "QueryCriteria assumes underlying schema tables are correctly indexed for performance.")
     private QueryCriteria queryCriteria;
+    @UriParam(label = "consumer", defaultValue = "200",
+            description = "PageSpecification allows specification of a page number (starting from 1) and page size"
+                    + " (defaulting to 200 with a maximum page size of (Integer.MAX_INT)"
+                    + " Note: we default the page number to 200 to enable queries without requiring a page specification"
+                    + " but enabling detection of large results sets that fall out of the 200 requirement."
+                    + " Max page size should be used with extreme caution as results may exceed your JVM memory footprint.")
     private PageSpecification pageSpecification;
+    @UriParam(label = "consumer", enums = "ASC,DESC",
+            description = "Sort allows specification of a set of entity attribute names and their associated directionality"
+                    + " and null handling, to be applied upon processing a query specification.")
     private Sort sort;
 
     public void configure() {
         try {
             URI nodeURI = new URI(node);
-            setHost(nodeURI.getHost());
-            setPort(nodeURI.getPort());
+            this.host = nodeURI.getHost();
+            this.port = nodeURI.getPort();
 
             if (nodeURI.getUserInfo() != null) {
                 String[] creds = nodeURI.getUserInfo().split(":");
@@ -74,13 +95,20 @@ public class CordaConfiguration implements Cloneable {
         }
     }
 
+    public String retrieveHost() {
+        return host;
+    }
+
+    public int retrievePort() {
+        return port;
+    }
+
+
+
     public String getNode() {
         return node;
     }
 
-    /**
-     * The url for the corda node
-     */
     public void setNode(String node) {
         this.node = node;
     }
@@ -89,9 +117,6 @@ public class CordaConfiguration implements Cloneable {
         return operation;
     }
 
-    /**
-     * Operation to use
-     */
     public void setOperation(String operation) {
         this.operation = operation;
     }
@@ -100,9 +125,6 @@ public class CordaConfiguration implements Cloneable {
         return username;
     }
 
-    /**
-     * Username for login
-     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -111,54 +133,32 @@ public class CordaConfiguration implements Cloneable {
         return password;
     }
 
-    /**
-     * Password for login
-     */
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
     }
 
     public boolean isProcessSnapshot() {
         return processSnapshot;
     }
 
-    /**
-     * Whether to process snapshots or not
-     */
     public void setProcessSnapshot(boolean processSnapshot) {
         this.processSnapshot = processSnapshot;
     }
 
-    public Class<FlowLogic<?>> getFlowLociClass() {
-        return flowLociClass;
+    public Class<FlowLogic<?>> getFlowLogicClass() {
+        return flowLogicClass;
     }
 
-    public void setFlowLociClass(Class<FlowLogic<?>> flowLociClass) {
-        this.flowLociClass = flowLociClass;
+    public void setFlowLogicClass(Class<FlowLogic<?>> flowLogicClass) {
+        this.flowLogicClass = flowLogicClass;
     }
 
-    public Object[] getArguments() {
-        return arguments;
+    public Object[] getFlowLogicArguments() {
+        return flowLogicArguments;
     }
 
-    public void setArguments(Object[] arguments) {
-        this.arguments = arguments;
+    public void setFlowLogicArguments(Object[] flowLogicArguments) {
+        this.flowLogicArguments = flowLogicArguments;
     }
 
     public Class<ContractState> getContractStateClass() {

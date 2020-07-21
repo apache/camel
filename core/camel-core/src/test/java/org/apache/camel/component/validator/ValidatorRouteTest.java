@@ -28,8 +28,11 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.processor.validation.NoXmlHeaderValidationException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ValidatorRouteTest extends ContextTestSupport {
 
@@ -100,9 +103,10 @@ public class ValidatorRouteTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
 
         Exception exception = out.getException();
-        assertTrue("Should be failed", out.isFailed());
-        assertTrue("Exception should be correct type", exception instanceof NoXmlHeaderValidationException);
-        assertTrue("Exception should mention missing header", exception.getMessage().contains("headerToValidate"));
+        assertTrue(out.isFailed(), "Should be failed");
+        boolean b = exception instanceof NoXmlHeaderValidationException;
+        assertTrue(b, "Exception should be correct type");
+        assertTrue(exception.getMessage().contains("headerToValidate"), "Exception should mention missing header");
     }
 
     @Test
@@ -154,7 +158,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
             // wait for test completion, timeout after 30 sec to let other unit
             // test run to not wait forever
             assertTrue(latch.await(30000L, TimeUnit.MILLISECONDS));
-            assertEquals("Latch should be zero", 0, latch.getCount());
+            assertEquals(0, latch.getCount(), "Latch should be zero");
         } finally {
             executor.shutdown();
         }
@@ -162,7 +166,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

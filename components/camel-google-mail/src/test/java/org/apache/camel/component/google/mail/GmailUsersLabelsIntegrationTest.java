@@ -23,9 +23,12 @@ import com.google.api.services.gmail.model.Label;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.mail.internal.GmailUsersLabelsApiMethod;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for {@link com.google.api.services.gmail.Gmail$Users$Labels} APIs.
@@ -52,7 +55,7 @@ public class GmailUsersLabelsIntegrationTest extends AbstractGoogleMailTestSuppo
 
             com.google.api.services.gmail.model.Label result = requestBodyAndHeaders("direct://CREATE", null, headers);
 
-            assertNotNull("create result", result);
+            assertNotNull(result, "create result");
             labelId = result.getId();
         } else {
             labelId = getTestLabel(labels).getId();

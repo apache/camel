@@ -53,7 +53,7 @@ public class GlanceProducerTest extends AbstractProducerTestSupport {
     @Mock
     private GlanceEndpoint endpoint;
 
-    @Mock
+    @Mock(lenient = true)
     private ImageService imageService;
 
     @Captor

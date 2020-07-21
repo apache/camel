@@ -16,16 +16,15 @@
  */
 package org.apache.camel.processor;
 
-import java.net.URISyntaxException;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProducer;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.engine.DefaultProducerCache;
 import org.apache.camel.spi.IdAware;
@@ -38,6 +37,8 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Processor for forwarding exchanges to a static endpoint destination.
@@ -46,8 +47,10 @@ import org.apache.camel.util.URISupport;
  */
 public class SendProcessor extends AsyncProcessorSupport implements Traceable, EndpointAware, IdAware, RouteIdAware {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SendProcessor.class);
+
     protected transient String traceLabelToString;
-    protected final CamelContext camelContext;
+    protected final ExtendedCamelContext camelContext;
     protected final ExchangePattern pattern;
     protected ProducerCache producerCache;
     protected AsyncProducer producer;
@@ -55,7 +58,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
     protected ExchangePattern destinationExchangePattern;
     protected String id;
     protected String routeId;
-    protected volatile long counter;
+    protected final AtomicLong counter = new AtomicLong();
 
     public SendProcessor(Endpoint destination) {
         this(destination, null);
@@ -64,20 +67,16 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
     public SendProcessor(Endpoint destination, ExchangePattern pattern) {
         ObjectHelper.notNull(destination, "destination");
         this.destination = destination;
-        this.camelContext = destination.getCamelContext();
+        this.camelContext = (ExtendedCamelContext) destination.getCamelContext();
         this.pattern = pattern;
-        try {
-            this.destinationExchangePattern = null;
-            this.destinationExchangePattern = EndpointHelper.resolveExchangePatternFromUrl(destination.getEndpointUri());
-        } catch (URISyntaxException e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        }
+        this.destinationExchangePattern = null;
+        this.destinationExchangePattern = EndpointHelper.resolveExchangePatternFromUrl(destination.getEndpointUri());
         ObjectHelper.notNull(this.camelContext, "camelContext");
     }
 
     @Override
     public String toString() {
-        return id;
+        return destination != null ? destination.toString() : id;
     }
 
     @Override
@@ -124,14 +123,20 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
         // if you want to permanently to change the MEP then use .setExchangePattern in the DSL
         final ExchangePattern existingPattern = exchange.getPattern();
 
-        counter++;
+        counter.incrementAndGet();
 
         // if we have a producer then use that as its optimized
         if (producer != null) {
 
-            final Exchange target = configureExchange(exchange, pattern);
+            final Exchange target = exchange;
+            // we can send with a different MEP pattern
+            if (destinationExchangePattern != null || pattern != null) {
+                target.setPattern(destinationExchangePattern != null ? destinationExchangePattern : pattern);
+            }
+            // set property which endpoint we send to
+            target.setProperty(Exchange.TO_ENDPOINT, destination.getEndpointUri());
 
-            final boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), target, destination);
+            final boolean sending = camelContext.isEventNotificationApplicable() && EventHelper.notifyExchangeSending(exchange.getContext(), target, destination);
             // record timing for sending the exchange using the producer
             StopWatch watch;
             if (sending) {
@@ -140,24 +145,27 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
                 watch = null;
             }
 
-            try {
-                log.debug(">>>> {} {}", destination, exchange);
-                return producer.process(exchange, new AsyncCallback() {
-                    @Override
-                    public void done(boolean doneSync) {
-                        try {
-                            // restore previous MEP
-                            target.setPattern(existingPattern);
-                            // emit event that the exchange was sent to the endpoint
-                            if (watch != null) {
-                                long timeTaken = watch.taken();
-                                EventHelper.notifyExchangeSent(target.getContext(), target, destination, timeTaken);
-                            }
-                        } finally {
-                            callback.done(doneSync);
+            // optimize to only create a new callback if really needed, otherwise we can use the provided callback as-is
+            AsyncCallback ac = callback;
+            boolean newCallback = watch != null || existingPattern != target.getPattern();
+            if (newCallback) {
+                ac = doneSync -> {
+                    try {
+                        // restore previous MEP
+                        target.setPattern(existingPattern);
+                        // emit event that the exchange was sent to the endpoint
+                        if (watch != null) {
+                            long timeTaken = watch.taken();
+                            EventHelper.notifyExchangeSent(target.getContext(), target, destination, timeTaken);
                         }
+                    } finally {
+                        callback.done(doneSync);
                     }
-                });
+                };
+            }
+            try {
+                LOG.debug(">>>> {} {}", destination, exchange);
+                return producer.process(exchange, ac);
             } catch (Throwable throwable) {
                 exchange.setException(throwable);
                 callback.done(true);
@@ -165,8 +173,14 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
 
             return true;
         } else {
-            configureExchange(exchange, pattern);
-            log.debug(">>>> {} {}", destination, exchange);
+            // we can send with a different MEP pattern
+            if (destinationExchangePattern != null || pattern != null) {
+                exchange.setPattern(destinationExchangePattern != null ? destinationExchangePattern : pattern);
+            }
+            // set property which endpoint we send to
+            exchange.setProperty(Exchange.TO_ENDPOINT, destination.getEndpointUri());
+
+            LOG.debug(">>>> {} {}", destination, exchange);
 
             // send the exchange to the destination using the producer cache for the non optimized producers
             return producerCache.doInAsyncProducer(destination, exchange, callback, (producer, ex, cb) -> producer.process(ex, doneSync -> {
@@ -186,24 +200,12 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
         return pattern;
     }
 
-    protected Exchange configureExchange(Exchange exchange, ExchangePattern pattern) {
-        // destination exchange pattern overrides pattern
-        if (destinationExchangePattern != null) {
-            exchange.setPattern(destinationExchangePattern);
-        } else if (pattern != null) {
-            exchange.setPattern(pattern);
-        }
-        // set property which endpoint we send to
-        exchange.setProperty(Exchange.TO_ENDPOINT, destination.getEndpointUri());
-        return exchange;
-    }
-
     public long getCounter() {
-        return counter;
+        return counter.get();
     }
 
     public void reset() {
-        counter = 0;
+        counter.set(0);
     }
 
     @Override

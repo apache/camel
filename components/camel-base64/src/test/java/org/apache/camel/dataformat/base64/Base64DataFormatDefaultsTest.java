@@ -16,7 +16,7 @@
  */
 package org.apache.camel.dataformat.base64;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class Base64DataFormatDefaultsTest extends Base64DataFormatTestBase {
 
@@ -44,12 +44,12 @@ public class Base64DataFormatDefaultsTest extends Base64DataFormatTestBase {
     }
 
     @Test
-    public void testEncode() throws Exception {
+    void testEncode() throws Exception {
         runEncoderTest(DECODED, ENCODED.getBytes());
     }
 
     @Test
-    public void testDecode() throws Exception {
+    void testDecode() throws Exception {
         runDecoderTest(ENCODED.getBytes(), DECODED);
     }
 

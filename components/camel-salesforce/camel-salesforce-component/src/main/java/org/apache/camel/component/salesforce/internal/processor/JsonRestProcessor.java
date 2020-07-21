@@ -63,68 +63,68 @@ public class JsonRestProcessor extends AbstractRestProcessor {
     protected void processRequest(Exchange exchange) throws SalesforceException {
 
         switch (operationName) {
-        case GET_VERSIONS:
-            // handle in built response types
-            exchange.setProperty(RESPONSE_TYPE, TypeReferences.VERSION_LIST_TYPE);
-            break;
+            case GET_VERSIONS:
+                // handle in built response types
+                exchange.setProperty(RESPONSE_TYPE, TypeReferences.VERSION_LIST_TYPE);
+                break;
 
-        case GET_RESOURCES:
-            // handle in built response types
-            exchange.setProperty(RESPONSE_CLASS, RestResources.class);
-            break;
+            case GET_RESOURCES:
+                // handle in built response types
+                exchange.setProperty(RESPONSE_CLASS, RestResources.class);
+                break;
 
-        case GET_GLOBAL_OBJECTS:
-            // handle in built response types
-            exchange.setProperty(RESPONSE_CLASS, GlobalObjects.class);
-            break;
+            case GET_GLOBAL_OBJECTS:
+                // handle in built response types
+                exchange.setProperty(RESPONSE_CLASS, GlobalObjects.class);
+                break;
 
-        case GET_BASIC_INFO:
-            // handle in built response types
-            exchange.setProperty(RESPONSE_CLASS, SObjectBasicInfo.class);
-            break;
+            case GET_BASIC_INFO:
+                // handle in built response types
+                exchange.setProperty(RESPONSE_CLASS, SObjectBasicInfo.class);
+                break;
 
-        case GET_DESCRIPTION:
-            // handle in built response types
-            exchange.setProperty(RESPONSE_CLASS, SObjectDescription.class);
-            break;
+            case GET_DESCRIPTION:
+                // handle in built response types
+                exchange.setProperty(RESPONSE_CLASS, SObjectDescription.class);
+                break;
 
-        case CREATE_SOBJECT:
-            // handle known response type
-            exchange.setProperty(RESPONSE_CLASS, CreateSObjectResult.class);
-            break;
+            case CREATE_SOBJECT:
+                // handle known response type
+                exchange.setProperty(RESPONSE_CLASS, CreateSObjectResult.class);
+                break;
 
-        case UPSERT_SOBJECT:
-            // handle known response type
-            exchange.setProperty(RESPONSE_CLASS, CreateSObjectResult.class);
-            break;
+            case UPSERT_SOBJECT:
+                // handle known response type
+                exchange.setProperty(RESPONSE_CLASS, CreateSObjectResult.class);
+                break;
 
-        case SEARCH:
-            // handle known response type
-            exchange.setProperty(RESPONSE_TYPE, TypeReferences.SEARCH_RESULT_TYPE);
-            break;
+            case SEARCH:
+                // handle known response type
+                exchange.setProperty(RESPONSE_TYPE, TypeReferences.SEARCH_RESULT_TYPE);
+                break;
 
-        case RECENT:
-            // handle known response type
-            exchange.setProperty(RESPONSE_TYPE, TypeReferences.RECENT_ITEM_LIST_TYPE);
-            break;
+            case RECENT:
+                // handle known response type
+                exchange.setProperty(RESPONSE_TYPE, TypeReferences.RECENT_ITEM_LIST_TYPE);
+                break;
 
-        case LIMITS:
-            // handle known response type
-            exchange.setProperty(RESPONSE_CLASS, Limits.class);
-            break;
+            case LIMITS:
+                // handle known response type
+                exchange.setProperty(RESPONSE_CLASS, Limits.class);
+                break;
 
-        case APPROVAL:
-            // handle known response type
-            exchange.setProperty(RESPONSE_CLASS, ApprovalResult.class);
-            break;
+            case APPROVAL:
+                // handle known response type
+                exchange.setProperty(RESPONSE_CLASS, ApprovalResult.class);
+                break;
 
-        case APPROVALS:
-            // handle known response type
-            exchange.setProperty(RESPONSE_CLASS, Approvals.class);
-            break;
+            case APPROVALS:
+                // handle known response type
+                exchange.setProperty(RESPONSE_CLASS, Approvals.class);
+                break;
 
-        default:
-            // ignore, some operations do not require response class or type
+            default:
+                // ignore, some operations do not require response class or type
         }
     }
 

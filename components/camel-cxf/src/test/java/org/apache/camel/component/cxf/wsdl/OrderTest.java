@@ -22,14 +22,14 @@ import java.io.LineNumberReader;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.cxf.CXFTestSupport;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class OrderTest extends CamelSpringTestSupport {
-    @BeforeClass
+    @BeforeAll
     public static void loadTestSupport() {
         // Need to load the static class first
         CXFTestSupport.getPort1();

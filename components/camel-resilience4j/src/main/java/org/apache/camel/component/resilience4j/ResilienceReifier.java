@@ -26,52 +26,48 @@ import io.github.resilience4j.bulkhead.BulkheadConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.timelimiter.TimeLimiterConfig;
-import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.Model;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.Resilience4jConfigurationCommon;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.BeanIntrospection;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.function.Suppliers;
 
-import static org.apache.camel.support.CamelContextHelper.lookup;
-import static org.apache.camel.support.CamelContextHelper.mandatoryLookup;
-
 public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition> {
 
-    public ResilienceReifier(CircuitBreakerDefinition definition) {
-        super(definition);
+    public ResilienceReifier(Route route, CircuitBreakerDefinition definition) {
+        super(route, definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         // create the regular and fallback processors
-        Processor processor = createChildProcessor(routeContext, true);
+        Processor processor = createChildProcessor(true);
         Processor fallback = null;
         if (definition.getOnFallback() != null) {
-            fallback = ProcessorReifier.reifier(definition.getOnFallback()).createProcessor(routeContext);
+            fallback = createProcessor(definition.getOnFallback());
         }
-        boolean fallbackViaNetwork = definition.getOnFallback() != null && parseBoolean(routeContext, definition.getOnFallback().getFallbackViaNetwork());
+        boolean fallbackViaNetwork = definition.getOnFallback() != null && parseBoolean(definition.getOnFallback().getFallbackViaNetwork(), false);
         if (fallbackViaNetwork) {
             throw new UnsupportedOperationException("camel-resilience4j does not support onFallbackViaNetwork");
         }
-        final Resilience4jConfigurationCommon config = buildResilience4jConfiguration(routeContext.getCamelContext());
+        final Resilience4jConfigurationCommon config = buildResilience4jConfiguration();
         CircuitBreakerConfig cbConfig = configureCircuitBreaker(config);
         BulkheadConfig bhConfig = configureBulkHead(config);
         TimeLimiterConfig tlConfig = configureTimeLimiter(config);
 
         ResilienceProcessor answer = new ResilienceProcessor(cbConfig, bhConfig, tlConfig, processor, fallback);
-        configureTimeoutExecutorService(answer, routeContext, config);
+        configureTimeoutExecutorService(answer, config);
         // using any existing circuit breakers?
         if (config.getCircuitBreakerRef() != null) {
-            CircuitBreaker cb = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), config.getCircuitBreakerRef(), CircuitBreaker.class);
+            CircuitBreaker cb = mandatoryLookup(parseString(config.getCircuitBreakerRef()), CircuitBreaker.class);
             answer.setCircuitBreaker(cb);
         }
         return answer;
@@ -80,79 +76,79 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
     private CircuitBreakerConfig configureCircuitBreaker(Resilience4jConfigurationCommon config) {
         CircuitBreakerConfig.Builder builder = CircuitBreakerConfig.custom();
         if (config.getAutomaticTransitionFromOpenToHalfOpenEnabled() != null) {
-            builder.automaticTransitionFromOpenToHalfOpenEnabled(config.getAutomaticTransitionFromOpenToHalfOpenEnabled());
+            builder.automaticTransitionFromOpenToHalfOpenEnabled(parseBoolean(config.getAutomaticTransitionFromOpenToHalfOpenEnabled()));
         }
         if (config.getFailureRateThreshold() != null) {
-            builder.failureRateThreshold(config.getFailureRateThreshold());
+            builder.failureRateThreshold(parseFloat(config.getFailureRateThreshold()));
         }
         if (config.getMinimumNumberOfCalls() != null) {
-            builder.minimumNumberOfCalls(config.getMinimumNumberOfCalls());
+            builder.minimumNumberOfCalls(parseInt(config.getMinimumNumberOfCalls()));
         }
         if (config.getPermittedNumberOfCallsInHalfOpenState() != null) {
-            builder.permittedNumberOfCallsInHalfOpenState(config.getPermittedNumberOfCallsInHalfOpenState());
+            builder.permittedNumberOfCallsInHalfOpenState(parseInt(config.getPermittedNumberOfCallsInHalfOpenState()));
         }
         if (config.getSlidingWindowSize() != null) {
-            builder.slidingWindowSize(config.getSlidingWindowSize());
+            builder.slidingWindowSize(parseInt(config.getSlidingWindowSize()));
         }
         if (config.getSlidingWindowType() != null) {
             builder.slidingWindowType(CircuitBreakerConfig.SlidingWindowType.valueOf(config.getSlidingWindowType()));
         }
         if (config.getSlowCallDurationThreshold() != null) {
-            builder.slowCallDurationThreshold(Duration.ofSeconds(config.getSlowCallDurationThreshold()));
+            builder.slowCallDurationThreshold(Duration.ofSeconds(parseLong(config.getSlowCallDurationThreshold())));
         }
         if (config.getSlowCallRateThreshold() != null) {
-            builder.slowCallRateThreshold(config.getSlowCallRateThreshold());
+            builder.slowCallRateThreshold(parseFloat(config.getSlowCallRateThreshold()));
         }
         if (config.getWaitDurationInOpenState() != null) {
-            builder.waitDurationInOpenState(Duration.ofSeconds(config.getWaitDurationInOpenState()));
+            builder.waitDurationInOpenState(Duration.ofSeconds(parseLong(config.getWaitDurationInOpenState())));
         }
         if (config.getWritableStackTraceEnabled() != null) {
-            builder.writableStackTraceEnabled(config.getWritableStackTraceEnabled());
+            builder.writableStackTraceEnabled(parseBoolean(config.getWritableStackTraceEnabled()));
         }
         return builder.build();
     }
 
     private BulkheadConfig configureBulkHead(Resilience4jConfigurationCommon config) {
-        if (config.getBulkheadEnabled() == null || !config.getBulkheadEnabled()) {
+        if (!parseBoolean(config.getBulkheadEnabled(), false)) {
             return null;
         }
 
         BulkheadConfig.Builder builder = BulkheadConfig.custom();
         if (config.getBulkheadMaxConcurrentCalls() != null) {
-            builder.maxConcurrentCalls(config.getBulkheadMaxConcurrentCalls());
+            builder.maxConcurrentCalls(parseInt(config.getBulkheadMaxConcurrentCalls()));
         }
         if (config.getBulkheadMaxWaitDuration() != null) {
-            builder.maxWaitDuration(Duration.ofMillis(config.getBulkheadMaxWaitDuration()));
+            builder.maxWaitDuration(Duration.ofMillis(parseLong(config.getBulkheadMaxWaitDuration())));
         }
         return builder.build();
     }
 
     private TimeLimiterConfig configureTimeLimiter(Resilience4jConfigurationCommon config) {
-        if (config.getTimeoutEnabled() == null || !config.getTimeoutEnabled()) {
+        if (!parseBoolean(config.getTimeoutEnabled(), false)) {
             return null;
         }
 
         TimeLimiterConfig.Builder builder = TimeLimiterConfig.custom();
         if (config.getTimeoutDuration() != null) {
-            builder.timeoutDuration(Duration.ofMillis(config.getTimeoutDuration()));
+            builder.timeoutDuration(Duration.ofMillis(parseLong(config.getTimeoutDuration())));
         }
         if (config.getTimeoutCancelRunningFuture() != null) {
-            builder.cancelRunningFuture(config.getTimeoutCancelRunningFuture());
+            builder.cancelRunningFuture(parseBoolean(config.getTimeoutCancelRunningFuture()));
         }
         return builder.build();
     }
 
-    private void configureTimeoutExecutorService(ResilienceProcessor processor, RouteContext routeContext, Resilience4jConfigurationCommon config) {
-        if (config.getTimeoutEnabled() == null || !config.getTimeoutEnabled()) {
+    private void configureTimeoutExecutorService(ResilienceProcessor processor, Resilience4jConfigurationCommon config) {
+        if (!parseBoolean(config.getTimeoutEnabled(), false)) {
             return;
         }
 
         if (config.getTimeoutExecutorServiceRef() != null) {
             String ref = config.getTimeoutExecutorServiceRef();
             boolean shutdownThreadPool = false;
-            ExecutorService executorService = routeContext.lookup(ref, ExecutorService.class);
+            ExecutorService executorService = lookup(ref, ExecutorService.class);
             if (executorService == null) {
-                executorService = ProcessorDefinitionHelper.lookupExecutorServiceRef(routeContext, "CircuitBreaker", definition, ref);
+                executorService = lookupExecutorServiceRef("CircuitBreaker", definition, ref);
                 shutdownThreadPool = true;
             }
             processor.setExecutorService(executorService);
@@ -164,41 +160,62 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
     // Helpers
     // *******************************
 
-    Resilience4jConfigurationDefinition buildResilience4jConfiguration(CamelContext camelContext) throws Exception {
+    Resilience4jConfigurationDefinition buildResilience4jConfiguration() throws Exception {
         Map<String, Object> properties = new HashMap<>();
+
+        final PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class)
+                .getConfigurerResolver().resolvePropertyConfigurer(Resilience4jConfigurationDefinition.class.getSimpleName(), camelContext);
 
         // Extract properties from default configuration, the one configured on
         // camel context takes the precedence over those in the registry
-        loadProperties(camelContext, properties, Suppliers.firstNotNull(() -> camelContext.getExtension(Model.class).getResilience4jConfiguration(null),
-        () -> lookup(camelContext, "Camel", Resilience4jConfigurationDefinition.class)));
+        loadProperties(properties, Suppliers.firstNotNull(
+            () -> camelContext.getExtension(Model.class).getResilience4jConfiguration(null),
+            () -> lookup(ResilienceConstants.DEFAULT_RESILIENCE_CONFIGURATION_ID, Resilience4jConfigurationDefinition.class)),
+            configurer);
 
         // Extract properties from referenced configuration, the one configured
         // on camel context takes the precedence over those in the registry
         if (definition.getConfigurationRef() != null) {
             final String ref = definition.getConfigurationRef();
 
-            loadProperties(camelContext, properties, Suppliers.firstNotNull(() -> camelContext.getExtension(Model.class).getResilience4jConfiguration(ref),
-            () -> mandatoryLookup(camelContext, ref, Resilience4jConfigurationDefinition.class)));
+            loadProperties(properties, Suppliers.firstNotNull(
+                () -> camelContext.getExtension(Model.class).getResilience4jConfiguration(ref),
+                () -> mandatoryLookup(ref, Resilience4jConfigurationDefinition.class)),
+                configurer);
         }
 
         // Extract properties from local configuration
-        loadProperties(camelContext, properties, Optional.ofNullable(definition.getResilience4jConfiguration()));
-
-        // Extract properties from definition
-        BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
-        beanIntrospection.getProperties(definition, properties, null, false);
-
-        Resilience4jConfigurationDefinition config = new Resilience4jConfigurationDefinition();
+        loadProperties(properties, Optional.ofNullable(definition.getResilience4jConfiguration()), configurer);
 
         // Apply properties to a new configuration
-        PropertyBindingSupport.bindProperties(camelContext, config, properties);
+        Resilience4jConfigurationDefinition config = new Resilience4jConfigurationDefinition();
+        PropertyBindingSupport.build()
+                .withCamelContext(camelContext)
+                .withConfigurer(configurer)
+                .withProperties(properties)
+                .withTarget(config)
+                .bind();
 
         return config;
     }
 
-    private void loadProperties(CamelContext camelContext, Map<String, Object> properties, Optional<?> optional) {
+    private void loadProperties(Map<String, Object> properties, Optional<?> optional, PropertyConfigurer configurer) {
         BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
-        optional.ifPresent(bean -> beanIntrospection.getProperties(bean, properties, null, false));
+        optional.ifPresent(bean -> {
+            if (configurer instanceof PropertyConfigurerGetter) {
+                PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
+                Map<String, Object> types = getter.getAllOptions(bean);
+                types.forEach((k, t) -> {
+                    Object value = getter.getOptionValue(bean, k, true);
+                    if (value != null) {
+                        properties.put(k, value);
+                    }
+                });
+            } else {
+                // no configurer found so use bean introspection (reflection)
+                beanIntrospection.getProperties(bean, properties, null, false);
+            }
+        });
     }
 
 }

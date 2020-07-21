@@ -20,7 +20,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Advice with tests
@@ -38,7 +41,7 @@ public class AdviceWithTasksTest extends ContextTestSupport {
             });
             fail("Should hve thrown exception");
         } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage(), e.getMessage().startsWith("There are no outputs which matches: xxx in the route"));
+            assertTrue(e.getMessage().startsWith("There are no outputs which matches: xxx in the route"), e.getMessage());
         }
     }
 
@@ -85,7 +88,7 @@ public class AdviceWithTasksTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertTrue("Should have removed mock:bar endpoint", context.hasEndpoint("mock:bar") == null);
+        assertTrue(context.hasEndpoint("mock:bar") == null, "Should have removed mock:bar endpoint");
     }
 
     @Test

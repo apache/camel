@@ -24,15 +24,15 @@ import org.w3c.dom.NodeList;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.language.xpath.XPathBuilder;
-import org.junit.Test;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 public class XPathTransformTest extends ContextTestSupport {
@@ -55,6 +55,8 @@ public class XPathTransformTest extends ContextTestSupport {
 
     @Test
     public void testXPathNamespaceLoggingEnabledJavaDSL() throws Exception {
+        assumeThat("Reflection on java.lang.Field has been disabled in JDK 12", getJavaVersion(), Matchers.lessThanOrEqualTo(11));
+
         Logger l = mock(Logger.class);
 
         when(l.isInfoEnabled()).thenReturn(true);
@@ -80,6 +82,8 @@ public class XPathTransformTest extends ContextTestSupport {
 
     @Test
     public void testXPathNamespaceLoggingDisabledJavaDSL() throws Exception {
+        assumeThat("Reflection on java.lang.Field has been disabled in JDK 12", getJavaVersion(), Matchers.lessThanOrEqualTo(11));
+
         Logger l = mock(Logger.class);
 
         when(l.isInfoEnabled()).thenReturn(true);
@@ -103,4 +107,16 @@ public class XPathTransformTest extends ContextTestSupport {
         verify(l, never()).info(argThat(containsString("Namespaces discovered in message")), any(Object.class));
     }
 
+    private static int getJavaVersion() {
+        String version = System.getProperty("java.version");
+        if (version.startsWith("1.")) {
+            version = version.substring(2, 3);
+        } else {
+            int dot = version.indexOf('.');
+            if (dot != -1) {
+                version = version.substring(0, dot);
+            }
+        }
+        return Integer.parseInt(version);
+    }
 }

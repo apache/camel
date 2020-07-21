@@ -1,9 +1,7 @@
 [[GracefulShutdown-GracefulShutdown]]
 = Graceful Shutdown
 
-*Since Camel 2.2*
-
-Camel now supports a pluggable shutdown strategy using
+Camel supports a pluggable shutdown strategy using
 `org.apache.camel.spi.ShutdownStrategy`. Its responsible for shutting
 down routes in a graceful manner. The other resources will still be
 handled by xref:camelcontext.adoc[CamelContext] to shutdown. This leaves
@@ -11,7 +9,7 @@ the problem at hand with properly shutting down all the routes in a
 reliable manner to the `ShutdownStrategy`.
 
 Camel provides a default strategy in the
-`org.apache.camel.impl.DefaultShutdownStrategy` which is capable of
+`org.apache.camel.impl.engine.DefaultShutdownStrategy` which is capable of
 doing that.
 
 [[GracefulShutdown-DefaultShutdownStrategy]]
@@ -19,12 +17,11 @@ doing that.
 
 The default strategy will gracefully shutdown routes:
 
-* *Camel 2.2:* in the same order they was started
-* *Camel 2.3:* in the reverse order they was started. The option
+* in the reverse order they was started. The option
 `shutdownRoutesInReverseOrder` can be used to use the old behavior.
 * let pending and current in flight exchanges run to completion before
 shutting down
-* using a timeout of 300 seconds which then forces a shutdown now
+* using a timeout of 45 seconds which then forces a shutdown now
 
 You can configure the timeout, and whether it should shutdown now
 remaining routes when the timeout occurred or ignore. See the setters on
@@ -63,9 +60,6 @@ processed before it can shutdown.
 [[GracefulShutdown-Suppressingloggingduetotimeoutnotallowingallinflightmessagestocomplete]]
 == Suppressing logging due to timeout not allowing all inflight messages to complete
 
-
-*Since Camel 2.12*
-
 If a graceful shutdown could not shutdown cleanly within the given
 timeout period, then Camel performs a more aggressive shutdown by
 forcing routes and thread pools etc to shutdown. And as well the routing
@@ -88,8 +82,6 @@ control.
 [[GracefulShutdown-Logginginflightexchangeinformationontimeout]]
 == Logging inflight exchange information on timeout
 
-*Since Camel 2.15*
-
 If a graceful shutdown could not shutdown cleanly within the given
 timeout period, then Camel performs a more aggressive shutdown by
 forcing routes and thread pools etc to shutdown. When the timeout
@@ -102,7 +94,7 @@ long at the current node (eg delay1) and duration is total time in
 mills.
 
 If you enable DEBUG logging level
-on `org.apache.camel.impl.DefaultShutdownStrategy` then it logs the same
+on `org.apache.camel.impl.engine.DefaultShutdownStrategy` then it logs the same
 inflight exchange information during graceful shutdown
 
 [source,bash]
@@ -126,7 +118,7 @@ context.getShutdownStrategy().setLogInflightExchangesOnTimeout(false);
 == Controlling ordering of routes
 
 You can configure the order in which routes should be started, and thus
-also the same order they are being shutdown. 
+also the same order they are being shutdown.
  See more at
 xref:configuring-route-startup-ordering-and-autostartup.adoc[Configuring
 route startup ordering and autostartup].
@@ -162,7 +154,7 @@ we can mark both routes to `Defer` but since route 1 is a
 xref:components::seda-component.adoc[SEDA] based route its `Defer` by default (it uses
 `ShutdownAware`).
 
-A Java DSL based example to defer shutting down the 2nd
+A Java DSL based example to defer shutting down the 2nd:
 
 [source,java]
 ---------------------------------
@@ -378,8 +370,7 @@ JMX console. For example you can change the timeout value.
 [[GracefulShutdown-Shuttingdownindividualroutes]]
 == Shutting down individual routes
 
-*Since Camel 2.3* 
- Its now possible to gracefully shutdown an individual route using
+It is possible to gracefully shutdown an individual route using
 `shutdownRoute(routeId)` method on `CamelContext`. Its also possible to
 provide a specific timeout to use instead of the default timeout
 settings using `shutdownRoute(routeId, timeout, timeUnit)`.
@@ -424,3 +415,9 @@ xref:batch-consumer.adoc[Batch Consumer] should implement
 `ShutdownAware` so they properly support the `ShutdownRunningTask`
 option. See `GenericFileConsumer` for an example.
 
+
+== See Also
+
+When Camel is starting up, then its xref:route-controller.adoc[Route Controller]
+that handles this to ensure all the routes are started with support for managing
+troublesome routes with restaring.

@@ -23,6 +23,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.Suspendable;
@@ -138,7 +139,7 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
         final Exchange newExchange = ExchangeHelper
                 .copyExchangeAndSetCamelContext(exchange, endpoint.getCamelContext(), false);
         // set the from endpoint
-        newExchange.setFromEndpoint(endpoint);
+        newExchange.adapt(ExtendedExchange.class).setFromEndpoint(endpoint);
         return newExchange;
     }
 
@@ -163,7 +164,7 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
             // (see org.apache.camel.processor.CamelInternalProcessor.InternalCallback#done).
             // To solve this problem, a new synchronization is set on the exchange that is to be
             // processed
-            result.addOnCompletion(new Synchronization() {
+            result.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
                 @Override
                 public void onComplete(Exchange exchange) {
                     synchronizedExchange.consumed(result);

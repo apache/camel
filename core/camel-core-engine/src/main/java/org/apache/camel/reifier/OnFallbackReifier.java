@@ -17,19 +17,19 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.OnFallbackDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.spi.RouteContext;
 
 public class OnFallbackReifier extends ProcessorReifier<OnFallbackDefinition> {
 
-    public OnFallbackReifier(ProcessorDefinition<?> definition) {
-        super((OnFallbackDefinition)definition);
+    public OnFallbackReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (OnFallbackDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return this.createChildProcessor(routeContext, false);
+    public Processor createProcessor() throws Exception {
+        return this.createChildProcessor(false);
     }
 
 }

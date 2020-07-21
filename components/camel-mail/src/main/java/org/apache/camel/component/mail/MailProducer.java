@@ -17,27 +17,36 @@
 package org.apache.camel.component.mail;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Producer to send messages using JavaMail.
  */
-public class MailProducer extends DefaultProducer {
+public class MailProducer extends DefaultAsyncProducer {
 
-    private final JavaMailSender sender;
+    private static final Logger LOG = LoggerFactory.getLogger(MailProducer.class);
+
+    private final JavaMailSender defaultSender;
 
     public MailProducer(MailEndpoint endpoint, JavaMailSender sender) {
         super(endpoint);
-        this.sender = sender;
+        this.defaultSender = sender;
     }
 
     @Override
-    public void process(final Exchange exchange) {
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        JavaMailSender mailSender = getSender(exchange);
+
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         try {
             ClassLoader applicationClassLoader = getEndpoint().getCamelContext().getApplicationContextClassLoader();
@@ -53,13 +62,13 @@ public class MailProducer extends DefaultProducer {
                 mimeMessage = (MimeMessage) body;
             } else {
                 // Create a message with exchange data
-                mimeMessage = new MimeMessage(sender.getSession());
+                mimeMessage = new MimeMessage(mailSender.getSession());
                 getEndpoint().getBinding().populateMailMessage(getEndpoint(), mimeMessage, exchange);
             }
-            if (log.isDebugEnabled()) {
-                log.debug("Sending MimeMessage: {}", MailUtils.dumpMessage(mimeMessage));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sending MimeMessage: {}", MailUtils.dumpMessage(mimeMessage));
             }
-            sender.send(mimeMessage);
+            mailSender.send(mimeMessage);
             // set the message ID for further processing
             exchange.getIn().setHeader(MailConstants.MAIL_MESSAGE_ID, mimeMessage.getMessageID());
         } catch (MessagingException | IOException e) {
@@ -67,10 +76,34 @@ public class MailProducer extends DefaultProducer {
         } finally {
             Thread.currentThread().setContextClassLoader(tccl);
         }
+
+        callback.done(true);
+        return true;
     }
 
     @Override
     public MailEndpoint getEndpoint() {
         return (MailEndpoint) super.getEndpoint();
+    }
+
+    protected JavaMailSender getSender(Exchange exchange) {
+        // do we have special headers
+        Map<String, Object> additional = URISupport.extractProperties(exchange.getMessage().getHeaders(), "mail.smtp.");
+        if (additional.isEmpty()) {
+            // no then use default sender
+            LOG.trace("Using default JavaMailSender");
+            return defaultSender;
+        } else {
+            // create new mail sender specially for this
+            LOG.debug("Creating new JavaMailSender to include additional {} java mail properties", additional.size());
+            JavaMailSender customSender = getEndpoint().getConfiguration().createJavaMailSender();
+            additional.forEach((k, v) -> {
+                if (v != null) {
+                    // add with prefix so we dont loose that
+                    customSender.addAdditionalJavaMailProperty("mail.smtp." + k, v.toString());
+                }
+            });
+            return customSender;
+        }
     }
 }

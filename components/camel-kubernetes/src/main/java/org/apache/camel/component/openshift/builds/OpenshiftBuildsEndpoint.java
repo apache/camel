@@ -24,8 +24,7 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The Openshift Builds component provides a producer to execute openshift build
- * operations.
+ * Perform operations on OpenShift Builds.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "openshift-builds", title = "Openshift Builds", syntax = "openshift-builds:masterUrl", producerOnly = true, label = "container,cloud,paas")
 public class OpenshiftBuildsEndpoint extends AbstractKubernetesEndpoint {

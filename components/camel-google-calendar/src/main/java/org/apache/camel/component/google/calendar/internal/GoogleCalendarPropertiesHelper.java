@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.google.calendar.internal;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.google.calendar.GoogleCalendarConfiguration;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
@@ -26,13 +27,13 @@ public final class GoogleCalendarPropertiesHelper extends ApiMethodPropertiesHel
 
     private static GoogleCalendarPropertiesHelper helper;
 
-    private GoogleCalendarPropertiesHelper() {
-        super(GoogleCalendarConfiguration.class, GoogleCalendarConstants.PROPERTY_PREFIX);
+    private GoogleCalendarPropertiesHelper(CamelContext context) {
+        super(context, GoogleCalendarConfiguration.class, GoogleCalendarConstants.PROPERTY_PREFIX);
     }
 
-    public static synchronized GoogleCalendarPropertiesHelper getHelper() {
+    public static synchronized GoogleCalendarPropertiesHelper getHelper(CamelContext context) {
         if (helper == null) {
-            helper = new GoogleCalendarPropertiesHelper();
+            helper = new GoogleCalendarPropertiesHelper(context);
         }
         return helper;
     }

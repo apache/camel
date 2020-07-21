@@ -199,11 +199,11 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     public Object sendBody(String endpointUri, ExchangePattern pattern, Object body) throws CamelExecutionException {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
         Object result = sendBody(endpoint, pattern, body);
-        if (pattern.isOutCapable()) {
-            return result;
-        } else {
+        if (pattern == ExchangePattern.InOnly) {
             // return null if not OUT capable
             return null;
+        } else {
+            return result;
         }
     }
 
@@ -224,11 +224,11 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                                     final String header, final Object headerValue) throws CamelExecutionException {
         Exchange exchange = send(endpoint, pattern, createBodyAndHeaderProcessor(body, header, headerValue));
         Object result = extractResultBody(exchange, pattern);
-        if (pattern.isOutCapable()) {
-            return result;
-        } else {
+        if (pattern == ExchangePattern.InOnly) {
             // return null if not OUT capable
             return null;
+        } else {
+            return result;
         }
     }
 
@@ -237,11 +237,11 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                                     final String header, final Object headerValue) throws CamelExecutionException {
         Exchange exchange = send(endpoint, pattern, createBodyAndHeaderProcessor(body, header, headerValue));
         Object result = extractResultBody(exchange, pattern);
-        if (pattern.isOutCapable()) {
-            return result;
-        } else {
+        if (pattern == ExchangePattern.InOnly) {
             // return null if not OUT capable
             return null;
+        } else {
+            return result;
         }
     }
 
@@ -264,11 +264,11 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                                       final String property, final Object propertyValue) throws CamelExecutionException {
         Exchange exchange = send(endpoint, pattern, createBodyAndPropertyProcessor(body, property, propertyValue));
         Object result = extractResultBody(exchange, pattern);
-        if (pattern.isOutCapable()) {
-            return result;
-        } else {
+        if (pattern == ExchangePattern.InOnly) {
             // return null if not OUT capable
             return null;
+        } else {
+            return result;
         }
     }
 
@@ -277,11 +277,11 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                                       final String property, final Object propertyValue) throws CamelExecutionException {
         Exchange exchange = send(endpoint, pattern, createBodyAndPropertyProcessor(body, property, propertyValue));
         Object result = extractResultBody(exchange, pattern);
-        if (pattern.isOutCapable()) {
-            return result;
-        } else {
+        if (pattern == ExchangePattern.InOnly) {
             // return null if not OUT capable
             return null;
+        } else {
+            return result;
         }
     }
 
@@ -306,11 +306,11 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     public Object sendBodyAndHeaders(Endpoint endpoint, ExchangePattern pattern, final Object body, final Map<String, Object> headers) throws CamelExecutionException {
         Exchange exchange = send(endpoint, pattern, createBodyAndHeaders(body, headers));
         Object result = extractResultBody(exchange, pattern);
-        if (pattern.isOutCapable()) {
-            return result;
-        } else {
+        if (pattern == ExchangePattern.InOnly) {
             // return null if not OUT capable
             return null;
+        } else {
+            return result;
         }
     }
 
@@ -757,11 +757,11 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 .thenApply(createCompletionFunction(onCompletion))
                 .thenApply(answer -> {
                     Object result = extractResultBody(answer, pattern);
-                    if (pattern.isOutCapable()) {
-                        return result;
-                    } else {
+                    if (pattern == ExchangePattern.InOnly) {
                         // return null if not OUT capable
                         return null;
+                    } else {
+                        return result;
                     }
                 });
     }
@@ -777,51 +777,49 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         if (!isStarted()) {
             throw new IllegalStateException("ProducerTemplate has not been started");
         }
-
-        if (executor != null) {
-            return executor;
-        }
-
-        // create a default executor which must be synchronized
-        synchronized (this) {
-            if (executor != null) {
-                return executor;
-            }
-            if (!threadedAsyncMode) {
-                executor = new SynchronousExecutorService();
-            } else {
-                executor = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, "ProducerTemplate");
+        if (executor == null) {
+            // create a default executor which must be synchronized
+            synchronized (lock) {
+                if (executor == null) {
+                    if (threadedAsyncMode) {
+                        executor = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, "ProducerTemplate");
+                    } else {
+                        executor = new SynchronousExecutorService();
+                    }
+                }
             }
         }
-
-        ObjectHelper.notNull(executor, "ExecutorService");
         return executor;
     }
 
     @Override
-    protected void doStart() throws Exception {
-        if (producerCache == null) {
-            producerCache = new DefaultProducerCache(this, camelContext, maximumCacheSize);
-            producerCache.setEventNotifierEnabled(isEventNotifierEnabled());
-        }
-
+    protected void doInit() throws Exception {
         // need to lookup default endpoint as it may have been intercepted
         if (defaultEndpoint != null) {
             defaultEndpoint = camelContext.getEndpoint(defaultEndpoint.getEndpointUri());
         }
+        producerCache = new DefaultProducerCache(this, camelContext, maximumCacheSize);
+        producerCache.setEventNotifierEnabled(isEventNotifierEnabled());
+        ServiceHelper.initService(producerCache);
+    }
 
+    @Override
+    protected void doStart() throws Exception {
         ServiceHelper.startService(producerCache);
     }
 
     @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(producerCache);
-        producerCache = null;
-
         if (executor != null) {
             camelContext.getExecutorServiceManager().shutdownNow(executor);
             executor = null;
         }
     }
 
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownService(producerCache);
+        producerCache = null;
+    }
 }

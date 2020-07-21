@@ -27,21 +27,23 @@ import com.datastax.driver.core.querybuilder.Update;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.cassandraunit.CassandraCQLUnit;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.update;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CassandraComponentProducerUnpreparedTest extends BaseCassandraTest {
 
-    private static final String CQL = "insert into camel_user(login, first_name, last_name) values (?, ?, ?)";
-    private static final String NO_PARAMETER_CQL = "select login, first_name, last_name from camel_user";
+    static final String CQL = "insert into camel_user(login, first_name, last_name) values (?, ?, ?)";
+    static final String NO_PARAMETER_CQL = "select login, first_name, last_name from camel_user";
 
-    @Rule
-    public CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit();
+    @RegisterExtension
+    static CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit();
 
     @Produce("direct:input")
     ProducerTemplate producerTemplate;

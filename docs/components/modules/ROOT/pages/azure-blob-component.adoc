@@ -1,15 +1,26 @@
 [[azure-blob-component]]
-= Azure Storage Blob Service Component
+= Azure Storage Blob Service (Deprecated) Component (deprecated)
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-azure/src/main/docs/azure-blob-component.adoc
+:docTitle: Azure Storage Blob Service (Deprecated)
+:artifactId: camel-azure
+:description: Store and retrieve blobs from Azure Storage Blob Service.
+:since: 2.19
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Azure
 
-*Since Camel 2.19*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Azure Blob component supports storing and retrieving the blobs to/from
 https://azure.microsoft.com/services/storage/blobs/[Azure Storage Blob] service.
+
+*Note:* This component uses the legacy https://github.com/azure/azure-storage-java/tree/legacy-master[Azure SDK v8] and thus is *Deprecated*. There is another component
+xref:components::azure-storage-blob-component.adoc[Azure Storage Blob Component] that uses the latest *12+* Azure SDK version.
 
 Prerequisites
 
@@ -18,7 +29,7 @@ https://docs.microsoft.com/azure/[Azure Documentation Portal].
 
 == URI Format
 
-[source,java]
+[source,text]
 ------------------------------
 azure-blob://accountName/containerName[/blobName][?options]
 ------------------------------
@@ -40,17 +51,35 @@ to("file://blobdirectory");
 
 
 // component options: START
-The Azure Storage Blob Service component supports 4 options, which are listed below.
+The Azure Storage Blob Service (Deprecated) component supports 22 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (advanced) | The Blob Service configuration |  | BlobServiceConfiguration
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *azureBlobClient* (common) | The blob service client |  | CloudBlob
+| *blobOffset* (common) | Set the blob offset for the upload or download operations, default is 0 | 0 | Long
+| *blobType* (common) | Set a blob type, 'blockblob' is default. The value can be one of: blockblob, appendblob, pageblob | blockblob | BlobType
+| *closeStreamAfterRead* (common) | Close the stream after read or keep it open, default is true | true | boolean
+| *credentials* (common) | Set the storage credentials, required in most cases |  | StorageCredentials
+| *dataLength* (common) | Set the data length for the download or page blob upload operations |  | Long
+| *fileDir* (common) | Set the file directory where the downloaded blobs will be saved to |  | String
+| *publicForRead* (common) | Storage resources can be public for reading their content, if this property is enabled then the credentials do not have to be set | false | boolean
+| *streamReadSize* (common) | Set the minimum read size in bytes when reading the blob content |  | int
+| *validateClientURI* (common) | Whether to validate the Azure client URI | true | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *blobMetadata* (producer) | Set the blob meta-data |  | Map
+| *blobPrefix* (producer) | Set a prefix which can be used for listing the blobs |  | String
+| *closeStreamAfterWrite* (producer) | Close the stream after write or keep it open, default is true | true | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | Blob service operation hint to the producer. The value can be one of: getBlob, deleteBlob, listBlobs, updateBlockBlob, uploadBlobBlocks, commitBlobBlockList, getBlobBlockList, createAppendBlob, updateAppendBlob, createPageBlob, updatePageBlob, resizePageBlob, clearPageBlob, getPageBlobRanges | listBlobs | BlobServiceOperations
+| *streamWriteSize* (producer) | Set the size of the buffer for writing block and page blocks |  | int
+| *useFlatListing* (producer) | Specify if the flat or hierarchical blob listing should be used | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *configuration* (advanced) | The Blob Service configuration |  | BlobServiceConfiguration
+| *credentialsAccountKey* (security) | Set the storage account key used during authentication phase |  | String
+| *credentialsAccountName* (security) | Set the storage account name used during authentication phase |  | String
 |===
 // component options: END
 
@@ -65,7 +94,7 @@ The Azure Storage Blob Service component supports 4 options, which are listed be
 
 
 // endpoint options: START
-The Azure Storage Blob Service endpoint is configured using URI syntax:
+The Azure Storage Blob Service (Deprecated) endpoint is configured using URI syntax:
 
 ----
 azure-blob:containerOrBlobUri
@@ -83,7 +112,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (21 parameters):
+=== Query Parameters (24 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,74 +120,30 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *azureBlobClient* (common) | The blob service client |  | CloudBlob
 | *blobOffset* (common) | Set the blob offset for the upload or download operations, default is 0 | 0 | Long
-| *blobType* (common) | Set a blob type, 'blockblob' is default | blockblob | BlobType
+| *blobType* (common) | Set a blob type, 'blockblob' is default. The value can be one of: blockblob, appendblob, pageblob | blockblob | BlobType
 | *closeStreamAfterRead* (common) | Close the stream after read or keep it open, default is true | true | boolean
 | *credentials* (common) | Set the storage credentials, required in most cases |  | StorageCredentials
 | *dataLength* (common) | Set the data length for the download or page blob upload operations |  | Long
 | *fileDir* (common) | Set the file directory where the downloaded blobs will be saved to |  | String
 | *publicForRead* (common) | Storage resources can be public for reading their content, if this property is enabled then the credentials do not have to be set | false | boolean
 | *streamReadSize* (common) | Set the minimum read size in bytes when reading the blob content |  | int
+| *validateClientURI* (common) | Whether to validate the Azure client URI | true | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *blobMetadata* (producer) | Set the blob meta-data |  | Map
 | *blobPrefix* (producer) | Set a prefix which can be used for listing the blobs |  | String
 | *closeStreamAfterWrite* (producer) | Close the stream after write or keep it open, default is true | true | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | Blob service operation hint to the producer | listBlobs | BlobServiceOperations
+| *operation* (producer) | Blob service operation hint to the producer. The value can be one of: getBlob, deleteBlob, listBlobs, updateBlockBlob, uploadBlobBlocks, commitBlobBlockList, getBlobBlockList, createAppendBlob, updateAppendBlob, createPageBlob, updatePageBlob, resizePageBlob, clearPageBlob, getPageBlobRanges | listBlobs | BlobServiceOperations
 | *streamWriteSize* (producer) | Set the size of the buffer for writing block and page blocks |  | int
 | *useFlatListing* (producer) | Specify if the flat or hierarchical blob listing should be used | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *credentialsAccountKey* (security) | Set the storage account key used during authentication phase |  | String
+| *credentialsAccountName* (security) | Set the storage account name used during authentication phase |  | String
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-azure-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 22 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.azure-blob.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.azure-blob.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.azure-blob.configuration.account-name* | Set the Azure account name |  | String
-| *camel.component.azure-blob.configuration.azure-blob-client* | The blob service client |  | CloudBlob
-| *camel.component.azure-blob.configuration.blob-metadata* | Set the blob meta-data |  | Map
-| *camel.component.azure-blob.configuration.blob-name* | Blob name, required for most operations |  | String
-| *camel.component.azure-blob.configuration.blob-offset* | Set the blob offset for the upload or download operations, default is 0 | 0 | Long
-| *camel.component.azure-blob.configuration.blob-prefix* | Set a prefix which can be used for listing the blobs |  | String
-| *camel.component.azure-blob.configuration.blob-type* | Set a blob type, 'blockblob' is default |  | BlobType
-| *camel.component.azure-blob.configuration.close-stream-after-read* | Close the stream after read or keep it open, default is true | true | Boolean
-| *camel.component.azure-blob.configuration.close-stream-after-write* | Close the stream after write or keep it open, default is true | true | Boolean
-| *camel.component.azure-blob.configuration.container-name* | Set the blob service container name |  | String
-| *camel.component.azure-blob.configuration.credentials* | Set the storage credentials, required in most cases |  | StorageCredentials
-| *camel.component.azure-blob.configuration.data-length* | Set the data length for the download or page blob upload operations |  | Long
-| *camel.component.azure-blob.configuration.file-dir* | Set the file directory where the downloaded blobs will be saved to |  | String
-| *camel.component.azure-blob.configuration.operation* | Blob service operation hint to the producer |  | BlobServiceOperations
-| *camel.component.azure-blob.configuration.public-for-read* | Storage resources can be public for reading their content, if this property is enabled then the credentials do not have to be set | false | Boolean
-| *camel.component.azure-blob.configuration.stream-read-size* | Set the minimum read size in bytes when reading the blob content |  | Integer
-| *camel.component.azure-blob.configuration.stream-write-size* | Set the size of the buffer for writing block and page blocks |  | Integer
-| *camel.component.azure-blob.configuration.use-flat-listing* | Specify if the flat or hierarchical blob listing should be used | true | Boolean
-| *camel.component.azure-blob.enabled* | Whether to enable auto configuration of the azure-blob component. This is enabled by default. |  | Boolean
-| *camel.component.azure-blob.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-|===
-// spring-boot-auto-configure options: END
 
 
 
@@ -263,6 +248,20 @@ from("azure-blob://" + accountName + "/" + containerName + "/" + fileName + "?az
 .to("mock:result");
 ----
 
+== Dynamic blob names
+
+The producer supports overriding the default blob name from a message header as shown below:
+
+[source,java]
+----
+   .setHeader("CamelAzureOverrideBlobName", constant("myNewBlob"))
+    .to("azure-blob://myacount/mycontainer/myblob")
+----
+
+Here the producer would normally use `myBlob` as the blob name, but the header will override this and use
+`myNewBlob` instead. This allow for dynamic blob names.
+
+
 == Dependencies
 
 Maven users will need to add the following dependency to their `pom.xml`.
@@ -279,3 +278,5 @@ Maven users will need to add the following dependency to their `pom.xml`.
 ----
 
 where `+++${camel-version}+++` must be replaced by the actual version of Camel.
+
+include::camel-spring-boot::page$azure-starter.adoc[]

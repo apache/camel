@@ -16,12 +16,11 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.LinkedList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
@@ -41,19 +40,19 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
     private final ThreadLocal<Worker> workers = ThreadLocal.withInitial(new Supplier<Worker>() {
         @Override
         public Worker get() {
-            createdWorkers.incrementAndGet();
-            return new Worker(DefaultReactiveExecutor.this);
+            int number = createdWorkers.incrementAndGet();
+            return new Worker(number, DefaultReactiveExecutor.this);
         }
     });
 
     // use for statistics so we have insights at runtime
     private final AtomicInteger createdWorkers = new AtomicInteger();
     private final AtomicInteger runningWorkers = new AtomicInteger();
-    private final AtomicLong pendingTasks = new AtomicLong();
+    private final AtomicInteger pendingTasks = new AtomicInteger();
 
     @Override
     public void schedule(Runnable runnable) {
-        workers.get().schedule(runnable, true, false, false);
+        workers.get().schedule(runnable, false, false, false);
     }
 
     @Override
@@ -64,30 +63,6 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
     @Override
     public void scheduleSync(Runnable runnable) {
         workers.get().schedule(runnable, false, true, true);
-    }
-
-    @Override
-    public void scheduleMain(Runnable runnable, String description) {
-        if (description != null) {
-            runnable = describe(runnable, description);
-        }
-        scheduleMain(runnable);
-    }
-
-    @Override
-    public void schedule(Runnable runnable, String description) {
-        if (description != null) {
-            runnable = describe(runnable, description);
-        }
-        schedule(runnable);
-    }
-
-    @Override
-    public void scheduleSync(Runnable runnable, String description) {
-        if (description != null) {
-            runnable = describe(runnable, description);
-        }
-        scheduleSync(runnable);
     }
 
     @Override
@@ -106,41 +81,28 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
     }
 
     @ManagedAttribute(description = "Number of pending tasks")
-    public long getPendingTasks() {
+    public int getPendingTasks() {
         return pendingTasks.get();
-    }
-
-    private static Runnable describe(Runnable runnable, String description) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                runnable.run();
-            }
-            @Override
-            public String toString() {
-                return description;
-            }
-        };
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        // noop
     }
 
     @Override
     protected void doStop() throws Exception {
-        // noop
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Stopping DefaultReactiveExecutor [createdWorkers: {}, runningWorkers: {}, pendingTasks: {}]",
+                    getCreatedWorkers(), getRunningWorkers(), getPendingTasks());
+        }
     }
 
     private static class Worker {
 
+        private final int number;
         private final DefaultReactiveExecutor executor;
-        private volatile LinkedList<Runnable> queue = new LinkedList<>();
-        private volatile LinkedList<LinkedList<Runnable>> back;
+        private volatile Deque<Runnable> queue = new ArrayDeque<>();
+        private volatile Deque<Deque<Runnable>> back;
         private volatile boolean running;
 
-        public Worker(DefaultReactiveExecutor executor) {
+        public Worker(int number, DefaultReactiveExecutor executor) {
+            this.number = number;
             this.executor = executor;
         }
 
@@ -151,10 +113,10 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
             if (main) {
                 if (!queue.isEmpty()) {
                     if (back == null) {
-                        back = new LinkedList<>();
+                        back = new ArrayDeque<>();
                     }
                     back.push(queue);
-                    queue = new LinkedList<>();
+                    queue = new ArrayDeque<>();
                 }
             }
             if (first) {
@@ -169,10 +131,10 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                 executor.runningWorkers.incrementAndGet();
                 try {
                     for (;;) {
-                        final Runnable polled = queue.poll();
+                        final Runnable polled = queue.pollFirst();
                         if (polled == null) {
                             if (back != null && !back.isEmpty()) {
-                                queue = back.poll();
+                                queue = back.pollFirst();
                                 continue;
                             } else {
                                 break;
@@ -181,7 +143,7 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                         try {
                             executor.pendingTasks.decrementAndGet();
                             if (LOG.isTraceEnabled()) {
-                                LOG.trace("Running: {}", runnable);
+                                LOG.trace("Worker #{} running: {}", number, runnable);
                             }
                             polled.run();
                         } catch (Throwable t) {
@@ -193,14 +155,14 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                     executor.runningWorkers.decrementAndGet();
                 }
             } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Queuing reactive work: {}", runnable);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Queuing reactive work: {}", runnable);
                 }
             }
         }
 
         boolean executeFromQueue() {
-            final Runnable polled = queue != null ? queue.poll() : null;
+            final Runnable polled = queue != null ? queue.pollFirst() : null;
             if (polled == null) {
                 return false;
             }

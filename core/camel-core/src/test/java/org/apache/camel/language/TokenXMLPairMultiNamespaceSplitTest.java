@@ -18,8 +18,8 @@ package org.apache.camel.language;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -42,7 +42,7 @@ public class TokenXMLPairMultiNamespaceSplitTest extends TokenXMLPairNamespaceSp
     }
 
     @Override
-    @Ignore
+    @Disabled
     @Test
     public void testTokenXMLPair2() throws Exception {
         // noop

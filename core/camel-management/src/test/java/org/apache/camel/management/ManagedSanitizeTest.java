@@ -21,14 +21,16 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedSanitizeTest extends ManagementTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.init();
         context.getManagementStrategy().getManagementAgent().setMask(true);
         return context;
     }
@@ -38,7 +40,7 @@ public class ManagedSanitizeTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"stub://foo\\?password=xxxxxx&username=foo\"");
-        assertTrue("Should be registered", mbeanServer.isRegistered(name));
+        assertTrue(mbeanServer.isRegistered(name), "Should be registered");
         String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
         assertEquals("stub://foo?password=xxxxxx&username=foo", uri);
     }

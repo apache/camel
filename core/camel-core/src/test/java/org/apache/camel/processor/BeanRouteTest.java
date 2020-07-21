@@ -18,18 +18,18 @@ package org.apache.camel.processor;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.naming.Context;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.support.jndi.JndiContext;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanRouteTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
@@ -41,7 +41,7 @@ public class BeanRouteTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:in", expectedBody, Exchange.BEAN_METHOD_NAME, "read");
 
-        assertEquals("bean received correct value for: " + myBean, expectedBody, myBean.body);
+        assertEquals(expectedBody, myBean.body, "bean received correct value for: " + myBean);
     }
 
     @Test
@@ -55,21 +55,21 @@ public class BeanRouteTest extends ContextTestSupport {
                 in.setHeader(Exchange.BEAN_METHOD_NAME, "read");
             }
         });
-        assertEquals("bean received correct value", expectedBody, myBean.body);
+        assertEquals(expectedBody, myBean.body, "bean received correct value");
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
         Object lookedUpBean = context.getRegistry().lookupByName("myBean");
-        assertSame("Lookup of 'myBean' should return same object!", myBean, lookedUpBean);
+        assertSame(myBean, lookedUpBean, "Lookup of 'myBean' should return same object!");
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
         answer.bind("myBean", myBean);
         return answer;
     }

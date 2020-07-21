@@ -43,11 +43,7 @@ public class FtpConsumerFileSplitTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(getFtpUrl())
-                    .to("log:file")
-                    .split(body().tokenize(LS))
-                        .to("log:line")
-                        .to("mock:result");
+                from(getFtpUrl()).to("log:file").split(body().tokenize(LS)).to("log:line").to("mock:result");
             }
         };
     }

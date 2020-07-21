@@ -45,7 +45,7 @@ public final class QueueServiceUtil {
         CloudQueue client = getConfiguredClient(cfg);
         if (client == null) {
             URI uri = prepareStorageQueueUri(cfg);
-            StorageCredentials creds = getAccountCredentials(cfg);
+            StorageCredentials creds = cfg.getAccountCredentials();
             client = new CloudQueue(uri, creds);
         }
         return client;
@@ -53,16 +53,13 @@ public final class QueueServiceUtil {
 
     public static CloudQueue getConfiguredClient(QueueServiceConfiguration cfg) {
         CloudQueue client = cfg.getAzureQueueClient();
-        if (client != null && !client.getUri().equals(prepareStorageQueueUri(cfg))) {
+        boolean validateURI = cfg.isValidateClientURI();
+        if (validateURI && client != null && !client.getUri().equals(prepareStorageQueueUri(cfg))) {
             throw new IllegalArgumentException("Invalid Client URI");
         }
         return client;
     }
-    
-    public static StorageCredentials getAccountCredentials(QueueServiceConfiguration cfg) {
-        return cfg.getCredentials();
-    }
-    
+
     public static void retrieveMessage(Exchange exchange, QueueServiceConfiguration cfg) throws Exception {
         CloudQueue client = createQueueClient(cfg);
         QueueServiceRequestOptions opts = getRequestOptions(exchange);  

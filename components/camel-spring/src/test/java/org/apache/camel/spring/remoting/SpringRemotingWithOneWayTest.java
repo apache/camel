@@ -23,9 +23,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRunWithTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
 public class SpringRemotingWithOneWayTest extends SpringRunWithTestSupport {
@@ -49,7 +51,7 @@ public class SpringRemotingWithOneWayTest extends SpringRunWithTestSupport {
         for (Exchange exchange : list) {
             log.info("Received: " + exchange.getIn().getBody());
             ExchangePattern pattern = exchange.getPattern();
-            assertEquals("Expected pattern on exchange: " + exchange, ExchangePattern.InOnly, pattern);
+            assertEquals(ExchangePattern.InOnly, pattern, "Expected pattern on exchange: " + exchange);
         }
 
     }

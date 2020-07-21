@@ -41,7 +41,7 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
 
         // okay we got the file then execute the begin renamer
         if (beginRenamer != null) {
-            GenericFile<T> newName = beginRenamer.renameFile(exchange, file);
+            GenericFile<T> newName = beginRenamer.renameFile(operations, exchange, file);
             GenericFile<T> to = renameFile(operations, file, newName);
             FileEndpoint fe = null;
             if (endpoint instanceof FileEndpoint) {
@@ -54,7 +54,7 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
                     to.bindToExchange(exchange);
                 }
             }
-            
+
         }
 
         return true;
@@ -66,7 +66,8 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
             operations.releaseRetrievedFileResources(exchange);
 
             if (failureRenamer != null) {
-                // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
+                // create a copy and bind the file to the exchange to be used by
+                // the renamer to evaluate the file name
                 Exchange copy = ExchangeHelper.createCopy(exchange, true);
                 FileEndpoint fe = null;
                 if (endpoint instanceof FileEndpoint) {
@@ -79,7 +80,7 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
                 copy.getIn().setMessageId(exchange.getIn().getMessageId());
                 copy.setExchangeId(exchange.getExchangeId());
 
-                GenericFile<T> newName = failureRenamer.renameFile(copy, file);
+                GenericFile<T> newName = failureRenamer.renameFile(operations, copy, file);
                 renameFile(operations, file, newName);
             }
         } finally {
@@ -96,20 +97,21 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
             operations.releaseRetrievedFileResources(exchange);
 
             if (commitRenamer != null) {
-                // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
+                // create a copy and bind the file to the exchange to be used by
+                // the renamer to evaluate the file name
                 Exchange copy = ExchangeHelper.createCopy(exchange, true);
                 FileEndpoint fe = null;
                 if (endpoint instanceof FileEndpoint) {
                     fe = (FileEndpoint)endpoint;
                     file.bindToExchange(copy, fe.isProbeContentType());
-                }  else {
+                } else {
                     file.bindToExchange(copy);
                 }
                 // must preserve message id
                 copy.getIn().setMessageId(exchange.getIn().getMessageId());
                 copy.setExchangeId(exchange.getExchangeId());
 
-                GenericFile<T> newName = commitRenamer.renameFile(copy, file);
+                GenericFile<T> newName = commitRenamer.renameFile(operations, copy, file);
                 renameFile(operations, file, newName);
             }
         } finally {

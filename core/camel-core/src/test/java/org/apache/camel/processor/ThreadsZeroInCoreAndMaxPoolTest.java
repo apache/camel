@@ -18,7 +18,10 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
 
@@ -45,7 +48,8 @@ public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
             });
             fail("Expect FailedToCreateRouteException exception here");
         } catch (Exception ex) {
-            assertTrue(ex.getCause() instanceof IllegalArgumentException);
+            boolean b = ex.getCause() instanceof IllegalArgumentException;
+            assertTrue(b);
         }
     }
 

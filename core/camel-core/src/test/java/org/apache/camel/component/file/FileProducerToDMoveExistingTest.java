@@ -22,11 +22,13 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FileProducerToDMoveExistingTest extends ContextTestSupport {
 
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/out");
         super.setUp();

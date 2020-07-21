@@ -17,10 +17,12 @@
 package org.apache.camel.component.netty.http.rest;
 
 import org.apache.camel.component.netty.http.RestContextPathMatcher;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class RestPathMatchingTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class RestPathMatchingTest {
 
     private RestContextPathMatcher matcher = new RestContextPathMatcher("", "", null, true);
 

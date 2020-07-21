@@ -38,22 +38,31 @@ import org.springframework.test.context.TestContext;
  * for this class to work right.
  */
 public final class CamelSpringTestHelper {
-    
+
     private static ThreadLocal<String> originalJmxDisabledValue = new ThreadLocal<>();
+    private static ThreadLocal<String> originalExcludeRoutesValue = new ThreadLocal<>();
     private static ThreadLocal<Class<?>> testClazz = new ThreadLocal<>();
     private static ThreadLocal<TestContext> testContext = new ThreadLocal<>();
 
     private CamelSpringTestHelper() {
     }
-    
+
     public static String getOriginalJmxDisabled() {
         return originalJmxDisabledValue.get();
     }
-    
+
     public static void setOriginalJmxDisabledValue(String originalValue) {
         originalJmxDisabledValue.set(originalValue);
     }
-    
+
+    public static String getOriginalExcludeRoutes() {
+        return originalExcludeRoutesValue.get();
+    }
+
+    public static void setOriginalExcludeRoutesValue(String originalValue) {
+        originalExcludeRoutesValue.set(originalValue);
+    }
+
     public static Class<?> getTestClass() {
         return testClazz.get();
     }

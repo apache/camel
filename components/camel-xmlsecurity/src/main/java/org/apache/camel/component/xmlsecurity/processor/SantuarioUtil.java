@@ -46,7 +46,7 @@ public final class SantuarioUtil {
                     return true; 
                 }
             });
-        } catch (Throwable t) { //NOPMD
+        } catch (Throwable t) {
             //ignore
         }
         org.apache.xml.security.Init.init();
@@ -60,7 +60,7 @@ public final class SantuarioUtil {
                         return false;
                     }
                 });
-            } catch (Throwable t) { //NOPMD
+            } catch (Throwable t) {
                 //ignore
             }
         }

@@ -34,13 +34,13 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
-   
-
-@Ignore("Does not run well on CI due test uses JMX mbeans")
 public class RestOpenApiReaderPropertyPlaceholderTest extends CamelTestSupport {
 
     @BindToRegistry("dummy-rest")
     private DummyRestProducerFactory factory = new DummyRestProducerFactory();
+
+    @BindToRegistry("dummy-rest-consumer")
+    private DummyRestConsumerFactory consumerFactory = new DummyRestConsumerFactory();
 
     @Override
     protected boolean useJmx() {
@@ -79,9 +79,9 @@ public class RestOpenApiReaderPropertyPlaceholderTest extends CamelTestSupport {
         RestOpenApiReader reader = new RestOpenApiReader();
 
         RestOpenApiSupport support = new RestOpenApiSupport();
-        List<RestDefinition> rests = support.getRestDefinitions(context.getName());
+        List<RestDefinition> rests = support.getRestDefinitions(context);
 
-        OasDocument openApi = reader.read(rests, null, config, context.getName(), new DefaultClassResolver());
+        OasDocument openApi = reader.read(context, rests, null, config, context.getName(), new DefaultClassResolver());
         assertNotNull(openApi);
 
         ObjectMapper mapper = new ObjectMapper();

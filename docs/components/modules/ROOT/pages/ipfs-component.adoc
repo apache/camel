@@ -1,12 +1,17 @@
 [[ipfs-component]]
 = IPFS Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-ipfs/src/main/docs/ipfs-component.adoc
+:docTitle: IPFS
+:artifactId: camel-ipfs
+:description: Access the Interplanetary File System (IPFS).
+:since: 2.23
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.23*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The IPFS component provides access to the Interplanetary File System https://ipfs.io/[(IPFS)].
 
@@ -33,15 +38,17 @@ ipfs://cmd?options
 == Options
 
 // component options: START
-The IPFS component supports 2 options, which are listed below.
+The IPFS component supports 4 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *ipfsHost* (producer) | The ipfs host | 127.0.0.1 | String
+| *ipfsPort* (producer) | The ipfs port | 5001 | int
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -49,20 +56,18 @@ The IPFS component supports 2 options, which are listed below.
 The IPFS endpoint is configured using URI syntax:
 
 ----
-ipfs:ipfsHost:ipfsPort/ipfsCmd
+ipfs:ipfsCmd
 ----
 
 with the following path and query parameters:
 
-=== Path Parameters (3 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *ipfsHost* | *Required* The ipfs host |  | String
-| *ipfsPort* | *Required* The ipfs port |  | int
-| *ipfsCmd* | *Required* The ipfs command |  | String
+| *ipfsCmd* | *Required* The ipfs command. The value can be one of: add, cat, get, version |  | String
 |===
 
 
@@ -78,35 +83,6 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-ipfs-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 4 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.ipfs.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.ipfs.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.ipfs.enabled* | Whether to enable auto configuration of the ipfs component. This is enabled by default. |  | Boolean
-| *camel.component.ipfs.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-|===
-// spring-boot-auto-configure options: END
 
 == Karaf support
 
@@ -126,3 +102,5 @@ from("direct:start").to("ipfs:add")
 from("direct:start").to("ipfs:get?outdir=target")
 from("direct:start").to("ipfs:cat");
 ---------------------------------------------------------------------------------------------
+
+include::camel-spring-boot::page$ipfs-starter.adoc[]

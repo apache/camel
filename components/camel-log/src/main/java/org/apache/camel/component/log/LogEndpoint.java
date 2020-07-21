@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.log;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
@@ -37,12 +38,12 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 
 /**
- * The log component logs message exchanges to the underlying logging mechanism.
+ * Log messages to the underlying logging mechanism.
  *
  * Camel uses sfl4j which allows you to configure logging to the actual logging system.
  */
 @UriEndpoint(firstVersion = "1.1.0", scheme = "log", title = "Log",
-        syntax = "log:loggerName", producerOnly = true, label = "core,monitoring")
+        syntax = "log:loggerName", producerOnly = true, category = {Category.CORE, Category.MONITORING})
 public class LogEndpoint extends ProcessorEndpoint {
 
     private volatile Processor logger;
@@ -124,21 +125,22 @@ public class LogEndpoint extends ProcessorEndpoint {
         this.localFormatter = exchangeFormatter;
         if (this.localFormatter == null) {
             DefaultExchangeFormatter def = new DefaultExchangeFormatter();
-            def.setShowExchangeId(showExchangeId);
-            def.setShowExchangePattern(showExchangePattern);
-            def.setShowProperties(showProperties);
-            def.setShowHeaders(showHeaders);
-            def.setSkipBodyLineSeparator(skipBodyLineSeparator);
+            def.setShowAll(showAll);
             def.setShowBody(showBody);
             def.setShowBodyType(showBodyType);
+            def.setShowCaughtException(showCaughtException);
             def.setShowException(showException);
-            def.setShowStackTrace(showStackTrace);
-            def.setShowAll(showAll);
-            def.setMultiline(multiline);
-            def.setShowFuture(showFuture);
-            def.setShowStreams(showStreams);
+            def.setShowExchangeId(showExchangeId);
+            def.setShowExchangePattern(showExchangePattern);
             def.setShowFiles(showFiles);
+            def.setShowFuture(showFuture);
+            def.setShowHeaders(showHeaders);
+            def.setShowProperties(showProperties);
+            def.setShowStackTrace(showStackTrace);
+            def.setShowStreams(showStreams);
             def.setMaxChars(maxChars);
+            def.setMultiline(multiline);
+            def.setSkipBodyLineSeparator(skipBodyLineSeparator);
             def.setStyle(style);
             this.localFormatter = def;
         }

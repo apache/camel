@@ -25,23 +25,26 @@ import org.apache.camel.component.cxf.CxfSpringEndpoint;
 import org.apache.camel.component.cxf.DataFormat;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
     protected AbstractXmlApplicationContext applicationContext;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         applicationContext = createApplicationContext();        
-        assertNotNull("Should have created a valid spring context", applicationContext);
+        assertNotNull(applicationContext, "Should have created a valid spring context");
 
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         IOHelper.close(applicationContext);
     }
@@ -83,21 +86,20 @@ public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
     public void testGetProperties() throws Exception {
         CxfSpringEndpoint endpoint = (CxfSpringEndpoint)createEndpoint(getEndpointURI());
         QName service = endpoint.getServiceNameAsQName();
-        assertEquals("We should get the right service name", SERVICE_NAME, service);
-        assertEquals("The cxf endpoint's DataFromat should be RAW", DataFormat.RAW,
-                     endpoint.getDataFormat().dealias());
+        assertEquals(SERVICE_NAME, service, "We should get the right service name");
+        assertEquals(DataFormat.RAW, endpoint.getDataFormat().dealias(), "The cxf endpoint's DataFromat should be RAW");
         
         endpoint = (CxfSpringEndpoint)createEndpoint("cxf:bean:testPropertiesEndpoint");
         service = CxfEndpointUtils.getServiceName(endpoint);
-        assertEquals("We should get the right service name", SERVICE_NAME, service);
+        assertEquals(SERVICE_NAME, service, "We should get the right service name");
         QName port = CxfEndpointUtils.getPortName(endpoint);
-        assertEquals("We should get the right endpoint name", PORT_NAME, port);
+        assertEquals(PORT_NAME, port, "We should get the right endpoint name");
     }
 
     @Test
     public void testGetDataFormatFromCxfEndpontProperties() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getEndpointURI() + "?dataFormat=PAYLOAD");
-        assertEquals("We should get the PAYLOAD DataFormat", DataFormat.PAYLOAD, endpoint.getDataFormat());
+        assertEquals(DataFormat.PAYLOAD, endpoint.getDataFormat(), "We should get the PAYLOAD DataFormat");
     }
 
 

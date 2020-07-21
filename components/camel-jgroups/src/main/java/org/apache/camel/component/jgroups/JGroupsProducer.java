@@ -21,11 +21,15 @@ import org.apache.camel.support.DefaultProducer;
 import org.jgroups.Address;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Producer sending messages to the JGroups cluster.
  */
 public class JGroupsProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JGroupsProducer.class);
 
     // Producer settings
 
@@ -68,18 +72,18 @@ public class JGroupsProducer extends DefaultProducer {
             Address destinationAddress = exchange.getIn().getHeader(JGroupsEndpoint.HEADER_JGROUPS_DEST, Address.class);
             Address sourceAddress = exchange.getIn().getHeader(JGroupsEndpoint.HEADER_JGROUPS_SRC, Address.class);
 
-            log.debug("Posting: {} to cluster: {}", body, clusterName);
+            LOG.debug("Posting: {} to cluster: {}", body, clusterName);
             if (destinationAddress != null) {
-                log.debug("Posting to custom destination address: {}", destinationAddress);
+                LOG.debug("Posting to custom destination address: {}", destinationAddress);
             }
             if (sourceAddress != null) {
-                log.debug("Posting from custom source address: {}", sourceAddress);
+                LOG.debug("Posting from custom source address: {}", sourceAddress);
             }
             Message message = new Message(destinationAddress, body);
             message.setSrc(sourceAddress);
             channel.send(message);
         } else {
-            log.debug("Body is null, cannot post to channel.");
+            LOG.debug("Body is null, cannot post to channel.");
         }
     }
 

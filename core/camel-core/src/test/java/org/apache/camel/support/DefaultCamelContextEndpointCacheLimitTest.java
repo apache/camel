@@ -25,7 +25,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultCamelContextEndpointCacheLimitTest extends ContextTestSupport {
 
@@ -58,7 +60,7 @@ public class DefaultCamelContextEndpointCacheLimitTest extends ContextTestSuppor
         context.getEndpointRegistry().cleanUp();
 
         Collection<Endpoint> col = context.getEndpoints();
-        assertTrue("Size should be at most 75 was " + col.size(), col.size() <= 75);
+        assertTrue(col.size() <= 75, "Size should be at most 75 was " + col.size());
     }
 
     @Override

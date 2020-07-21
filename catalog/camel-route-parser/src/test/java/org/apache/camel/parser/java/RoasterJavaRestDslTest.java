@@ -22,10 +22,13 @@ import java.util.List;
 import org.apache.camel.parser.RestDslParser;
 import org.apache.camel.parser.model.RestConfigurationDetails;
 import org.apache.camel.parser.model.RestServiceDetails;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class RoasterJavaRestDslTest extends CamelTestSupport {
 
@@ -35,7 +38,7 @@ public class RoasterJavaRestDslTest extends CamelTestSupport {
     }
 
     @Test
-    public void parseRestConfiguration() throws Exception {
+    void parseRestConfiguration() throws Exception {
         JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java"));
 
         List<RestConfigurationDetails> list = RestDslParser.parseRestConfiguration(clazz, ".",
@@ -70,7 +73,7 @@ public class RoasterJavaRestDslTest extends CamelTestSupport {
     }
 
     @Test
-    public void parseRestService() throws Exception {
+    void parseRestService() throws Exception {
         JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java"));
 
         List<RestServiceDetails> list = RestDslParser.parseRestService(clazz, ".",

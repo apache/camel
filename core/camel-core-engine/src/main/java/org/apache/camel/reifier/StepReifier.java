@@ -19,25 +19,25 @@ package org.apache.camel.reifier;
 import java.util.List;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.StepDefinition;
 import org.apache.camel.processor.StepProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class StepReifier extends ProcessorReifier<StepDefinition> {
 
-    public StepReifier(ProcessorDefinition<?> definition) {
-        super(StepDefinition.class.cast(definition));
+    public StepReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, StepDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return this.createChildProcessor(routeContext, true);
+    public Processor createProcessor() throws Exception {
+        return this.createChildProcessor(true);
     }
 
     @Override
-    protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) throws Exception {
-        String stepId = getId(definition, routeContext);
-        return StepProcessor.newInstance(routeContext.getCamelContext(), list, stepId);
+    protected Processor createCompositeProcessor(List<Processor> list) throws Exception {
+        String stepId = getId(definition);
+        return StepProcessor.newInstance(camelContext, list, stepId);
     }
 }

@@ -22,7 +22,10 @@ import javax.jms.TemporaryTopic;
 import javax.jms.Topic;
 
 import org.apache.camel.component.sjms.support.JmsTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DefaultDestinationCreationStrategyTest extends JmsTestSupport {
 

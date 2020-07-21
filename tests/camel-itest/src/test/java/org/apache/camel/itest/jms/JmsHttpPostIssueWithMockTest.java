@@ -25,13 +25,14 @@ import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.Exchange.CONTENT_TYPE;
 import static org.apache.camel.Exchange.HTTP_METHOD;
 import static org.apache.camel.Exchange.HTTP_RESPONSE_CODE;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Based on user forum.
@@ -41,7 +42,7 @@ public class JmsHttpPostIssueWithMockTest extends CamelTestSupport {
     private int port;
 
     @Test
-    public void testJmsInOnlyHttpPostIssue() throws Exception {
+    void testJmsInOnlyHttpPostIssue() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("jms:queue:in", "Hello World");
@@ -50,7 +51,7 @@ public class JmsHttpPostIssueWithMockTest extends CamelTestSupport {
     }
 
     @Test
-    public void testJmsInOutHttpPostIssue() throws Exception {
+    void testJmsInOutHttpPostIssue() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         String out = template.requestBody("jms:queue:in", "Hello World", String.class);
@@ -60,7 +61,7 @@ public class JmsHttpPostIssueWithMockTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
@@ -75,13 +76,13 @@ public class JmsHttpPostIssueWithMockTest extends CamelTestSupport {
                 from("jetty:http://0.0.0.0:" + port + "/myservice")
                     .process(new Processor() {
                         @Override
-                        public void process(Exchange exchange) throws Exception {
+                        public void process(Exchange exchange) {
                             String body = exchange.getIn().getBody(String.class);
                             assertEquals("name=Hello World", body);
 
-                            exchange.getOut().setBody("OK");
-                            exchange.getOut().setHeader(CONTENT_TYPE, "text/plain");
-                            exchange.getOut().setHeader(HTTP_RESPONSE_CODE, 200);
+                            exchange.getMessage().setBody("OK");
+                            exchange.getMessage().setHeader(CONTENT_TYPE, "text/plain");
+                            exchange.getMessage().setHeader(HTTP_RESPONSE_CODE, 200);
                         }
                     });
             }

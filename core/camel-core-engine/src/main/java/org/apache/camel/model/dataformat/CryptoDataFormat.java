@@ -25,8 +25,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Crypto data format is used for encrypting and decrypting of messages using
- * Java Cryptographic Extension.
+ * Encrypt and decrypt messages using Java Cryptography Extension (JCE).
  */
 @Metadata(firstVersion = "2.3.0", label = "dataformat,transformation,security", title = "Crypto (Java Cryptographic Extension)")
 @XmlRootElement(name = "crypto")
@@ -49,7 +48,7 @@ public class CryptoDataFormat extends DataFormatDefinition {
     @Metadata(defaultValue = "HmacSHA1")
     private String macAlgorithm = "HmacSHA1";
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String shouldAppendHMAC;
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")

@@ -22,7 +22,10 @@ import javax.jcr.SimpleCredentials;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JcrAuthLoginTest extends JcrAuthTestBase {
 
@@ -31,7 +34,7 @@ public class JcrAuthLoginTest extends JcrAuthTestBase {
         Exchange exchange = createExchangeWithBody("<message>hello!</message>");
         Exchange out = template.send("direct:a", exchange);
         assertNotNull(out);
-        String uuid = out.getOut().getBody(String.class);
+        String uuid = out.getMessage().getBody(String.class);
         assertNotNull("Out body was null; expected JCR node UUID", uuid);
         Session session = getRepository().login(
                 new SimpleCredentials("admin", "admin".toCharArray()));

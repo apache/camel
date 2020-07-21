@@ -20,6 +20,7 @@ import java.net.URI;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClientFactory;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -28,9 +29,13 @@ import org.apache.camel.component.jira.consumer.NewIssuesConsumer;
 import org.apache.camel.component.jira.oauth.JiraOAuthAuthenticationHandler;
 import org.apache.camel.component.jira.oauth.OAuthAsynchronousJiraRestClientFactory;
 import org.apache.camel.component.jira.producer.AddCommentProducer;
+import org.apache.camel.component.jira.producer.AddIssueLinkProducer;
 import org.apache.camel.component.jira.producer.AddIssueProducer;
+import org.apache.camel.component.jira.producer.AddWorkLogProducer;
 import org.apache.camel.component.jira.producer.AttachFileProducer;
 import org.apache.camel.component.jira.producer.DeleteIssueProducer;
+import org.apache.camel.component.jira.producer.FetchCommentsProducer;
+import org.apache.camel.component.jira.producer.FetchIssueProducer;
 import org.apache.camel.component.jira.producer.TransitionIssueProducer;
 import org.apache.camel.component.jira.producer.UpdateIssueProducer;
 import org.apache.camel.component.jira.producer.WatcherProducer;
@@ -46,7 +51,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
 
 /**
- * The jira component interacts with the JIRA issue tracker.
+ * Interact with JIRA issue tracker.
  * <p>
  * The endpoint encapsulates portions of the JIRA API, relying on the jira-rest-java-client SDK. Available endpoint URIs include:
  * <p>
@@ -60,7 +65,7 @@ import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FAC
  * Note: Rather than webhooks, this endpoint relies on simple polling.  Reasons include: - concerned about reliability/stability if this somehow relied on an exposed, embedded server (Jetty?) - the
  * types of payloads we're polling aren't typically large (plus, paging is available in the API) - need to support apps running somewhere not publicly accessible where a webhook would fail
  */
-@UriEndpoint(firstVersion = "3.0", scheme = "jira", title = "Jira", syntax = "jira:type", label = "api,reporting")
+@UriEndpoint(firstVersion = "3.0", scheme = "jira", title = "Jira", syntax = "jira:type", category = {Category.API, Category.REPORTING})
 public class JiraEndpoint extends DefaultEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(JiraEndpoint.class);
@@ -102,8 +107,8 @@ public class JiraEndpoint extends DefaultEndpoint {
         } else {
             LOG.info("Jira OAuth authentication.");
             JiraOAuthAuthenticationHandler oAuthHandler = new JiraOAuthAuthenticationHandler(configuration.getConsumerKey(),
-            configuration.getVerificationCode(), configuration.getPrivateKey(), configuration.getAccessToken(),
-            configuration.getJiraUrl());
+                    configuration.getVerificationCode(), configuration.getPrivateKey(), configuration.getAccessToken(),
+                    configuration.getJiraUrl());
             client = factory.create(jiraServerUri, oAuthHandler);
         }
     }
@@ -119,22 +124,30 @@ public class JiraEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() {
         switch (type) {
-        case ADDISSUE:
-            return new AddIssueProducer(this);
-        case ATTACH:
-            return new AttachFileProducer(this);
-        case ADDCOMMENT:
-            return new AddCommentProducer(this);
-        case WATCHERS:
-            return new WatcherProducer(this);
-        case DELETEISSUE:
-            return new DeleteIssueProducer(this);
-        case UPDATEISSUE:
-            return new UpdateIssueProducer(this);
-        case TRANSITIONISSUE:
-            return new TransitionIssueProducer(this);
-        default:
-            throw new IllegalArgumentException("Producer does not support type: " + type);
+            case ADDISSUE:
+                return new AddIssueProducer(this);
+            case ATTACH:
+                return new AttachFileProducer(this);
+            case ADDCOMMENT:
+                return new AddCommentProducer(this);
+            case WATCHERS:
+                return new WatcherProducer(this);
+            case DELETEISSUE:
+                return new DeleteIssueProducer(this);
+            case UPDATEISSUE:
+                return new UpdateIssueProducer(this);
+            case TRANSITIONISSUE:
+                return new TransitionIssueProducer(this);
+            case ADDISSUELINK:
+                return new AddIssueLinkProducer(this);
+            case ADDWORKLOG:
+                return new AddWorkLogProducer(this);
+            case FETCHISSUE:
+                return new FetchIssueProducer(this);
+            case FETCHCOMMENTS:
+                return new FetchCommentsProducer(this);
+            default:
+                throw new IllegalArgumentException("Producer does not support type: " + type);
         }
     }
 

@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ReplyKeyboardMarkup implements Serializable {
+public class ReplyKeyboardMarkup implements Serializable, ReplyMarkup {
 
     private static final long serialVersionUID = 1L;
 
@@ -36,15 +36,23 @@ public class ReplyKeyboardMarkup implements Serializable {
     @JsonProperty("remove_keyboard")
     private Boolean removeKeyboard;
 
+    @JsonProperty("resize_keyboard")
+    private Boolean resizeKeyboard;
+
+    private Boolean selective;
+
     private List<List<InlineKeyboardButton>> keyboard;
 
     public ReplyKeyboardMarkup() {
 
     }
 
-    public ReplyKeyboardMarkup(Boolean oneTimeKeyboard, Boolean removeKeyboard, List<List<InlineKeyboardButton>> keyboard) {
+    public ReplyKeyboardMarkup(Boolean oneTimeKeyboard, Boolean removeKeyboard, Boolean resizeKeyboard,
+                               Boolean selective, List<List<InlineKeyboardButton>> keyboard) {
         this.oneTimeKeyboard = oneTimeKeyboard;
         this.removeKeyboard = removeKeyboard;
+        this.resizeKeyboard = resizeKeyboard;
+        this.selective = selective;
         this.keyboard = keyboard;
     }
 
@@ -82,14 +90,31 @@ public class ReplyKeyboardMarkup implements Serializable {
     }    
 
     public static Builder builder() {
-
         return new Builder();
+    }
+
+    public Boolean getResizeKeyboard() {
+        return resizeKeyboard;
+    }
+
+    public void setResizeKeyboard(Boolean resizeKeyboard) {
+        this.resizeKeyboard = resizeKeyboard;
+    }
+
+    public Boolean getSelective() {
+        return selective;
+    }
+
+    public void setSelective(Boolean selective) {
+        this.selective = selective;
     }
 
     public static class Builder {
 
         private Boolean oneTimeKeyboard;
         private Boolean removeKeyboard;
+        private Boolean resizeKeyboard;
+        private Boolean selective;
         private List<List<InlineKeyboardButton>> keyboard;
 
         public Builder oneTimeKeyboard(Boolean oneTimeKeyboard) {
@@ -104,9 +129,19 @@ public class ReplyKeyboardMarkup implements Serializable {
             return this;
         }
 
+        public Builder resizeKeyboard(Boolean resizeKeyboard) {
+            this.resizeKeyboard = resizeKeyboard;
+            return this;
+        }
+
+        public Builder selective(Boolean selective) {
+            this.selective = selective;
+            return this;
+        }
+
         public ReplyKeyboardMarkup build() {
 
-            return new ReplyKeyboardMarkup(oneTimeKeyboard, removeKeyboard, keyboard);
+            return new ReplyKeyboardMarkup(oneTimeKeyboard, removeKeyboard, resizeKeyboard, selective, keyboard);
         }
 
         public KeyboardBuilder keyboard() {

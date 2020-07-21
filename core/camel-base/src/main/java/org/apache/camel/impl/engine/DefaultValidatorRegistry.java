@@ -16,17 +16,13 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.io.IOException;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.Service;
 import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**

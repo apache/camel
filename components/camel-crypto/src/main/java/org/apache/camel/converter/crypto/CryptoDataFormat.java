@@ -84,7 +84,7 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
     private byte[] initializationVector;
     private boolean inline;
     private String macAlgorithm = "HmacSHA1";
-    private boolean shouldAppendHMAC;
+    private boolean shouldAppendHMAC = true;
     private AlgorithmParameterSpec parameterSpec;
 
     public CryptoDataFormat() {

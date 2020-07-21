@@ -17,9 +17,11 @@
 package org.apache.camel.spring.issues;
 
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProduceSplitMethodCallIssueTest extends SpringTestSupport {
 

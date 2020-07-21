@@ -33,9 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class SftpFromSedaDeleteFileTest extends SftpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
-                + "?username=admin&knownHostsFile=" + getKnownHostsFile() + "&privateKeyFile=./src/test/resources/id_rsa"
-                + "&privateKeyPassphrase=secret&delay=500&disconnect=false&delete=true";
+        return "sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&knownHostsFile=" + getKnownHostsFile() + "&privateKeyFile=./src/test/resources/id_rsa"
+               + "&privateKeyPassphrase=secret&delay=500&disconnect=false&delete=true";
     }
 
     @Override
@@ -44,7 +43,7 @@ public class SftpFromSedaDeleteFileTest extends SftpServerTestSupport {
         super.setUp();
         createSampleFile();
     }
-    
+
     @Test
     public void testPollFileAndShouldBeDeleted() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -72,11 +71,7 @@ public class SftpFromSedaDeleteFileTest extends SftpServerTestSupport {
             public void configure() throws Exception {
                 from(getFtpUrl()).to("seda:foo");
 
-                from("seda:foo")
-                        .delay(750)
-                        .log("${body}")
-                        .delay(750)
-                        .to("mock:result");
+                from("seda:foo").delay(750).log("${body}").delay(750).to("mock:result");
             }
         };
     }

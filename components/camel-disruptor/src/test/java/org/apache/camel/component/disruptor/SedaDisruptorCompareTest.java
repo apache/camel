@@ -35,12 +35,11 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.SedaEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * This class does not perform any functional test, but instead makes a comparison between the performance of the
@@ -48,8 +47,7 @@ import org.junit.runners.Parameterized;
  * <p/>
  * As memory management may have great impact on the results, it is adviced to run this test with a large, fixed heap (e.g. run with -Xmx1024m -Xms1024m JVM parameters)
  */
-@Ignore
-@RunWith(value = Parameterized.class)
+@Disabled
 public class SedaDisruptorCompareTest extends CamelTestSupport {
     // Use '0' for default value, '1'+ for specific value to be used by both SEDA and DISRUPTOR.
     private static final int SIZE_PARAMETER_VALUE = 1024;
@@ -60,32 +58,16 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
     private static final long[] SEDA_SIZE_HISTOGRAM_BOUNDS = generateLinearHistogramBounds(
             SIZE_PARAMETER_VALUE == 0 ? SPEED_TEST_EXCHANGE_COUNT : SIZE_PARAMETER_VALUE, 10);
 
+    private static Collection<Object[]> tPARAMETERS;
+
     @Produce
     protected ProducerTemplate producerTemplate;
 
-    private final ExchangeAwaiter[] exchangeAwaiters;
-    private final String componentName;
-    private final String endpointUri;
-    private final int amountProducers;
-    private final long[] sizeHistogramBounds;
-
     private final Queue<Integer> endpointSizeQueue = new ConcurrentLinkedQueue<>();
-    
-    public SedaDisruptorCompareTest(final String componentName, final String endpointUri,
-                                    final int amountProducers, final int amountConsumers,
-                                    final int concurrentConsumerThreads, final long[] sizeHistogramBounds) {
-        this.componentName = componentName;
-        this.endpointUri = endpointUri;
-        this.amountProducers = amountProducers;
-        this.sizeHistogramBounds = sizeHistogramBounds;
-        exchangeAwaiters = new ExchangeAwaiter[amountConsumers];
-        for (int i = 0; i < amountConsumers; ++i) {
-            exchangeAwaiters[i] = new ExchangeAwaiter(SPEED_TEST_EXCHANGE_COUNT);
-        }
-    }
 
-    @BeforeClass
+    @BeforeAll
     public static void legend() {
+        tPARAMETERS = parameters();
         System.out.println("-----------------------");
         System.out.println("- Tests output legend -");
         System.out.println("-----------------------");
@@ -111,8 +93,6 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
         return bounds;
     }
 
-    
-
     private static int singleProducer() {
         return 1;
     }
@@ -121,12 +101,16 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
         return 4;
     }
 
-    private static int singleConsumer() {
-        return 1;
+    private static ExchangeAwaiter[] singleConsumer() {
+        return new ExchangeAwaiter[] {new ExchangeAwaiter(SPEED_TEST_EXCHANGE_COUNT)};
     }
 
-    private static int multipleConsumers() {
-        return 4;
+    private static ExchangeAwaiter[] multipleConsumers() {
+        ExchangeAwaiter[] exchangeAwaiters = new ExchangeAwaiter[4];
+        for (int i = 0; i < exchangeAwaiters.length; ++i) {
+            exchangeAwaiters[i] = new ExchangeAwaiter(SPEED_TEST_EXCHANGE_COUNT);
+        }
+        return exchangeAwaiters;
     }
 
     private static int singleConcurrentConsumerThread() {
@@ -137,7 +121,10 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
         return 2;
     }
 
-    @Parameterized.Parameters(name = "{index}: {0}")
+    public static Collection<Object[]> getTestParameters() {
+        return tPARAMETERS;
+    }
+
     public static Collection<Object[]> parameters() {
         final List<Object[]> parameters = new ArrayList<>();
 
@@ -171,12 +158,21 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
         addParameterPair(parameters, multipleProducers(), multipleConsumers(), singleConcurrentConsumerThread());
         addParameterPair(parameters, multipleProducers(), multipleConsumers(), multipleConcurrentConsumerThreads());
 
+        // Make endpointUris unique
+        int i = 0;
+        for (Object[] params : parameters) {
+            String endpointUri = (String)params[1];
+            String uniqueEndpointUri = endpointUri.replaceFirst("([a-z]+):([^?]+)\\?(.*)", "$1:$2-" + i + "?$3");
+            params[1] = uniqueEndpointUri;
+            i++;
+        }
+
         return parameters;
     }
 
     private static void addParameterPair(final List<Object[]> parameters, final int producers,
-                                         final int consumers, final int parallelConsumerThreads) {
-        final String multipleConsumerOption = consumers > 1 ? "multipleConsumers=true" : "";
+                                         final ExchangeAwaiter[] consumers, final int parallelConsumerThreads) {
+        final String multipleConsumerOption = consumers.length > 1 ? "multipleConsumers=true" : "";
         final String concurrentConsumerOptions = parallelConsumerThreads > 1 ? "concurrentConsumers=" + parallelConsumerThreads : "";
         final String sizeOption = SIZE_PARAMETER_VALUE > 0 ? "size=" + SIZE_PARAMETER_VALUE : "";
         final String sizeOptionSeda = SIZE_PARAMETER_VALUE > 0 ? "&blockWhenFull=true" : "";
@@ -215,18 +211,21 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
             consumers, parallelConsumerThreads, DISRUPTOR_SIZE_HISTOGRAM_BOUNDS});
     }
 
-    @Test
-    public void speedTestDisruptor() throws InterruptedException {
+    @ParameterizedTest
+    @MethodSource("getTestParameters")
+    void speedTestDisruptor(final String componentName, final String endpointUri, final int amountProducers, final ExchangeAwaiter[] exchangeAwaiters,
+                                   final int concurrentConsumerThreads, final long[] sizeHistogramBounds)
+        throws InterruptedException {
 
         System.out.println("Warming up for test of: " + componentName);
 
-        performTest(true);
+        performTest(componentName, endpointUri, true, exchangeAwaiters, amountProducers, sizeHistogramBounds);
         System.out.println("Starting real test of: " + componentName);
 
         forceGC();
         Thread.sleep(1000);
 
-        performTest(false);
+        performTest(componentName, endpointUri, false, exchangeAwaiters, amountProducers, sizeHistogramBounds);
     }
 
     private void forceGC() {
@@ -236,13 +235,13 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
         System.gc();
     }
 
-    private void resetExchangeAwaiters() {
+    private void resetExchangeAwaiters(ExchangeAwaiter[] exchangeAwaiters) {
         for (final ExchangeAwaiter exchangeAwaiter : exchangeAwaiters) {
             exchangeAwaiter.reset();
         }
     }
 
-    private void awaitExchangeAwaiters() throws InterruptedException {
+    private void awaitExchangeAwaiters(String componentName, ExchangeAwaiter[] exchangeAwaiters) throws InterruptedException {
         for (final ExchangeAwaiter exchangeAwaiter : exchangeAwaiters) {
             while (!exchangeAwaiter.awaitMessagesReceived(10, TimeUnit.SECONDS)) {
                 System.err.println(
@@ -252,7 +251,7 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
         }
     }
 
-    private void outputExchangeAwaitersResult(final long start) throws InterruptedException {
+    private void outputExchangeAwaitersResult(String componentName, final long start, ExchangeAwaiter[] exchangeAwaiters) throws InterruptedException {
         for (final ExchangeAwaiter exchangeAwaiter : exchangeAwaiters) {
             final long stop = exchangeAwaiter.getCountDownReachedTime();
             final Histogram histogram = exchangeAwaiter.getLatencyHistogram();
@@ -262,12 +261,12 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
         }
     }
 
-    private void performTest(final boolean warmup) throws InterruptedException {
-        resetExchangeAwaiters();
+    private void performTest(String componentName, String endpointUri, final boolean warmup, ExchangeAwaiter[] exchangeAwaiters, int amountProducers, long[] sizeHistogramBounds) throws InterruptedException {
+        resetExchangeAwaiters(exchangeAwaiters);
 
         final ProducerThread[] producerThread = new ProducerThread[amountProducers];
         for (int i = 0; i < producerThread.length; ++i) {
-            producerThread[i] = new ProducerThread(SPEED_TEST_EXCHANGE_COUNT / amountProducers);
+            producerThread[i] = new ProducerThread(SPEED_TEST_EXCHANGE_COUNT / amountProducers, endpointUri);
         }
 
         ExecutorService monitoring = null;
@@ -280,11 +279,11 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
             element.start();
         }
 
-        awaitExchangeAwaiters();
+        awaitExchangeAwaiters(componentName, exchangeAwaiters);
 
         if (!warmup) {
-            outputExchangeAwaitersResult(start);
-            uninstallSizeMonitoring(monitoring);
+            outputExchangeAwaitersResult(componentName, start, exchangeAwaiters);
+            uninstallSizeMonitoring(monitoring, sizeHistogramBounds);
         }
     }
 
@@ -315,7 +314,7 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
         return service;
     }
 
-    private void uninstallSizeMonitoring(final ExecutorService monitoring) {
+    private void uninstallSizeMonitoring(final ExecutorService monitoring, long[] sizeHistogramBounds) {
         if (monitoring != null) {
             monitoring.shutdownNow();
         }
@@ -327,12 +326,16 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                for (final ExchangeAwaiter exchangeAwaiter : exchangeAwaiters) {
-                    from(endpointUri).process(exchangeAwaiter);
+            public void configure() {
+                for (Object[] parameters : tPARAMETERS) {
+                    ExchangeAwaiter[] exchangeAwaiters = (ExchangeAwaiter[])parameters[3];
+                    String endpointUri = (String)parameters[1];
+                    for (final ExchangeAwaiter exchangeAwaiter : exchangeAwaiters) {
+                        from(endpointUri).process(exchangeAwaiter);
+                    }
                 }
             }
         };
@@ -372,7 +375,7 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
         }
 
         @Override
-        public void process(final Exchange exchange) throws Exception {
+        public void process(final Exchange exchange) {
             final long sentTimeNs = exchange.getIn().getBody(Long.class);
             latencyQueue.offer(Long.valueOf(System.nanoTime() - sentTimeNs));
 
@@ -403,10 +406,12 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
 
         private final int totalMessageCount;
         private int producedMessageCount;
+        private String endpointUri;
 
-        ProducerThread(final int totalMessageCount) {
+        ProducerThread(final int totalMessageCount, String endpointUri) {
             super("TestDataProducerThread");
             this.totalMessageCount = totalMessageCount;
+            this.endpointUri = endpointUri;
         }
 
         @Override

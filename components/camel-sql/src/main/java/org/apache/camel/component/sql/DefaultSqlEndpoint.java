@@ -109,7 +109,8 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
             + " in the message body, any existing content in the message body is discarded. If outputHeader is set, the value is used as the name of the header"
             + " to store the query result and the original message body is preserved.")
     private String outputHeader;
-    @UriParam(label = "producer", description = "Whether to use the message body as the SQL and then headers for parameters. If this option is enabled then the SQL in the uri is not used.")
+    @UriParam(label = "producer", description = "Whether to use the message body as the SQL and then headers for parameters. If this option is enabled then the SQL in the uri is not used."
+                                                + " Note that query parameters in the message body are represented by a question mark instead of a <tt>#</tt> symbol.")
     private boolean useMessageBodyForSql;
     @UriParam(label = "advanced", defaultValue = "#", description = "Specifies a character that will be replaced to ? in SQL query."
             + " Notice, that it is simple String.replaceAll() operation and no SQL parsing is involved (quoted strings will also change).")

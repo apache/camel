@@ -30,10 +30,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class IOHelperTest extends Assert {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class IOHelperTest {
 
     @Test
     public void testIOException() {
@@ -47,18 +48,6 @@ public class IOHelperTest extends Assert {
         IOException io = new IOException("Not again", new IllegalArgumentException("Damn"));
         assertEquals("Not again", io.getMessage());
         assertTrue(io.getCause() instanceof IllegalArgumentException);
-    }
-
-    @Test
-    public void testNewStringFromBytes() {
-        String s = IOHelper.newStringFromBytes("Hello".getBytes());
-        assertEquals("Hello", s);
-    }
-
-    @Test
-    public void testNewStringFromBytesWithStart() {
-        String s = IOHelper.newStringFromBytes("Hello".getBytes(), 2, 3);
-        assertEquals("llo", s);
     }
 
     @Test

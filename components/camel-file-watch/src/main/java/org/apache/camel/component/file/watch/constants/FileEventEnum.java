@@ -33,14 +33,14 @@ public enum FileEventEnum {
 
     public static FileEventEnum valueOf(DirectoryChangeEvent.EventType directoryChangeEventType) {
         switch (directoryChangeEventType) {
-        case CREATE:
-            return FileEventEnum.CREATE;
-        case DELETE:
-            return FileEventEnum.DELETE;
-        case MODIFY:
-            return FileEventEnum.MODIFY;
-        default:
-            return null;
+            case CREATE:
+                return FileEventEnum.CREATE;
+            case DELETE:
+                return FileEventEnum.DELETE;
+            case MODIFY:
+                return FileEventEnum.MODIFY;
+            default:
+                return null;
         }
     }
 
@@ -66,27 +66,27 @@ public enum FileEventEnum {
 
     public WatchEvent.Kind<Path> kind() {
         switch (this) {
-        case CREATE:
-            return StandardWatchEventKinds.ENTRY_CREATE;
-        case MODIFY:
-            return StandardWatchEventKinds.ENTRY_MODIFY;
-        case DELETE:
-            return StandardWatchEventKinds.ENTRY_DELETE;
-        default:
-            return null;
+            case CREATE:
+                return StandardWatchEventKinds.ENTRY_CREATE;
+            case MODIFY:
+                return StandardWatchEventKinds.ENTRY_MODIFY;
+            case DELETE:
+                return StandardWatchEventKinds.ENTRY_DELETE;
+            default:
+                return null;
         }
     }
 
     public DirectoryChangeEvent.EventType eventType() {
         switch (this) {
-        case CREATE:
-            return DirectoryChangeEvent.EventType.CREATE;
-        case MODIFY:
-            return DirectoryChangeEvent.EventType.MODIFY;
-        case DELETE:
-            return DirectoryChangeEvent.EventType.DELETE;
-        default:
-            return null;
+            case CREATE:
+                return DirectoryChangeEvent.EventType.CREATE;
+            case MODIFY:
+                return DirectoryChangeEvent.EventType.MODIFY;
+            case DELETE:
+                return DirectoryChangeEvent.EventType.DELETE;
+            default:
+                return null;
         }
     }
 }

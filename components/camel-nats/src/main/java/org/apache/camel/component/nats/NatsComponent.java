@@ -21,7 +21,6 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriPath;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
@@ -32,12 +31,15 @@ public class NatsComponent extends DefaultComponent implements SSLContextParamet
     private String servers;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
+    @Metadata
+    private boolean verbose;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         NatsConfiguration config = new NatsConfiguration();
         config.setTopic(remaining);
         config.setServers(servers);
+        config.setVerbose(verbose);
 
         if (config.getSslContextParameters() == null) {
             config.setSslContextParameters(retrieveGlobalSslContextParameters());
@@ -73,4 +75,14 @@ public class NatsComponent extends DefaultComponent implements SSLContextParamet
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    /**
+     * Whether or not running in verbose mode
+     */
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
+    }
 }

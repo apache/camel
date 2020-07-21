@@ -18,7 +18,7 @@ package org.apache.camel.component.http;
 
 import javax.net.ssl.SSLContext;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.HttpResponseFactory;
 import org.apache.http.protocol.HttpExpectationVerifier;

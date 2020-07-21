@@ -24,12 +24,13 @@ import org.apache.camel.Predicate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.builder.Builder.constant;
 import static org.apache.camel.builder.PredicateBuilder.in;
 import static org.apache.camel.builder.PredicateBuilder.not;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class PredicateBuilderTest extends TestSupport {
 
@@ -180,7 +181,7 @@ public class PredicateBuilderTest extends TestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         Message in = exchange.getIn();

@@ -25,9 +25,12 @@ import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirCapabilitiesApiMethod;
 import org.hl7.fhir.dstu3.model.CapabilityStatement;
 import org.hl7.fhir.dstu3.model.Enumerations;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirCapabilities} APIs.
@@ -43,7 +46,7 @@ public class FhirCapabilitiesIT extends AbstractFhirTestSupport {
         org.hl7.fhir.instance.model.api.IBaseConformance result = requestBody("direct://OF_TYPE", CapabilityStatement.class);
 
         LOG.debug("ofType: " + result);
-        assertNotNull("ofType result", result);
+        assertNotNull(result, "ofType result");
         assertEquals(Enumerations.PublicationStatus.ACTIVE, ((CapabilityStatement)result).getStatus());
     }
 
@@ -55,7 +58,7 @@ public class FhirCapabilitiesIT extends AbstractFhirTestSupport {
         org.hl7.fhir.instance.model.api.IBaseConformance result = requestBodyAndHeaders("direct://OF_TYPE", CapabilityStatement.class, headers);
 
         LOG.debug("ofType: " + result);
-        assertNotNull("ofType result", result);
+        assertNotNull(result, "ofType result");
         assertEquals(Enumerations.PublicationStatus.ACTIVE, ((CapabilityStatement)result).getStatus());
     }
 

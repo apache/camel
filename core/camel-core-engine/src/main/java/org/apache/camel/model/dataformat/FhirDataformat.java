@@ -35,7 +35,8 @@ public abstract class FhirDataformat extends DataFormatDefinition {
     private String fhirVersion;
 
     @XmlAttribute
-    private Boolean prettyPrint;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String prettyPrint;
 
     @XmlTransient
     @Metadata(label = "advanced")
@@ -58,12 +59,12 @@ public abstract class FhirDataformat extends DataFormatDefinition {
     private String serverBaseUrl;
 
     @XmlAttribute
-    @Metadata(label = "advanced")
-    private Boolean omitResourceId;
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private String omitResourceId;
 
     @XmlAttribute
-    @Metadata(label = "advanced")
-    private Boolean encodeElementsAppliesToChildResourcesOnly;
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private String encodeElementsAppliesToChildResourcesOnly;
 
     @XmlAttribute
     @Metadata(label = "advanced")
@@ -74,20 +75,20 @@ public abstract class FhirDataformat extends DataFormatDefinition {
     private Set<String> dontEncodeElements;
 
     @XmlAttribute
-    @Metadata(label = "advanced")
-    private Boolean stripVersionsFromReferences;
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private String stripVersionsFromReferences;
 
     @XmlAttribute
-    @Metadata(label = "advanced")
-    private Boolean overrideResourceIdWithBundleEntryFullUrl;
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private String overrideResourceIdWithBundleEntryFullUrl;
 
     @XmlAttribute
-    @Metadata(label = "advanced")
-    private Boolean summaryMode;
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private String summaryMode;
 
     @XmlAttribute
-    @Metadata(label = "advanced")
-    private Boolean suppressNarratives;
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private String suppressNarratives;
 
     @XmlAttribute
     @Metadata(label = "advanced")
@@ -121,7 +122,7 @@ public abstract class FhirDataformat extends DataFormatDefinition {
         this.fhirVersion = fhirVersion;
     }
 
-    public Boolean isPrettyPrint() {
+    public String getPrettyPrint() {
         return prettyPrint;
     }
 
@@ -132,7 +133,7 @@ public abstract class FhirDataformat extends DataFormatDefinition {
      *
      * @param prettyPrint The flag
      */
-    public void setPrettyPrint(Boolean prettyPrint) {
+    public void setPrettyPrint(String prettyPrint) {
         this.prettyPrint = prettyPrint;
     }
 
@@ -208,7 +209,7 @@ public abstract class FhirDataformat extends DataFormatDefinition {
         this.serverBaseUrl = serverBaseUrl;
     }
 
-    public Boolean isOmitResourceId() {
+    public String getOmitResourceId() {
         return omitResourceId;
     }
 
@@ -222,11 +223,11 @@ public abstract class FhirDataformat extends DataFormatDefinition {
      *
      * @param omitResourceId Should resource IDs be omitted
      */
-    public void setOmitResourceId(Boolean omitResourceId) {
+    public void setOmitResourceId(String omitResourceId) {
         this.omitResourceId = omitResourceId;
     }
 
-    public Boolean isEncodeElementsAppliesToChildResourcesOnly() {
+    public String getEncodeElementsAppliesToChildResourcesOnly() {
         return encodeElementsAppliesToChildResourcesOnly;
     }
 
@@ -236,7 +237,7 @@ public abstract class FhirDataformat extends DataFormatDefinition {
      * (typically a Bundle), but will be applied to any sub-resources contained
      * within it (i.e. search result resources in that bundle)
      */
-    public void setEncodeElementsAppliesToChildResourcesOnly(Boolean encodeElementsAppliesToChildResourcesOnly) {
+    public void setEncodeElementsAppliesToChildResourcesOnly(String encodeElementsAppliesToChildResourcesOnly) {
         this.encodeElementsAppliesToChildResourcesOnly = encodeElementsAppliesToChildResourcesOnly;
     }
 
@@ -294,7 +295,7 @@ public abstract class FhirDataformat extends DataFormatDefinition {
         this.dontEncodeElements = dontEncodeElements;
     }
 
-    public Boolean getStripVersionsFromReferences() {
+    public String getStripVersionsFromReferences() {
         return stripVersionsFromReferences;
     }
 
@@ -318,11 +319,11 @@ public abstract class FhirDataformat extends DataFormatDefinition {
      *            {@link #setParserOptions(Object)}
      * @see #setDontStripVersionsFromReferencesAtPaths(List)
      */
-    public void setStripVersionsFromReferences(Boolean stripVersionsFromReferences) {
+    public void setStripVersionsFromReferences(String stripVersionsFromReferences) {
         this.stripVersionsFromReferences = stripVersionsFromReferences;
     }
 
-    public Boolean getOverrideResourceIdWithBundleEntryFullUrl() {
+    public String getOverrideResourceIdWithBundleEntryFullUrl() {
         return overrideResourceIdWithBundleEntryFullUrl;
     }
 
@@ -340,11 +341,11 @@ public abstract class FhirDataformat extends DataFormatDefinition {
      *            <code>null</code> to apply the default setting from the
      *            {@link #setParserOptions(Object)})
      */
-    public void setOverrideResourceIdWithBundleEntryFullUrl(Boolean overrideResourceIdWithBundleEntryFullUrl) {
+    public void setOverrideResourceIdWithBundleEntryFullUrl(String overrideResourceIdWithBundleEntryFullUrl) {
         this.overrideResourceIdWithBundleEntryFullUrl = overrideResourceIdWithBundleEntryFullUrl;
     }
 
-    public Boolean isSummaryMode() {
+    public String getSummaryMode() {
         return summaryMode;
     }
 
@@ -353,11 +354,11 @@ public abstract class FhirDataformat extends DataFormatDefinition {
      * marked by the FHIR specification as being "summary elements" will be
      * included.
      */
-    public void setSummaryMode(Boolean summaryMode) {
+    public void setSummaryMode(String summaryMode) {
         this.summaryMode = summaryMode;
     }
 
-    public Boolean isSuppressNarratives() {
+    public String getSuppressNarratives() {
         return suppressNarratives;
     }
 
@@ -365,7 +366,7 @@ public abstract class FhirDataformat extends DataFormatDefinition {
      * If set to <code>true</code> (default is <code>false</code>), narratives
      * will not be included in the encoded values.
      */
-    public void setSuppressNarratives(Boolean suppressNarratives) {
+    public void setSuppressNarratives(String suppressNarratives) {
         this.suppressNarratives = suppressNarratives;
     }
 
@@ -380,9 +381,9 @@ public abstract class FhirDataformat extends DataFormatDefinition {
      * parsing process.
      * <p>
      * This method provides a finer-grained level of control than
-     * {@link #setStripVersionsFromReferences(Boolean)} and any paths specified
+     * {@link #setStripVersionsFromReferences(String)} and any paths specified
      * by this method will be encoded even if
-     * {@link #setStripVersionsFromReferences(Boolean)} has been set to
+     * {@link #setStripVersionsFromReferences(String)} has been set to
      * <code>true</code> (which is the default)
      * </p>
      *
@@ -394,7 +395,7 @@ public abstract class FhirDataformat extends DataFormatDefinition {
      *            repetition indicators, FluentPath expressions, etc.). Set to
      *            <code>null</code> to use the value set in the
      *            {@link #setParserOptions(Object)}
-     * @see #setStripVersionsFromReferences(Boolean)
+     * @see #setStripVersionsFromReferences(String)
      */
     public void setDontStripVersionsFromReferencesAtPaths(List<String> dontStripVersionsFromReferencesAtPaths) {
         this.dontStripVersionsFromReferencesAtPaths = dontStripVersionsFromReferencesAtPaths;

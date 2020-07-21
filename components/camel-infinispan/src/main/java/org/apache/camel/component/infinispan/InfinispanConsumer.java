@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class InfinispanConsumer extends DefaultConsumer {
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(InfinispanProducer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(InfinispanProducer.class);
     private final InfinispanConfiguration configuration;
     private final InfinispanManager manager;
     private final String cacheName;
@@ -65,7 +65,7 @@ public class InfinispanConsumer extends DefaultConsumer {
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
-            LOGGER.error("Error processing event ", e);
+            LOG.error("Error processing event ", e);
         }
     }
 

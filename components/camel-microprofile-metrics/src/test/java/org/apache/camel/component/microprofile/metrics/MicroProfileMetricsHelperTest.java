@@ -21,9 +21,10 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.Tag;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MicroProfileMetricsHelperTest {
 
@@ -34,19 +35,22 @@ public class MicroProfileMetricsHelperTest {
         assertEquals("bar", tag.getTagValue());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParseTagForEmptyString() {
-        MicroProfileMetricsHelper.parseTag("");
+        assertThrows(IllegalArgumentException.class,
+            () -> MicroProfileMetricsHelper.parseTag(""));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParseTagForInvalidString() {
-        MicroProfileMetricsHelper.parseTag("badtag");
+        assertThrows(IllegalArgumentException.class,
+            () -> MicroProfileMetricsHelper.parseTag("badtag"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParseTagForStringWithNotEnoughElements() {
-        MicroProfileMetricsHelper.parseTag("badtag=");
+        assertThrows(IllegalArgumentException.class,
+            () -> MicroProfileMetricsHelper.parseTag("badtag="));
     }
 
     @Test
@@ -67,8 +71,9 @@ public class MicroProfileMetricsHelperTest {
         MicroProfileMetricsHelper.getMetricRegistry(camelContext);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testGetMetricRegistryWhenNoRegistryConfigured() {
-        MicroProfileMetricsHelper.getMetricRegistry(new DefaultCamelContext());
+        assertThrows(IllegalStateException.class,
+            () -> MicroProfileMetricsHelper.getMetricRegistry(new DefaultCamelContext()));
     }
 }

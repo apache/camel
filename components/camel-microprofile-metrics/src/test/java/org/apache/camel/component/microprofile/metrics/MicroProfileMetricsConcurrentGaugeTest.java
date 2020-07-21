@@ -19,10 +19,11 @@ package org.apache.camel.component.microprofile.metrics;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.microprofile.metrics.ConcurrentGauge;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_GAUGE_DECREMENT;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_GAUGE_INCREMENT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MicroProfileMetricsConcurrentGaugeTest extends MicroProfileMetricsTestSupport {
 

@@ -29,7 +29,7 @@ import java.util.Map;
  * JsonObject is a common non-thread safe data format for string to data
  * mappings. The contents of a JsonObject are only validated as JSON values on
  * serialization.
- * 
+ *
  * @see Jsoner
  * @since 2.0.0
  */
@@ -52,7 +52,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
      * Instantiate a new JsonObject by accepting a map's entries, which could
      * lead to de/serialization issues of the resulting JsonObject since the
      * entry values aren't validated as JSON values.
-     * 
+     *
      * @param map represents the mappings to produce the JsonObject with.
      */
     public JsonObject(final Map<String, ?> map) {
@@ -64,7 +64,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
      * String at the given key. If a Number is there its Number#toString() is
      * used to construct a new BigDecimal(String). If a String is there it is
      * used to construct a new BigDecimal(String).
-     * 
+     *
      * @param key representing where the value ought to be stored at.
      * @return the value stored at the key.
      * @throws ClassCastException if the value didn't match the assumed return
@@ -94,7 +94,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
      * String at the given key. If a Number is there its Number#toString() is
      * used to construct a new BigDecimal(String). If a String is there it is
      * used to construct a new BigDecimal(String).
-     * 
+     *
      * @param key representing where the value ought to be stored at.
      * @param defaultValue representing what is returned when the key isn't in
      *            the JsonObject.
@@ -130,7 +130,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
     /**
      * A convenience method that assumes there is a Boolean or String value at
      * the given key.
-     * 
+     *
      * @param key representing where the value ought to be stored at.
      * @return the value stored at the key.
      * @throws ClassCastException if the value didn't match the assumed return
@@ -147,7 +147,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
     /**
      * A convenience method that assumes there is a Boolean or String value at
      * the given key.
-     * 
+     *
      * @param key representing where the value ought to be stored at.
      * @param defaultValue representing what is returned when the key isn't in
      *            the JsonObject.
@@ -172,7 +172,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
     /**
      * A convenience method that assumes there is a Number or String value at
      * the given key.
-     * 
+     *
      * @param key representing where the value ought to be stored at.
      * @return the value stored at the key (which may involve rounding or
      *         truncation).
@@ -198,7 +198,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
     /**
      * A convenience method that assumes there is a Number or String value at
      * the given key.
-     * 
+     *
      * @param key representing where the value ought to be stored at.
      * @param defaultValue representing what is returned when the key isn't in
      *            the JsonObject.
@@ -230,7 +230,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
 
     /**
      * A convenience method that assumes there is a Collection at the given key.
-     * 
+     *
      * @param <T> the kind of collection to expect at the key. Note unless
      *            manually added, collection values will be a JsonArray.
      * @param key representing where the value ought to be stored at.
@@ -249,7 +249,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
 
     /**
      * A convenience method that assumes there is a Collection at the given key.
-     * 
+     *
      * @param <T> the kind of collection to expect at the key. Note unless
      *            manually added, collection values will be a JsonArray.
      * @param key representing where the value ought to be stored at.
@@ -278,7 +278,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
     /**
      * A convenience method that assumes there is a Number or String value at
      * the given key.
-     * 
+     *
      * @param key representing where the value ought to be stored at.
      * @return the value stored at the key (which may involve rounding or
      *         truncation).
@@ -304,7 +304,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
     /**
      * A convenience method that assumes there is a Number or String value at
      * the given key.
-     * 
+     *
      * @param key representing where the value ought to be stored at.
      * @param defaultValue representing what is returned when the key isn't in
      *            the JsonObject.
@@ -337,7 +337,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
     /**
      * A convenience method that assumes there is a String value at the given
      * key representing a fully qualified name in dot notation of an enum.
-     * 
+     *
      * @param key representing where the value ought to be stored at.
      * @param <T> the Enum type the value at the key is expected to belong to.
      * @return the enum based on the string found at the key, or null if the
@@ -407,7 +407,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
     /**
      * A convenience method that assumes there is a String value at the given
      * key representing a fully qualified name in dot notation of an enum.
-     * 
+     *
      * @param key representing where the value ought to be stored at.
      * @param defaultValue representing what is returned when the key isn't in
      *            the JsonObject.
@@ -492,7 +492,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
     /**
      * A convenience method that assumes there is a Number or String value at
      * the given key.
-     * 
+     *
      * @param key representing where the value ought to be stored at.
      * @return the value stored at the key (which may involve rounding or
      *         truncation).
@@ -518,7 +518,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
     /**
      * A convenience method that assumes there is a Number or String value at
      * the given key.
-     * 
+     *
      * @param key representing where the value ought to be stored at.
      * @param defaultValue representing what is returned when the key isn't in
      *            the JsonObject.
@@ -551,7 +551,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
     /**
      * A convenience method that assumes there is a Number or String value at
      * the given key.
-     * 
+     *
      * @param key representing where the value ought to be stored at.
      * @return the value stored at the key (which may involve rounding or
      *         truncation).
@@ -577,7 +577,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
     /**
      * A convenience method that assumes there is a Number or String value at
      * the given key.
-     * 
+     *
      * @param key representing where the value ought to be stored at.
      * @param defaultValue representing what is returned when the key isn't in
      *            the JsonObject.
@@ -610,7 +610,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
     /**
      * A convenience method that assumes there is a Number or String value at
      * the given key.
-     * 
+     *
      * @param key representing where the value ought to be stored at.
      * @return the value stored at the key (which may involve rounding or
      *         truncation).
@@ -636,7 +636,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
     /**
      * A convenience method that assumes there is a Number or String value at
      * the given key.
-     * 
+     *
      * @param key representing where the value ought to be stored at.
      * @param defaultValue representing what is returned when the key isn't in
      *            the JsonObject.
@@ -668,7 +668,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
 
     /**
      * A convenience method that assumes there is a Map at the given key.
-     * 
+     *
      * @param <T> the kind of map to expect at the key. Note unless manually
      *            added, Map values will be a JsonObject.
      * @param key representing where the value ought to be stored at.
@@ -687,7 +687,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
 
     /**
      * A convenience method that assumes there is a Map at the given key.
-     * 
+     *
      * @param <T> the kind of map to expect at the key. Note unless manually
      *            added, Map values will be a JsonObject.
      * @param key representing where the value ought to be stored at.
@@ -716,7 +716,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
     /**
      * A convenience method that assumes there is a Number or String value at
      * the given key.
-     * 
+     *
      * @param key representing where the value ought to be stored at.
      * @return the value stored at the key (which may involve rounding or
      *         truncation).
@@ -742,7 +742,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
     /**
      * A convenience method that assumes there is a Number or String value at
      * the given key.
-     * 
+     *
      * @param key representing where the value ought to be stored at.
      * @param defaultValue representing what is returned when the key isn't in
      *            the JsonObject.
@@ -775,7 +775,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
     /**
      * A convenience method that assumes there is a Boolean, Number, or String
      * value at the given key.
-     * 
+     *
      * @param key representing where the value ought to be stored at.
      * @return the value stored at the key.
      * @throws ClassCastException if the value didn't match the assumed return
@@ -794,7 +794,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
     /**
      * A convenience method that assumes there is a Boolean, Number, or String
      * value at the given key.
-     * 
+     *
      * @param key representing where the value ought to be stored at.
      * @param defaultValue representing what is returned when the key isn't in
      *            the JsonObject.

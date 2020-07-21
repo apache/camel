@@ -34,6 +34,7 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.spi.StreamCachingStrategy;
@@ -231,7 +232,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                     streamCacheUnitOfWork.addSynchronization(onCompletion);
                 } else {
                     // add on completion so we can cleanup after the exchange is done such as deleting temporary files
-                    exchange.addOnCompletion(onCompletion);
+                    exchange.adapt(ExtendedExchange.class).addOnCompletion(onCompletion);
                 }
             }
         }

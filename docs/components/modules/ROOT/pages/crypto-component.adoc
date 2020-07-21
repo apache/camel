@@ -1,12 +1,17 @@
 [[crypto-component]]
 = Crypto (JCE) Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-crypto/src/main/docs/crypto-component.adoc
+:docTitle: Crypto (JCE)
+:artifactId: camel-crypto
+:description: Sign and verify exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
+:since: 2.3
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.3*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 With Camel cryptographic endpoints and Java's Cryptographic extension it
 is easy to create Digital Signatures for Exchanges.
@@ -86,16 +91,34 @@ both signing and verifying should be configured identically.
 == Options
 
 // component options: START
-The Crypto (JCE) component supports 3 options, which are listed below.
+The Crypto (JCE) component supports 21 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (advanced) | To use the shared DigitalSignatureConfiguration as configuration |  | DigitalSignatureConfiguration
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *algorithm* (producer) | Sets the JCE name of the Algorithm that should be used for the signer. | SHA256withRSA | String
+| *alias* (producer) | Sets the alias used to query the KeyStore for keys and {link java.security.cert.Certificate Certificates} to be used in signing and verifying exchanges. This value can be provided at runtime via the message header org.apache.camel.component.crypto.DigitalSignatureConstants#KEYSTORE_ALIAS |  | String
+| *certificateName* (producer) | Sets the reference name for a PrivateKey that can be found in the registry. |  | String
+| *keystore* (producer) | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges. A KeyStore is typically used with an alias, either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore, then this single entry will be used. |  | KeyStore
+| *keystoreName* (producer) | Sets the reference name for a Keystore that can be found in the registry. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *privateKey* (producer) | Set the PrivateKey that should be used to sign the exchange |  | PrivateKey
+| *privateKeyName* (producer) | Sets the reference name for a PrivateKey that can be found in the registry. |  | String
+| *provider* (producer) | Set the id of the security provider that provides the configured Signature algorithm. |  | String
+| *publicKeyName* (producer) | references that should be resolved when the context changes |  | String
+| *secureRandomName* (producer) | Sets the reference name for a SecureRandom that can be found in the registry. |  | String
+| *signatureHeaderName* (producer) | Set the name of the message header that should be used to store the base64 encoded signature. This defaults to 'CamelDigitalSignature' |  | String
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *bufferSize* (advanced) | Set the size of the buffer used to read in the Exchange payload data. | 2048 | Integer
+| *certificate* (advanced) | Set the Certificate that should be used to verify the signature in the exchange based on its payload. |  | Certificate
+| *clearHeaders* (advanced) | Determines if the Signature specific headers be cleared after signing and verification. Defaults to true, and should only be made otherwise at your extreme peril as vital private information such as Keys and passwords may escape if unset. | true | boolean
+| *configuration* (advanced) | To use the shared DigitalSignatureConfiguration as configuration |  | DigitalSignatureConfiguration
+| *keyStoreParameters* (advanced) | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges based on the given KeyStoreParameters. A KeyStore is typically used with an alias, either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore, then this single entry will be used. |  | KeyStoreParameters
+| *publicKey* (advanced) | Set the PublicKey that should be used to verify the signature in the exchange. |  | PublicKey
+| *secureRandom* (advanced) | Set the SecureRandom used to initialize the Signature service |  | SecureRandom
+| *password* (security) | Sets the password used to access an aliased PrivateKey in the KeyStore. |  | String
 |===
 // component options: END
 
@@ -114,7 +137,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *cryptoOperation* | *Required* Set the Crypto operation from that supplied after the crypto scheme in the endpoint uri e.g. crypto:sign sets sign as the operation. |  | CryptoOperation
+| *cryptoOperation* | *Required* Set the Crypto operation from that supplied after the crypto scheme in the endpoint uri e.g. crypto:sign sets sign as the operation. The value can be one of: sign, verify |  | CryptoOperation
 | *name* | *Required* The logical name of this operation. |  | String
 |===
 
@@ -148,66 +171,6 @@ with the following path and query parameters:
 | *password* (security) | Sets the password used to access an aliased PrivateKey in the KeyStore. |  | String
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-crypto-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 35 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.crypto.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.crypto.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.crypto.configuration.algorithm* | Sets the JCE name of the Algorithm that should be used for the signer. | SHA256withRSA | String
-| *camel.component.crypto.configuration.alias* | Sets the alias used to query the KeyStore for keys and {@link java.security.cert.Certificate Certificates} to be used in signing and verifying exchanges. This value can be provided at runtime via the message header {@link org.apache.camel.component.crypto.DigitalSignatureConstants#KEYSTORE_ALIAS} |  | String
-| *camel.component.crypto.configuration.buffer-size* | Set the size of the buffer used to read in the Exchange payload data. | 2048 | Integer
-| *camel.component.crypto.configuration.certificate* | Set the Certificate that should be used to verify the signature in the exchange based on its payload. |  | Certificate
-| *camel.component.crypto.configuration.certificate-name* | Sets the reference name for a PrivateKey that can be found in the registry. |  | String
-| *camel.component.crypto.configuration.clear-headers* | Determines if the Signature specific headers be cleared after signing and verification. Defaults to true, and should only be made otherwise at your extreme peril as vital private information such as Keys and passwords may escape if unset. | true | Boolean
-| *camel.component.crypto.configuration.crypto-operation* | Set the Crypto operation from that supplied after the crypto scheme in the endpoint uri e.g. crypto:sign sets sign as the operation. |  | CryptoOperation
-| *camel.component.crypto.configuration.key-store-parameters* | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges based on the given KeyStoreParameters. A {@link KeyStore} is typically used with an alias, either one supplied in the Route definition or dynamically via the message header "CamelSignatureKeyStoreAlias". If no alias is supplied and there is only a single entry in the Keystore, then this single entry will be used. |  | KeyStoreParameters
-| *camel.component.crypto.configuration.keystore* | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges. A {@link KeyStore} is typically used with an alias, either one supplied in the Route definition or dynamically via the message header "CamelSignatureKeyStoreAlias". If no alias is supplied and there is only a single entry in the Keystore, then this single entry will be used. |  | KeyStore
-| *camel.component.crypto.configuration.keystore-name* | Sets the reference name for a Keystore that can be found in the registry. |  | String
-| *camel.component.crypto.configuration.name* | The logical name of this operation. |  | String
-| *camel.component.crypto.configuration.password* | Sets the password used to access an aliased {@link PrivateKey} in the KeyStore. |  | String
-| *camel.component.crypto.configuration.private-key* | Set the PrivateKey that should be used to sign the exchange |  | PrivateKey
-| *camel.component.crypto.configuration.private-key-name* | Sets the reference name for a PrivateKey that can be found in the registry. |  | String
-| *camel.component.crypto.configuration.provider* | Set the id of the security provider that provides the configured {@link Signature} algorithm. |  | String
-| *camel.component.crypto.configuration.public-key* | Set the PublicKey that should be used to verify the signature in the exchange. |  | PublicKey
-| *camel.component.crypto.configuration.public-key-name* | Sets the reference name for a publicKey that can be found in the registry. |  | String
-| *camel.component.crypto.configuration.secure-random* | Set the SecureRandom used to initialize the Signature service |  | SecureRandom
-| *camel.component.crypto.configuration.secure-random-name* | Sets the reference name for a SecureRandom that can be found in the registry. |  | String
-| *camel.component.crypto.configuration.signature-header-name* | Set the name of the message header that should be used to store the base64 encoded signature. This defaults to 'CamelDigitalSignature' |  | String
-| *camel.component.crypto.enabled* | Whether to enable auto configuration of the crypto component. This is enabled by default. |  | Boolean
-| *camel.component.crypto.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-| *camel.dataformat.crypto.algorithm* | The JCE algorithm name indicating the cryptographic algorithm that will be used. |  | String
-| *camel.dataformat.crypto.algorithm-parameter-ref* | A JCE AlgorithmParameterSpec used to initialize the Cipher. Will lookup the type using the given name as a java.security.spec.AlgorithmParameterSpec type. |  | String
-| *camel.dataformat.crypto.buffersize* | The size of the buffer used in the signature process. |  | Integer
-| *camel.dataformat.crypto.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
-| *camel.dataformat.crypto.crypto-provider* | The name of the JCE Security Provider that should be used. |  | String
-| *camel.dataformat.crypto.enabled* | Whether to enable auto configuration of the crypto data format. This is enabled by default. |  | Boolean
-| *camel.dataformat.crypto.init-vector-ref* | Refers to a byte array containing the Initialization Vector that will be used to initialize the Cipher. |  | String
-| *camel.dataformat.crypto.inline* | Flag indicating that the configured IV should be inlined into the encrypted data stream. Is by default false. | false | Boolean
-| *camel.dataformat.crypto.key-ref* | Refers to the secret key to lookup from the register to use. |  | String
-| *camel.dataformat.crypto.mac-algorithm* | The JCE algorithm name indicating the Message Authentication algorithm. | HmacSHA1 | String
-| *camel.dataformat.crypto.should-append-h-m-a-c* | Flag indicating that a Message Authentication Code should be calculated and appended to the encrypted data. | false | Boolean
-|===
-// spring-boot-auto-configure options: END
 
 
 
@@ -301,3 +264,5 @@ signed.getIn().setHeader(KEYSTORE_ALIAS, "bob");
 template.send("direct:alias-verify", signed);
 -------------------------------------------------------------------------------------------------
 
+
+include::camel-spring-boot::page$crypto-starter.adoc[]

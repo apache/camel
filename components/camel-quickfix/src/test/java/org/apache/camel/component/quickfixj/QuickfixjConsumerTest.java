@@ -20,9 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import quickfix.FixVersions;
 import quickfix.Message;
@@ -32,6 +31,7 @@ import quickfix.field.BeginString;
 import quickfix.field.SenderCompID;
 import quickfix.field.TargetCompID;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.isA;
 
 public class QuickfixjConsumerTest {
@@ -40,7 +40,7 @@ public class QuickfixjConsumerTest {
     private QuickfixjEndpoint mockEndpoint;
     private Message inboundFixMessage;
     
-    @Before
+    @BeforeEach
     public void setUp() {
 
         mockExchange = Mockito.mock(Exchange.class);
@@ -62,7 +62,7 @@ public class QuickfixjConsumerTest {
     public void processExchangeOnlyWhenStarted() throws Exception {
         QuickfixjConsumer consumer = new QuickfixjConsumer(mockEndpoint, mockProcessor);
         
-        Assert.assertThat("Consumer should not be automatically started", 
+        assertThat("Consumer should not be automatically started",
             consumer.isStarted(), CoreMatchers.is(false));
         
         consumer.onExchange(mockExchange);
@@ -72,7 +72,7 @@ public class QuickfixjConsumerTest {
         
         consumer.start();
         Mockito.verify(mockEndpoint).ensureInitialized();
-        Assert.assertThat(consumer.isStarted(), CoreMatchers.is(true));
+        assertThat(consumer.isStarted(), CoreMatchers.is(true));
         
         consumer.onExchange(mockExchange);
         
@@ -105,7 +105,7 @@ public class QuickfixjConsumerTest {
 
         Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOut);
         Mockito.when(mockExchange.hasOut()).thenReturn(true);
-        Mockito.when(mockExchange.getOut()).thenReturn(mockCamelOutMessage);
+        Mockito.when(mockExchange.getMessage()).thenReturn(mockCamelOutMessage);
         Message outboundFixMessage = new Message();
         Mockito.when(mockCamelOutMessage.getBody(Message.class)).thenReturn(outboundFixMessage);
         Mockito.when(mockExchange.getIn()).thenReturn(mockCamelInMessage);
@@ -132,7 +132,7 @@ public class QuickfixjConsumerTest {
 
         Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOut);
         Mockito.when(mockExchange.hasOut()).thenReturn(true);
-        Mockito.when(mockExchange.getOut()).thenReturn(mockCamelOutMessage);
+        Mockito.when(mockExchange.getMessage()).thenReturn(mockCamelOutMessage);
         Message outboundFixMessage = new Message();
         Mockito.when(mockCamelOutMessage.getBody(Message.class)).thenReturn(outboundFixMessage);
         Mockito.when(mockExchange.getIn()).thenReturn(mockCamelInMessage);

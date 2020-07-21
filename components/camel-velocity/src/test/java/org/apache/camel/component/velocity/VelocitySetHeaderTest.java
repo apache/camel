@@ -17,7 +17,6 @@
 package org.apache.camel.component.velocity;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -36,7 +35,7 @@ public class VelocitySetHeaderTest extends CamelSpringTestSupport {
         assertRespondsWith("orange", "I am an orange");
     }
 
-    protected void assertRespondsWith(final String value, String expectedBody) throws InvalidPayloadException, InterruptedException {
+    protected void assertRespondsWith(final String value, String expectedBody) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived("fruit", value);

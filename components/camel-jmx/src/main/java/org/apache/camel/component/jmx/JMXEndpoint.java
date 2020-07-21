@@ -24,6 +24,7 @@ import javax.management.MalformedObjectNameException;
 import javax.management.NotificationFilter;
 import javax.management.ObjectName;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -35,7 +36,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The jmx component allows to receive JMX notifications.
+ * Receive JMX notifications.
  *
  * Endpoint that describes a connection to an mbean.
  * <p/>
@@ -49,7 +50,7 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * You can append query options to the URI in the following format, ?options=value&option2=value&...
  */
-@UriEndpoint(firstVersion = "2.6.0", scheme = "jmx", title = "JMX", syntax = "jmx:serverURL", consumerOnly = true, label = "monitoring")
+@UriEndpoint(firstVersion = "2.6.0", scheme = "jmx", title = "JMX", syntax = "jmx:serverURL", consumerOnly = true, category = {Category.MONITORING})
 public class JMXEndpoint extends DefaultEndpoint {
 
     // error messages as constants so they can be asserted on from unit tests
@@ -88,7 +89,7 @@ public class JMXEndpoint extends DefaultEndpoint {
     /**
      * The frequency to poll the bean to check the monitor (monitor types only).
      */
-    @UriParam(defaultValue = "10000")
+    @UriParam(defaultValue = "10000", javaType = "java.time.Duration")
     private long granularityPeriod = 10000;
 
     /**
@@ -165,7 +166,7 @@ public class JMXEndpoint extends DefaultEndpoint {
      */
     @UriParam(label = "consumer,string")
     private String stringToCompare;
-    
+
     /**
      * Format for the message body. Either "xml" or "raw". If xml, the notification is serialized to xml. If raw, then the raw java object is set as the body.
      */
@@ -195,21 +196,21 @@ public class JMXEndpoint extends DefaultEndpoint {
      */
     @UriParam(label = "advanced")
     private Object handback;
-    
+
     /**
      * If true the consumer will throw an exception if unable to establish the JMX connection upon startup.  If false, the consumer will attempt
      * to establish the JMX connection every 'x' seconds until the connection is made -- where 'x' is the configured  reconnectionDelay
      */
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean testConnectionOnStartup = true;
-    
+
     /**
      * If true the consumer will attempt to reconnect to the JMX server when any connection failure occurs.  The consumer will attempt
      * to re-establish the JMX connection every 'x' seconds until the connection is made-- where 'x' is the configured  reconnectionDelay
      */
     @UriParam(label = "advanced")
     private boolean reconnectOnConnectionFailure;
-     
+
     /**
      * The number of seconds to wait before attempting to retry establishment of the initial connection or attempt to reconnect a lost connection
      */
@@ -241,11 +242,11 @@ public class JMXEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor aProcessor) throws Exception {
         // validate that all of the endpoint is configured properly
         if (getMonitorType() != null) {
-            
+
             if (!isPlatformServer()) {
                 throw new IllegalArgumentException(ERR_PLATFORM_SERVER);
             }
-            
+
             if (ObjectHelper.isEmpty(getObservedAttribute())) {
                 throw new IllegalArgumentException(ERR_OBSERVED_ATTRIBUTE);
             }
@@ -502,27 +503,27 @@ public class JMXEndpoint extends DefaultEndpoint {
     public void setStringToCompare(String aStringToCompare) {
         stringToCompare = aStringToCompare;
     }
-    
+
     public boolean isTestConnectionOnStartup() {
         return this.testConnectionOnStartup;
     }
-    
+
     public void setTestConnectionOnStartup(boolean testConnectionOnStartup) {
         this.testConnectionOnStartup = testConnectionOnStartup;
     }
-    
+
     public boolean isReconnectOnConnectionFailure() {
         return this.reconnectOnConnectionFailure;
     }
-    
+
     public void setReconnectOnConnectionFailure(boolean reconnectOnConnectionFailure) {
         this.reconnectOnConnectionFailure = reconnectOnConnectionFailure;
-    }    
-    
+    }
+
     public int getReconnectDelay() {
         return this.reconnectDelay;
-    }    
-     
+    }
+
     public void setReconnectDelay(int reconnectDelay) {
         this.reconnectDelay = reconnectDelay;
     }

@@ -25,27 +25,28 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The iCal dataformat is used for working with iCalendar messages.
+ * Marshal and unmarshal iCal (*.ics) documents to/from model objects provided by the iCal4j library.
  */
 @Metadata(firstVersion = "2.12.0", label = "dataformat,transformation", title = "iCal")
 @XmlRootElement(name = "ical")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IcalDataFormat extends DataFormatDefinition {
     @XmlAttribute
-    private Boolean validating;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String validating;
 
     public IcalDataFormat() {
         super("ical");
     }
 
-    public Boolean getValidating() {
+    public String getValidating() {
         return validating;
     }
 
     /**
      * Whether to validate.
      */
-    public void setValidating(Boolean validating) {
+    public void setValidating(String validating) {
         this.validating = validating;
     }
 

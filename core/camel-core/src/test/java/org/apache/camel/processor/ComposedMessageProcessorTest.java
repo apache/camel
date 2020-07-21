@@ -26,8 +26,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ComposedMessageProcessorTest extends ContextTestSupport {
 
@@ -70,8 +72,8 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("orderItemHelper", new OrderItemHelper());
         jndi.bind("widgetInventory", new WidgetInventory());
         jndi.bind("gadgetInventory", new GadgetInventory());

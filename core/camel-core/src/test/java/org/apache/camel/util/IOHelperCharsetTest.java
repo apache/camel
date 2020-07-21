@@ -27,7 +27,10 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 
 import org.apache.camel.ContextTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class IOHelperCharsetTest extends ContextTestSupport {
 
@@ -84,7 +87,7 @@ public class IOHelperCharsetTest extends ContextTestSupport {
             in.read(bytes);
             byte[] naiveBytes = new byte[8192];
             naiveIn.read(naiveBytes);
-            assertFalse("both input streams deliver the same byte sequence", Arrays.equals(naiveBytes, bytes));
+            assertFalse(Arrays.equals(naiveBytes, bytes), "both input streams deliver the same byte sequence");
         }
     }
 

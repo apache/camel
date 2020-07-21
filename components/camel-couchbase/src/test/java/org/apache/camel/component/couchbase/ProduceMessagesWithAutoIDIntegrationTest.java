@@ -18,8 +18,8 @@ package org.apache.camel.component.couchbase;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class ProduceMessagesWithAutoIDIntegrationTest extends CamelTestSupport {
 
@@ -42,7 +42,7 @@ public class ProduceMessagesWithAutoIDIntegrationTest extends CamelTestSupport {
             public void configure() throws Exception {
 
                 // need couchbase installed on localhost
-                from("direct:start").to("couchbase:http://localhost/default?autoStartIdForInserts=true&startingIdForInsertsFrom=1000").to("mock:result");
+                from("direct:start").to("couchbase:http://localhost/test?username=root&password=123456&autoStartIdForInserts=true&startingIdForInsertsFrom=1000").to("mock:result");
             }
         };
     }

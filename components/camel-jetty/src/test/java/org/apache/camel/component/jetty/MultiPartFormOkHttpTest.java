@@ -27,7 +27,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MultiPartFormOkHttpTest extends BaseJettyTest {
 
@@ -58,13 +62,13 @@ public class MultiPartFormOkHttpTest extends BaseJettyTest {
                 from("jetty://http://localhost:{{port}}/test").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         AttachmentMessage message = exchange.getMessage(AttachmentMessage.class);
-                        assertTrue("Should have attachment", message.hasAttachments());
+                        assertTrue(message.hasAttachments(), "Should have attachment");
 
                         InputStream is = message.getAttachment("test").getInputStream();
                         assertNotNull(is);
                         assertEquals("form-data; name=\"test\"", message.getAttachmentObject("test").getHeader("content-disposition"));
                         String data = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, is);
-                        assertNotNull("Should have data", data);
+                        assertNotNull(data, "Should have data");
                         assertEquals("some data here", data);
 
                         exchange.getOut().setBody("Thanks");

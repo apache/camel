@@ -98,93 +98,93 @@ public class DockerProducer extends DefaultProducer {
 
         switch (operation) {
 
-        /** General **/
-        case AUTH:
-            result = executeAuthRequest(client, message).exec();
-            break;
-        case INFO:
-            result = executeInfoRequest(client, message).exec();
-            break;
-        case PING:
-            result = executePingRequest(client, message).exec();
-            break;
-        case VERSION:
-            result = executeVersionRequest(client, message).exec();
-            break;
-        case CREATE_IMAGE:
-            result = executeCreateImageRequest(client, message).exec();
-            break;
-        case INSPECT_IMAGE:
-            result = executeInspectImageRequest(client, message).exec();
-            break;
-        case LIST_IMAGES:
-            result = executeListImagesRequest(client, message).exec();
-            break;
-        case REMOVE_IMAGE:
-            result = executeRemoveImageRequest(client, message).exec();
-            break;
-        case SEARCH_IMAGES:
-            result = executeSearchImageRequest(client, message).exec();
-            break;
-        case TAG_IMAGE:
-            result = executeTagImageRequest(client, message).exec();
-            break;
-        case COMMIT_CONTAINER:
-            result = executeCommitContainerRequest(client, message).exec();
-            break;
-        case COPY_FILE_CONTAINER:
-            result = executeCopyFileContainerRequest(client, message).exec();
-            break;
-        case CREATE_CONTAINER:
-            result = executeCreateContainerRequest(client, message).exec();
-            break;
-        case DIFF_CONTAINER:
-            result = executeDiffContainerRequest(client, message).exec();
-            break;
-        case INSPECT_CONTAINER:
-            result = executeInspectContainerRequest(client, message).exec();
-            break;
-        case LIST_CONTAINERS:
-            result = executeListContainersRequest(client, message).exec();
-            break;
-        case KILL_CONTAINER:
-            result = executeKillContainerRequest(client, message).exec();
-            break;
-        case PAUSE_CONTAINER:
-            result = executePauseContainerRequest(client, message).exec();
-            break;
-        case REMOVE_CONTAINER:
-            result = executeRemoveContainerRequest(client, message).exec();
-            break;
-        case RESTART_CONTAINER:
-            result = executeRestartContainerRequest(client, message).exec();
-            break;
-        case START_CONTAINER:
-            result = executeStartContainerRequest(client, message).exec();
-            break;
-        case STOP_CONTAINER:
-            result = executeStopContainerRequest(client, message).exec();
-            break;
-        case TOP_CONTAINER:
-            result = executeTopContainerRequest(client, message).exec();
-            break;
-        case UNPAUSE_CONTAINER:
-            result = executeUnpauseContainerRequest(client, message).exec();
-            break;
-        case CREATE_NETWORK:
-            result = executeCreateNetworkRequest(client, message).exec();
-            break;
-        case REMOVE_NETWORK:
-            result = executeRemoveNetworkRequest(client, message).exec();
-            break;
-        case CONNECT_NETWORK:
-            result = executeConnectToNetworkRequest(client, message).exec();
-            break;
-        case EXEC_CREATE:
-            result = executeExecCreateRequest(client, message).exec();
-            break;
-        default:
-            throw new DockerException("Invalid operation: " + operation);
+            /** General **/
+            case AUTH:
+                result = executeAuthRequest(client, message).exec();
+                break;
+            case INFO:
+                result = executeInfoRequest(client, message).exec();
+                break;
+            case PING:
+                result = executePingRequest(client, message).exec();
+                break;
+            case VERSION:
+                result = executeVersionRequest(client, message).exec();
+                break;
+            case CREATE_IMAGE:
+                result = executeCreateImageRequest(client, message).exec();
+                break;
+            case INSPECT_IMAGE:
+                result = executeInspectImageRequest(client, message).exec();
+                break;
+            case LIST_IMAGES:
+                result = executeListImagesRequest(client, message).exec();
+                break;
+            case REMOVE_IMAGE:
+                result = executeRemoveImageRequest(client, message).exec();
+                break;
+            case SEARCH_IMAGES:
+                result = executeSearchImageRequest(client, message).exec();
+                break;
+            case TAG_IMAGE:
+                result = executeTagImageRequest(client, message).exec();
+                break;
+            case COMMIT_CONTAINER:
+                result = executeCommitContainerRequest(client, message).exec();
+                break;
+            case COPY_FILE_CONTAINER:
+                result = executeCopyFileContainerRequest(client, message).exec();
+                break;
+            case CREATE_CONTAINER:
+                result = executeCreateContainerRequest(client, message).exec();
+                break;
+            case DIFF_CONTAINER:
+                result = executeDiffContainerRequest(client, message).exec();
+                break;
+            case INSPECT_CONTAINER:
+                result = executeInspectContainerRequest(client, message).exec();
+                break;
+            case LIST_CONTAINERS:
+                result = executeListContainersRequest(client, message).exec();
+                break;
+            case KILL_CONTAINER:
+                result = executeKillContainerRequest(client, message).exec();
+                break;
+            case PAUSE_CONTAINER:
+                result = executePauseContainerRequest(client, message).exec();
+                break;
+            case REMOVE_CONTAINER:
+                result = executeRemoveContainerRequest(client, message).exec();
+                break;
+            case RESTART_CONTAINER:
+                result = executeRestartContainerRequest(client, message).exec();
+                break;
+            case START_CONTAINER:
+                result = executeStartContainerRequest(client, message).exec();
+                break;
+            case STOP_CONTAINER:
+                result = executeStopContainerRequest(client, message).exec();
+                break;
+            case TOP_CONTAINER:
+                result = executeTopContainerRequest(client, message).exec();
+                break;
+            case UNPAUSE_CONTAINER:
+                result = executeUnpauseContainerRequest(client, message).exec();
+                break;
+            case CREATE_NETWORK:
+                result = executeCreateNetworkRequest(client, message).exec();
+                break;
+            case REMOVE_NETWORK:
+                result = executeRemoveNetworkRequest(client, message).exec();
+                break;
+            case CONNECT_NETWORK:
+                result = executeConnectToNetworkRequest(client, message).exec();
+                break;
+            case EXEC_CREATE:
+                result = executeExecCreateRequest(client, message).exec();
+                break;
+            default:
+                throw new DockerException("Invalid operation: " + operation);
         }
 
         // If request included a response, set as body
@@ -1121,12 +1121,12 @@ public class DockerProducer extends DefaultProducer {
     }
 
     /**
-    * Produces a network remove request
-    *
-    * @param client
-    * @param message
-    * @return
-    */
+     * Produces a network remove request
+     *
+     * @param client
+     * @param message
+     * @return
+     */
     private RemoveNetworkCmd executeRemoveNetworkRequest(DockerClient client, Message message) {
 
         LOGGER.debug("Executing Docker Network Remove Request");

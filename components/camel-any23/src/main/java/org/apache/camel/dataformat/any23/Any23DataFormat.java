@@ -112,7 +112,7 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
         if (outputFormat == Any23OutputFormat.RDF4JMODEL) {
             respon = ((RDF4JModelWriter)handler).getModel();
         } else {
-            respon = new String(out.toByteArray());
+            respon = out.toString();
         }
         return respon;
 

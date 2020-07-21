@@ -27,10 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
-import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.Language;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.slf4j.LoggerFactory;
 
@@ -42,31 +39,25 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     protected CamelLogger logger;
     protected RedeliveryPolicy redeliveryPolicy;
     protected Processor onRedelivery;
+    protected String onRedeliveryRef;
     protected Predicate retryWhile;
     protected String retryWhileRef;
     protected Processor failureProcessor;
+    protected String failureProcessorRef;
     protected Endpoint deadLetter;
     protected String deadLetterUri;
     protected boolean deadLetterHandleNewException = true;
     protected boolean useOriginalMessage;
     protected boolean useOriginalBody;
     protected boolean asyncDelayedRedelivery;
-    protected String executorServiceRef;
     protected ScheduledExecutorService executorService;
+    protected String executorServiceRef;
     protected Processor onPrepareFailure;
+    protected String onPrepareFailureRef;
     protected Processor onExceptionOccurred;
+    protected String onExceptionOccurredRef;
 
     public DefaultErrorHandlerBuilder() {
-    }
-
-    @Override
-    public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
-        DefaultErrorHandler answer = new DefaultErrorHandler(routeContext.getCamelContext(), processor, getLogger(), getOnRedelivery(), getRedeliveryPolicy(),
-                                                             getExceptionPolicyStrategy(), getRetryWhilePolicy(routeContext.getCamelContext()),
-                                                             getExecutorService(routeContext.getCamelContext()), getOnPrepareFailure(), getOnExceptionOccurred());
-        // configure error handler before we can use it
-        configure(routeContext, answer);
-        return answer;
     }
 
     @Override
@@ -84,36 +75,24 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     protected void cloneBuilder(DefaultErrorHandlerBuilder other) {
         super.cloneBuilder(other);
 
-        if (logger != null) {
-            other.setLogger(logger);
-        }
+        other.logger = logger;
         if (redeliveryPolicy != null) {
-            other.setRedeliveryPolicy(redeliveryPolicy.copy());
+            other.redeliveryPolicy = redeliveryPolicy.copy();
         }
-        if (onRedelivery != null) {
-            other.setOnRedelivery(onRedelivery);
-        }
-        if (retryWhile != null) {
-            other.setRetryWhile(retryWhile);
-        }
-        if (retryWhileRef != null) {
-            other.setRetryWhileRef(retryWhileRef);
-        }
-        if (failureProcessor != null) {
-            other.setFailureProcessor(failureProcessor);
-        }
+        other.setOnRedelivery(onRedelivery);
+        other.setOnRedeliveryRef(onRedeliveryRef);
+        other.setRetryWhile(retryWhile);
+        other.setRetryWhileRef(retryWhileRef);
+        other.setFailureProcessor(failureProcessor);
+        other.setFailureProcessorRef(failureProcessorRef);
         if (deadLetter != null) {
             other.setDeadLetter(deadLetter);
         }
-        if (deadLetterUri != null) {
-            other.setDeadLetterUri(deadLetterUri);
-        }
-        if (onPrepareFailure != null) {
-            other.setOnPrepareFailure(onPrepareFailure);
-        }
-        if (onExceptionOccurred != null) {
-            other.setOnExceptionOccurred(onExceptionOccurred);
-        }
+        other.setDeadLetterUri(deadLetterUri);
+        other.setOnPrepareFailure(onPrepareFailure);
+        other.setOnPrepareFailureRef(onPrepareFailureRef);
+        other.setOnExceptionOccurred(onExceptionOccurred);
+        other.setOnExceptionOccurredRef(onExceptionOccurredRef);
         other.setDeadLetterHandleNewException(deadLetterHandleNewException);
         other.setUseOriginalMessage(useOriginalMessage);
         other.setUseOriginalBody(useOriginalBody);
@@ -255,6 +234,17 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     }
 
     /**
+     * Sets the thread pool to be used for redelivery.
+     *
+     * @param executorService the scheduled thread pool to use
+     * @return the builder.
+     */
+    public DefaultErrorHandlerBuilder executorService(ScheduledExecutorService executorService) {
+        setExecutorService(executorService);
+        return this;
+    }
+
+    /**
      * Sets a reference to a thread pool to be used for redelivery.
      *
      * @param ref reference to a scheduled thread pool
@@ -334,6 +324,18 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     }
 
     /**
+     * Sets a reference for the processor to use <b>before</b> a redelivery attempt.
+     *
+     * @param onRedeliveryRef the processor's reference
+     * @return the builder
+     * @see #onRedelivery(Processor)
+     */
+    public DefaultErrorHandlerBuilder onRedeliveryRef(String onRedeliveryRef) {
+        setOnRedeliveryRef(onRedeliveryRef);
+        return this;
+    }
+
+    /**
      * Sets the retry while expression.
      * <p/>
      * Will continue retrying until expression evaluates to <tt>false</tt>.
@@ -343,6 +345,11 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
      */
     public DefaultErrorHandlerBuilder retryWhile(Expression retryWhile) {
         setRetryWhile(ExpressionToPredicateAdapter.toPredicate(retryWhile));
+        return this;
+    }
+
+    public DefaultErrorHandlerBuilder retryWhileRef(String retryWhileRef) {
+        setRetryWhileRef(retryWhileRef);
         return this;
     }
 
@@ -484,6 +491,18 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     }
 
     /**
+     * Sets a reference for the processor to use before handled by the failure processor.
+     *
+     * @param onPrepareFailureRef the processor's reference
+     * @return the builder
+     * @see #onPrepareFailure(Processor)
+     */
+    public DefaultErrorHandlerBuilder onPrepareFailureRef(String onPrepareFailureRef) {
+        setOnPrepareFailureRef(onPrepareFailureRef);
+        return this;
+    }
+
+    /**
      * Sets a custom {@link org.apache.camel.Processor} to process the
      * {@link org.apache.camel.Exchange} just after an exception was thrown.
      * This allows to execute the processor at the same time the exception was
@@ -499,6 +518,18 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
+    /**
+     * Sets a reference for the processor to use just after an exception was thrown.
+     *
+     * @param onExceptionOccurredRef the processor's reference
+     * @return the builder
+     * @see #onExceptionOccurred(Processor)
+     */
+    public DefaultErrorHandlerBuilder onExceptionOccurredRef(String onExceptionOccurredRef) {
+        setOnExceptionOccurredRef(onExceptionOccurredRef);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -508,6 +539,14 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
     public void setFailureProcessor(Processor failureProcessor) {
         this.failureProcessor = failureProcessor;
+    }
+
+    public String getFailureProcessorRef() {
+        return failureProcessorRef;
+    }
+
+    public void setFailureProcessorRef(String failureProcessorRef) {
+        this.failureProcessorRef = failureProcessorRef;
     }
 
     public RedeliveryPolicy getRedeliveryPolicy() {
@@ -541,6 +580,14 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
     public void setOnRedelivery(Processor onRedelivery) {
         this.onRedelivery = onRedelivery;
+    }
+
+    public String getOnRedeliveryRef() {
+        return onRedeliveryRef;
+    }
+
+    public void setOnRedeliveryRef(String onRedeliveryRef) {
+        this.onRedeliveryRef = onRedeliveryRef;
     }
 
     public Predicate getRetryWhilePolicy(CamelContext context) {
@@ -645,12 +692,28 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         this.onPrepareFailure = onPrepareFailure;
     }
 
+    public String getOnPrepareFailureRef() {
+        return onPrepareFailureRef;
+    }
+
+    public void setOnPrepareFailureRef(String onPrepareFailureRef) {
+        this.onPrepareFailureRef = onPrepareFailureRef;
+    }
+
     public Processor getOnExceptionOccurred() {
         return onExceptionOccurred;
     }
 
     public void setOnExceptionOccurred(Processor onExceptionOccurred) {
         this.onExceptionOccurred = onExceptionOccurred;
+    }
+
+    public String getOnExceptionOccurredRef() {
+        return onExceptionOccurredRef;
+    }
+
+    public void setOnExceptionOccurredRef(String onExceptionOccurredRef) {
+        this.onExceptionOccurredRef = onExceptionOccurredRef;
     }
 
     protected RedeliveryPolicy createRedeliveryPolicy() {
@@ -661,31 +724,6 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
     protected CamelLogger createLogger() {
         return new CamelLogger(LoggerFactory.getLogger(DefaultErrorHandler.class), LoggingLevel.ERROR);
-    }
-
-    protected synchronized ScheduledExecutorService getExecutorService(CamelContext camelContext) {
-        if (executorService == null || executorService.isShutdown()) {
-            // camel context will shutdown the executor when it shutdown so no
-            // need to shut it down when stopping
-            if (executorServiceRef != null) {
-                executorService = camelContext.getRegistry().lookupByNameAndType(executorServiceRef, ScheduledExecutorService.class);
-                if (executorService == null) {
-                    ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
-                    ThreadPoolProfile profile = manager.getThreadPoolProfile(executorServiceRef);
-                    executorService = manager.newScheduledThreadPool(this, executorServiceRef, profile);
-                }
-                if (executorService == null) {
-                    throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
-                }
-            } else {
-                // no explicit configured thread pool, so leave it up to the
-                // error handler to decide if it need
-                // a default thread pool from
-                // CamelContext#getErrorHandlerExecutorService
-                executorService = null;
-            }
-        }
-        return executorService;
     }
 
     @Override

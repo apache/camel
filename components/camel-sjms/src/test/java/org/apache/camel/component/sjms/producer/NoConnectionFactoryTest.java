@@ -17,14 +17,15 @@
 package org.apache.camel.component.sjms.producer;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * A unit test to ensure getting a meaningful error message
@@ -41,11 +42,11 @@ public class NoConnectionFactoryTest {
         try {
             context.start();
         } catch (Throwable t) {
-            Assert.assertEquals(IllegalArgumentException.class, t.getClass());
+            assertEquals(IllegalArgumentException.class, t.getClass());
             LOG.info("Expected exception was thrown", t);
             return;
         }
-        Assert.fail("No exception was thrown");
+        fail("No exception was thrown");
     }
 
     @Test
@@ -55,11 +56,11 @@ public class NoConnectionFactoryTest {
         try {
             context.start();
         } catch (Throwable t) {
-            Assert.assertEquals(IllegalArgumentException.class, t.getClass());
+            assertEquals(IllegalArgumentException.class, t.getClass());
             LOG.info("Expected exception was thrown", t);
             return;
         }
-        Assert.fail("No exception was thrown");
+        fail("No exception was thrown");
     }
 
     @Test
@@ -69,12 +70,12 @@ public class NoConnectionFactoryTest {
         try {
             context.start();
         } catch (Throwable t) {
-            Assert.assertEquals(FailedToStartRouteException.class, t.getClass());
-            Assert.assertEquals(IllegalArgumentException.class, t.getCause().getCause().getClass());
+            assertEquals(FailedToStartRouteException.class, t.getClass());
+            assertEquals(IllegalArgumentException.class, t.getCause().getCause().getClass());
             LOG.info("Expected exception was thrown", t);
             return;
         }
-        Assert.fail("No exception was thrown");
+        fail("No exception was thrown");
     }
 
     @Test
@@ -84,12 +85,12 @@ public class NoConnectionFactoryTest {
         try {
             context.start();
         } catch (Throwable t) {
-            Assert.assertEquals(FailedToStartRouteException.class, t.getClass());
-            Assert.assertEquals(IllegalArgumentException.class, t.getCause().getCause().getClass());
+            assertEquals(FailedToStartRouteException.class, t.getClass());
+            assertEquals(IllegalArgumentException.class, t.getCause().getCause().getClass());
             LOG.info("Expected exception was thrown", t);
             return;
         }
-        Assert.fail("No exception was thrown");
+        fail("No exception was thrown");
     }
 
     protected RouteBuilder createConsumerInOnlyRouteBuilder() throws Exception {

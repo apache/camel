@@ -108,50 +108,50 @@ public enum ExtraParameters {
         }
         for (Map.Entry<ExtraParameters, Object> entry : extraParameters.entrySet()) {
             switch (entry.getKey()) {
-            case ENCODE_JSON:
-                Boolean encode = (Boolean) extraParameters.get(ENCODE_JSON);
-                if (encode) {
-                    clientExecutable.encodedJson();
-                }
-                break;
-            case ENCODE_XML:
-                Boolean encodeXml = (Boolean) extraParameters.get(ENCODE_XML);
-                if (encodeXml) {
-                    clientExecutable.encodedXml();
-                }
-                break;
-            case CACHE_CONTROL_DIRECTIVE:
-                CacheControlDirective cacheControlDirective = (CacheControlDirective) extraParameters.get(CACHE_CONTROL_DIRECTIVE);
-                clientExecutable.cacheControl(cacheControlDirective);
-                break;
-            case SUBSET_ELEMENTS:
-                String[] subsetElements = (String[]) extraParameters.get(SUBSET_ELEMENTS);
-                clientExecutable.elementsSubset(subsetElements);
-                break;
-            case ENCODING_ENUM:
-                EncodingEnum encodingEnum = (EncodingEnum) extraParameters.get(ENCODING_ENUM);
-                clientExecutable.encoded(encodingEnum);
-                break;
-            case PREFER_RESPONSE_TYPE:
-                Class<? extends IBaseResource> type = (Class<? extends IBaseResource>) extraParameters.get(PREFER_RESPONSE_TYPE);
-                clientExecutable.preferResponseType(type);
-                break;
-            case PREFER_RESPONSE_TYPES:
-                List<Class<? extends IBaseResource>> types = (List<Class<? extends IBaseResource>>) extraParameters.get(PREFER_RESPONSE_TYPES);
-                clientExecutable.preferResponseTypes(types);
-                break;
-            case PRETTY_PRINT:
-                Boolean prettyPrint = (Boolean) extraParameters.get(PRETTY_PRINT);
-                if (prettyPrint) {
-                    clientExecutable.prettyPrint();
-                }
-                break;
-            case SUMMARY_ENUM:
-                SummaryEnum summary = (SummaryEnum) extraParameters.get(SUMMARY_ENUM);
-                clientExecutable.summaryMode(summary);
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported FHIR extra parameter parameter: " + entry.getKey());
+                case ENCODE_JSON:
+                    Boolean encode = (Boolean) extraParameters.get(ENCODE_JSON);
+                    if (encode) {
+                        clientExecutable.encodedJson();
+                    }
+                    break;
+                case ENCODE_XML:
+                    Boolean encodeXml = (Boolean) extraParameters.get(ENCODE_XML);
+                    if (encodeXml) {
+                        clientExecutable.encodedXml();
+                    }
+                    break;
+                case CACHE_CONTROL_DIRECTIVE:
+                    CacheControlDirective cacheControlDirective = (CacheControlDirective) extraParameters.get(CACHE_CONTROL_DIRECTIVE);
+                    clientExecutable.cacheControl(cacheControlDirective);
+                    break;
+                case SUBSET_ELEMENTS:
+                    String[] subsetElements = (String[]) extraParameters.get(SUBSET_ELEMENTS);
+                    clientExecutable.elementsSubset(subsetElements);
+                    break;
+                case ENCODING_ENUM:
+                    EncodingEnum encodingEnum = (EncodingEnum) extraParameters.get(ENCODING_ENUM);
+                    clientExecutable.encoded(encodingEnum);
+                    break;
+                case PREFER_RESPONSE_TYPE:
+                    Class<? extends IBaseResource> type = (Class<? extends IBaseResource>) extraParameters.get(PREFER_RESPONSE_TYPE);
+                    clientExecutable.preferResponseType(type);
+                    break;
+                case PREFER_RESPONSE_TYPES:
+                    List<Class<? extends IBaseResource>> types = (List<Class<? extends IBaseResource>>) extraParameters.get(PREFER_RESPONSE_TYPES);
+                    clientExecutable.preferResponseTypes(types);
+                    break;
+                case PRETTY_PRINT:
+                    Boolean prettyPrint = (Boolean) extraParameters.get(PRETTY_PRINT);
+                    if (prettyPrint) {
+                        clientExecutable.prettyPrint();
+                    }
+                    break;
+                case SUMMARY_ENUM:
+                    SummaryEnum summary = (SummaryEnum) extraParameters.get(SUMMARY_ENUM);
+                    clientExecutable.summaryMode(summary);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported FHIR extra parameter parameter: " + entry.getKey());
             }
         }
     }

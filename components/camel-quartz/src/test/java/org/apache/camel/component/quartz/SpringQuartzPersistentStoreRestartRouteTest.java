@@ -17,10 +17,13 @@
 package org.apache.camel.component.quartz;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.apache.camel.test.junit5.TestSupport.isPlatform;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class SpringQuartzPersistentStoreRestartRouteTest extends CamelSpringTestSupport {
 
@@ -32,9 +35,7 @@ public class SpringQuartzPersistentStoreRestartRouteTest extends CamelSpringTest
     @Test
     public void testQuartzPersistentStore() throws Exception {
         // skip testing on aix
-        if (isPlatform("aix")) {
-            return;
-        }
+        assumeFalse(isPlatform("aix"));
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);

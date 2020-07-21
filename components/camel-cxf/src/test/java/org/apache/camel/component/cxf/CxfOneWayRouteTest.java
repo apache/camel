@@ -26,12 +26,16 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.hello_world_soap_http.Greeter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests a cxf routing scenario from an oneway cxf EP to a file EP to not forward the old input
@@ -46,7 +50,7 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
     private static boolean bindingDone;
     private static boolean onCompeletedCalled;
 
-    @Before
+    @BeforeEach
     public void setup() {
         bindingException = null;
         bindingDone = false;
@@ -82,8 +86,8 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
         }
 
         assertMockEndpointsSatisfied();
-        assertTrue("UnitOfWork done should be called", onCompeletedCalled);
-        assertNull("exception occured: " + bindingException, bindingException);
+        assertTrue(onCompeletedCalled, "UnitOfWork done should be called");
+        assertNull(bindingException, "exception occured: " + bindingException);
     }
     
     public static class TestProcessor implements Processor {
@@ -92,7 +96,7 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
         @Override
         public void process(Exchange exchange) throws Exception {
             // just check the MEP here
-            assertEquals("Don't get the right MEP", ExchangePattern.InOnly, exchange.getPattern());
+            assertEquals(ExchangePattern.InOnly, exchange.getPattern(), "Don't get the right MEP");
             // adding some binary segment
             String msg = exchange.getIn().getBody(String.class);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();

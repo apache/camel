@@ -41,8 +41,8 @@
       <!-- Camel BOM -->
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-parent</artifactId>
-        <version>${camelVersion}</version>
+        <artifactId>camel-bom</artifactId>
+        <version>${camel-version}</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>

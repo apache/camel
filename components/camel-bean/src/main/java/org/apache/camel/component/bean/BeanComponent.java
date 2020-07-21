@@ -25,12 +25,16 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.util.PropertiesHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The bean component is for invoking Java beans from Camel.
  */
 @org.apache.camel.spi.annotations.Component("bean")
 public class BeanComponent extends DefaultComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(BeanComponent.class);
 
     // use an internal soft cache for BeanInfo as they are costly to introspect
     // for example the bean language using OGNL expression runs much faster reusing the BeanInfo from this cache
@@ -82,9 +86,9 @@ public class BeanComponent extends DefaultComponent {
 
     @Override
     protected void doShutdown() throws Exception {
-        if (log.isDebugEnabled() && beanInfoCache instanceof LRUCache) {
+        if (LOG.isDebugEnabled() && beanInfoCache instanceof LRUCache) {
             LRUCache cache = (LRUCache) this.beanInfoCache;
-            log.debug("Clearing BeanInfo cache[size={}, hits={}, misses={}, evicted={}]", cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted());
+            LOG.debug("Clearing BeanInfo cache[size={}, hits={}, misses={}, evicted={}]", cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted());
         }
         beanInfoCache.clear();
     }

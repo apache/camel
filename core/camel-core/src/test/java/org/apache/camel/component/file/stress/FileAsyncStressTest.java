@@ -23,17 +23,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Manual test")
+@Disabled("Manual test")
 public class FileAsyncStressTest extends ContextTestSupport {
 
     private int files = 150;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // do not test on windows
         if (isPlatform("windows")) {

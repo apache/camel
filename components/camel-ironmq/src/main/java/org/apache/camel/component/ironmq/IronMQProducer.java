@@ -21,11 +21,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The IronMQ producer.
  */
 public class IronMQProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(IronMQProducer.class);
 
     private final Queue ironQueue;
     
@@ -52,8 +56,8 @@ public class IronMQProducer extends DefaultProducer {
             } else {
                 throw new InvalidPayloadException(exchange, String.class);
             }
-            log.trace("Send request [{}] from exchange [{}]...", body, exchange);
-            log.trace("Received messageId [{}]", messageId);
+            LOG.trace("Send request [{}] from exchange [{}]...", body, exchange);
+            LOG.trace("Received messageId [{}]", messageId);
             Message message = getMessageForResponse(exchange);
             message.setHeader(IronMQConstants.MESSAGE_ID, messageId);
         }

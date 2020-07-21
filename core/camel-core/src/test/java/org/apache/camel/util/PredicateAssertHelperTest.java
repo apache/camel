@@ -22,9 +22,10 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.PredicateAssertHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.builder.Builder.constant;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class PredicateAssertHelperTest extends ContextTestSupport {
 

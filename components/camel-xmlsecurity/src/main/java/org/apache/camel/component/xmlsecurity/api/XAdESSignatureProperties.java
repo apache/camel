@@ -603,7 +603,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
     }
 
     @Override
-    public Output get(Input input) throws Exception { //NOPMD
+    public Output get(Input input) throws Exception {
 
         XmlSignatureProperties.Output result = new Output();
 
@@ -795,7 +795,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
                 || (getDataObjectFormatMimeType() != null && !getDataObjectFormatMimeType().isEmpty());
     }
 
-    protected void addSignedSignatureProperties(Document doc, Element signedProperties, Input input) throws Exception { //NOPMD
+    protected void addSignedSignatureProperties(Document doc, Element signedProperties, Input input) throws Exception {
         if (isAddSignedSignatureProperties()) {
             LOG.debug("Adding signed signature properties");
             Element signedSignatureProperties = createElement("SignedSignatureProperties", doc, input);
@@ -809,7 +809,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
         }
     }
 
-    protected boolean isAddSignedSignatureProperties() throws Exception { //NOPMD
+    protected boolean isAddSignedSignatureProperties() throws Exception {
         return isAddSigningTime() || getSigningCertificate() != null
                 || (getSigningCertificateChain() != null && getSigningCertificateChain().length > 0) || isAddSignaturePolicy()
                 || isAddSignatureProductionPlace() || isAddSignerRole();
@@ -1072,7 +1072,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
         return !SIG_POLICY_NONE.equals(getSignaturePolicy());
     }
 
-    protected void addSigningCertificate(Document doc, Element signedProperties, Input input) throws Exception { //NOPMD
+    protected void addSigningCertificate(Document doc, Element signedProperties, Input input) throws Exception {
         if (getSigningCertificate() == null && (getSigningCertificateChain() == null || getSigningCertificateChain().length == 0)) {
             return;
         }
@@ -1106,7 +1106,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
      * <p>
      * This implementation returns <code>null</code>
      */
-    protected X509Certificate getSigningCertificate() throws Exception { //NOPMD
+    protected X509Certificate getSigningCertificate() throws Exception {
         return null;
     }
 
@@ -1117,7 +1117,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
      * <p>
      * This implementation returns <code>null</code>
      */
-    protected X509Certificate[] getSigningCertificateChain() throws Exception { //NOPMD
+    protected X509Certificate[] getSigningCertificateChain() throws Exception {
         return null;
     }
 

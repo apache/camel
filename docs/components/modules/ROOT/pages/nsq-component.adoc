@@ -1,12 +1,17 @@
 [[nsq-component]]
 = NSQ Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-nsq/src/main/docs/nsq-component.adoc
+:docTitle: NSQ
+:artifactId: camel-nsq
+:description: Send and receive messages from NSQ realtime distributed messaging platform.
+:since: 2.23
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.23*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 http://nsq.io/[NSQ] is a realtime distributed messaging platform.
 
@@ -44,10 +49,10 @@ The NSQ component supports 5 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *servers* (common) | The hostnames of one or more nsqlookupd servers (consumer) or nsqd servers (producer). |  | String
-| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 |===
 // component options: END
 
@@ -70,7 +75,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *topic* | *Required* The name of topic we want to use |  | String
+| *topic* | *Required* The NSQ topic |  | String
 |===
 
 
@@ -80,18 +85,18 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *servers* (common) | The hostnames of one or more nsqlookupd servers (consumer) or nsqd servers (producer). |  | String
+| *servers* (common) | The hostnames of one or more nsqlookupd servers (consumer) or nsqd servers (producer) |  | String
 | *userAgent* (common) | A String to identify the kind of client |  | String
-| *autoFinish* (consumer) | Automatically finish the NSQ message when it is retrieved from the quese and before the Exchange is processed. | true | Boolean
+| *autoFinish* (consumer) | Automatically finish the NSQ Message when it is retrieved from the queue and before the Exchange is processed | true | Boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *channel* (consumer) | The name of channel we want to use |  | String
-| *lookupInterval* (consumer) | The lookup retry interval | 5000 | long
-| *lookupServerPort* (consumer) | The port of the nsqdlookupd server | 4161 | int
-| *messageTimeout* (consumer) | The NSQ message timeout for a consumer. | -1 | long
+| *channel* (consumer) | The NSQ channel |  | String
+| *lookupInterval* (consumer) | The lookup interval | 5000 | long
+| *lookupServerPort* (consumer) | The NSQ lookup server port | 4161 | int
+| *messageTimeout* (consumer) | The NSQ consumer timeout period for messages retrieved from the queue. A value of -1 is the server default | -1 | long
 | *poolSize* (consumer) | Consumer pool size | 10 | int
-| *requeueInterval* (consumer) | The requeue interval | -1 | long
+| *requeueInterval* (consumer) | The requeue interval in milliseconds. A value of -1 is the server default | -1 | long
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *port* (producer) | The port of the nsqd server | 4150 | int
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
@@ -100,37 +105,6 @@ with the following path and query parameters:
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-nsq-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 6 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.nsq.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.nsq.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.nsq.enabled* | Whether to enable auto configuration of the nsq component. This is enabled by default. |  | Boolean
-| *camel.component.nsq.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-| *camel.component.nsq.servers* | The hostnames of one or more nsqlookupd servers (consumer) or nsqd servers (producer). |  | String
-| *camel.component.nsq.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
-|===
-// spring-boot-auto-configure options: END
 
 == Examples
 
@@ -165,3 +139,5 @@ Then you can omit the servers from the endpoint URI
 from("direct:start").to("nsq:myTopic");
 ----
 
+
+include::camel-spring-boot::page$nsq-starter.adoc[]

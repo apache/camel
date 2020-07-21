@@ -18,25 +18,22 @@ package org.apache.camel.component.servlet.rest;
 
 import java.io.ByteArrayInputStream;
 
-import com.meterware.httpunit.GetMethodWebRequest;
-import com.meterware.httpunit.PostMethodWebRequest;
-import com.meterware.httpunit.WebRequest;
-import com.meterware.httpunit.WebResponse;
-import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RestServletPojoInOutTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testServletPojoInOut() throws Exception {
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/users/lives", new ByteArrayInputStream(body.getBytes()), "application/json");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users/lives",
+                new ByteArrayInputStream(body.getBytes()), "application/json");
+        WebResponse response = query(req, false);
 
         assertEquals(200, response.getResponseCode());
 
@@ -45,14 +42,12 @@ public class RestServletPojoInOutTest extends ServletCamelRouterTestSupport {
         assertNotNull(out);
         assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
     }
-    
+
     @Test
     public void testServletPojoGet() throws Exception {
-        
-        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/users/lives");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+
+        WebRequest req = new GetMethodWebRequest(contextUrl + "/services/users/lives");
+        WebResponse response = query(req, false);
 
         assertEquals(200, response.getResponseCode());
 
@@ -60,7 +55,7 @@ public class RestServletPojoInOutTest extends ServletCamelRouterTestSupport {
 
         assertNotNull(out);
         assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
-    }   
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

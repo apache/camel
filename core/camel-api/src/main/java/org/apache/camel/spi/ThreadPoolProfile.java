@@ -266,6 +266,11 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
         }
     }
 
+    public boolean isEmpty() {
+        return poolSize == null && maxPoolSize == null && keepAliveTime == null && timeUnit == null
+                && maxQueueSize == null && allowCoreThreadTimeOut == null && rejectedPolicy == null;
+    }
+
     @Override
     public ThreadPoolProfile clone() {
         ThreadPoolProfile cloned = new ThreadPoolProfile();
@@ -284,7 +289,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
     @Override
     public String toString() {
         return "ThreadPoolProfile[" + id + " (" + defaultProfile + ") size:" + poolSize + "-" + maxPoolSize
-                + ", keepAlive: " + keepAliveTime + " " + timeUnit + ", maxQueue: " + maxQueueSize
+                + ", keepAlive:" + keepAliveTime + " " + timeUnit + ", maxQueue:" + maxQueueSize
                 + ", allowCoreThreadTimeOut:" + allowCoreThreadTimeOut + ", rejectedPolicy:" + rejectedPolicy + "]";
     }
 

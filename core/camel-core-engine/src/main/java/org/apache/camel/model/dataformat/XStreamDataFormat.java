@@ -17,29 +17,23 @@
 package org.apache.camel.model.dataformat;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**
- * XSTream data format is used for unmarshal a XML payload to POJO or to marshal
- * POJO back to XML payload.
+ * Marshal and unmarshal POJOs to/from XML using <a href="https://x-stream.github.io/">XStream</a> library.
  */
 @Metadata(firstVersion = "1.3.0", label = "dataformat,transformation,xml,json", title = "XStream")
 @XmlRootElement(name = "xstream")
@@ -56,18 +50,14 @@ public class XStreamDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String mode;
 
-    @XmlJavaTypeAdapter(ConvertersAdapter.class)
     @XmlElement(name = "converters")
-    private List<String> converters;
-    @XmlJavaTypeAdapter(AliasAdapter.class)
+    private List<PropertyDefinition> converters;
     @XmlElement(name = "aliases")
-    private Map<String, String> aliases;
-    @XmlJavaTypeAdapter(OmitFieldsAdapter.class)
+    private List<PropertyDefinition> aliases;
     @XmlElement(name = "omitFields")
-    private Map<String, String[]> omitFields;
-    @XmlJavaTypeAdapter(ImplicitCollectionsAdapter.class)
+    private List<PropertyDefinition> omitFields;
     @XmlElement(name = "implicitCollections")
-    private Map<String, String[]> implicitCollections;
+    private List<PropertyDefinition> implicitCollections;
 
     public XStreamDataFormat() {
         super("xstream");
@@ -76,6 +66,11 @@ public class XStreamDataFormat extends DataFormatDefinition {
     public XStreamDataFormat(String encoding) {
         this();
         setEncoding(encoding);
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "json".equals(driver) ? "json-xstream" : "xstream";
     }
 
     public String getEncoding() {
@@ -133,52 +128,116 @@ public class XStreamDataFormat extends DataFormatDefinition {
         this.mode = mode;
     }
 
-    public List<String> getConverters() {
+    public List<PropertyDefinition> getConverters() {
         return converters;
+    }
+
+    public Map<String, String> getConvertersAsMap() {
+        if (converters == null || converters.isEmpty()) {
+            return null;
+        }
+        Map<String, String> answer = new LinkedHashMap<>();
+        for (PropertyDefinition def : converters) {
+            answer.put(def.getKey(), def.getValue());
+        }
+        return answer;
     }
 
     /**
      * List of class names for using custom XStream converters. The classes must
      * be of type com.thoughtworks.xstream.converters.Converter
      */
-    public void setConverters(List<String> converters) {
+    public void setConverters(List<PropertyDefinition> converters) {
         this.converters = converters;
     }
 
-    public Map<String, String> getAliases() {
+    public void setConverters(Map<String, String> converters) {
+        this.converters = new ArrayList<>();
+        converters.forEach((k, v) -> this.converters.add(new PropertyDefinition(k, v)));
+    }
+
+    public List<PropertyDefinition> getAliases() {
         return aliases;
+    }
+
+    public Map<String, String> getAliasesAsMap() {
+        if (aliases == null || aliases.isEmpty()) {
+            return null;
+        }
+        Map<String, String> answer = new LinkedHashMap<>();
+        for (PropertyDefinition def : aliases) {
+            answer.put(def.getKey(), def.getValue());
+        }
+        return answer;
     }
 
     /**
      * Alias a Class to a shorter name to be used in XML elements.
      */
-    public void setAliases(Map<String, String> aliases) {
+    public void setAliases(List<PropertyDefinition> aliases) {
         this.aliases = aliases;
     }
 
-    public Map<String, String[]> getOmitFields() {
+    public void setAliases(Map<String, String> aliases) {
+        this.aliases = new ArrayList<>();
+        aliases.forEach((k, v) -> this.aliases.add(new PropertyDefinition(k, v)));
+    }
+
+    public List<PropertyDefinition> getOmitFields() {
         return omitFields;
     }
 
     /**
      * Prevents a field from being serialized. To omit a field you must always
      * provide the declaring type and not necessarily the type that is
-     * converted.
+     * converted. Multiple values can be separated by comma.
      */
-    public void setOmitFields(Map<String, String[]> omitFields) {
+    public void setOmitFields(List<PropertyDefinition> omitFields) {
         this.omitFields = omitFields;
     }
 
-    public Map<String, String[]> getImplicitCollections() {
+    public void setOmitFields(Map<String, String> aliases) {
+        this.omitFields = new ArrayList<>();
+        aliases.forEach((k, v) -> this.omitFields.add(new PropertyDefinition(k, v)));
+    }
+
+    public Map<String, String> getOmitFieldsAsMap() {
+        if (omitFields == null || omitFields.isEmpty()) {
+            return null;
+        }
+        Map<String, String> answer = new LinkedHashMap<>();
+        for (PropertyDefinition def : omitFields) {
+            answer.put(def.getKey(), def.getValue());
+        }
+        return answer;
+    }
+
+    public List<PropertyDefinition> getImplicitCollections() {
         return implicitCollections;
     }
 
     /**
-     * Adds a default implicit collection which is used for any unmapped XML
-     * tag.
+     * Adds a default implicit collection which is used for any unmapped XML tag.
+     * Multiple values can be separated by comma.
      */
-    public void setImplicitCollections(Map<String, String[]> implicitCollections) {
+    public void setImplicitCollections(List<PropertyDefinition> implicitCollections) {
         this.implicitCollections = implicitCollections;
+    }
+
+    public void setImplicitCollections(Map<String, String> implicitCollections) {
+        this.implicitCollections = new ArrayList<>();
+        implicitCollections.forEach((k, v) -> this.implicitCollections.add(new PropertyDefinition(k, v)));
+    }
+
+    public Map<String, String> getImplicitCollectionsAsMap() {
+        if (implicitCollections == null || implicitCollections.isEmpty()) {
+            return null;
+        }
+        Map<String, String> answer = new LinkedHashMap<>();
+        for (PropertyDefinition def : implicitCollections) {
+            answer.put(def.getKey(), def.getValue());
+        }
+        return answer;
     }
 
     public String getPermissions() {
@@ -193,7 +252,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
      * system property. The permission can be specified in a syntax where a plus
      * sign is allow, and minus sign is deny. <br/>
      * Wildcards is supported by using <tt>.*</tt> as prefix. For example to
-     * allow <tt>com.foo</tt> and all subpackages then specfy
+     * allow <tt>com.foo</tt> and all subpackages then specify
      * <tt>+com.foo.*</tt>. Multiple permissions can be configured separated by
      * comma, such as <tt>+com.foo.*,-com.foo.bar.MySecretBean</tt>. <br/>
      * The following default permission is always included:
@@ -207,7 +266,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
 
     /**
      * To add permission for the given pojo classes.
-     * 
+     *
      * @param type the pojo class(es) xstream should use as allowed permission
      * @see #setPermissions(String)
      */
@@ -220,332 +279,4 @@ public class XStreamDataFormat extends DataFormatDefinition {
         setPermissions(csb.toString());
     }
 
-    @XmlTransient
-    public static class ConvertersAdapter extends XmlAdapter<ConverterList, List<String>> {
-        @Override
-        public ConverterList marshal(List<String> v) throws Exception {
-            if (v == null) {
-                return null;
-            }
-
-            List<ConverterEntry> list = new ArrayList<>();
-            for (String str : v) {
-                ConverterEntry entry = new ConverterEntry();
-                entry.setClsName(str);
-                list.add(entry);
-            }
-            ConverterList converterList = new ConverterList();
-            converterList.setList(list);
-            return converterList;
-        }
-
-        @Override
-        public List<String> unmarshal(ConverterList v) throws Exception {
-            if (v == null) {
-                return null;
-            }
-
-            List<String> list = new ArrayList<>();
-            for (ConverterEntry entry : v.getList()) {
-                list.add(entry.getClsName());
-            }
-            return list;
-        }
-    }
-
-    @XmlAccessorType(XmlAccessType.NONE)
-    @XmlType(name = "converterList", namespace = "http://camel.apache.org/schema/spring")
-    public static class ConverterList {
-        @XmlElement(name = "converter", namespace = "http://camel.apache.org/schema/spring")
-        private List<ConverterEntry> list;
-
-        public List<ConverterEntry> getList() {
-            return list;
-        }
-
-        public void setList(List<ConverterEntry> list) {
-            this.list = list;
-        }
-    }
-
-    @XmlAccessorType(XmlAccessType.NONE)
-    @XmlType(name = "converterEntry", namespace = "http://camel.apache.org/schema/spring")
-    public static class ConverterEntry {
-        @XmlAttribute(name = "class")
-        private String clsName;
-
-        public String getClsName() {
-            return clsName;
-        }
-
-        public void setClsName(String clsName) {
-            this.clsName = clsName;
-        }
-    }
-
-    @XmlTransient
-    public static class ImplicitCollectionsAdapter extends XmlAdapter<ImplicitCollectionList, Map<String, String[]>> {
-
-        @Override
-        public ImplicitCollectionList marshal(Map<String, String[]> v) throws Exception {
-            if (v == null || v.isEmpty()) {
-                return null;
-            }
-
-            List<ImplicitCollectionEntry> list = new ArrayList<>();
-            for (Entry<String, String[]> e : v.entrySet()) {
-                ImplicitCollectionEntry entry = new ImplicitCollectionEntry(e.getKey(), e.getValue());
-                list.add(entry);
-            }
-
-            ImplicitCollectionList collectionList = new ImplicitCollectionList();
-            collectionList.setList(list);
-
-            return collectionList;
-        }
-
-        @Override
-        public Map<String, String[]> unmarshal(ImplicitCollectionList v) throws Exception {
-            if (v == null) {
-                return null;
-            }
-
-            Map<String, String[]> map = new HashMap<>();
-            for (ImplicitCollectionEntry entry : v.getList()) {
-                map.put(entry.getClsName(), entry.getFields());
-            }
-            return map;
-        }
-    }
-
-    @XmlAccessorType(XmlAccessType.NONE)
-    @XmlType(name = "implicitCollectionList", namespace = "http://camel.apache.org/schema/spring")
-    public static class ImplicitCollectionList {
-        @XmlElement(name = "class", namespace = "http://camel.apache.org/schema/spring")
-        private List<ImplicitCollectionEntry> list;
-
-        public List<ImplicitCollectionEntry> getList() {
-            return list;
-        }
-
-        public void setList(List<ImplicitCollectionEntry> list) {
-            this.list = list;
-        }
-    }
-
-    @XmlAccessorType(XmlAccessType.NONE)
-    @XmlType(name = "implicitCollectionEntry", namespace = "http://camel.apache.org/schema/spring")
-    public static class ImplicitCollectionEntry {
-        @XmlAttribute(name = "name")
-        private String clsName;
-
-        @XmlElement(name = "field", namespace = "http://camel.apache.org/schema/spring")
-        private String[] fields;
-
-        public ImplicitCollectionEntry() {
-        }
-
-        public ImplicitCollectionEntry(String clsName, String[] fields) {
-            this.clsName = clsName;
-            this.fields = fields;
-        }
-
-        public String getClsName() {
-            return clsName;
-        }
-
-        public void setClsName(String clsName) {
-            this.clsName = clsName;
-        }
-
-        public String[] getFields() {
-            return fields;
-        }
-
-        public void setFields(String[] fields) {
-            this.fields = fields;
-        }
-
-        @Override
-        public String toString() {
-            return "Alias[ImplicitCollection=" + clsName + ", fields=" + Arrays.asList(this.fields) + "]";
-        }
-    }
-
-    @XmlTransient
-    public static class AliasAdapter extends XmlAdapter<AliasList, Map<String, String>> {
-
-        @Override
-        public AliasList marshal(Map<String, String> value) throws Exception {
-            if (value == null || value.isEmpty()) {
-                return null;
-            }
-
-            List<AliasEntry> ret = new ArrayList<>(value.size());
-            for (Map.Entry<String, String> entry : value.entrySet()) {
-                ret.add(new AliasEntry(entry.getKey(), entry.getValue()));
-            }
-            AliasList jaxbMap = new AliasList();
-            jaxbMap.setList(ret);
-            return jaxbMap;
-        }
-
-        @Override
-        public Map<String, String> unmarshal(AliasList value) throws Exception {
-            if (value == null || value.getList() == null || value.getList().isEmpty()) {
-                return null;
-            }
-
-            Map<String, String> answer = new HashMap<>();
-            for (AliasEntry alias : value.getList()) {
-                answer.put(alias.getName(), alias.getClsName());
-            }
-            return answer;
-        }
-    }
-
-    @XmlAccessorType(XmlAccessType.NONE)
-    @XmlType(name = "aliasList", namespace = "http://camel.apache.org/schema/spring")
-    public static class AliasList {
-        @XmlElement(name = "alias", namespace = "http://camel.apache.org/schema/spring")
-        private List<AliasEntry> list;
-
-        public List<AliasEntry> getList() {
-            return list;
-        }
-
-        public void setList(List<AliasEntry> list) {
-            this.list = list;
-        }
-    }
-
-    @XmlAccessorType(XmlAccessType.NONE)
-    @XmlType(name = "aliasEntry", namespace = "http://camel.apache.org/schema/spring")
-    public static class AliasEntry {
-
-        @XmlAttribute
-        private String name;
-
-        @XmlAttribute(name = "class")
-        private String clsName;
-
-        public AliasEntry() {
-        }
-
-        public AliasEntry(String key, String clsName) {
-            this.name = key;
-            this.clsName = clsName;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getClsName() {
-            return clsName;
-        }
-
-        public void setClsName(String clsName) {
-            this.clsName = clsName;
-        }
-
-        @Override
-        public String toString() {
-            return "Alias[name=" + name + ", class=" + clsName + "]";
-        }
-    }
-
-    @XmlTransient
-    public static class OmitFieldsAdapter extends XmlAdapter<OmitFieldList, Map<String, String[]>> {
-
-        @Override
-        public OmitFieldList marshal(Map<String, String[]> v) throws Exception {
-            if (v == null || v.isEmpty()) {
-                return null;
-            }
-
-            List<OmitFieldEntry> list = new ArrayList<>();
-            for (Entry<String, String[]> e : v.entrySet()) {
-                OmitFieldEntry entry = new OmitFieldEntry(e.getKey(), e.getValue());
-                list.add(entry);
-            }
-
-            OmitFieldList collectionList = new OmitFieldList();
-            collectionList.setList(list);
-
-            return collectionList;
-        }
-
-        @Override
-        public Map<String, String[]> unmarshal(OmitFieldList v) throws Exception {
-            if (v == null || v.getList() == null || v.getList().isEmpty()) {
-                return null;
-            }
-
-            Map<String, String[]> map = new HashMap<>();
-            for (OmitFieldEntry entry : v.getList()) {
-                map.put(entry.getClsName(), entry.getFields());
-            }
-            return map;
-        }
-    }
-
-    @XmlAccessorType(XmlAccessType.NONE)
-    @XmlType(name = "omitFieldList", namespace = "http://camel.apache.org/schema/spring")
-    public static class OmitFieldList {
-        @XmlElement(name = "omitField", namespace = "http://camel.apache.org/schema/spring")
-        private List<OmitFieldEntry> list;
-
-        public List<OmitFieldEntry> getList() {
-            return list;
-        }
-
-        public void setList(List<OmitFieldEntry> list) {
-            this.list = list;
-        }
-    }
-
-    @XmlAccessorType(XmlAccessType.NONE)
-    @XmlType(name = "omitFieldEntry", namespace = "http://camel.apache.org/schema/spring")
-    public static class OmitFieldEntry {
-
-        @XmlAttribute(name = "class")
-        private String clsName;
-
-        @XmlElement(name = "field", namespace = "http://camel.apache.org/schema/spring")
-        private String[] fields;
-
-        public OmitFieldEntry() {
-        }
-
-        public OmitFieldEntry(String clsName, String[] fields) {
-            this.clsName = clsName;
-            this.fields = fields;
-        }
-
-        public String getClsName() {
-            return clsName;
-        }
-
-        public void setClsName(String clsName) {
-            this.clsName = clsName;
-        }
-
-        public String[] getFields() {
-            return fields;
-        }
-
-        public void setFields(String[] fields) {
-            this.fields = fields;
-        }
-
-        @Override
-        public String toString() {
-            return "OmitField[" + clsName + ", fields=" + Arrays.asList(this.fields) + "]";
-        }
-    }
 }

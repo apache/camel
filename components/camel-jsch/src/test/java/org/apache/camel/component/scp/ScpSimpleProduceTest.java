@@ -22,9 +22,10 @@ import java.nio.file.Files;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Assume;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class ScpSimpleProduceTest extends ScpServerTestSupport {
 
@@ -42,7 +43,7 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
 
     @Test
     public void testScpSimpleProduce() throws Exception {
-        Assume.assumeTrue(this.isSetupComplete());
+        assumeTrue(this.isSetupComplete());
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -54,7 +55,7 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
 
     @Test
     public void testScpSimpleProduceTwoTimes() throws Exception {
-        Assume.assumeTrue(this.isSetupComplete());
+        assumeTrue(this.isSetupComplete());
 
         getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
 
@@ -67,7 +68,7 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
 
     @Test
     public void testScpSimpleSubPathProduce() throws Exception {
-        Assume.assumeTrue(this.isSetupComplete());
+        assumeTrue(this.isSetupComplete());
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
@@ -79,7 +80,7 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
 
     @Test
     public void testScpSimpleTwoSubPathProduce() throws Exception {
-        Assume.assumeTrue(this.isSetupComplete());
+        assumeTrue(this.isSetupComplete());
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Farewell World");
 
@@ -91,7 +92,7 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
 
     @Test
     public void testScpProduceChmod() throws Exception {
-        Assume.assumeTrue(this.isSetupComplete());
+        assumeTrue(this.isSetupComplete());
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Bonjour Monde");
 
@@ -102,9 +103,9 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
     }
 
     @Test
-    @Ignore("Fails on CI servers")
+    @Disabled("Fails on CI servers")
     public void testScpProducePrivateKey() throws Exception {
-        Assume.assumeTrue(this.isSetupComplete());
+        assumeTrue(this.isSetupComplete());
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -115,9 +116,9 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
     }
 
     @Test
-    @Ignore("Fails on CI servers")
+    @Disabled("Fails on CI servers")
     public void testScpProducePrivateKeyFromClasspath() throws Exception {
-        Assume.assumeTrue(this.isSetupComplete());
+        assumeTrue(this.isSetupComplete());
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -128,9 +129,9 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
     }
   
     @Test
-    @Ignore("Fails on CI servers")
+    @Disabled("Fails on CI servers")
     public void testScpProducePrivateKeyByte() throws Exception {
-        Assume.assumeTrue(this.isSetupComplete());
+        assumeTrue(this.isSetupComplete());
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

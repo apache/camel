@@ -28,26 +28,25 @@ public class DefaultKafkaHeaderSerializer implements KafkaHeaderSerializer {
     @Override
     public byte[] serialize(final String key, final Object value) {
         if (value instanceof String) {
-            return ((String) value).getBytes();
+            return ((String)value).getBytes();
         } else if (value instanceof Long) {
             ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-            buffer.putLong((Long) value);
+            buffer.putLong((Long)value);
             return buffer.array();
         } else if (value instanceof Integer) {
             ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
-            buffer.putInt((Integer) value);
+            buffer.putInt((Integer)value);
             return buffer.array();
         } else if (value instanceof Double) {
             ByteBuffer buffer = ByteBuffer.allocate(Double.BYTES);
-            buffer.putDouble((Double) value);
+            buffer.putDouble((Double)value);
             return buffer.array();
         } else if (value instanceof Boolean) {
             return value.toString().getBytes();
         } else if (value instanceof byte[]) {
-            return (byte[]) value;
+            return (byte[])value;
         }
-        LOG.debug("Cannot propagate header value of type[{}], skipping... "
-                + "Supported types: String, Integer, Long, Double, byte[].", value != null ? value.getClass() : "null");
+        LOG.debug("Cannot propagate header value of type[{}], skipping... " + "Supported types: String, Integer, Long, Double, byte[].", value != null ? value.getClass() : "null");
         return null;
     }
 }

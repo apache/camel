@@ -21,17 +21,19 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.handler.DrinkValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpSendDynamicAwareTest extends BaseHttpTest {
 
     private HttpServer localServer;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().
@@ -48,7 +50,7 @@ public class HttpSendDynamicAwareTest extends BaseHttpTest {
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -82,7 +84,7 @@ public class HttpSendDynamicAwareTest extends BaseHttpTest {
 
         // and there should only be one http endpoint as they are both on same host
         boolean found = context.getEndpointMap().containsKey("http://localhost:" + localServer.getLocalPort() + "?throwExceptionOnFailure=false");
-        assertTrue("Should find static uri", found);
+        assertTrue(found, "Should find static uri");
 
         // we only have 2xdirect and 1xhttp
         assertEquals(3, context.getEndpointMap().size());

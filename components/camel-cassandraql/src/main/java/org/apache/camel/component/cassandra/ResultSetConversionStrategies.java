@@ -30,7 +30,7 @@ import com.datastax.driver.core.Row;
  */
 public final class ResultSetConversionStrategies {
 
-    private static final Pattern LIMIT_NAME_PATTERN = Pattern.compile("^LIMIT_(\\d+)$");
+    private static final Pattern LIMIT_NAME_PATTERN = Pattern.compile("^LIMIT_(\\d+)$", Pattern.CASE_INSENSITIVE);
 
     private static final ResultSetConversionStrategy ALL = new ResultSetConversionStrategy() {
         @Override
@@ -98,10 +98,10 @@ public final class ResultSetConversionStrategies {
         if (name == null) {
             return null;
         }
-        if (name.equals("ALL")) {
+        if (name.equalsIgnoreCase("ALL")) {
             return ResultSetConversionStrategies.all();
         }
-        if (name.equals("ONE")) {
+        if (name.equalsIgnoreCase("ONE")) {
             return ResultSetConversionStrategies.one();
         }
         Matcher matcher = LIMIT_NAME_PATTERN.matcher(name);

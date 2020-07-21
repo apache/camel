@@ -48,10 +48,22 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
 
     private BulkApiClient bulkClient;
 
-    public BulkApiProcessor(SalesforceEndpoint endpoint) throws SalesforceException {
+    public BulkApiProcessor(SalesforceEndpoint endpoint) {
         super(endpoint);
+    }
 
-        this.bulkClient = new DefaultBulkApiClient((String)endpointConfigMap.get(SalesforceEndpointConfig.API_VERSION), session, httpClient);
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        this.bulkClient = new DefaultBulkApiClient((String)endpointConfigMap.get(SalesforceEndpointConfig.API_VERSION), session, httpClient, loginConfig);
+        ServiceHelper.startService(bulkClient);
+    }
+
+
+    @Override
+    public void doStop() {
+        // stop the client
+        ServiceHelper.stopService(bulkClient);
     }
 
     @Override
@@ -60,44 +72,44 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
 
         try {
             switch (operationName) {
-            case CREATE_JOB:
-                processCreateJob(exchange, callback);
-                break;
-            case GET_JOB:
-                processGetJob(exchange, callback);
-                break;
-            case CLOSE_JOB:
-                processCloseJob(exchange, callback);
-                break;
-            case ABORT_JOB:
-                processAbortJob(exchange, callback);
-                break;
-            case CREATE_BATCH:
-                processCreateBatch(exchange, callback);
-                break;
-            case GET_BATCH:
-                processGetBatch(exchange, callback);
-                break;
-            case GET_ALL_BATCHES:
-                processGetAllBatches(exchange, callback);
-                break;
-            case GET_REQUEST:
-                processGetRequest(exchange, callback);
-                break;
-            case GET_RESULTS:
-                processGetResults(exchange, callback);
-                break;
-            case CREATE_BATCH_QUERY:
-                processCreateBatchQuery(exchange, callback);
-                break;
-            case GET_QUERY_RESULT_IDS:
-                processGetQueryResultIds(exchange, callback);
-                break;
-            case GET_QUERY_RESULT:
-                processGetQueryResult(exchange, callback);
-                break;
-            default:
-                throw new SalesforceException("Unknown operation name: " + operationName.value(), null);
+                case CREATE_JOB:
+                    processCreateJob(exchange, callback);
+                    break;
+                case GET_JOB:
+                    processGetJob(exchange, callback);
+                    break;
+                case CLOSE_JOB:
+                    processCloseJob(exchange, callback);
+                    break;
+                case ABORT_JOB:
+                    processAbortJob(exchange, callback);
+                    break;
+                case CREATE_BATCH:
+                    processCreateBatch(exchange, callback);
+                    break;
+                case GET_BATCH:
+                    processGetBatch(exchange, callback);
+                    break;
+                case GET_ALL_BATCHES:
+                    processGetAllBatches(exchange, callback);
+                    break;
+                case GET_REQUEST:
+                    processGetRequest(exchange, callback);
+                    break;
+                case GET_RESULTS:
+                    processGetResults(exchange, callback);
+                    break;
+                case CREATE_BATCH_QUERY:
+                    processCreateBatchQuery(exchange, callback);
+                    break;
+                case GET_QUERY_RESULT_IDS:
+                    processGetQueryResultIds(exchange, callback);
+                    break;
+                case GET_QUERY_RESULT:
+                    processGetQueryResult(exchange, callback);
+                    break;
+                default:
+                    throw new SalesforceException("Unknown operation name: " + operationName.value(), null);
             }
         } catch (SalesforceException e) {
             exchange.setException(new SalesforceException(String.format("Error processing %s: [%s] \"%s\"", operationName.value(), e.getStatusCode(), e.getMessage()), e));
@@ -413,16 +425,5 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
 
         // signal exchange completion
         callback.done(false);
-    }
-
-    @Override
-    public void start() {
-        ServiceHelper.startService(bulkClient);
-    }
-
-    @Override
-    public void stop() {
-        // stop the client
-        ServiceHelper.stopService(bulkClient);
     }
 }

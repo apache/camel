@@ -31,8 +31,7 @@ import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 
 /**
- * The XML Security data format facilitates encryption and decryption of XML
- * payloads.
+ * Encrypt and decrypt XML payloads using Apache Santuario.
  */
 @Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,xml,security", title = "XML Security")
 @XmlRootElement(name = "secureXML")
@@ -49,7 +48,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     @XmlAttribute
     private String secureTag;
     @XmlAttribute
-    private Boolean secureTagContents;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String secureTagContents;
     @XmlAttribute
     @Metadata(defaultValue = "RSA_OAEP")
     private String keyCipherAlgorithm;
@@ -66,8 +66,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     @Metadata(defaultValue = "MGF1_SHA1")
     private String mgfAlgorithm;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
-    private Boolean addKeyValueForEncryptedKey;
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    private String addKeyValueForEncryptedKey;
     @XmlTransient
     private KeyStoreParameters keyOrTrustStoreParameters;
     @XmlTransient
@@ -144,7 +144,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         this.secureTag = secureTag;
     }
 
-    public Boolean getSecureTagContents() {
+    public String getSecureTagContents() {
         return secureTagContents;
     }
 
@@ -153,7 +153,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
      * the contents of the XML Element false = Element Level true = Element
      * Content Level
      */
-    public void setSecureTagContents(Boolean secureTagContents) {
+    public void setSecureTagContents(String secureTagContents) {
         this.secureTagContents = secureTagContents;
     }
 
@@ -261,7 +261,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         this.mgfAlgorithm = mgfAlgorithm;
     }
 
-    public Boolean getAddKeyValueForEncryptedKey() {
+    public String getAddKeyValueForEncryptedKey() {
         return addKeyValueForEncryptedKey;
     }
 
@@ -269,7 +269,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
      * Whether to add the public key used to encrypt the session key as a
      * KeyValue in the EncryptedKey structure or not.
      */
-    public void setAddKeyValueForEncryptedKey(Boolean addKeyValueForEncryptedKey) {
+    public void setAddKeyValueForEncryptedKey(String addKeyValueForEncryptedKey) {
         this.addKeyValueForEncryptedKey = addKeyValueForEncryptedKey;
     }
 

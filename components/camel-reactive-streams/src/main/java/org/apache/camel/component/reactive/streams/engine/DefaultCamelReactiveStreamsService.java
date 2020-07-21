@@ -35,6 +35,7 @@ import javax.management.openmbean.TabularType;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
@@ -84,6 +85,11 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
     @Override
     public String getId() {
         return ReactiveStreamsConstants.DEFAULT_SERVICE_NAME;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return context;
     }
 
     @Override
@@ -171,7 +177,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
 
         DelayedMonoPublisher<Exchange> publisher = new DelayedMonoPublisher<>(this.workerPool);
 
-        data.addOnCompletion(new Synchronization() {
+        data.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
             @Override
             public void onComplete(Exchange exchange) {
                 publisher.setData(exchange);
@@ -210,7 +216,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
                 String uuid = context.getUuidGenerator().generateUuid();
                 new RouteBuilder() {
                     @Override
-                    public void configure() throws Exception {
+                    public void configure() {
                         from(u)
                             .to("reactive-streams:" + uuid);
                     }
@@ -235,7 +241,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
             String uuid = context.getUuidGenerator().generateUuid();
             new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("reactive-streams:" + uuid)
                         .to(uri);
                 }
@@ -259,7 +265,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
                 String uuid = context.getUuidGenerator().generateUuid();
                 new RouteBuilder() {
                     @Override
-                    public void configure() throws Exception {
+                    public void configure() {
                         from("reactive-streams:" + uuid)
                             .to(u);
                     }
@@ -293,7 +299,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
         try {
             new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from(uri)
                         .process(exchange -> {
                             Exchange copy = exchange.copy();

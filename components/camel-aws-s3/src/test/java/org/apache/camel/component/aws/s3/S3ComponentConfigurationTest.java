@@ -16,9 +16,18 @@
  */
 package org.apache.camel.component.aws.s3;
 
+import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.regions.Regions;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class S3ComponentConfigurationTest extends CamelTestSupport {
 
@@ -114,29 +123,32 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         assertFalse(endpoint.getConfiguration().isIncludeBody());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutBucketName() throws Exception {
         S3Component component = context.getComponent("aws-s3", S3Component.class);
-        component.createEndpoint("aws-s3:// ");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("aws-s3:// "));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
         S3Component component = context.getComponent("aws-s3", S3Component.class);
-        component.createEndpoint("aws-s3://MyTopic?secretKey=yyy");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("aws-s3://MyTopic?secretKey=yyy"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
         S3Component component = context.getComponent("aws-s3", S3Component.class);
-        component.createEndpoint("aws-s3://MyTopic?accessKey=xxx");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("aws-s3://MyTopic?accessKey=xxx"));
     }
 
     @Test
     public void createEndpointWithComponentElements() throws Exception {
         S3Component component = context.getComponent("aws-s3", S3Component.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
         S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
@@ -147,9 +159,9 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
         S3Component component = context.getComponent("aws-s3", S3Component.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Regions.US_WEST_1.toString());
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Regions.US_WEST_1.toString());
         S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
@@ -238,5 +250,19 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         context.getRegistry().bind("amazonS3Client", clientMock);
         S3Component component = context.getComponent("aws-s3", S3Component.class);
         component.createEndpoint("aws-s3://MyTopic?amazonS3Client=#amazonS3Client");
+    }
+
+    @Test
+    public void createEndpointWithEndpointConfiguration() throws Exception {
+
+        EndpointConfiguration endpointConfiguration = new EndpointConfiguration("localhost", Regions.US_EAST_1.toString());
+        context.getRegistry().bind("endpointConfiguration", endpointConfiguration);
+        S3Component component = context.getComponent("aws-s3", S3Component.class);
+        S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket?endpointConfiguration=#endpointConfiguration&accessKey=xxx&secretKey=yyy&region=US_WEST_1");
+
+        assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertNotNull(endpoint.getConfiguration().getEndpointConfiguration());
     }
 }

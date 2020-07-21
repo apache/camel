@@ -37,8 +37,12 @@ import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultServiceCallProcessor.class);
 
     private final ExchangePattern exchangePattern;
     private final String name;
@@ -86,7 +90,6 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
     // Properties
     // *************************************
 
-
     public ExchangePattern getExchangePattern() {
         return exchangePattern;
     }
@@ -119,8 +122,9 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
     // Lifecycle
     // *************************************
 
+
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         StringHelper.notEmpty(name, "name", "service name");
         ObjectHelper.notNull(camelContext, "camel context");
         ObjectHelper.notNull(expression, "expression");
@@ -133,7 +137,10 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
 
         Processor send = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(camelContext, "SendDynamicProcessor", args);
         processor = AsyncProcessorConverterHelper.convert(send);
+    }
 
+    @Override
+    protected void doStart() throws Exception {
         // Start services if needed
         ServiceHelper.startService(processor);
         ServiceHelper.startService(loadBalancer);
@@ -179,7 +186,7 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
         final int port = service.getPort();
         final Map<String, String> meta = service.getMetadata();
 
-        log.debug("Service {} active at server: {}:{}", name, host, port);
+        LOG.debug("Service {} active at server: {}:{}", name, host, port);
 
         // set selected server as header
         message.setHeader(ServiceCallConstants.SERVICE_HOST, host);

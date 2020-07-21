@@ -18,8 +18,6 @@ package org.apache.camel.component.cron;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.NoFactoryAvailableException;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cron.api.CamelCronService;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.support.CamelContextHelper;
@@ -52,12 +50,8 @@ public final class CronHelper {
         }
 
         // Fallback to factory finder
-        try {
-            FactoryFinder finder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
-            return finder.newInstance(FACTORY_KEY, CamelCronService.class).orElse(null);
-        } catch (NoFactoryAvailableException e) {
-            throw new RuntimeCamelException("Cannot find any CamelCronService implementation", e);
-        }
+        FactoryFinder finder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
+        return finder.newInstance(FACTORY_KEY, CamelCronService.class).orElse(null);
     }
 
 }

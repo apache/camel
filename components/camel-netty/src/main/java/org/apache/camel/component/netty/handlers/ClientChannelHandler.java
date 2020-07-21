@@ -149,6 +149,12 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
             LOG.trace("Message received: {}", msg);
         }
 
+        ChannelHandler handler = ctx.pipeline().get("timeout");
+        if (handler != null) {
+            LOG.trace("Removing timeout channel as we received message");
+            ctx.pipeline().remove(handler);
+        }
+
         NettyCamelState state = getState(ctx, msg);
         Exchange exchange = state != null ? state.getExchange() : null;
         if (exchange == null) {

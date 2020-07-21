@@ -25,10 +25,12 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -66,7 +68,7 @@ public class ManagedJmsEndpointTest extends CamelTestSupport {
         assertEquals("activemq://queue:start", uri);
 
         Boolean singleton = (Boolean) mbeanServer.getAttribute(name, "Singleton");
-        assertTrue(singleton.booleanValue());
+        assertTrue(singleton);
 
         Integer running = (Integer) mbeanServer.getAttribute(name, "RunningMessageListeners");
         assertEquals(1, running.intValue());

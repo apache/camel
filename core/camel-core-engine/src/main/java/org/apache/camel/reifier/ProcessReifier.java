@@ -18,26 +18,26 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.processor.DelegateSyncProcessor;
 import org.apache.camel.util.ObjectHelper;
 
 public class ProcessReifier extends ProcessorReifier<ProcessDefinition> {
 
-    public ProcessReifier(ProcessorDefinition<?> definition) {
-        super((ProcessDefinition)definition);
+    public ProcessReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (ProcessDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) {
+    public Processor createProcessor() {
         Processor answer = definition.getProcessor();
         if (answer == null) {
             ObjectHelper.notNull(definition.getRef(), "ref", definition);
-            answer = routeContext.mandatoryLookup(definition.getRef(), Processor.class);
+            answer = mandatoryLookup(definition.getRef(), Processor.class);
         }
 
         // ensure its wrapped in a Service so we can manage it from eg. JMX

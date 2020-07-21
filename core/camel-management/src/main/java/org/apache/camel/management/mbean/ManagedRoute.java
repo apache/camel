@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,6 +39,7 @@ import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
@@ -50,8 +52,8 @@ import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.mbean.ManagedStepMBean;
 import org.apache.camel.api.management.mbean.RouteError;
 import org.apache.camel.model.Model;
-import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RoutePolicy;
@@ -121,9 +123,9 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 final String val = context.getTypeConverter().convertTo(String.class, entry.getValue());
 
                 CompositeData data = new CompositeDataSupport(
-                    ct,
-                    new String[]{"key", "value"},
-                    new Object[]{key, val}
+                        ct,
+                        new String[]{"key", "value"},
+                        new Object[]{key, val}
                 );
 
                 answer.put(data);
@@ -184,27 +186,27 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
     @Override
     public Boolean getTracing() {
-        return route.getRouteContext().isTracing();
+        return route.isTracing();
     }
 
     @Override
     public void setTracing(Boolean tracing) {
-        route.getRouteContext().setTracing(tracing);
+        route.setTracing(tracing);
     }
 
     @Override
     public Boolean getMessageHistory() {
-        return route.getRouteContext().isMessageHistory();
+        return route.isMessageHistory();
     }
 
     @Override
     public Boolean getLogMask() {
-        return route.getRouteContext().isLogMask();
+        return route.isLogMask();
     }
 
     @Override
     public String getRoutePolicyList() {
-        List<RoutePolicy> policyList = route.getRouteContext().getRoutePolicyList();
+        List<RoutePolicy> policyList = route.getRoutePolicyList();
 
         if (policyList == null || policyList.isEmpty()) {
             // return an empty string to have it displayed nicely in JMX consoles
@@ -353,7 +355,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         String id = route.getId();
         RouteDefinition def = context.getExtension(Model.class).getRouteDefinition(id);
         if (def != null) {
-            return ModelHelper.dumpModelAsXml(context, def, resolvePlaceholders, resolveDelegateEndpoints);
+            ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+            return ecc.getModelToXMLDumper().dumpModelAsXml(context, def, resolvePlaceholders, resolveDelegateEndpoints);
         }
 
         return null;
@@ -362,10 +365,13 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     @Override
     public void updateRouteFromXml(String xml) throws Exception {
         // convert to model from xml
-        RouteDefinition def = ModelHelper.createModelFromXml(context, xml, RouteDefinition.class);
-        if (def == null) {
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        InputStream is = context.getTypeConverter().convertTo(InputStream.class, xml);
+        RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(context, is);
+        if (routes == null || routes.getRoutes().isEmpty()) {
             return;
         }
+        RouteDefinition def = routes.getRoutes().get(0);
 
         // if the xml does not contain the route-id then we fix this by adding the actual route id
         // this may be needed if the route-id was auto-generated, as the intend is to update this route
@@ -466,7 +472,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             answer.append(" oldestInflightExchangeId=\"").append(oldest.getExchange().getExchangeId()).append("\"");
             answer.append(" oldestInflightDuration=\"").append(oldest.getDuration()).append("\"");
         }
-        answer.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
+        answer.append(" ").append(stat, 7, stat.length() - 2).append(">\n");
 
         if (includeProcessors) {
             answer.append(sb);
@@ -524,7 +530,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             answer.append(" oldestInflightExchangeId=\"").append(oldest.getExchange().getExchangeId()).append("\"");
             answer.append(" oldestInflightDuration=\"").append(oldest.getDuration()).append("\"");
         }
-        answer.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
+        answer.append(" ").append(stat, 7, stat.length() - 2).append(">\n");
 
         answer.append(sb);
 
@@ -588,12 +594,12 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
     @Override
     public Boolean getHasRouteController() {
-        return route.getRouteContext().getRouteController() != null;
+        return route.getRouteController() != null;
     }
 
     @Override
     public RouteError getLastError() {
-        org.apache.camel.spi.RouteError error = route.getRouteContext().getLastError();
+        org.apache.camel.spi.RouteError error = route.getLastError();
         if (error == null) {
             return null;
         } else {

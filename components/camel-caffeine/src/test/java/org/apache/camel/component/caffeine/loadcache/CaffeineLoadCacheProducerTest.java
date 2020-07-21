@@ -25,7 +25,11 @@ import com.github.benmanes.caffeine.cache.Cache;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.caffeine.CaffeineConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport {
 
@@ -34,7 +38,7 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
     // ****************************
 
     @Test
-    public void testCacheClear() throws Exception {
+    void testCacheClear() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived((Object)null);
@@ -51,7 +55,7 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
     // ****************************
 
     @Test
-    public void testCachePut() throws Exception {
+    void testCachePut() {
         final int key = 1;
         final int val = 3;
 
@@ -68,7 +72,7 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
     }
 
     @Test
-    public void testCachePutAll() throws Exception {
+    void testCachePutAll() throws Exception {
         final Map<Integer, Integer> map = new HashMap<>();
         map.put(1, 1);
         map.put(2, 2);
@@ -96,7 +100,7 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
     // ****************************
 
     @Test
-    public void testCacheGet() throws Exception {
+    void testCacheGet() throws Exception {
         final Integer key = 1;
         final Integer val = 2;
 
@@ -112,7 +116,7 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
     }
 
     @Test
-    public void testCacheGetAll() throws Exception {
+    void testCacheGetAll() throws Exception {
         final Cache<Object, Object> cache = getTestCache();
         final Map<Integer, Integer> map = new HashMap<>();
         map.put(1, 1);
@@ -143,7 +147,7 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
     // ****************************
 
     @Test
-    public void testCacheInvalidate() throws Exception {
+    void testCacheInvalidate() throws Exception {
         final Cache<Object, Object> cache = getTestCache();
         final Integer key = 1;
         final Integer val = 1;
@@ -163,7 +167,7 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
     }
 
     @Test
-    public void testCacheInvalidateAll() throws Exception {
+    void testCacheInvalidateAll() throws Exception {
         final Cache<Object, Object> cache = getTestCache();
         final Map<Integer, Integer> map = new HashMap<>();
         map.put(1, 1);
@@ -193,7 +197,7 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
     // ****************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://start").toF("caffeine-loadcache://%s?cache=#cache", "test").to("log:org.apache.camel.component.caffeine?level=INFO&showAll=true&multiline=true")

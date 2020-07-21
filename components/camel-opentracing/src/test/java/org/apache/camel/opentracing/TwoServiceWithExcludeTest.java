@@ -22,15 +22,12 @@ import java.util.Set;
 import io.opentracing.tag.Tags;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TwoServiceWithExcludeTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
         new SpanTestData().setLabel("ServiceA server").setUri("direct://ServiceA").setOperation("ServiceA")
-            .setKind(Tags.SPAN_KIND_SERVER).setParentId(1),
-        new SpanTestData().setLabel("ServiceA client").setUri("direct://ServiceA").setOperation("ServiceA")
-            .setKind(Tags.SPAN_KIND_CLIENT)
     };
 
     public TwoServiceWithExcludeTest() {

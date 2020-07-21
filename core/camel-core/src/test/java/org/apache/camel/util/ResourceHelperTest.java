@@ -33,7 +33,9 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.ResourceHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -317,6 +319,18 @@ public class ResourceHelperTest extends TestSupport {
 
         assertTrue(ResourceHelper.isHttpUri("http://camel.apache.org"));
         assertTrue(ResourceHelper.isHttpUri("https://camel.apache.org"));
+    }
+
+    @Test
+    public void testIsClasspath() throws Exception {
+        assertFalse(ResourceHelper.isClasspathUri("direct:foo"));
+        assertFalse(ResourceHelper.isClasspathUri("file:foo/bar.properties"));
+        assertFalse(ResourceHelper.isClasspathUri("http://camel.apache.org"));
+        assertFalse(ResourceHelper.isClasspathUri(""));
+        assertFalse(ResourceHelper.isClasspathUri(null));
+
+        assertTrue(ResourceHelper.isClasspathUri("classpath:foo/bar.properties"));
+        assertTrue(ResourceHelper.isClasspathUri("foo/bar.properties"));
     }
 
     @Test

@@ -22,7 +22,10 @@ import javax.management.ObjectName;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedDefaultReactiveExecutorTest extends ManagementTestSupport {
 
@@ -49,14 +52,14 @@ public class ManagedDefaultReactiveExecutorTest extends ManagementTestSupport {
                             MBeanServer mbeanServer = getMBeanServer();
 
                             ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,name=DefaultReactiveExecutor");
-                            assertTrue("Should be registered", mbeanServer.isRegistered(on));
+                            assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
                             // should be 1 running
                             Integer running = (Integer) mbeanServer.getAttribute(on, "RunningWorkers");
                             assertEquals(1, running.intValue());
 
                             // should be 0 pending
-                            Long pending = (Long) mbeanServer.getAttribute(on, "PendingTasks");
+                            Integer pending = (Integer) mbeanServer.getAttribute(on, "PendingTasks");
                             assertEquals(0, pending.intValue());
                         }
                     })

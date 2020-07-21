@@ -25,7 +25,10 @@ import javax.management.ObjectName;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ManagedRouteRemoveWireTapExplicitThreadPoolTest extends ManagementTestSupport {
 
@@ -50,7 +53,7 @@ public class ManagedRouteRemoveWireTapExplicitThreadPoolTest extends ManagementT
 
         // should be started
         String state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be started", ServiceStatus.Started.name(), state);
+        assertEquals(ServiceStatus.Started.name(), state, "Should be started");
 
         // and no wire tap thread pool as we use an existing external pool
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=threadpools,*"), null);
@@ -61,20 +64,20 @@ public class ManagedRouteRemoveWireTapExplicitThreadPoolTest extends ManagementT
                 break;
             }
         }
-        assertFalse("Should not have a wire tap thread pool", wireTap);
+        assertFalse(wireTap, "Should not have a wire tap thread pool");
 
         // stop
         mbeanServer.invoke(on, "stop", null, null);
 
         state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be stopped", ServiceStatus.Stopped.name(), state);
+        assertEquals(ServiceStatus.Stopped.name(), state, "Should be stopped");
 
         // remove
         mbeanServer.invoke(on, "remove", null, null);
 
         // should not be registered anymore
         boolean registered = mbeanServer.isRegistered(on);
-        assertFalse("Route mbean should have been unregistered", registered);
+        assertFalse(registered, "Route mbean should have been unregistered");
 
         // and no wire tap thread pool as we use an existing external pool
         set = mbeanServer.queryNames(new ObjectName("*:type=threadpools,*"), null);
@@ -85,10 +88,10 @@ public class ManagedRouteRemoveWireTapExplicitThreadPoolTest extends ManagementT
                 break;
             }
         }
-        assertFalse("Should not have a wire tap thread pool", wireTap);
+        assertFalse(wireTap, "Should not have a wire tap thread pool");
 
         // should not be shutdown
-        assertFalse("Thread pool should not be shutdown", myThreadPool.isShutdown());
+        assertFalse(myThreadPool.isShutdown(), "Thread pool should not be shutdown");
 
         myThreadPool.shutdownNow();
     }

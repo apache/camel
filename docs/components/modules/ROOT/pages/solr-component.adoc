@@ -1,16 +1,21 @@
 [[solr-component]]
 = Solr Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-solr/src/main/docs/solr-component.adoc
+:docTitle: Solr
+:artifactId: camel-solr
+:description: Perform operations against Apache Lucene Solr.
+:since: 2.9
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.9*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Solr component allows you to interface with an
 http://lucene.apache.org/solr/[Apache Lucene Solr] server (based on
-SolrJ 3.5.0).
+SolrJ 8.4.1).
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -45,8 +50,8 @@ The Solr component supports 2 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -79,7 +84,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *allowCompression* (producer) | Server side must support gzip or deflate for this to have any effect |  | Boolean
 | *connectionTimeout* (producer) | connectionTimeout on the underlying HttpConnectionManager |  | Integer
-| *defaultMaxConnectionsPer Host* (producer) | maxConnectionsPerHost on the underlying HttpConnectionManager |  | Integer
+| *defaultMaxConnectionsPerHost* (producer) | maxConnectionsPerHost on the underlying HttpConnectionManager |  | Integer
 | *followRedirects* (producer) | indicates whether redirects are used to get to the Solr server |  | Boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *maxRetries* (producer) | Maximum number of retries to attempt in the event of transient errors |  | Integer
@@ -96,35 +101,6 @@ with the following path and query parameters:
 | *zkHost* (solrCloud) | Set the ZooKeeper host information which the solrCloud could use, such as zkhost=localhost:8123. |  | String
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-solr-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 4 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.solr.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.solr.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.solr.enabled* | Whether to enable auto configuration of the solr component. This is enabled by default. |  | Boolean
-| *camel.component.solr.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-|===
-// spring-boot-auto-configure options: END
 
 
 
@@ -134,11 +110,8 @@ The following Solr operations are currently supported. Simply set an
 exchange header with a key of "SolrOperation" and a value set to one of
 the following. Some operations also require the message body to be set.
 
-* the INSERT operations use the
-http://lucene.apache.org/solr/api/org/apache/solr/client/solrj/impl/CommonsHttpSolrServer.html[CommonsHttpSolrServer]
-* the INSERT_STREAMING operations use the
-http://lucene.apache.org/solr/api/org/apache/solr/client/solrj/impl/StreamingUpdateSolrServer.html[StreamingUpdateSolrServer]
-(*Camel 2.9.2*)
+* INSERT
+* INSERT_STREAMING
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -166,6 +139,8 @@ bean]
 |DELETE_BY_QUERY |query string |delete a record by a query
 
 |COMMIT |n/a |performs a commit on any pending index changes
+
+|SOFT_COMMIT |n/a |performs a `soft commit` (without guarantee that Lucene index files are written to stable storage; useful for Near Real Time operations) on any pending index changes
 
 |ROLLBACK |n/a |performs a rollback on any pending index changes
 
@@ -254,5 +229,7 @@ For more information, see these resources...
 http://lucene.apache.org/solr/tutorial.html#Querying+Data[Solr Query
 Tutorial]
 
-http://wiki.apache.org/solr/SolrQuerySyntax[Solr Query Syntax]
+https://lucene.apache.org/solr/guide/8_4/the-standard-query-parser.html[Solr Query Syntax]
 
+
+include::camel-spring-boot::page$solr-starter.adoc[]

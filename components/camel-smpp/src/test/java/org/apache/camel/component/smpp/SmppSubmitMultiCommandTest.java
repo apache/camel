@@ -17,6 +17,7 @@
 package org.apache.camel.component.smpp;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -98,9 +99,9 @@ public class SmppSubmitMultiCommandTest {
 
         command.execute(exchange);
 
-        assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
-        assertEquals(1, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
-        assertNotNull(exchange.getOut().getHeader(SmppConstants.ERROR));
+        assertEquals(Collections.singletonList("1"), exchange.getMessage().getHeader(SmppConstants.ID));
+        assertEquals(1, exchange.getMessage().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
+        assertNotNull(exchange.getMessage().getHeader(SmppConstants.ERROR));
     }
 
     @Test
@@ -129,9 +130,9 @@ public class SmppSubmitMultiCommandTest {
 
         command.execute(exchange);
 
-        assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
-        assertEquals(1, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
-        assertNull(exchange.getOut().getHeader(SmppConstants.ERROR));
+        assertEquals(Collections.singletonList("1"), exchange.getMessage().getHeader(SmppConstants.ID));
+        assertEquals(1, exchange.getMessage().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
+        assertNull(exchange.getMessage().getHeader(SmppConstants.ERROR));
     }
 
     @Test
@@ -144,7 +145,7 @@ public class SmppSubmitMultiCommandTest {
         exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR, "1818");
         exchange.getIn().setHeader(SmppConstants.DEST_ADDR_TON, TypeOfNumber.INTERNATIONAL.value());
         exchange.getIn().setHeader(SmppConstants.DEST_ADDR_NPI, NumberingPlanIndicator.INTERNET.value());
-        exchange.getIn().setHeader(SmppConstants.DEST_ADDR, Arrays.asList("1919"));
+        exchange.getIn().setHeader(SmppConstants.DEST_ADDR, Collections.singletonList("1919"));
         exchange.getIn().setHeader(SmppConstants.SCHEDULE_DELIVERY_TIME, new Date(1111111));
         exchange.getIn().setHeader(SmppConstants.VALIDITY_PERIOD, "000003000000000R"); // three days
         exchange.getIn().setHeader(SmppConstants.PROTOCOL_ID, (byte) 1);
@@ -160,9 +161,9 @@ public class SmppSubmitMultiCommandTest {
 
         command.execute(exchange);
 
-        assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
-        assertEquals(1, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
-        assertNull(exchange.getOut().getHeader(SmppConstants.ERROR));
+        assertEquals(Collections.singletonList("1"), exchange.getMessage().getHeader(SmppConstants.ID));
+        assertEquals(1, exchange.getMessage().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
+        assertNull(exchange.getMessage().getHeader(SmppConstants.ERROR));
     }
 
     @Test
@@ -200,7 +201,7 @@ public class SmppSubmitMultiCommandTest {
 
         command.execute(exchange);
 
-        assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
+        assertEquals(Collections.singletonList("1"), exchange.getMessage().getHeader(SmppConstants.ID));
     }
 
     @Test
@@ -238,7 +239,7 @@ public class SmppSubmitMultiCommandTest {
 
         command.execute(exchange);
 
-        assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
+        assertEquals(Collections.singletonList("1"), exchange.getMessage().getHeader(SmppConstants.ID));
     }
 
     @Test
@@ -275,7 +276,7 @@ public class SmppSubmitMultiCommandTest {
 
         command.execute(exchange);
 
-        assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
+        assertEquals(Collections.singletonList("1"), exchange.getMessage().getHeader(SmppConstants.ID));
     }
 
     @Test
@@ -312,7 +313,7 @@ public class SmppSubmitMultiCommandTest {
 
         command.execute(exchange);
 
-        assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
+        assertEquals(Collections.singletonList("1"), exchange.getMessage().getHeader(SmppConstants.ID));
     }
 
     @Test
@@ -350,7 +351,7 @@ public class SmppSubmitMultiCommandTest {
 
         command.execute(exchange);
 
-        assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
+        assertEquals(Collections.singletonList("1"), exchange.getMessage().getHeader(SmppConstants.ID));
     }
 
     @Test
@@ -389,7 +390,7 @@ public class SmppSubmitMultiCommandTest {
 
         command.execute(exchange);
 
-        assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
+        assertEquals(Collections.singletonList("1"), exchange.getMessage().getHeader(SmppConstants.ID));
     }
 
     @Test
@@ -432,9 +433,9 @@ public class SmppSubmitMultiCommandTest {
 
         command.execute(exchange);
 
-        assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
-        assertEquals(1, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
-        assertNull(exchange.getOut().getHeader(SmppConstants.ERROR));
+        assertEquals(Collections.singletonList("1"), exchange.getMessage().getHeader(SmppConstants.ID));
+        assertEquals(1, exchange.getMessage().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
+        assertNull(exchange.getMessage().getHeader(SmppConstants.ERROR));
     }
 
     @Test
@@ -456,19 +457,19 @@ public class SmppSubmitMultiCommandTest {
         exchange.getIn().setHeader(SmppConstants.REPLACE_IF_PRESENT_FLAG, ReplaceIfPresentFlag.REPLACE.value());
         Map<Short, Object> optionalParameters = new LinkedHashMap<>();
         // standard optional parameter
-        optionalParameters.put(Short.valueOf((short) 0x0202), "1292".getBytes("UTF-8"));
-        optionalParameters.put(Short.valueOf((short) 0x001D), "urgent");
-        optionalParameters.put(Short.valueOf((short) 0x0005), Byte.valueOf("4"));
-        optionalParameters.put(Short.valueOf((short) 0x0008), Short.valueOf((short) 2));
-        optionalParameters.put(Short.valueOf((short) 0x0017), Integer.valueOf(3600000));
-        optionalParameters.put(Short.valueOf((short) 0x130C), null);
+        optionalParameters.put((short) 0x0202, "1292".getBytes("UTF-8"));
+        optionalParameters.put((short) 0x001D, "urgent");
+        optionalParameters.put((short) 0x0005, Byte.valueOf("4"));
+        optionalParameters.put((short) 0x0008, (short) 2);
+        optionalParameters.put((short) 0x0017, 3600000);
+        optionalParameters.put((short) 0x130C, null);
         // vendor specific optional parameter
-        optionalParameters.put(Short.valueOf((short) 0x2150), "0815".getBytes("UTF-8"));
-        optionalParameters.put(Short.valueOf((short) 0x2151), "0816");
-        optionalParameters.put(Short.valueOf((short) 0x2152), Byte.valueOf("6"));
-        optionalParameters.put(Short.valueOf((short) 0x2153), Short.valueOf((short) 9));
-        optionalParameters.put(Short.valueOf((short) 0x2154), Integer.valueOf(7400000));
-        optionalParameters.put(Short.valueOf((short) 0x2155), null);
+        optionalParameters.put((short) 0x2150, "0815".getBytes("UTF-8"));
+        optionalParameters.put((short) 0x2151, "0816");
+        optionalParameters.put((short) 0x2152, Byte.valueOf("6"));
+        optionalParameters.put((short) 0x2153, (short) 9);
+        optionalParameters.put((short) 0x2154, 7400000);
+        optionalParameters.put((short) 0x2155, null);
         exchange.getIn().setHeader(SmppConstants.OPTIONAL_PARAMETER, optionalParameters);
         exchange.getIn().setBody("short message body");
         when(session.submitMultiple(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
@@ -491,8 +492,8 @@ public class SmppSubmitMultiCommandTest {
 
         command.execute(exchange);
 
-        assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
-        assertEquals(1, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
-        assertNull(exchange.getOut().getHeader(SmppConstants.ERROR));
+        assertEquals(Collections.singletonList("1"), exchange.getMessage().getHeader(SmppConstants.ID));
+        assertEquals(1, exchange.getMessage().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
+        assertNull(exchange.getMessage().getHeader(SmppConstants.ERROR));
     }
 }

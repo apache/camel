@@ -33,24 +33,27 @@ import org.junit.jupiter.api.Timeout;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * Test class used to demonstrate the problematic disconnect sequence of the {@link FtpOperations}.
+ * Test class used to demonstrate the problematic disconnect sequence of the
+ * {@link FtpOperations}.
  * <p>
- * Setting the logging level of {@code org.apache.camel.file.remote} to {@code TRACE} will provide useful information
+ * Setting the logging level of {@code org.apache.camel.file.remote} to
+ * {@code TRACE} will provide useful information
  * 
  * @author l.chiarello
- *
  */
 public class FtpSoTimeoutTest extends CamelTestSupport {
 
     private ServerSocket serverSocket;
 
     // --- Set up
-    
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        // the created server socket makes it possible for the FTP client to establish the socket connection.
-        // However, no message will ever be sent back, thus a read timeout should occur within FTPClient#__getReply()
+        // the created server socket makes it possible for the FTP client to
+        // establish the socket connection.
+        // However, no message will ever be sent back, thus a read timeout
+        // should occur within FTPClient#__getReply()
         serverSocket = new ServerSocket(0);
         super.setUp();
     }
@@ -63,24 +66,20 @@ public class FtpSoTimeoutTest extends CamelTestSupport {
             serverSocket.close();
         }
     }
-    
+
     @Override
     protected int getShutdownTimeout() {
         return 5; // speedup graceful shutdown
     }
-    
+
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:with")
-                    .to("ftp://localhost:" + serverSocket.getLocalPort()
-                        + "?ftpClient=#myftpclient&connectTimeout=300&soTimeout=300&reconnectDelay=100");
-                
-                from("direct:without")
-                    .to("ftp://localhost:" + serverSocket.getLocalPort()
-                        + "?connectTimeout=300&soTimeout=300&reconnectDelay=100");
+                from("direct:with").to("ftp://localhost:" + serverSocket.getLocalPort() + "?ftpClient=#myftpclient&connectTimeout=300&soTimeout=300&reconnectDelay=100");
+
+                from("direct:without").to("ftp://localhost:" + serverSocket.getLocalPort() + "?connectTimeout=300&soTimeout=300&reconnectDelay=100");
             }
         };
     }
@@ -91,14 +90,15 @@ public class FtpSoTimeoutTest extends CamelTestSupport {
         ftpClient.setDefaultTimeout(300);
         return ftpClient;
     }
-    
+
     // --- Tests
-    
+
     @Test
     @Timeout(value = 10, unit = TimeUnit.SECONDS)
     public void testWithDefaultTimeout() throws Exception {
         assertThrows(CamelExecutionException.class, () -> {
-            // send exchange to the route using the custom FTPClient (with a default timeout)
+            // send exchange to the route using the custom FTPClient (with a
+            // default timeout)
             // the soTimeout triggers in time and test is successful
             template.sendBody("direct:with", "");
         });
@@ -108,7 +108,8 @@ public class FtpSoTimeoutTest extends CamelTestSupport {
     @Timeout(value = 10, unit = TimeUnit.SECONDS)
     public void testWithoutDefaultTimeout() throws Exception {
         assertThrows(CamelExecutionException.class, () -> {
-            // send exchange to the route using the default FTPClient (without a default timeout)
+            // send exchange to the route using the default FTPClient (without a
+            // default timeout)
             // the soTimeout never triggers and test fails after its own timeout
             template.sendBody("direct:without", "");
         });

@@ -18,27 +18,27 @@ package org.apache.camel.component.atom;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for consuming from a http feed
  */
 public class AtomHttpConsumerTest extends CamelTestSupport {
 
-    @Ignore("requires to be online for testing")
+    @Disabled("requires to be online for testing")
     @Test
-    public void testHttpConsumer() throws Exception {
+    void testHttpConsumer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.assertIsSatisfied();
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("atom:http://feeds2.feedburner.com/ApacheCamel.atom?splitEntries=false").to("mock:result");
             }
         };

@@ -39,7 +39,6 @@ public class TelegramMockRoutes extends RouteBuilder {
     private final Map<String, MockProcessor<?>> mocks = new LinkedHashMap<>();
 
     public TelegramMockRoutes(int port) {
-        super();
         this.port = port;
     }
 

@@ -41,10 +41,12 @@ import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
+import org.apache.camel.core.xml.CamelRouteControllerDefinition;
 import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ContextScanDefinition;
+import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.GlobalOptionsDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.InterceptDefinition;
@@ -58,6 +60,8 @@ import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteTemplateContextRefDefinition;
+import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
@@ -126,6 +130,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     private String allowUseOriginalMessage;
 
     @XmlAttribute
+    private String caseInsensitiveHeaders;
+
+    @XmlAttribute
     private String runtimeEndpointRegistryEnabled;
 
     @XmlAttribute
@@ -141,10 +148,13 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     private ShutdownRunningTask shutdownRunningTask;
 
     @XmlAttribute
-    private Boolean loadTypeConverters;
+    private String loadTypeConverters;
 
     @XmlAttribute
-    private Boolean typeConverterStatisticsEnabled;
+    private String typeConverterStatisticsEnabled;
+
+    @XmlAttribute
+    private String inflightRepositoryBrowseEnabled;
 
     @XmlAttribute
     private TypeConverterExists typeConverterExists;
@@ -169,6 +179,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     @XmlElement(name = "streamCaching", type = CamelStreamCachingStrategyDefinition.class)
     private CamelStreamCachingStrategyDefinition camelStreamCachingStrategy;
+
+    @XmlElement(name = "routeController", type = CamelRouteControllerDefinition.class)
+    private CamelRouteControllerDefinition camelRouteController;
 
     @XmlElement(name = "jmxAgent", type = CamelJMXAgentDefinition.class)
     private CamelJMXAgentDefinition camelJMXAgent;
@@ -199,6 +212,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     @XmlElement(name = "resilience4jConfiguration", type = Resilience4jConfigurationDefinition.class)
     private List<Resilience4jConfigurationDefinition> resilience4jConfigurations;
 
+    @XmlElement(name = "defaultFaultToleranceConfiguration")
+    private FaultToleranceConfigurationDefinition defaultFaultToleranceConfiguration;
+
+    @XmlElement(name = "faultToleranceConfiguration", type = FaultToleranceConfigurationDefinition.class)
+    private List<FaultToleranceConfigurationDefinition> faultToleranceConfigurations;
+
     @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class)
     private List<ErrorHandlerDefinition> errorHandlers;
 
@@ -207,6 +226,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     @XmlElement(name = "proxy")
     private List<CamelProxyFactoryDefinition> proxies;
+
+    @XmlElement(name = "routeTemplateContextRef")
+    private List<RouteTemplateContextRefDefinition> routeTemplateRefs = new ArrayList<>();
 
     @XmlElement(name = "routeBuilder")
     private List<RouteBuilderDefinition> builderRefs = new ArrayList<>();
@@ -255,6 +277,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     @XmlElement(name = "rest")
     private List<RestDefinition> rests = new ArrayList<>();
+
+    @XmlElement(name = "routeTemplate")
+    private List<RouteTemplateDefinition> routeTemplates = new ArrayList<>();
 
     @XmlElement(name = "route")
     private List<RouteDefinition> routes = new ArrayList<>();
@@ -416,6 +441,24 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     }
 
     @Override
+    public FaultToleranceConfigurationDefinition getDefaultFaultToleranceConfiguration() {
+        return defaultFaultToleranceConfiguration;
+    }
+
+    public void setDefaultFaultToleranceConfiguration(FaultToleranceConfigurationDefinition defaultFaultToleranceConfiguration) {
+        this.defaultFaultToleranceConfiguration = defaultFaultToleranceConfiguration;
+    }
+
+    @Override
+    public List<FaultToleranceConfigurationDefinition> getFaultToleranceConfigurations() {
+        return faultToleranceConfigurations;
+    }
+
+    public void setFaultToleranceConfigurations(List<FaultToleranceConfigurationDefinition> faultToleranceConfigurations) {
+        this.faultToleranceConfigurations = faultToleranceConfigurations;
+    }
+
+    @Override
     public List<RouteDefinition> getRoutes() {
         return routes;
     }
@@ -423,6 +466,16 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     @Override
     public void setRoutes(List<RouteDefinition> routes) {
         this.routes = routes;
+    }
+
+    @Override
+    public List<RouteTemplateDefinition> getRouteTemplates() {
+        return routeTemplates;
+    }
+
+    @Override
+    public void setRouteTemplates(List<RouteTemplateDefinition> routeTemplates) {
+        this.routeTemplates = routeTemplates;
     }
 
     @Override
@@ -572,6 +625,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     }
 
     @Override
+    public CamelRouteControllerDefinition getCamelRouteController() {
+        return camelRouteController;
+    }
+
+    public void setCamelRouteController(CamelRouteControllerDefinition camelRouteController) {
+        this.camelRouteController = camelRouteController;
+    }
+
+    @Override
     public String getTrace() {
         return trace;
     }
@@ -712,6 +774,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     }
 
     @Override
+    public String getCaseInsensitiveHeaders() {
+        return caseInsensitiveHeaders;
+    }
+
+    public void setCaseInsensitiveHeaders(String caseInsensitiveHeaders) {
+        this.caseInsensitiveHeaders = caseInsensitiveHeaders;
+    }
+
+    @Override
     public String getRuntimeEndpointRegistryEnabled() {
         return runtimeEndpointRegistryEnabled;
     }
@@ -739,21 +810,30 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     }
 
     @Override
-    public Boolean getLoadTypeConverters() {
+    public String getLoadTypeConverters() {
         return loadTypeConverters;
     }
 
-    public void setLoadTypeConverters(Boolean loadTypeConverters) {
+    public void setLoadTypeConverters(String loadTypeConverters) {
         this.loadTypeConverters = loadTypeConverters;
     }
 
     @Override
-    public Boolean getTypeConverterStatisticsEnabled() {
+    public String getTypeConverterStatisticsEnabled() {
         return typeConverterStatisticsEnabled;
     }
 
-    public void setTypeConverterStatisticsEnabled(Boolean typeConverterStatisticsEnabled) {
+    public void setTypeConverterStatisticsEnabled(String typeConverterStatisticsEnabled) {
         this.typeConverterStatisticsEnabled = typeConverterStatisticsEnabled;
+    }
+
+    @Override
+    public String getInflightRepositoryBrowseEnabled() {
+        return inflightRepositoryBrowseEnabled;
+    }
+
+    public void setInflightRepositoryBrowseEnabled(String inflightRepositoryBrowseEnabled) {
+        this.inflightRepositoryBrowseEnabled = inflightRepositoryBrowseEnabled;
     }
 
     @Override
@@ -781,6 +861,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setCamelJMXAgent(CamelJMXAgentDefinition agent) {
         camelJMXAgent = agent;
+    }
+
+    @Override
+    public List<RouteTemplateContextRefDefinition> getRouteTemplateRefs() {
+        return routeTemplateRefs;
+    }
+
+    public void setRouteTemplateRefs(List<RouteTemplateContextRefDefinition> routeTemplateRefs) {
+        this.routeTemplateRefs = routeTemplateRefs;
     }
 
     @Override

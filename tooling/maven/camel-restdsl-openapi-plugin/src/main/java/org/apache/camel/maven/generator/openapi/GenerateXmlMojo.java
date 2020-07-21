@@ -32,8 +32,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-
-
 @Mojo(name = "generate-xml", inheritByDefault = false, defaultPhase = LifecyclePhase.GENERATE_SOURCES,
     requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
 public class GenerateXmlMojo extends AbstractGenerateMojo {
@@ -82,33 +80,7 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
         }
 
         if (restConfiguration) {
-            String comp = detectRestComponentFromClasspath();
-            if (comp != null) {
-                getLog().info("Detected Camel Rest component from classpath: " + comp);
-                generator.withRestComponent(comp);
-            } else {
-                comp = "servlet";
-
-                // is it spring boot?
-                String aid = "camel-servlet";
-                if (detectSpringBootFromClasspath()) {
-                    aid = "camel-servlet-starter";
-                }
-
-                String dep = "\n\t\t<dependency>"
-                    + "\n\t\t\t<groupId>org.apache.camel</groupId>"
-                    + "\n\t\t\t<artifactId>" + aid + "</artifactId>";
-                final String ver = detectCamelVersionFromClasspath();
-                if (ver != null) {
-                    dep += "\n\t\t\t<version>" + ver + "</version>";
-                }
-                dep += "\n\t\t</dependency>\n";
-
-                getLog().info("Cannot detect Rest component from classpath. Will use servlet as Rest component.");
-                getLog().info("Add the following dependency in the Maven pom.xml file:\n" + dep + "\n");
-
-                generator.withRestComponent(comp);
-            }
+            generator.withRestComponent(findAppropriateComponent());
         }
 
         try {

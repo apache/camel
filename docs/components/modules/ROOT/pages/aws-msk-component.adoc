@@ -1,12 +1,19 @@
 [[aws-msk-component]]
-= AWS MSK Component
+= AWS Managed Streaming for Apache Kafka (MSK) Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-msk/src/main/docs/aws-msk-component.adoc
+:docTitle: AWS Managed Streaming for Apache Kafka (MSK)
+:artifactId: camel-aws-msk
+:description: Manage AWS MSK instances.
+:since: 3.0
+:supportLevel: Stable
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AWS
 
-*Since Camel 3.0*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The AWS MSK component supports create, run, start, stop and terminate
 https://aws.amazon.com/msk/[AWS MSK] instances.
@@ -31,19 +38,24 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS MSK component supports 6 options, which are listed below.
+The AWS Managed Streaming for Apache Kafka (MSK) component supports 11 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (advanced) | The AWS MSK default configuration |  | MSKConfiguration
 | *accessKey* (producer) | Amazon AWS Access Key |  | String
-| *secretKey* (producer) | Amazon AWS Secret Key |  | String
-| *region* (producer) | The region in which MSK client needs to work |  | String
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *configuration* (producer) | The component configuration |  | MSKConfiguration
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *mskClient* (producer) | To use a existing configured AWS MSK as client |  | AWSKafka
+| *operation* (producer) | *Required* The operation to perform. The value can be one of: listClusters, createCluster, deleteCluster, describeCluster |  | MSKOperations
+| *proxyHost* (producer) | To define a proxy host when instantiating the MSK client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the MSK client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the MSK client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *region* (producer) | The region in which MSK client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
+| *secretKey* (producer) | Amazon AWS Secret Key |  | String
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -51,7 +63,7 @@ The AWS MSK component supports 6 options, which are listed below.
 
 
 // endpoint options: START
-The AWS MSK endpoint is configured using URI syntax:
+The AWS Managed Streaming for Apache Kafka (MSK) endpoint is configured using URI syntax:
 
 ----
 aws-msk:label
@@ -78,10 +90,10 @@ with the following path and query parameters:
 | *accessKey* (producer) | Amazon AWS Access Key |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *mskClient* (producer) | To use a existing configured AWS MSK as client |  | AWSKafka
-| *operation* (producer) | *Required* The operation to perform |  | MSKOperations
+| *operation* (producer) | *Required* The operation to perform. The value can be one of: listClusters, createCluster, deleteCluster, describeCluster |  | MSKOperations
 | *proxyHost* (producer) | To define a proxy host when instantiating the MSK client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the MSK client |  | Integer
-| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the MSK client | HTTPS | Protocol
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the MSK client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *region* (producer) | The region in which MSK client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
@@ -89,46 +101,6 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-aws-msk-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 15 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.aws-msk.access-key* | Amazon AWS Access Key |  | String
-| *camel.component.aws-msk.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.aws-msk.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.aws-msk.configuration.access-key* | Amazon AWS Access Key |  | String
-| *camel.component.aws-msk.configuration.msk-client* | To use a existing configured AWS MSK as client |  | AWSKafka
-| *camel.component.aws-msk.configuration.operation* | The operation to perform |  | MSKOperations
-| *camel.component.aws-msk.configuration.proxy-host* | To define a proxy host when instantiating the MSK client |  | String
-| *camel.component.aws-msk.configuration.proxy-port* | To define a proxy port when instantiating the MSK client |  | Integer
-| *camel.component.aws-msk.configuration.proxy-protocol* | To define a proxy protocol when instantiating the MSK client |  | Protocol
-| *camel.component.aws-msk.configuration.region* | The region in which MSK client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
-| *camel.component.aws-msk.configuration.secret-key* | Amazon AWS Secret Key |  | String
-| *camel.component.aws-msk.enabled* | Whether to enable auto configuration of the aws-msk component. This is enabled by default. |  | Boolean
-| *camel.component.aws-msk.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-| *camel.component.aws-msk.region* | The region in which MSK client needs to work |  | String
-| *camel.component.aws-msk.secret-key* | Amazon AWS Secret Key |  | String
-|===
-// spring-boot-auto-configure options: END
 
 
 
@@ -169,6 +141,7 @@ Camel-AWS MSK component provides the following operation on the producer side:
 - listClusters
 - createCluster
 - deleteCluster
+- describeCluster
 
 == Producer Examples
 
@@ -203,3 +176,5 @@ Maven users will need to add the following dependency to their pom.xml.
 
 where `$\{camel-version\}` must be replaced by the actual version of Camel.
 
+
+include::camel-spring-boot::page$aws-msk-starter.adoc[]

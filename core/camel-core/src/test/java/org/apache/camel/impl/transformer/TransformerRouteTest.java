@@ -44,9 +44,11 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultDataFormat;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * A TransformerTest demonstrates contract based declarative transformation via
@@ -223,7 +225,7 @@ public class TransformerRouteTest extends ContextTestSupport {
             super(new DefaultDataFormat() {
                 @Override
                 public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-                    assertEquals(graph.toString(), XOrderResponse.class, graph.getClass());
+                    assertEquals(XOrderResponse.class, graph.getClass(), graph.toString());
                     LOG.info("DataFormat: XOrderResponse -> JSON");
                     stream.write("{name:XOrderResponse}".getBytes());
                 }
@@ -260,11 +262,11 @@ public class TransformerRouteTest extends ContextTestSupport {
                 public boolean process(Exchange exchange, AsyncCallback callback) {
                     Object input = exchange.getIn().getBody();
                     if (input instanceof XOrderResponse) {
-                        log.info("Endpoint: XOrderResponse -> XML");
+                        LOG.info("Endpoint: XOrderResponse -> XML");
                         exchange.getIn().setBody("<XOrderResponse/>");
                     } else {
                         assertEquals("<XOrder/>", input);
-                        log.info("Endpoint: XML -> XOrder");
+                        LOG.info("Endpoint: XML -> XOrder");
                         exchange.getIn().setBody(new XOrder());
 
                     }
@@ -294,7 +296,7 @@ public class TransformerRouteTest extends ContextTestSupport {
         @Override
         public void transform(Message message, DataType from, DataType to) throws Exception {
             assertEquals("name=XOrder", message.getBody());
-            log.info("Bean: Other -> XOrder");
+            LOG.info("Bean: Other -> XOrder");
             message.setBody(new XOrder());
         }
     }
@@ -302,7 +304,7 @@ public class TransformerRouteTest extends ContextTestSupport {
     public static class XOrderResponseToOtherTransformer extends Transformer {
         @Override
         public void transform(Message message, DataType from, DataType to) throws Exception {
-            log.info("Bean: XOrderResponse -> Other");
+            LOG.info("Bean: XOrderResponse -> Other");
             message.setBody("name=XOrderResponse");
         }
     }

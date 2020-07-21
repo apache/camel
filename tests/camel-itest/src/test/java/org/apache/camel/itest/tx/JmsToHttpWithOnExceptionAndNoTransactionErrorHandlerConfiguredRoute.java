@@ -34,7 +34,7 @@ public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute
     private String noAccess = "<?xml version=\"1.0\"?><reply><status>Access denied</status></reply>";
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         port = AvailablePortFinder.getNextAvailable();
 
         // if its a 404 then regard it as handled
@@ -68,28 +68,28 @@ public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute
 
         // this is our http router
         from("jetty:http://localhost:" + port + "/sender").process(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 // first hit is always a error code 500 to force the caller to retry
                 if (counter++ < 1) {
                     // simulate http error 500
-                    exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
-                    exchange.getOut().setBody("Damn some internal server error");
+                    exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
+                    exchange.getMessage().setBody("Damn some internal server error");
                     return;
                 }
 
                 String user = exchange.getIn().getHeader("user", String.class);
                 if ("unknown".equals(user)) {
                     // no page for a unknown user
-                    exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
-                    exchange.getOut().setBody("Page does not exists");
+                    exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
+                    exchange.getMessage().setBody("Page does not exists");
                     return;
                 } else if ("guest".equals(user)) {
                     // not okay for guest user
-                    exchange.getOut().setBody(nok);
+                    exchange.getMessage().setBody(nok);
                     return;
                 }
 
-                exchange.getOut().setBody(ok);
+                exchange.getMessage().setBody(ok);
             }
         });
     }

@@ -23,9 +23,9 @@ import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.configuration.global.GlobalConfiguration;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.jgroups.util.Util.assertFalse;
 import static org.jgroups.util.Util.assertTrue;
@@ -36,16 +36,16 @@ public class InfinispanIdempotentRepositoryTest {
     protected InfinispanIdempotentRepository idempotentRepository;
     protected String cacheName = "default";
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        GlobalConfiguration global = new GlobalConfigurationBuilder().defaultCacheName("default").globalJmxStatistics().allowDuplicateDomains(true).build();
+        GlobalConfiguration global = new GlobalConfigurationBuilder().defaultCacheName("default").jmx().domain("test").build();
         Configuration conf = new ConfigurationBuilder().build();
         basicCacheContainer = new DefaultCacheManager(global, conf);
         basicCacheContainer.start();
         idempotentRepository = InfinispanIdempotentRepository.infinispanIdempotentRepository(basicCacheContainer, cacheName);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         basicCacheContainer.stop();
     }

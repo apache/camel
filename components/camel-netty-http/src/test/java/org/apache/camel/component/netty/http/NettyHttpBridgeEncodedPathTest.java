@@ -22,9 +22,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.junit.Test;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
 
@@ -36,7 +41,7 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
     @Test
     public void testEncodedQuery() throws Exception {
         String response = template.requestBody("http://localhost:" + port2 + "/nettyTestRouteA?param1=%2B447777111222", null, String.class);
-        assertEquals("Get a wrong response", "param1=+447777111222", response);
+        assertEquals("param1=+447777111222", response, "Get a wrong response");
     }
 
     @Test
@@ -48,12 +53,14 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
         mock.message(0).header(Exchange.HTTP_RAW_QUERY).isNull();
 
         // cannot use template as it automatically decodes some chars in the path
-        HttpClient httpClient = new HttpClient();
-        GetMethod httpGet = new GetMethod("http://localhost:" + port4 + "/nettyTestRouteC/" + path);
-        int status = httpClient.executeMethod(httpGet);
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpGet httpGet = new HttpGet("http://localhost:" + port4 + "/nettyTestRouteC/" + path);
 
-        assertEquals("Get a wrong response status", 200, status);
-        assertMockEndpointsSatisfied();
+            try (CloseableHttpResponse response = client.execute(httpGet)) {
+                assertEquals(200, response.getStatusLine().getStatusCode(), "Get a wrong response status");
+                assertMockEndpointsSatisfied();
+            }
+        }
     }
 
     @Override
@@ -68,16 +75,14 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
 
                 errorHandler(noErrorHandler());
 
-                Processor serviceProc = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        // %2B becomes decoded to a space
-                        Object s = exchange.getIn().getHeader("param1");
-                        // can be either + or %2B
-                        assertTrue(s.equals(" 447777111222") || s.equals("+447777111222") || s.equals("%2B447777111222"));
+                Processor serviceProc = exchange -> {
+                    // %2B becomes decoded to a space
+                    Object s = exchange.getIn().getHeader("param1");
+                    // can be either + or %2B
+                    assertTrue(s.equals(" 447777111222") || s.equals("+447777111222") || s.equals("%2B447777111222"));
 
-                        // send back the query
-                        exchange.getOut().setBody(exchange.getIn().getHeader(Exchange.HTTP_QUERY));
-                    }
+                    // send back the query
+                    exchange.getMessage().setBody(exchange.getIn().getHeader(Exchange.HTTP_QUERY));
                 };
                 
                 from("netty-http:http://localhost:" + port2 + "/nettyTestRouteA?matchOnUriPrefix=true")

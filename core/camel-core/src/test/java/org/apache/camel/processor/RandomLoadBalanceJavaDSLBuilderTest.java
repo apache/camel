@@ -25,10 +25,11 @@ import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SendDefinition;
+import org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition;
 import org.apache.camel.processor.channel.DefaultChannel;
-import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * A crude unit test to navigate the route and build a Java DSL from the route
@@ -76,7 +77,7 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
 
     private void navigateRoute(Navigate<Processor> nav, StringBuilder sb) {
         if (nav instanceof Pipeline) {
-            nav = (Navigate<Processor>)((Pipeline)nav).getProcessors().get(0);
+            nav = (Navigate<Processor>) nav.next().get(0);
         }
 
         if (!nav.hasNext()) {
@@ -99,8 +100,7 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
             sb.append(".loadBalance()");
 
             LoadBalanceDefinition lbd = (LoadBalanceDefinition)defn;
-            LoadBalancer balancer = lbd.getLoadBalancerType().getLoadBalancer();
-            if (balancer instanceof RandomLoadBalancer) {
+            if (lbd.getLoadBalancerType() instanceof RandomLoadBalancerDefinition) {
                 sb.append(".random()");
             }
         }

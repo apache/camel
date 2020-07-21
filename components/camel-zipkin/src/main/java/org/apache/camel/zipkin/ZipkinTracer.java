@@ -49,12 +49,11 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
-import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.service.ServiceHelper;
@@ -367,7 +366,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
 
         camelContext.getManagementStrategy().addEventNotifier(eventNotifier);
@@ -438,7 +437,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     }
 
     @Override
-    protected void doStop() throws Exception {
+    protected void doShutdown() throws Exception {
         // stop event notifier
         camelContext.getManagementStrategy().removeEventNotifier(eventNotifier);
         ServiceHelper.stopService(eventNotifier);
@@ -564,7 +563,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         Tracing brave = null;
         if (camelContext.isUseMDCLogging()) {
             brave = Tracing.newBuilder().currentTraceContext(ThreadLocalCurrentTraceContext.newBuilder().addScopeDecorator(MDCScopeDecorator.create()).build())
-                .localServiceName(serviceName).sampler(Sampler.create(rate)).spanReporter(spanReporter).build();
+                    .localServiceName(serviceName).sampler(Sampler.create(rate)).spanReporter(spanReporter).build();
         } else {
             brave = Tracing.newBuilder().localServiceName(serviceName).sampler(Sampler.create(rate)).spanReporter(spanReporter).build();
         }
@@ -760,14 +759,14 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         @Override
         public boolean isEnabled(CamelEvent event) {
             switch (event.getType()) {
-            case ExchangeSending:
-            case ExchangeSent:
-            case ExchangeCreated:
-            case ExchangeCompleted:
-            case ExchangeFailed:
-                return true;
-            default:
-                return false;
+                case ExchangeSending:
+                case ExchangeSent:
+                case ExchangeCreated:
+                case ExchangeCompleted:
+                case ExchangeFailed:
+                    return true;
+                default:
+                    return false;
             }
         }
 
@@ -809,16 +808,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
-                String answer = null;
-                UnitOfWork uow = exchange.getUnitOfWork();
-                RouteContext rc = uow != null ? uow.getRouteContext() : null;
-                if (rc != null) {
-                    answer = rc.getRouteId();
-                }
-                if (answer == null) {
-                    // fallback and get from route id on the exchange
-                    answer = exchange.getFromRouteId();
-                }
+                String answer = ExchangeHelper.getRouteId(exchange);
                 return type.cast(answer);
             }
         };

@@ -22,10 +22,12 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.SettlementBatchSummaryGatewayApiMethod;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SettlementBatchSummaryGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
@@ -33,18 +35,18 @@ public class SettlementBatchSummaryGatewayIntegrationTest extends AbstractBraint
     private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(SettlementBatchSummaryGatewayApiMethod.class).getName();
 
     // TODO provide parameter values for generate
-    @Ignore
+    @Disabled
     @Test
     public void testGenerate() throws Exception {
         // using java.util.Calendar message body for single parameter "settlementDate"
         final com.braintreegateway.Result result = requestBody("direct://GENERATE", null);
 
-        assertNotNull("generate result", result);
+        assertNotNull(result, "generate result");
         LOG.debug("generate: " + result);
     }
 
     // TODO provide parameter values for generate
-    @Ignore
+    @Disabled
     @Test
     public void testGenerateWithCustomFields() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
@@ -55,7 +57,7 @@ public class SettlementBatchSummaryGatewayIntegrationTest extends AbstractBraint
 
         final com.braintreegateway.Result result = requestBodyAndHeaders("direct://GENERATE_1", null, headers);
 
-        assertNotNull("generate result", result);
+        assertNotNull(result, "generate result");
         LOG.debug("generate: " + result);
     }
 

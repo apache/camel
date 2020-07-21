@@ -18,10 +18,10 @@ package org.apache.camel.opentracing.decorators;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AwsSnsSpanDecoratorTest {
 

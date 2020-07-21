@@ -25,6 +25,8 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.PropertyBindingSupport;
 
@@ -34,7 +36,7 @@ import org.apache.camel.support.PropertyBindingSupport;
 public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S extends ApiCollection<E, T>>
         extends DefaultComponent {
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Component configuration")
     protected T configuration;
 
     // API collection
@@ -63,17 +65,17 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
         String apiNameStr;
         String methodName;
         switch (pathElements.length) {
-        case 1:
-            apiNameStr = "";
-            methodName = pathElements[0];
-            break;
-        case 2:
-            apiNameStr = pathElements[0];
-            methodName = pathElements[1];
-            break;
-        default:
-            throw new CamelException("Invalid URI path [" + remaining
-                + "], must be of the format " + collection.getApiNames() + "/<operation-name>");
+            case 1:
+                apiNameStr = "";
+                methodName = pathElements[0];
+                break;
+            case 2:
+                apiNameStr = pathElements[0];
+                methodName = pathElements[1];
+                break;
+            default:
+                throw new CamelException("Invalid URI path [" + remaining
+                        + "], must be of the format " + collection.getApiNames() + "/<operation-name>");
         }
 
         try {
@@ -83,17 +85,14 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
             final T endpointConfiguration = createEndpointConfiguration(apiName);
             final Endpoint endpoint = createEndpoint(uri, methodName, apiName, endpointConfiguration);
 
-            // set endpoint property inBody
-            setProperties(endpoint, parameters);
-
             // configure endpoint properties and initialize state
-            endpoint.configureProperties(parameters);
+            setProperties(endpoint, parameters);
 
             return endpoint;
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof IllegalArgumentException) {
                 throw new CamelException("Invalid URI path prefix [" + remaining
-                    + "], must be one of " + collection.getApiNames());
+                        + "], must be one of " + collection.getApiNames());
             }
             throw e;
         }
@@ -107,12 +106,27 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
         final Map<String, Object> componentProperties = new HashMap<>();
         // copy component configuration, if set
         if (configuration != null) {
-            getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(configuration, componentProperties, null, false);
+            PropertyConfigurer configurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(configuration.getClass().getSimpleName(), getCamelContext());
+            // use reflection free configurer (if possible)
+            if (configurer instanceof PropertyConfigurerGetter) {
+                PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
+                for (String key : getter.getAllOptions(configuration).keySet()) {
+                    Object value = getter.getOptionValue(configuration, key, true);
+                    if (value != null) {
+                        componentProperties.put(key, value);
+                    }
+                }
+            } else {
+                getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(configuration, componentProperties, null, false);
+            }
         }
 
         // create endpoint configuration with component properties
         final T endpointConfiguration = collection.getEndpointConfiguration(name);
-        PropertyBindingSupport.build().bind(getCamelContext(), endpointConfiguration, componentProperties);
+        PropertyConfigurer configurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(endpointConfiguration.getClass().getSimpleName(), getCamelContext());
+        PropertyBindingSupport.build()
+                .withConfigurer(configurer)
+                .bind(getCamelContext(), endpointConfiguration, componentProperties);
         return endpointConfiguration;
     }
 

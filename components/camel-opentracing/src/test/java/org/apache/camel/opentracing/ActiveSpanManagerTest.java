@@ -19,8 +19,11 @@ package org.apache.camel.opentracing;
 import io.opentracing.Span;
 import io.opentracing.mock.MockTracer;
 import org.apache.camel.Exchange;
-import org.apache.camel.test.junit4.ExchangeTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.ExchangeTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ActiveSpanManagerTest extends ExchangeTestSupport {
 

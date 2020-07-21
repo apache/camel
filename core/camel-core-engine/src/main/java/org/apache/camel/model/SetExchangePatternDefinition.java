@@ -32,21 +32,30 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetExchangePatternDefinition extends NoOutputDefinition<SetExchangePatternDefinition> {
     @XmlAttribute(required = true)
-    private ExchangePattern pattern;
+    @Metadata(required = true, javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut,InOptionalOut")
+    private String pattern;
 
     public SetExchangePatternDefinition() {
     }
 
     public SetExchangePatternDefinition(ExchangePattern pattern) {
+        this(pattern.name());
+    }
+
+    public SetExchangePatternDefinition(String pattern) {
         this.pattern = pattern;
     }
 
     public SetExchangePatternDefinition pattern(ExchangePattern pattern) {
+        return pattern(pattern.name());
+    }
+
+    public SetExchangePatternDefinition pattern(String pattern) {
         setPattern(pattern);
         return this;
     }
 
-    public ExchangePattern getPattern() {
+    public String getPattern() {
         return pattern;
     }
 
@@ -54,7 +63,7 @@ public class SetExchangePatternDefinition extends NoOutputDefinition<SetExchange
      * Sets the new exchange pattern of the Exchange to be used from this point
      * forward
      */
-    public void setPattern(ExchangePattern pattern) {
+    public void setPattern(String pattern) {
         this.pattern = pattern;
     }
 

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.debezium;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,25 +25,25 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.Producer;
 import org.apache.camel.component.debezium.configuration.FileConnectorEmbeddedDebeziumConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaBuilder;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class DebeziumEndpointTest {
 
     private DebeziumEndpoint debeziumEndpoint;
@@ -50,26 +51,28 @@ public class DebeziumEndpointTest {
     @Mock
     private Processor processor;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         debeziumEndpoint = new DebeziumTestEndpoint("", new DebeziumTestComponent(new DefaultCamelContext()),
                 new FileConnectorEmbeddedDebeziumConfiguration());
     }
 
     @Test
-    public void testIfCreatesConsumer() throws Exception {
+    void testIfCreatesConsumer() throws Exception {
         final Consumer debeziumConsumer = debeziumEndpoint.createConsumer(processor);
 
         assertNotNull(debeziumConsumer);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testIfFailsToCreateProducer() throws Exception {
-        final Producer debeziumConsumer = debeziumEndpoint.createProducer();
+    @Test
+    void testIfFailsToCreateProducer() {
+        assertThrows(UnsupportedOperationException.class, () -> {
+            debeziumEndpoint.createProducer();
+        });
     }
 
     @Test
-    public void testIfCreatesExchangeFromSourceCreateRecord() {
+    void testIfCreatesExchangeFromSourceCreateRecord() {
         final SourceRecord sourceRecord = createCreateRecord();
 
         final Exchange exchange = debeziumEndpoint.createDbzExchange(sourceRecord);
@@ -95,7 +98,7 @@ public class DebeziumEndpointTest {
     }
 
     @Test
-    public void testIfCreatesExchangeFromSourceDeleteRecord() {
+    void testIfCreatesExchangeFromSourceDeleteRecord() {
         final SourceRecord sourceRecord = createDeleteRecord();
 
         final Exchange exchange = debeziumEndpoint.createDbzExchange(sourceRecord);
@@ -116,7 +119,7 @@ public class DebeziumEndpointTest {
     }
 
     @Test
-    public void testIfCreatesExchangeFromSourceDeleteRecordWithNull() {
+    void testIfCreatesExchangeFromSourceDeleteRecordWithNull() {
         final SourceRecord sourceRecord = createDeleteRecordWithNull();
 
         final Exchange exchange = debeziumEndpoint.createDbzExchange(sourceRecord);
@@ -134,7 +137,7 @@ public class DebeziumEndpointTest {
     }
 
     @Test
-    public void testIfCreatesExchangeFromSourceUpdateRecord() {
+    void testIfCreatesExchangeFromSourceUpdateRecord() {
         final SourceRecord sourceRecord = createUpdateRecord();
 
         final Exchange exchange = debeziumEndpoint.createDbzExchange(sourceRecord);
@@ -159,7 +162,7 @@ public class DebeziumEndpointTest {
     }
 
     @Test
-    public void testIfCreatesExchangeFromSourceRecordOtherThanStruct() {
+    void testIfCreatesExchangeFromSourceRecordOtherThanStruct() {
         final SourceRecord sourceRecord = createStringRecord();
 
         final Exchange exchange = debeziumEndpoint.createDbzExchange(sourceRecord);
@@ -177,7 +180,7 @@ public class DebeziumEndpointTest {
     }
 
     @Test
-    public void testIfHandlesUnknownSchema() {
+    void testIfHandlesUnknownSchema() {
         final SourceRecord sourceRecord = createUnknownUnnamedSchemaRecord();
 
         final Exchange exchange = debeziumEndpoint.createDbzExchange(sourceRecord);
@@ -205,7 +208,7 @@ public class DebeziumEndpointTest {
 
         after.put("id", (byte)1);
         source.put("lsn", 1234);
-        final Struct payload = envelope.create(after, source, System.nanoTime());
+        final Struct payload = envelope.create(after, source, Instant.now());
         return new SourceRecord(new HashMap<>(), createSourceOffset(), "dummy", createKeySchema(),
                 createKeyRecord(), envelope.schema(), payload);
     }
@@ -216,15 +219,14 @@ public class DebeziumEndpointTest {
                 .withSource(SchemaBuilder.struct().build()).build();
         final Struct before = new Struct(recordSchema);
         before.put("id", (byte)1);
-        final Struct payload = envelope.delete(before, null, System.nanoTime());
+        final Struct payload = envelope.delete(before, null, Instant.now());
         return new SourceRecord(new HashMap<>(), createSourceOffset(), "dummy", createKeySchema(),
                 createKeyRecord(), envelope.schema(), payload);
     }
 
     private SourceRecord createDeleteRecordWithNull() {
         final Schema recordSchema = SchemaBuilder.struct().field("id", SchemaBuilder.int8()).build();
-        Envelope envelope = Envelope.defineSchema().withName("dummy.Envelope").withRecord(recordSchema)
-                .withSource(SchemaBuilder.struct().build()).build();
+        Envelope.defineSchema().withName("dummy.Envelope").withRecord(recordSchema).withSource(SchemaBuilder.struct().build()).build();
         final Struct before = new Struct(recordSchema);
         before.put("id", (byte)1);
         return new SourceRecord(new HashMap<>(), createSourceOffset(), "dummy", createKeySchema(),
@@ -243,7 +245,7 @@ public class DebeziumEndpointTest {
         before.put("id", (byte)1);
         after.put("id", (byte)2);
         source.put("lsn", 1234);
-        final Struct payload = envelope.update(before, after, source, System.nanoTime());
+        final Struct payload = envelope.update(before, after, source, Instant.now());
         return new SourceRecord(new HashMap<>(), createSourceOffset(), "dummy", createKeySchema(),
                 createKeyRecord(), envelope.schema(), payload);
     }

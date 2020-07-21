@@ -22,20 +22,16 @@ package org.apache.camel.spi;
 public interface ReactiveExecutor {
 
     /**
-     * Schedules the task to be run
+     * Service factory key.
+     */
+    String FACTORY = "reactive-executor";
+
+    /**
+     * Schedules the task to be run (fairly)
      *
      * @param runnable    the task
      */
     void schedule(Runnable runnable);
-
-    /**
-     * Schedules the task to be run
-     *
-     * @param runnable    the task
-     * @param description a human readable description for logging purpose
-     */
-    @Deprecated
-    void schedule(Runnable runnable, String description);
 
     /**
      * Schedules the task to be prioritized and run asap
@@ -45,29 +41,11 @@ public interface ReactiveExecutor {
     void scheduleMain(Runnable runnable);
 
     /**
-     * Schedules the task to be prioritized and run asap
-     *
-     * @param runnable    the task
-     * @param description a human readable description for logging purpose
-     */
-    @Deprecated
-    void scheduleMain(Runnable runnable, String description);
-
-    /**
-     * Schedules the task to run synchronously
+     * Schedules the task to run synchronously (current thread)
      *
      * @param runnable    the task
      */
     void scheduleSync(Runnable runnable);
-
-    /**
-     * Schedules the task to run synchronously
-     *
-     * @param runnable    the task
-     * @param description a human readable description for logging purpose
-     */
-    @Deprecated
-    void scheduleSync(Runnable runnable, String description);
 
     /**
      * Executes the next task (if supported by the reactive executor implementation)

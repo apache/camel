@@ -1,12 +1,17 @@
 [[ldap-component]]
 = LDAP Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-ldap/src/main/docs/ldap-component.adoc
+:docTitle: LDAP
+:artifactId: camel-ldap
+:description: Perform searches on LDAP servers.
+:since: 1.5
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 1.5*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The LDAP component allows you to perform searches in LDAP servers
 using filters as the message payload. +
@@ -53,8 +58,8 @@ The LDAP component supports 2 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -90,40 +95,11 @@ with the following path and query parameters:
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *pageSize* (producer) | When specified the ldap module uses paging to retrieve all results (most LDAP Servers throw an exception when trying to retrieve more than 1000 entries in one query). To be able to use this a LdapContext (subclass of DirContext) has to be passed in as ldapServerBean (otherwise an exception is thrown) |  | Integer
 | *returnedAttributes* (producer) | Comma-separated list of attributes that should be set in each entry of the result |  | String
-| *scope* (producer) | Specifies how deeply to search the tree of entries, starting at the base DN. | subtree | String
+| *scope* (producer) | Specifies how deeply to search the tree of entries, starting at the base DN. The value can be one of: object, onelevel, subtree | subtree | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-ldap-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 4 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.ldap.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.ldap.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.ldap.enabled* | Whether to enable auto configuration of the ldap component. This is enabled by default. |  | Boolean
-| *camel.component.ldap.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-|===
-// spring-boot-auto-configure options: END
 
 
 
@@ -154,12 +130,15 @@ The URI, `ldap:ldapserver`, references a Spring bean with the ID,
 The preceding example declares a regular Sun based LDAP `DirContext`
 that connects anonymously to a locally hosted LDAP server.
 
-NOTE: `DirContext` objects are *not* required to support concurrency by
+[NOTE]
+====
+`DirContext` objects are *not* required to support concurrency by
 contract. It is therefore important that the directory context is
 declared with the setting, `scope="prototype"`, in the `bean` definition
 or that the context supports concurrency. In the Spring framework,
 `prototype` scoped objects are instantiated each time they are looked
 up.
+====
 
 == Samples
 
@@ -386,3 +365,5 @@ public class CustomSocketFactory extends SSLSocketFactory {
 
  
 
+
+include::camel-spring-boot::page$ldap-starter.adoc[]

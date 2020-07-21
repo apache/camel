@@ -40,21 +40,21 @@ import org.apache.directory.server.annotations.CreateLdapServer;
 import org.apache.directory.server.annotations.CreateTransport;
 import org.apache.directory.server.core.annotations.ApplyLdifFiles;
 import org.apache.directory.server.core.integ.AbstractLdapTestUnit;
-import org.apache.directory.server.core.integ.FrameworkRunner;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.directory.server.core.integ5.DirectoryExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.apache.directory.server.integ.ServerIntegrationUtils.getWiredConnection;
 import static org.apache.directory.server.integ.ServerIntegrationUtils.getWiredContext;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@RunWith(FrameworkRunner.class)
+@ExtendWith(DirectoryExtension.class)
 @CreateLdapServer(transports = {@CreateTransport(protocol = "LDAP")})
 public class LdifRouteTest extends AbstractLdapTestUnit {
     // Constants
@@ -67,8 +67,8 @@ public class LdifRouteTest extends AbstractLdapTestUnit {
     private CamelContext camel;
     private ProducerTemplate template;
     private LdapContext ldapContext;
-    
-    @Before
+
+    @BeforeEach
     public void setup() throws Exception {
         // Create the LDAPConnection
         ldapContext = getWiredContext(ldapServer);
@@ -79,7 +79,7 @@ public class LdifRouteTest extends AbstractLdapTestUnit {
         template = camel.createProducerTemplate();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         camel.stop();
     }
@@ -324,9 +324,9 @@ public class LdifRouteTest extends AbstractLdapTestUnit {
     private List<String> defaultLdapModuleOutAssertions(Exchange out) {
         // assertions of the response
         assertNotNull(out);
-        assertNotNull(out.getOut());
-        List<String> data = out.getOut().getBody(List.class);
-        assertNotNull("out body could not be converted to a List - was: " + out.getOut().getBody(), data);
+        assertNotNull(out.getMessage());
+        List<String> data = out.getMessage().getBody(List.class);
+        assertNotNull(data, "out body could not be converted to a List - was: " + out.getMessage().getBody());
         return data;
     }
 

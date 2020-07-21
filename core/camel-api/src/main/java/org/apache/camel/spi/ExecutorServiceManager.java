@@ -229,10 +229,11 @@ public interface ExecutorServiceManager extends ShutdownableService, StaticServi
      * @param name        name which is appended to the thread name
      * @return the created thread pool
      */
+    @Deprecated
     ExecutorService newCachedThreadPool(Object source, String name);
 
     /**
-     * Creates a new fixed thread pool.
+     * Creates a new fixed thread pool (the pool will not grow or shrink but has a fixed number of threads constantly).
      *
      * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
      * @param name        name which is appended to the thread name

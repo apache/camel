@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.5.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -36,61 +36,149 @@
     <modules>
         <module>camel-util</module>
         <module>camel-api</module>
+        <module>camel-core-catalog</module>
         <module>camel-support</module>
         <module>camel-caffeine-lrucache</module>
-        <module>camel-headersmap</module>
         <module>camel-management-api</module>
         <module>camel-management</module>
         <module>camel-base</module>
-        <module>camel-jaxp</module>
+        <module>camel-xml-jaxp</module>
+        <module>camel-cluster</module>
         <module>camel-core-engine</module>
+        <module>camel-core-languages</module>
+        <module>camel-xml-io</module>
+        <module>camel-xml-jaxb</module>
         <module>camel-core</module>
-        <module>camel-endpointdsl</module>
-        <module>camel-core-osgi</module>
         <module>camel-core-xml</module>
         <module>camel-cloud</module>
+        <module>camel-health</module>
         <module>camel-main</module>
+        <module>camel-allcomponents</module>
+        <module>camel-endpointdsl</module>
+        <module>camel-componentdsl</module>
     </modules>
+
+    <properties>
+        <camel.osgi.manifest>${project.build.outputDirectory}/META-INF/MANIFEST.MF</camel.osgi.manifest>
+    </properties>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-package-maven-plugin</artifactId>
-                <version>${project.version}</version>
                 <executions>
                     <execution>
-                        <id>generate-legal</id>
+                        <id>generate</id>
                         <goals>
-                            <goal>generate-legal</goal>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                    </execution>
+                    <execution>
+                        <id>generate-postcompile</id>
+                        <goals>
+                            <goal>generate-postcompile</goal>
                         </goals>
                         <phase>prepare-package</phase>
                     </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
                     <execution>
-                        <id>jaxb-list</id>
+                        <id>recompile</id>
                         <goals>
-                            <goal>generate-jaxb-list</goal>
+                            <goal>compile</goal>
                         </goals>
                         <phase>process-classes</phase>
                     </execution>
                 </executions>
             </plugin>
+            <!-- generate sources JAR by default as they are needed by other Camel sub projects -->
             <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
-                        <id>copy-generated-resources</id>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
                         <goals>
-                            <goal>resources</goal>
+                            <goal>jar-no-fork</goal>
                         </goals>
-                        <phase>process-classes</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>add-resource</goal>
+                        </goals>
                         <configuration>
+                            <sources>
+                                <source>src/generated/java</source>
+                            </sources>
                             <resources>
                                 <resource>
-                                    <directory>${basedir}/target/generated/camel/jaxb</directory>
+                                    <directory>src/generated/resources</directory>
                                 </resource>
                             </resources>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-bundle-plugin</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                    <supportIncrementalBuild>true</supportIncrementalBuild>
+                    <noWarningProjectTypes>pom</noWarningProjectTypes>
+                    <excludeDependencies>${camel.osgi.exclude.dependencies}</excludeDependencies>
+                    <instructions>
+                        <Bundle-Name>${project.artifactId}</Bundle-Name>
+                        <Bundle-SymbolicName>${camel.osgi.symbolic.name}</Bundle-SymbolicName>
+                        <Bundle-Activator>${camel.osgi.activator}</Bundle-Activator>
+                        <Import-Package>${camel.osgi.import}</Import-Package>
+                        <Export-Package>${camel.osgi.export}</Export-Package>
+                        <DynamicImport-Package>${camel.osgi.dynamic}</DynamicImport-Package>
+                        <Private-Package>${camel.osgi.private.pkg}</Private-Package>
+                        <Require-Capability>${camel.osgi.require.capability}</Require-Capability>
+                        <Provide-Capability>${camel.osgi.provide.capability}</Provide-Capability>
+                        <Implementation-Title>Apache Camel</Implementation-Title>
+                        <Implementation-Version>${project.version}</Implementation-Version>
+                        <Karaf-Info>Camel;${project.artifactId}=${project.version}</Karaf-Info>
+                        <_versionpolicy>${camel.osgi.import.default.version}</_versionpolicy>
+                        <_failok>${camel.osgi.failok}</_failok>
+                        <_removeheaders>Bnd-LastModified</_removeheaders>
+                    </instructions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>versions</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>cleanVersions</goal>
+                        </goals>
+                        <configuration>
+                            <versions>
+                                <camel.osgi.version.clean>${project.version}</camel.osgi.version.clean>
+                            </versions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

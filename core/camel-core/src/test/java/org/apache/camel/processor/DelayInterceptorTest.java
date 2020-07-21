@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Delay interceptor unit test.
@@ -34,9 +36,9 @@ public class DelayInterceptorTest extends ContextTestSupport {
             template.sendBody("direct:start", "Message #" + i);
         }
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should not be that fast to run: " + delta, delta > 100);
+        assertTrue(delta > 100, "Should not be that fast to run: " + delta);
         // some OS boxes are slow
-        assertTrue("Should not take that long to run: " + delta, delta < 5000);
+        assertTrue(delta < 5000, "Should not take that long to run: " + delta);
     }
 
     @Override

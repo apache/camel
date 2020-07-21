@@ -18,9 +18,6 @@ package ${package};
 
 import org.apache.camel.spi.UriParams;
 
-/**
- * Component configuration for ${name} component.
- */
 @UriParams
 public class ${name}Configuration {
 

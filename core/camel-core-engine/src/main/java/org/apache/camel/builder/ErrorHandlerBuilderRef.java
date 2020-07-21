@@ -16,28 +16,19 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.Processor;
-import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
-
 /**
  * Represents a proxy to an error handler builder which is resolved by named
  * reference
  */
 public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
+
+    public static final String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";
+
     private final String ref;
     private boolean supportTransacted;
 
     public ErrorHandlerBuilderRef(String ref) {
         this.ref = ref;
-    }
-
-    @Override
-    public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
-        ErrorHandlerFactory handler = lookupErrorHandler(routeContext);
-        return ErrorHandlerReifier.reifier(handler).createErrorHandler(routeContext, processor);
     }
 
     @Override
@@ -62,18 +53,6 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
 
     public String getRef() {
         return ref;
-    }
-
-    private ErrorHandlerBuilder lookupErrorHandler(RouteContext routeContext) {
-        ErrorHandlerBuilder handler = (ErrorHandlerBuilder)ErrorHandlerReifier.lookupErrorHandlerFactory(routeContext, getRef());
-        ObjectHelper.notNull(handler, "error handler '" + ref + "'");
-
-        // configure if the handler support transacted
-        supportTransacted = handler.supportTransacted();
-
-        routeContext.addErrorHandlerFactoryReference(this, handler);
-
-        return handler;
     }
 
     @Override

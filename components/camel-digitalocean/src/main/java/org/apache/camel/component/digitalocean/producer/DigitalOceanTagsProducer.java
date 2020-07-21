@@ -37,20 +37,20 @@ public class DigitalOceanTagsProducer extends DigitalOceanProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case list:
-            getTags(exchange);
-            break;
-        case create:
-            createTag(exchange);
-            break;
-        case get:
-            getTag(exchange);
-            break;
-        case delete:
-            deleteTag(exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case list:
+                getTags(exchange);
+                break;
+            case create:
+                createTag(exchange);
+                break;
+            case get:
+                getTag(exchange);
+                break;
+            case delete:
+                deleteTag(exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
 
     }

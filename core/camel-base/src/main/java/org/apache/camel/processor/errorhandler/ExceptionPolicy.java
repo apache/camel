@@ -195,10 +195,10 @@ public class ExceptionPolicy {
                 answer.setAsyncDelayedRedelivery(CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.asyncDelayedRedelivery)));
             }
             if (definition.get(RedeliveryOption.retriesExhaustedLogLevel) != null) {
-                answer.setRetriesExhaustedLogLevel(LoggingLevel.valueOf(definition.get(RedeliveryOption.retriesExhaustedLogLevel)));
+                answer.setRetriesExhaustedLogLevel(CamelContextHelper.parse(context, LoggingLevel.class, definition.get(RedeliveryOption.retriesExhaustedLogLevel)));
             }
             if (definition.get(RedeliveryOption.retryAttemptedLogLevel) != null) {
-                answer.setRetryAttemptedLogLevel(LoggingLevel.valueOf(definition.get(RedeliveryOption.retryAttemptedLogLevel)));
+                answer.setRetryAttemptedLogLevel(CamelContextHelper.parse(context, LoggingLevel.class, definition.get(RedeliveryOption.retryAttemptedLogLevel)));
             }
             if (definition.get(RedeliveryOption.retryAttemptedLogInterval) != null) {
                 answer.setRetryAttemptedLogInterval(CamelContextHelper.parseInteger(context, definition.get(RedeliveryOption.retryAttemptedLogInterval)));

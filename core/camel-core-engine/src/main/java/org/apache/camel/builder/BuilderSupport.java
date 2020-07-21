@@ -124,13 +124,6 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Returns a language expression value builder
-     */
-    public ValueBuilder language(String language, String expression) {
-        return Builder.language(language, expression);
-    }
-
-    /**
      * Returns a simple expression value builder
      */
     public SimpleBuilder simple(String value) {

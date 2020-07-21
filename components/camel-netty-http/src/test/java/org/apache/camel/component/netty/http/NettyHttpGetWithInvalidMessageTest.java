@@ -27,8 +27,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
     private static final String REQUEST_STRING = "user: Willem\n"
@@ -78,9 +81,9 @@ public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
         });
 
         assertNotNull(out);
-        String result = out.getOut().getBody(String.class);
+        String result = out.getMessage().getBody(String.class);
         assertNotNull(result);
-        assertTrue("We should get the 404 response.", result.indexOf("404 Not Found") > 0);
+        assertTrue(result.indexOf("404 Not Found") > 0, "We should get the 404 response.");
 
     }
 

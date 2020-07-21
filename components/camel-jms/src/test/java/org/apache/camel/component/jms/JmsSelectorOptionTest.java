@@ -23,10 +23,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JmsSelectorOptionTest extends CamelTestSupport {
     
@@ -68,8 +70,8 @@ public class JmsSelectorOptionTest extends CamelTestSupport {
             if (ex != null) {
                 Message message = ex.getIn();
                 int size = message.getHeader("SIZE_NUMBER", int.class);
-                assertTrue("The message header SIZE_NUMBER should be less than 1500", size < 1500);
-                assertEquals("The message body is wrong", "Message3", message.getBody());
+                assertTrue(size < 1500, "The message header SIZE_NUMBER should be less than 1500");
+                assertEquals(message.getBody(), "Message3", "The message body is wrong");
             } else {
                 break;
             }

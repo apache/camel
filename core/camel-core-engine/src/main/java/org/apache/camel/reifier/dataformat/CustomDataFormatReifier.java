@@ -16,6 +16,8 @@
  */
 package org.apache.camel.reifier.dataformat;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.CustomDataFormat;
@@ -23,17 +25,17 @@ import org.apache.camel.spi.DataFormat;
 
 public class CustomDataFormatReifier extends DataFormatReifier<CustomDataFormat> {
 
-    public CustomDataFormatReifier(DataFormatDefinition definition) {
-        super((CustomDataFormat)definition);
+    public CustomDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (CustomDataFormat) definition);
     }
 
     @Override
-    protected DataFormat doCreateDataFormat(CamelContext camelContext) {
-        return DataFormatReifier.getDataFormat(camelContext, null, definition.getRef());
+    protected DataFormat doCreateDataFormat() {
+        return DataFormatReifier.getDataFormat(camelContext, definition.getRef());
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
     }
 
 }

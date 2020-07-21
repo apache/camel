@@ -112,6 +112,11 @@ public abstract class LoadBalancerSupport extends AsyncProcessorSupport implemen
     }
 
     @Override
+    protected void doInit() throws Exception {
+        ServiceHelper.initService((Object[]) processors.get());
+    }
+
+    @Override
     protected void doStart() throws Exception {
         ServiceHelper.startService((Object[]) processors.get());
     }

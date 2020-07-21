@@ -24,6 +24,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.junit.jupiter.api.Test;
 
@@ -51,6 +52,11 @@ public class RemoteFileIgnoreDoPollErrorTest {
 
         @Override
         public String getScheme() {
+            return null;
+        }
+
+        @Override
+        protected GenericFileProcessStrategy<Object> createGenericFileStrategy() {
             return null;
         }
     };
@@ -103,14 +109,17 @@ public class RemoteFileIgnoreDoPollErrorTest {
                     return "true".equals(doPollResult);
                 }
             }
+
             @Override
             protected boolean pollDirectory(String fileName, List<GenericFile<Object>> genericFiles, int depth) {
                 return false;
             }
+
             @Override
             protected boolean isMatched(GenericFile<Object> file, String doneFileName, List<Object> files) {
                 return false;
             }
+
             @Override
             protected boolean ignoreCannotRetrieveFile(String name, Exchange exchange, Exception cause) {
                 return ignoreCannotRetrieveFile;

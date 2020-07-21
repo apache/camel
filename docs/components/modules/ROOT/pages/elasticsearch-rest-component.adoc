@@ -1,12 +1,17 @@
 [[elasticsearch-rest-component]]
-= Elastichsearch Rest Component
+= Elasticsearch Rest Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-elasticsearch-rest/src/main/docs/elasticsearch-rest-component.adoc
+:docTitle: Elasticsearch Rest
+:artifactId: camel-elasticsearch-rest
+:description: Send requests to with an ElasticSearch via REST API.
+:since: 2.21
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.21*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 *Since Camel 2.21*
 
@@ -39,32 +44,32 @@ elasticsearch-rest://clusterName[?options]
 == Endpoint Options
 
 // component options: START
-The Elastichsearch Rest component supports 13 options, which are listed below.
+The Elasticsearch Rest component supports 13 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *client* (advanced) | To use an existing configured Elasticsearch client, instead of creating a client per endpoint. This allow to customize the client with specific settings. |  | RestClient
-| *hostAddresses* (advanced) | Comma separated list with ip:port formatted remote transport addresses to use. The ip and port options must be left blank for hostAddresses to be considered instead. |  | String
-| *socketTimeout* (advanced) | The timeout in ms to wait before the socket will timeout. | 30000 | int
-| *connectionTimeout* (advanced) | The time in ms to wait before connection will timeout. | 30000 | int
-| *user* (security) | Basic authenticate user |  | String
-| *password* (security) | Password for authenticate |  | String
-| *enableSSL* (security) | Enable SSL | false | Boolean
-| *maxRetryTimeout* (advanced) | The time in ms before retry | 30000 | int
-| *enableSniffer* (advanced) | Enable automatically discover nodes from a running Elasticsearch cluster | false | Boolean
-| *snifferInterval* (advanced) | The interval between consecutive ordinary sniff executions in milliseconds. Will be honoured when sniffOnFailure is disabled or when there are no failures between consecutive sniff executions | 300000 | int
-| *sniffAfterFailureDelay* (advanced) | The delay of a sniff execution scheduled after a failure (in milliseconds) | 60000 | int
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *client* (advanced) | To use an existing configured Elasticsearch client, instead of creating a client per endpoint. This allow to customize the client with specific settings. |  | RestClient
+| *connectionTimeout* (advanced) | The time in ms to wait before connection will timeout. | 30000 | int
+| *enableSniffer* (advanced) | Enable automatically discover nodes from a running Elasticsearch cluster | false | Boolean
+| *hostAddresses* (advanced) | Comma separated list with ip:port formatted remote transport addresses to use. The ip and port options must be left blank for hostAddresses to be considered instead. |  | String
+| *maxRetryTimeout* (advanced) | The time in ms before retry | 30000 | int
+| *sniffAfterFailureDelay* (advanced) | The delay of a sniff execution scheduled after a failure (in milliseconds) | 60000 | int
+| *snifferInterval* (advanced) | The interval between consecutive ordinary sniff executions in milliseconds. Will be honoured when sniffOnFailure is disabled or when there are no failures between consecutive sniff executions | 300000 | int
+| *socketTimeout* (advanced) | The timeout in ms to wait before the socket will timeout. | 30000 | int
+| *enableSSL* (security) | Enable SSL | false | Boolean
+| *password* (security) | Password for authenticate |  | String
+| *user* (security) | Basic authenticate user |  | String
 |===
 // component options: END
 
 
 // endpoint options: START
-The Elastichsearch Rest endpoint is configured using URI syntax:
+The Elasticsearch Rest endpoint is configured using URI syntax:
 
 ----
 elasticsearch-rest:clusterName
@@ -82,7 +87,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (17 parameters):
+=== Query Parameters (19 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -92,12 +97,14 @@ with the following path and query parameters:
 | *disconnect* (producer) | Disconnect after it finish calling the producer | false | boolean
 | *enableSniffer* (producer) | Enable automatically discover nodes from a running Elasticsearch cluster | false | boolean
 | *enableSSL* (producer) | Enable SSL | false | boolean
+| *from* (producer) | Starting index of the response. |  | Integer
 | *hostAddresses* (producer) | *Required* Comma separated list with ip:port formatted remote transport addresses to use. |  | String
 | *indexName* (producer) | The name of the index to act against |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *maxRetryTimeout* (producer) | The time in ms before retry | 30000 | int
-| *operation* (producer) | What operation to perform |  | ElasticsearchOperation
+| *operation* (producer) | What operation to perform. The value can be one of: Index, Update, Bulk, BulkIndex, GetById, MultiGet, MultiSearch, Delete, DeleteIndex, Search, Exists, Ping |  | ElasticsearchOperation
 | *scrollKeepAliveMs* (producer) | Time in ms during which elasticsearch will keep search context alive | 60000 | int
+| *size* (producer) | Size of the response. |  | Integer
 | *sniffAfterFailureDelay* (producer) | The delay of a sniff execution scheduled after a failure (in milliseconds) | 60000 | int
 | *snifferInterval* (producer) | The interval between consecutive ordinary sniff executions in milliseconds. Will be honoured when sniffOnFailure is disabled or when there are no failures between consecutive sniff executions | 300000 | int
 | *socketTimeout* (producer) | The timeout in ms to wait before the socket will timeout. | 30000 | int
@@ -107,46 +114,6 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-elasticsearch-rest-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 15 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.elasticsearch-rest.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.elasticsearch-rest.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.elasticsearch-rest.client* | To use an existing configured Elasticsearch client, instead of creating a client per endpoint. This allow to customize the client with specific settings. The option is a org.elasticsearch.client.RestClient type. |  | String
-| *camel.component.elasticsearch-rest.connection-timeout* | The time in ms to wait before connection will timeout. | 30000 | Integer
-| *camel.component.elasticsearch-rest.enable-s-s-l* | Enable SSL | false | Boolean
-| *camel.component.elasticsearch-rest.enable-sniffer* | Enable automatically discover nodes from a running Elasticsearch cluster | false | Boolean
-| *camel.component.elasticsearch-rest.enabled* | Whether to enable auto configuration of the elasticsearch-rest component. This is enabled by default. |  | Boolean
-| *camel.component.elasticsearch-rest.host-addresses* | Comma separated list with ip:port formatted remote transport addresses to use. The ip and port options must be left blank for hostAddresses to be considered instead. |  | String
-| *camel.component.elasticsearch-rest.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-| *camel.component.elasticsearch-rest.max-retry-timeout* | The time in ms before retry | 30000 | Integer
-| *camel.component.elasticsearch-rest.password* | Password for authenticate |  | String
-| *camel.component.elasticsearch-rest.sniff-after-failure-delay* | The delay of a sniff execution scheduled after a failure (in milliseconds) | 60000 | Integer
-| *camel.component.elasticsearch-rest.sniffer-interval* | The interval between consecutive ordinary sniff executions in milliseconds. Will be honoured when sniffOnFailure is disabled or when there are no failures between consecutive sniff executions | 300000 | Integer
-| *camel.component.elasticsearch-rest.socket-timeout* | The timeout in ms to wait before the socket will timeout. | 30000 | Integer
-| *camel.component.elasticsearch-rest.user* | Basic authenticate user |  | String
-|===
-// spring-boot-auto-configure options: END
 
 
 
@@ -314,7 +281,7 @@ try (ElasticsearchScrollRequestIterator response = template.requestBody("direct:
 }
 ----
 
-xref:manual::split-eip.adoc[Split EIP] can also be used.
+xref:{eip-vc}:eips:split-eip.adoc[Split EIP] can also be used.
 
 [source,java]
 ----
@@ -359,3 +326,5 @@ req.types("tweets");
 MultiSearchRequest request = new MultiSearchRequest().add(req1).add(req);
 Item[] response = template.requestBody("direct:search", request, Item[].class);
 ----
+
+include::camel-spring-boot::page$elasticsearch-rest-starter.adoc[]

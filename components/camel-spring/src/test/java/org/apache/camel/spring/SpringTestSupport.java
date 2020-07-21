@@ -28,31 +28,42 @@ import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
 import org.apache.camel.impl.scan.InvertingPackageScanFilter;
+import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IOHelper;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public abstract class SpringTestSupport extends ContextTestSupport {
     protected AbstractXmlApplicationContext applicationContext;
     protected abstract AbstractXmlApplicationContext createApplicationContext();
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         // we want SpringTestSupport to startup faster and not use JMX by default and should stop seda quicker
         System.setProperty("CamelSedaPollTimeout", "10");
         System.setProperty(JmxSystemPropertyKeys.DISABLED, Boolean.toString(!useJmx()));
+        Class<?>[] excluded = excludeRoutes();
+        if (excluded != null && excluded.length > 0) {
+            CollectionStringBuffer csb = new CollectionStringBuffer(",");
+            for (Class<?> clazz : excluded) {
+                csb.append(clazz.getName());
+            }
+            System.setProperty(SpringCamelContext.EXCLUDE_ROUTES, csb.toString());
+        }
 
         applicationContext = createApplicationContext();
-        assertNotNull("Should have created a valid spring context", applicationContext);
+        assertNotNull(applicationContext, "Should have created a valid spring context");
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -128,7 +139,7 @@ public abstract class SpringTestSupport extends ContextTestSupport {
      */
     public <T> T getMandatoryBean(Class<T> type, String name) {
         T value = applicationContext.getBean(name, type);
-        assertNotNull("No spring bean found for name <" + name + ">", value);
+        assertNotNull(value, "No spring bean found for name <" + name + ">");
         return value;
     }
 

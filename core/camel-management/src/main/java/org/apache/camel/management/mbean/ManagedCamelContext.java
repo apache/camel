@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -48,13 +47,13 @@ import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.mbean.ManagedStepMBean;
 import org.apache.camel.model.Model;
-import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.util.xml.XmlLineNumberParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -143,7 +142,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     @Override
     public String getHeadersMapFactoryClassName() {
-        return context.getHeadersMapFactory().getClass().getName();
+        return context.adapt(ExtendedCamelContext.class).getHeadersMapFactory().getClass().getName();
     }
 
     @Override
@@ -180,7 +179,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     @Override
     public Integer getTotalRoutes() {
-        return context.getRoutes().size();
+        return context.getRoutesSize();
     }
 
     @Override
@@ -415,33 +414,9 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         // use a routes definition to dump the rests
         RestsDefinition def = new RestsDefinition();
         def.setRests(rests);
-        String xml = ModelHelper.dumpModelAsXml(context, def);
 
-        // if resolving placeholders we parse the xml, and resolve the property placeholders during parsing
-        if (resolvePlaceholders) {
-            final AtomicBoolean changed = new AtomicBoolean();
-            InputStream is = new ByteArrayInputStream(xml.getBytes("UTF-8"));
-            Document dom = XmlLineNumberParser.parseXml(is, text -> {
-                try {
-                    String after = getContext().resolvePropertyPlaceholders(text);
-                    if (!changed.get()) {
-                        changed.set(!text.equals(after));
-                    }
-                    return after;
-                } catch (Exception e) {
-                    // ignore
-                    return text;
-                }
-            });
-            // okay there were some property placeholder replaced so re-create the model
-            if (changed.get()) {
-                xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
-                RestsDefinition copy = ModelHelper.createModelFromXml(context, xml, RestsDefinition.class);
-                xml = ModelHelper.dumpModelAsXml(context, copy);
-            }
-        }
-
-        return xml;
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        return ecc.getModelToXMLDumper().dumpModelAsXml(context, def, resolvePlaceholders, false);
     }
 
     @Override
@@ -465,7 +440,23 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         RoutesDefinition def = new RoutesDefinition();
         def.setRoutes(routes);
 
-        return ModelHelper.dumpModelAsXml(context, def, resolvePlaceholders, resolveDelegateEndpoints);
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        return ecc.getModelToXMLDumper().dumpModelAsXml(context, def, resolvePlaceholders, resolveDelegateEndpoints);
+    }
+
+    @Override
+    public String dumpRouteTemplatesAsXml() throws Exception {
+        List<RouteTemplateDefinition> templates = context.getExtension(Model.class).getRouteTemplateDefinitions();
+        if (templates.isEmpty()) {
+            return null;
+        }
+
+        // use a route templates definition to dump the templates
+        RouteTemplatesDefinition def = new RouteTemplatesDefinition();
+        def.setRouteTemplates(templates);
+
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        return ecc.getModelToXMLDumper().dumpModelAsXml(context, def);
     }
 
     @Override
@@ -484,7 +475,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         InputStream is = context.getTypeConverter().mandatoryConvertTo(InputStream.class, xml);
         try {
             // add will remove existing route first
-            RoutesDefinition routes = ModelHelper.loadRoutesDefinition(context, is);
+            ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+            RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
             context.getExtension(Model.class).addRouteDefinitions(routes.getRoutes());
         } catch (Exception e) {
             // log the error as warn as the management api may be invoked remotely over JMX which does not propagate such exception
@@ -501,7 +493,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         // use substring as we only want the attributes
         String stat = dumpStatsAsXml(fullStats);
         sb.append(" exchangesInflight=\"").append(getInflightExchanges()).append("\"");
-        sb.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
+        sb.append(" ").append(stat, 7, stat.length() - 2).append(">\n");
 
         MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
         if (server != null) {
@@ -530,7 +522,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 // use substring as we only want the attributes
                 stat = route.dumpStatsAsXml(fullStats);
                 sb.append(" exchangesInflight=\"").append(route.getExchangesInflight()).append("\"");
-                sb.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
+                sb.append(" ").append(stat, 7, stat.length() - 2).append(">\n");
 
                 // add processor details if needed
                 if (includeProcessors) {
@@ -542,7 +534,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                             // use substring as we only want the attributes
                             stat = processor.dumpStatsAsXml(fullStats);
                             sb.append(" exchangesInflight=\"").append(processor.getExchangesInflight()).append("\"");
-                            sb.append(" ").append(stat.substring(7)).append("\n");
+                            sb.append(" ").append(stat, 7, stat.length()).append("\n");
                         }
                     }
                     sb.append("      </processorStats>\n");
@@ -563,7 +555,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         // use substring as we only want the attributes
         String stat = dumpStatsAsXml(fullStats);
         sb.append(" exchangesInflight=\"").append(getInflightExchanges()).append("\"");
-        sb.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
+        sb.append(" ").append(stat, 7, stat.length() - 2).append(">\n");
 
         MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
         if (server != null) {
@@ -590,7 +582,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 // use substring as we only want the attributes
                 stat = route.dumpStatsAsXml(fullStats);
                 sb.append(" exchangesInflight=\"").append(route.getExchangesInflight()).append("\"");
-                sb.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
+                sb.append(" ").append(stat, 7, stat.length() - 2).append(">\n");
 
                 // add steps details if needed
                 sb.append("      <stepStats>\n");
@@ -601,7 +593,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                         // use substring as we only want the attributes
                         stat = processor.dumpStatsAsXml(fullStats);
                         sb.append(" exchangesInflight=\"").append(processor.getExchangesInflight()).append("\"");
-                        sb.append(" ").append(stat.substring(7)).append("\n");
+                        sb.append(" ").append(stat, 7, stat.length()).append("\n");
                     }
                     sb.append("      </stepStats>\n");
                 }

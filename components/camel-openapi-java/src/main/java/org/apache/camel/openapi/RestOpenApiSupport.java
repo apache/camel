@@ -16,26 +16,15 @@
  */
 package org.apache.camel.openapi;
 
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.management.AttributeNotFoundException;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
-import org.w3c.dom.Document;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -54,22 +43,19 @@ import io.apicurio.datamodels.openapi.v3.models.Oas30License;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Server;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.model.Model;
-import org.apache.camel.model.ModelHelper;
+import org.apache.camel.impl.engine.BaseServiceResolver;
 import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.PatternHelper;
-import org.apache.camel.util.CamelVersionHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
-import org.apache.camel.util.xml.XmlLineNumberParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 import static org.apache.camel.openapi.OpenApiHelper.clearVendorExtensions;
+import static org.apache.camel.openapi.RestDefinitionsResolver.JMX_REST_DEFINITION_RESOLVER;
 
 /**
  * A support class for that allows SPI to plugin and offer OpenApi API service listings as part of the Camel
@@ -84,7 +70,9 @@ public class RestOpenApiSupport {
     static final String HEADER_HOST = "Host";
 
     private static final Logger LOG = LoggerFactory.getLogger(RestOpenApiSupport.class);
-    private RestOpenApiReader reader = new RestOpenApiReader();
+    private final RestOpenApiReader reader = new RestOpenApiReader();
+    private final RestDefinitionsResolver localRestDefinitionResolver = new DefaultRestDefinitionsResolver();
+    private volatile RestDefinitionsResolver jmxRestDefinitionResolver;
     private boolean cors;
 
     public void initOpenApi(BeanConfig openApiConfig, Map<String, Object> config) {
@@ -162,6 +150,7 @@ public class RestOpenApiSupport {
             contact.url = contactUrl;
             contact.email = contactEmail;
             info.contact = contact;
+            contact._parent = info;
         }
         openApiConfig.setInfo(info);
     }
@@ -188,118 +177,26 @@ public class RestOpenApiSupport {
             contact.url = contactUrl;
             contact.email = contactEmail;
             info.contact = contact;
+            contact._parent = info;
         }
         openApiConfig.setInfo(info);
     }
 
     public List<RestDefinition> getRestDefinitions(CamelContext camelContext) throws Exception {
-        Model model = camelContext.getExtension(Model.class);
-        List<RestDefinition> rests = model.getRestDefinitions();
-        if (rests.isEmpty()) {
-            return null;
-        }
-
-        // use a routes definition to dump the rests
-        RestsDefinition def = new RestsDefinition();
-        def.setRests(rests);
-        String xml = ModelHelper.dumpModelAsXml(camelContext, def);
-
-        // if resolving placeholders we parse the xml, and resolve the property placeholders during parsing
-        final AtomicBoolean changed = new AtomicBoolean();
-        InputStream is = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
-        Document dom = XmlLineNumberParser.parseXml(is, new XmlLineNumberParser.XmlTextTransformer() {
-            @Override
-            public String transform(String text) {
-                try {
-                    String after = camelContext.resolvePropertyPlaceholders(text);
-                    if (!changed.get()) {
-                        changed.set(!text.equals(after));
-                    }
-                    return after;
-                } catch (Exception e) {
-                    // ignore
-                    return text;
-                }
-            }
-        });
-        // okay there were some property placeholder replaced so re-create the model
-        if (changed.get()) {
-            xml = camelContext.getTypeConverter().mandatoryConvertTo(String.class, dom);
-            def = ModelHelper.createModelFromXml(camelContext, xml, RestsDefinition.class);
-            if (def != null) {
-                return def.getRests();
-            }
-        }
-
-        return rests;
+        return localRestDefinitionResolver.getRestDefinitions(camelContext, null);
     }
 
-    public List<RestDefinition> getRestDefinitions(String camelId) throws Exception {
-        ObjectName found = null;
-        boolean supportResolvePlaceholder = false;
-
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        Set<ObjectName> names = server.queryNames(new ObjectName("org.apache.camel:type=context,*"), null);
-        for (ObjectName on : names) {
-            String id = on.getKeyProperty("name");
-            if (id.startsWith("\"") && id.endsWith("\"")) {
-                id = id.substring(1, id.length() - 1);
-            }
-            if (camelId == null || camelId.equals(id)) {
-                // filter out older Camel versions as this requires Camel 2.15 or better (rest-dsl)
-                String version = (String)server.getAttribute(on, "CamelVersion");
-                if (CamelVersionHelper.isGE("2.15.0", version)) {
-                    found = on;
-                }
-                if (CamelVersionHelper.isGE("2.15.3", version)) {
-                    supportResolvePlaceholder = true;
-                }
-            }
+    public List<RestDefinition> getRestDefinitions(CamelContext camelContext, String camelId) throws Exception {
+        if (jmxRestDefinitionResolver == null) {
+            jmxRestDefinitionResolver = createJmxRestDefinitionsResolver(camelContext);
         }
-
-        if (found != null) {
-            String xml;
-            if (supportResolvePlaceholder) {
-                xml = (String)server.invoke(found, "dumpRestsAsXml", new Object[] {true}, 
-                                            new String[] {"boolean"});
-            } else {
-                xml = (String)server.invoke(found, "dumpRestsAsXml", null, null);
-            }
-            if (xml != null) {
-                LOG.debug("DumpRestAsXml:\n{}", xml);
-                RestsDefinition rests = ModelHelper.createModelFromXml(null, xml, RestsDefinition.class);
-                if (rests != null) {
-                    return rests.getRests();
-                }
-            }
-        }
-
-        return null;
+        return jmxRestDefinitionResolver.getRestDefinitions(camelContext, camelId);
     }
 
-    public List<String> findCamelContexts() throws Exception {
-        List<String> answer = new ArrayList<>();
-
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        Set<ObjectName> names = server.queryNames(new ObjectName("*:type=context,*"), null);
-        for (ObjectName on : names) {
-
-            String id = on.getKeyProperty("name");
-            if (id.startsWith("\"") && id.endsWith("\"")) {
-                id = id.substring(1, id.length() - 1);
-            }
-
-            // filter out older Camel versions as this requires Camel 2.15 or better (rest-dsl)
-            try {
-                String version = (String)server.getAttribute(on, "CamelVersion");
-                if (CamelVersionHelper.isGE("2.15.0", version)) {
-                    answer.add(id);
-                }
-            } catch (AttributeNotFoundException ex) {
-                // ignore
-            }
-        }
-        return answer;
+    protected RestDefinitionsResolver createJmxRestDefinitionsResolver(CamelContext camelContext) {
+        return new BaseServiceResolver<>(JMX_REST_DEFINITION_RESOLVER, RestDefinitionsResolver.class)
+                .resolve(camelContext)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find JMX_REST_DEFINITION_RESOLVER on classpath."));
     }
 
     public void renderResourceListing(CamelContext camelContext, RestApiResponseAdapter response,
@@ -317,11 +214,11 @@ public class RestOpenApiSupport {
             setupCorsHeaders(response, configuration.getCorsHeaders());
         }
 
-        List<RestDefinition> rests = null;
-        if (camelContext != null && camelContext.getName().equals(contextId)) {
+        List<RestDefinition> rests;
+        if (camelContext.getName().equals(contextId)) {
             rests = getRestDefinitions(camelContext);
         } else {
-            rests = getRestDefinitions(contextId);
+            rests = getRestDefinitions(camelContext, contextId);
         }
 
         if (rests != null) {
@@ -332,7 +229,7 @@ public class RestOpenApiSupport {
                     .getOrDefault("api.specification.contentType.json", "application/json"));
 
                 // read the rest-dsl into openApi model
-                OasDocument openApi = reader.read(rests, route, openApiConfig, contextId, classResolver);
+                OasDocument openApi = reader.read(camelContext, rests, route, openApiConfig, contextId, classResolver);
                 if (configuration.isUseXForwardHeaders()) {
                     setupXForwardedHeaders(openApi, headers);
                 }
@@ -341,8 +238,8 @@ public class RestOpenApiSupport {
                     clearVendorExtensions(openApi);
                 }
 
-                byte[] bytes = mapper.writeValueAsBytes(openApi);
-
+                Object dump = io.apicurio.datamodels.Library.writeNode(openApi);
+                byte[] bytes = mapper.writeValueAsBytes(dump);
                 int len = bytes.length;
                 response.setHeader(Exchange.CONTENT_LENGTH, "" + len);
 
@@ -352,7 +249,7 @@ public class RestOpenApiSupport {
                     .getOrDefault("api.specification.contentType.yaml", "text/yaml"));
 
                 // read the rest-dsl into openApi model
-                OasDocument openApi = reader.read(rests, route, openApiConfig, contextId, classResolver);
+                OasDocument openApi = reader.read(camelContext, rests, route, openApiConfig, contextId, classResolver);
                 if (configuration.isUseXForwardHeaders()) {
                     setupXForwardedHeaders(openApi, headers);
                 }
@@ -361,7 +258,8 @@ public class RestOpenApiSupport {
                     clearVendorExtensions(openApi);
                 }
 
-                byte[] jsonData = mapper.writeValueAsBytes(openApi);
+                Object dump = io.apicurio.datamodels.Library.writeNode(openApi);
+                byte[] jsonData = mapper.writeValueAsBytes(dump);
 
                 // json to yaml
                 JsonNode node = mapper.readTree(jsonData);
@@ -380,7 +278,7 @@ public class RestOpenApiSupport {
     /**
      * Renders a list of available CamelContexts in the JVM
      */
-    public void renderCamelContexts(RestApiResponseAdapter response, String contextId,
+    public void renderCamelContexts(CamelContext camelContext, RestApiResponseAdapter response, String contextId,
                                     String contextIdPattern, boolean json, boolean yaml,
                                     RestConfiguration configuration)
         throws Exception {
@@ -390,7 +288,7 @@ public class RestOpenApiSupport {
             setupCorsHeaders(response, configuration.getCorsHeaders());
         }
 
-        List<String> contexts = findCamelContexts();
+        List<String> contexts = findCamelContexts(camelContext);
 
         // filter non matched CamelContext's
         if (contextIdPattern != null) {
@@ -437,6 +335,13 @@ public class RestOpenApiSupport {
         response.setHeader(Exchange.CONTENT_LENGTH, "" + len);
 
         response.writeBytes(sb.toString().getBytes());
+    }
+
+    private List<String> findCamelContexts(CamelContext camelContext) throws Exception {
+        if (jmxRestDefinitionResolver == null) {
+            jmxRestDefinitionResolver = createJmxRestDefinitionsResolver(camelContext);
+        }
+        return jmxRestDefinitionResolver.findCamelContexts();
     }
 
     private static void setupCorsHeaders(RestApiResponseAdapter response, Map<String, String> corsHeaders) {
@@ -548,7 +453,7 @@ public class RestOpenApiSupport {
             if (((Oas30Document)openapi).getServers() != null 
                 && ((Oas30Document)openapi).getServers().get(0) != null) {
                 try {
-                    URL serverUrl = new URL(((Oas30Document)openapi).getServers().get(0).url);
+                    URL serverUrl = new URL(parseVariables(((Oas30Document)openapi).getServers().get(0).url, (Oas30Server)((Oas30Document)openapi).getServers().get(0)));
                     host = serverUrl.getHost();
                 
                 } catch (MalformedURLException e) {
@@ -574,7 +479,7 @@ public class RestOpenApiSupport {
                     }
                     if (basePath == null) {
                         // parse server url as fallback
-                        URL serverUrl = new URL(((Oas30Document)openapi).getServers().get(0).url);
+                        URL serverUrl = new URL(parseVariables(((Oas30Document)openapi).getServers().get(0).url, (Oas30Server)((Oas30Document)openapi).getServers().get(0)));
                         basePath = serverUrl.getPath();
                         if (basePath.indexOf("//") == 0) {
                             // strip off the first "/" if double "/" exists
@@ -594,6 +499,20 @@ public class RestOpenApiSupport {
         }
         return basePath;
         
+    }
+    
+    public static String parseVariables(String url, Oas30Server server) {
+        Pattern p = Pattern.compile("\\{(.*?)\\}");
+        Matcher m = p.matcher(url);
+        while (m.find()) {
+           
+            String var = m.group(1);
+            if (server != null && server.variables != null && server.variables.get(var) != null) {
+                String varValue = server.variables.get(var).default_;
+                url = url.replace("{" + var + "}", varValue);
+            }
+        }
+        return url;
     }
 }
 

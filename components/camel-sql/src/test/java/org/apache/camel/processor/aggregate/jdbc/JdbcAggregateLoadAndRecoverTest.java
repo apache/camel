@@ -24,9 +24,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JdbcAggregateLoadAndRecoverTest extends AbstractJdbcAggregationTestSupport {
 
@@ -38,7 +40,7 @@ public class JdbcAggregateLoadAndRecoverTest extends AbstractJdbcAggregationTest
     public void testLoadAndRecoverJdbcAggregate() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(SIZE / 10);
-        mock.setResultWaitTime(50 * 1000);
+        mock.setResultWaitTime(5_000);
 
         LOG.info("Staring to send " + SIZE + " messages.");
 
@@ -65,7 +67,7 @@ public class JdbcAggregateLoadAndRecoverTest extends AbstractJdbcAggregationTest
             }
         }
         int expected = SIZE / 10 / 10;
-        assertEquals("There should be " + expected + " recovered", expected, recovered);
+        assertEquals(expected, recovered, "There should be " + expected + " recovered");
     }
 
     @Override
@@ -73,13 +75,17 @@ public class JdbcAggregateLoadAndRecoverTest extends AbstractJdbcAggregationTest
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                onException(IllegalStateException.class)
+                        .maximumRedeliveries(3)
+                        .redeliveryDelay(100L);
+
                 from("seda:start?size=" + SIZE)
                         .to("log:input?groupSize=500")
                         .aggregate(header("id"), new MyAggregationStrategy())
                         .aggregationRepository(repo)
                         .completionSize(10)
                         .to("log:output?showHeaders=true")
-                                // have every 10th exchange fail which should then be recovered
+                        // have every 10th exchange fail which should then be recovered
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 //Avoid same message to be discarded twice

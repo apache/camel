@@ -19,12 +19,12 @@ A regular Camel service that manages cluster resources such as _views_ (see belo
 Represent a view of the cluster with its own set of isolated resources. As today views provide supports for:
 +
     * Leader Election
-    * Topology events like members joining/leaving the clutser)
+    * Topology events like members joining/leaving the cluster)
 
 
 - *Cluster Member*
 +
-Represent a member of the clutser.
+Represent a member of the cluster.
 
 
 == Cluster SPI Set-Up
@@ -110,7 +110,7 @@ context.addRoutes(new RouteBuilder {
         RoutePolicy policy = ClusteredRoutePolicy.forNamespace("my-ns");
 
         // bind the policy to one or more routes
-        from("timer:clustered?delay=1s&period=1s")
+        from("timer:clustered?delay=1000&period=1000")
             .routePolicy(policy)
             .log("Route ${routeId} is running ...");
     }
@@ -128,7 +128,7 @@ context.addRoutes(new RouteBuilder {
     @Override
     public void configure() throws Exception {
         // bind the policy to one or more routes
-        from("timer:clustered?delay=1s&period=1s")
+        from("timer:clustered?delay=1000&period=1000")
             .log("Route ${routeId} is running ...");
     }
 });
@@ -145,10 +145,10 @@ public RouteBuilder routeBuilder() {
     return new RouteBuilder() {
         @Override
         public void configure() throws Exception {
-            from("timer:heartbeat?period=10s")
+            from("timer:heartbeat?period=10000")
                 .routeId("heartbeat")
                 .log("HeartBeat route (timer) ...");
-            from("timer:clustered?period=5s")
+            from("timer:clustered?period=5000")
                 .routeId("clustered")
                 .log("Clustered route (timer) ...");
         }
@@ -188,10 +188,10 @@ public RouteBuilder routeBuilder() {
     return new RouteBuilder() {
         @Override
         public void configure() throws Exception {
-            from("timer:heartbeat?period=10s")
+            from("timer:heartbeat?period=10000")
                 .routeId("heartbeat")
                 .log("HeartBeat route (timer) ...");
-            from("master:my-ns:timer:clustered?period=5s")
+            from("master:my-ns:timer:clustered?period=5000")
                 .routeId("clustered")
                 .log("Clustered route (timer) ...");
         }

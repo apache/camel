@@ -33,6 +33,8 @@ import org.apache.camel.component.zookeeper.operations.ZooKeeperOperation;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.ZooKeeper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <code>ZooKeeperConsumer</code> uses various {@link ZooKeeperOperation} to
@@ -40,6 +42,8 @@ import org.apache.zookeeper.ZooKeeper;
  */
 @SuppressWarnings("rawtypes")
 public class ZooKeeperConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ZooKeeperConsumer.class);
 
     private final ZooKeeperConnectionManager zkm;
     private ZooKeeper connection;
@@ -58,8 +62,8 @@ public class ZooKeeperConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         connection = zkm.getConnection();
-        if (log.isDebugEnabled()) {
-            log.debug(String.format("Connected to Zookeeper cluster %s", configuration.getConnectString()));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(String.format("Connected to Zookeeper cluster %s", configuration.getConnectString()));
         }
 
         initializeConsumer();
@@ -73,8 +77,8 @@ public class ZooKeeperConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         super.doStop();
         shuttingDown = true;
-        if (log.isTraceEnabled()) {
-            log.trace(String.format("Shutting down zookeeper consumer of '%s'", configuration.getPath()));
+        if (LOG.isTraceEnabled()) {
+            LOG.trace(String.format("Shutting down zookeeper consumer of '%s'", configuration.getPath()));
         }
         getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(executor);
         zkm.shutdown();
@@ -91,8 +95,8 @@ public class ZooKeeperConsumer extends DefaultConsumer {
 
     private void initializeDataConsumer(String node) {
         if (!shuttingDown) {
-            if (log.isDebugEnabled()) {
-                log.debug(String.format("Initializing consumption of data on node '%s'", node));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(String.format("Initializing consumption of data on node '%s'", node));
             }
             addBasicDataConsumeSequence(node);
         }
@@ -100,8 +104,8 @@ public class ZooKeeperConsumer extends DefaultConsumer {
 
     private void initializeChildListingConsumer(String node) {
         if (!shuttingDown) {
-            if (log.isDebugEnabled()) {
-                log.debug(String.format("Initializing child listing of node '%s'", node));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(String.format("Initializing child listing of node '%s'", node));
             }
             addBasicChildListingSequence(node);
         }
@@ -130,8 +134,8 @@ public class ZooKeeperConsumer extends DefaultConsumer {
             while (isRunAllowed()) {
                 try {
                     current = operations.take();
-                    if (log.isTraceEnabled()) {
-                        log.trace(String.format("Processing '%s' operation", current.getClass().getSimpleName()));
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace(String.format("Processing '%s' operation", current.getClass().getSimpleName()));
                     }
                 } catch (InterruptedException e) {
                     continue;

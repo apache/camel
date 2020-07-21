@@ -16,8 +16,7 @@
  */
 package org.apache.camel.maven.config;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -27,12 +26,12 @@ import io.debezium.config.Configuration;
 import io.debezium.config.Field;
 import io.debezium.relational.history.FileDatabaseHistory;
 import org.apache.camel.component.debezium.configuration.ConfigurationValidation;
-import org.apache.camel.maven.packaging.srcgen.Annotation;
-import org.apache.camel.maven.packaging.srcgen.JavaClass;
-import org.apache.camel.maven.packaging.srcgen.Method;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.tooling.util.srcgen.Annotation;
+import org.apache.camel.tooling.util.srcgen.JavaClass;
+import org.apache.camel.tooling.util.srcgen.Method;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.source.SourceConnector;
@@ -103,12 +102,6 @@ public final class ConnectorConfigGenerator {
         return PACKAGE_NAME;
     }
 
-    public void printGeneratedClass(final OutputStream outputStream) {
-        final PrintStream printStreams = new PrintStream(outputStream, true);
-        printStreams.println(printClassAsString());
-        printStreams.close();
-    }
-
     public String printClassAsString() {
         return javaClass.printClass(true);
     }
@@ -173,7 +166,7 @@ public final class ConnectorConfigGenerator {
         // connector fields
         dbzConfigFields.forEach((fieldName, fieldConfig) -> {
             if (!isFieldInternalOrDeprecated(fieldConfig)) {
-                final org.apache.camel.maven.packaging.srcgen.Field field = javaClass.addField()
+                final org.apache.camel.tooling.util.srcgen.Field field = javaClass.addField()
                         .setName(fieldConfig.getFieldName())
                         .setType(fieldConfig.getRawType())
                         .setPrivate();
@@ -188,7 +181,17 @@ public final class ConnectorConfigGenerator {
 
                 // especial case for database.server.id, we don't set the default value, we let debezium do that
                 if (fieldConfig.getDefaultValue() != null && !fieldConfig.getRawName().equals("database.server.id")) {
-                    annotation.setLiteralValue("defaultValue", String.format("\"%s\"", fieldConfig.getDefaultValue()));
+                    if (fieldConfig.isTimeField()) {
+                        final long defaultValueAsLong = Long.parseLong(fieldConfig.getDefaultValueAsString());
+                        annotation.setLiteralValue("defaultValue", String.format("\"%s\"", ConnectorConfigGeneratorUtils.toTimeAsString(defaultValueAsLong)));
+                    } else {
+                        annotation.setLiteralValue("defaultValue", String.format("\"%s\"", fieldConfig.getDefaultValue()));
+                    }
+                }
+
+                // especial case for Duration field
+                if (fieldConfig.isTimeField()) {
+                    annotation.setLiteralValue("javaType", "\"java.time.Duration\"");
                 }
 
                 if (fieldConfig.isRequired()) {

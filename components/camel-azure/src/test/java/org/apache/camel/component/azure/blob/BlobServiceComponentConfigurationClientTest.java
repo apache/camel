@@ -21,15 +21,18 @@ import java.util.Collections;
 
 import com.microsoft.azure.storage.StorageCredentials;
 import com.microsoft.azure.storage.StorageCredentialsAccountAndKey;
-import com.microsoft.azure.storage.StorageCredentialsAnonymous;
-import com.microsoft.azure.storage.blob.CloudBlob;
 import com.microsoft.azure.storage.blob.CloudBlockBlob;
 import com.microsoft.azure.storage.core.Base64;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class BlobServiceComponentConfigurationClientTest extends CamelTestSupport {
     
@@ -119,60 +122,14 @@ public class BlobServiceComponentConfigurationClientTest extends CamelTestSuppor
         assertTrue(endpoint.getConfiguration().isPublicForRead());
         assertFalse(endpoint.getConfiguration().isUseFlatListing());
     }
-    
-    @Test
-    public void testNoClientAndCredentials() throws Exception {
-        try {
-            context.getEndpoint("azure-blob://camelazure/container/blob");
-            fail();
-        } catch (Exception ex) {
-            assertEquals("Credentials must be specified.", ex.getCause().getMessage());
-        }
-    }
+
     @Test
     public void testNoClientAndCredentialsPublicForRead() throws Exception {
         BlobServiceEndpoint endpoint =
-            (BlobServiceEndpoint) context.getEndpoint("azure-blob://camelazure/container/blob?publicForRead=true");
+                (BlobServiceEndpoint) context.getEndpoint("azure-blob://camelazure/container/blob?publicForRead=true");
         assertTrue(endpoint.getConfiguration().isPublicForRead());
     }
-    
-    @Test
-    public void testClientWithoutCredentials() throws Exception {
-        CloudBlockBlob client = 
-            new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"));
-        
-        doTestClientWithoutCredentials(client);
-    }
-    @Test
-    public void testClientWithoutAnonymousCredentials() throws Exception {
-        CloudBlockBlob client = 
-            new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"),
-                               StorageCredentialsAnonymous.ANONYMOUS);
-        
-        doTestClientWithoutCredentials(client);
-    }
-    @Test
-    public void testClientWithoutCredentialsPublicRead() throws Exception {
-        CloudBlockBlob client = 
-            new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"));
-        
-        context.getRegistry().bind("azureBlobClient", client);
-        
-        BlobServiceEndpoint endpoint =
-            (BlobServiceEndpoint) context.getEndpoint("azure-blob://camelazure/container/blob?publicForRead=true");
-        assertTrue(endpoint.getConfiguration().isPublicForRead());
-    }
-    private void doTestClientWithoutCredentials(CloudBlob client) throws Exception {
-        context.getRegistry().bind("azureBlobClient", client);
-        
-        try {
-            context.getEndpoint("azure-blob://camelazure/container/blob");
-            fail();
-        } catch (Exception ex) {
-            assertEquals("Credentials must be specified.", ex.getCause().getMessage());
-        }
-    }
-    
+
     @Test
     public void testNoBlobNameProducerWithOp() throws Exception {
         registerCredentials();
@@ -229,11 +186,8 @@ public class BlobServiceComponentConfigurationClientTest extends CamelTestSuppor
     }
     
     private static void createConsumer(Endpoint endpoint) throws Exception {
-        endpoint.createConsumer(new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                // noop
-            }
+        endpoint.createConsumer(exchange -> {
+            // noop
         });
     }
     

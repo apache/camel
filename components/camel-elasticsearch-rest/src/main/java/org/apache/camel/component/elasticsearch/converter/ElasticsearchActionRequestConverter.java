@@ -153,6 +153,8 @@ public final class ElasticsearchActionRequestConverter {
         // Only setup the indexName and indexType if the message header has the
         // setting
         String indexName = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class);
+        Integer size = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_SIZE, Integer.class);
+        Integer from = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_FROM, Integer.class);
         if (ObjectHelper.isNotEmpty(indexName)) {
             searchRequest.indices(indexName);
         }
@@ -186,7 +188,12 @@ public final class ElasticsearchActionRequestConverter {
             LOG.info("Cannot convert queryObject into SearchRequest object");
             return null;
         }
-
+        if (size != null)  {
+            searchSourceBuilder.size(size);
+        }
+        if (from != null)  {
+            searchSourceBuilder.from(from);
+        }
         searchSourceBuilder.query(QueryBuilders.wrapperQuery(queryText));
         searchRequest.source(searchSourceBuilder);
 

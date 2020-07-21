@@ -19,7 +19,9 @@ package org.apache.camel.component.cxf.mtom;
 import java.io.IOException;
 
 import org.apache.cxf.helpers.IOUtils;
-import org.junit.Assert;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 
 /**
  * Package local test helper
@@ -78,17 +80,8 @@ public final class MtomTestHelper {
         // utility class
     }
 
-    static void assertEquals(byte[] bytes1, byte[] bytes2) {
-        Assert.assertNotNull(bytes1);
-        Assert.assertNotNull(bytes2);
-        Assert.assertEquals(bytes1.length, bytes2.length);
-        for (int i = 0; i < bytes1.length; i++) {
-            Assert.assertEquals(bytes1[i], bytes2[i]);
-        }
-    }
-
     static boolean isAwtHeadless(org.apache.commons.logging.Log log, org.slf4j.Logger logger) {
-        Assert.assertFalse("Both loggers are not allowed to be null!", log == null && logger == null);
+        assertFalse(log == null && logger == null, "Both loggers are not allowed to be null!");
         boolean headless = Boolean.getBoolean("java.awt.headless");
         if (headless) {
             // having the conversion characters %c{1} inside log4j.properties will reveal us the

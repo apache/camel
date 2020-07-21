@@ -16,100 +16,76 @@
  */
 package org.apache.camel.impl;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
-
-import javax.naming.Context;
+import java.util.Properties;
+import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.TypeConverter;
-import org.apache.camel.health.HealthCheckRegistry;
-import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.impl.engine.BeanProcessorFactoryResolver;
-import org.apache.camel.impl.engine.BeanProxyFactoryResolver;
-import org.apache.camel.impl.engine.DefaultAsyncProcessorAwaitManager;
-import org.apache.camel.impl.engine.DefaultBeanIntrospection;
-import org.apache.camel.impl.engine.DefaultCamelBeanPostProcessor;
-import org.apache.camel.impl.engine.DefaultCamelContextNameStrategy;
-import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.apache.camel.impl.engine.DefaultComponentResolver;
-import org.apache.camel.impl.engine.DefaultDataFormatResolver;
-import org.apache.camel.impl.engine.DefaultEndpointRegistry;
-import org.apache.camel.impl.engine.DefaultFactoryFinderResolver;
-import org.apache.camel.impl.engine.DefaultInflightRepository;
-import org.apache.camel.impl.engine.DefaultInjector;
-import org.apache.camel.impl.engine.DefaultLanguageResolver;
-import org.apache.camel.impl.engine.DefaultManagementNameStrategy;
-import org.apache.camel.impl.engine.DefaultMessageHistoryFactory;
-import org.apache.camel.impl.engine.DefaultNodeIdFactory;
-import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
-import org.apache.camel.impl.engine.DefaultPackageScanResourceResolver;
-import org.apache.camel.impl.engine.DefaultProcessorFactory;
-import org.apache.camel.impl.engine.DefaultRouteController;
-import org.apache.camel.impl.engine.DefaultShutdownStrategy;
-import org.apache.camel.impl.engine.DefaultStreamCachingStrategy;
-import org.apache.camel.impl.engine.DefaultTracer;
-import org.apache.camel.impl.engine.DefaultUnitOfWorkFactory;
-import org.apache.camel.impl.engine.DefaultUuidGenerator;
-import org.apache.camel.impl.engine.EndpointKey;
-import org.apache.camel.impl.engine.HeadersMapFactoryResolver;
-import org.apache.camel.impl.engine.PropertiesComponentFactoryResolver;
-import org.apache.camel.impl.engine.ReactiveExecutorResolver;
-import org.apache.camel.impl.engine.RestRegistryFactoryResolver;
-import org.apache.camel.impl.engine.WebSpherePackageScanClassResolver;
-import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
-import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
-import org.apache.camel.runtimecatalog.impl.DefaultRuntimeCamelCatalog;
-import org.apache.camel.spi.AsyncProcessorAwaitManager;
-import org.apache.camel.spi.BeanIntrospection;
-import org.apache.camel.spi.BeanProcessorFactory;
-import org.apache.camel.spi.BeanProxyFactory;
+import org.apache.camel.Expression;
+import org.apache.camel.FailedToStartRouteException;
+import org.apache.camel.Predicate;
+import org.apache.camel.Processor;
+import org.apache.camel.Route;
+import org.apache.camel.ValueHolder;
+import org.apache.camel.builder.AdviceWithRouteBuilder;
+import org.apache.camel.impl.engine.RouteService;
+import org.apache.camel.impl.engine.SimpleCamelContext;
+import org.apache.camel.impl.transformer.TransformerKey;
+import org.apache.camel.impl.validator.ValidatorKey;
+import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.FaultToleranceConfigurationDefinition;
+import org.apache.camel.model.HystrixConfigurationDefinition;
+import org.apache.camel.model.Model;
+import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.Resilience4jConfigurationDefinition;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteDefinitionHelper;
+import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
+import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.transformer.TransformerDefinition;
+import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.reifier.RouteReifier;
+import org.apache.camel.reifier.dataformat.DataFormatReifier;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
+import org.apache.camel.reifier.language.ExpressionReifier;
+import org.apache.camel.reifier.transformer.TransformerReifier;
+import org.apache.camel.reifier.validator.ValidatorReifier;
 import org.apache.camel.spi.BeanRepository;
-import org.apache.camel.spi.CamelBeanPostProcessor;
-import org.apache.camel.spi.CamelContextNameStrategy;
-import org.apache.camel.spi.ClassResolver;
-import org.apache.camel.spi.ComponentResolver;
-import org.apache.camel.spi.DataFormatResolver;
-import org.apache.camel.spi.EndpointRegistry;
+import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.ExecutorServiceManager;
-import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.spi.FactoryFinderResolver;
-import org.apache.camel.spi.HeadersMapFactory;
-import org.apache.camel.spi.InflightRepository;
-import org.apache.camel.spi.Injector;
-import org.apache.camel.spi.LanguageResolver;
-import org.apache.camel.spi.ManagementNameStrategy;
-import org.apache.camel.spi.MessageHistoryFactory;
-import org.apache.camel.spi.ModelJAXBContextFactory;
-import org.apache.camel.spi.NodeIdFactory;
-import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.camel.spi.PackageScanResourceResolver;
-import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
-import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.spi.RestRegistryFactory;
-import org.apache.camel.spi.RouteController;
-import org.apache.camel.spi.ShutdownStrategy;
-import org.apache.camel.spi.StreamCachingStrategy;
-import org.apache.camel.spi.Tracer;
-import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.spi.UnitOfWorkFactory;
-import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.spi.Transformer;
+import org.apache.camel.spi.Validator;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultRegistry;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents the context used to configure routes and the policies to use.
  */
-public class DefaultCamelContext extends AbstractModelCamelContext {
+public class DefaultCamelContext extends SimpleCamelContext implements ModelCamelContext {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultCamelContext.class);
+
+    private Model model = new DefaultModel(this);
 
     /**
-     * Creates the {@link CamelContext} using {@link DefaultRegistry} as
-     * registry.
+     * Creates the {@link ModelCamelContext} using
+     * {@link org.apache.camel.support.DefaultRegistry} as registry.
      * <p/>
      * Use one of the other constructors to force use an explicit registry.
      */
     public DefaultCamelContext() {
+        this(true);
     }
 
     /**
@@ -121,166 +97,333 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
      * @param repository the bean repository.
      */
     public DefaultCamelContext(BeanRepository repository) {
-        super(new DefaultRegistry(repository));
+        this(new DefaultRegistry(repository));
     }
 
     /**
-     * Creates the {@link CamelContext} using the given JNDI context as the
-     * registry
-     *
-     * @param jndiContext the JNDI context
-     * @deprecated create a new {@link JndiRegistry} and use the constructor
-     *             that accepts this registry.
-     */
-    @Deprecated
-    public DefaultCamelContext(Context jndiContext) {
-        this(new JndiRegistry(jndiContext));
-    }
-
-    /**
-     * Creates the {@link CamelContext} using the given registry
+     * Creates the {@link ModelCamelContext} using the given registry
      *
      * @param registry the registry
      */
     public DefaultCamelContext(Registry registry) {
-        super(registry);
+        this();
+        setRegistry(registry);
     }
 
-    /**
-     * Creates the {@link CamelContext} and allows to control whether the
-     * context should automatic initialize or not.
-     * <p/>
-     * This is used by some Camel components such as camel-cdi and
-     * camel-blueprint, however this constructor is not intended for regular
-     * Camel end users.
-     *
-     * @param init whether to automatic initialize.
-     */
     public DefaultCamelContext(boolean init) {
         super(init);
     }
 
     @Override
-    protected TypeConverter createTypeConverter() {
-        return new DefaultTypeConverter(this, getPackageScanClassResolver(), getInjector(), getDefaultFactoryFinder(), isLoadTypeConverters());
+    public List<RouteDefinition> getRouteDefinitions() {
+        return model.getRouteDefinitions();
     }
 
     @Override
-    protected TypeConverterRegistry createTypeConverterRegistry() {
-        TypeConverter typeConverter = getTypeConverter();
-        if (typeConverter instanceof TypeConverterRegistry) {
-            return (TypeConverterRegistry)typeConverter;
+    public RouteDefinition getRouteDefinition(String id) {
+        return model.getRouteDefinition(id);
+    }
+
+    @Override
+    public void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
+        model.addRouteDefinitions(routeDefinitions);
+    }
+
+    @Override
+    public void addRouteDefinition(RouteDefinition routeDefinition) throws Exception {
+        model.addRouteDefinition(routeDefinition);
+    }
+
+    @Override
+    public void removeRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
+        model.removeRouteDefinitions(routeDefinitions);
+    }
+
+    @Override
+    public void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception {
+        model.removeRouteDefinition(routeDefinition);
+    }
+
+    @Override
+    public List<RouteTemplateDefinition> getRouteTemplateDefinitions() {
+        return model.getRouteTemplateDefinitions();
+    }
+
+    @Override
+    public RouteTemplateDefinition getRouteTemplateDefinition(String id) {
+        return model.getRouteTemplateDefinition(id);
+    }
+
+    @Override
+    public void addRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception {
+        model.addRouteTemplateDefinitions(routeTemplateDefinitions);
+    }
+
+    @Override
+    public void addRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception {
+        model.addRouteTemplateDefinition(routeTemplateDefinition);
+    }
+
+    @Override
+    public void removeRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception {
+        model.removeRouteTemplateDefinitions(routeTemplateDefinitions);
+    }
+
+    @Override
+    public void removeRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception {
+        model.removeRouteTemplateDefinition(routeTemplateDefinition);
+    }
+
+    @Override
+    public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception {
+        return model.addRouteFromTemplate(routeId, routeTemplateId, parameters);
+    }
+
+    @Override
+    public List<RestDefinition> getRestDefinitions() {
+        return model.getRestDefinitions();
+    }
+
+    @Override
+    public void addRestDefinitions(Collection<RestDefinition> restDefinitions, boolean addToRoutes) throws Exception {
+        model.addRestDefinitions(restDefinitions, addToRoutes);
+    }
+
+    @Override
+    public void setDataFormats(Map<String, DataFormatDefinition> dataFormats) {
+        model.setDataFormats(dataFormats);
+    }
+
+    @Override
+    public Map<String, DataFormatDefinition> getDataFormats() {
+        return model.getDataFormats();
+    }
+
+    @Override
+    public DataFormatDefinition resolveDataFormatDefinition(String name) {
+        return model.resolveDataFormatDefinition(name);
+    }
+
+    @Override
+    public ProcessorDefinition<?> getProcessorDefinition(String id) {
+        return model.getProcessorDefinition(id);
+    }
+
+    @Override
+    public <T extends ProcessorDefinition<T>> T getProcessorDefinition(String id, Class<T> type) {
+        return model.getProcessorDefinition(id, type);
+    }
+
+    @Override
+    public void setValidators(List<ValidatorDefinition> validators) {
+        model.setValidators(validators);
+    }
+
+    @Override
+    public HystrixConfigurationDefinition getHystrixConfiguration(String id) {
+        return model.getHystrixConfiguration(id);
+    }
+
+    @Override
+    public void setHystrixConfiguration(HystrixConfigurationDefinition configuration) {
+        model.setHystrixConfiguration(configuration);
+    }
+
+    @Override
+    public void setHystrixConfigurations(List<HystrixConfigurationDefinition> configurations) {
+        model.setHystrixConfigurations(configurations);
+    }
+
+    @Override
+    public void addHystrixConfiguration(String id, HystrixConfigurationDefinition configuration) {
+        model.addHystrixConfiguration(id, configuration);
+    }
+
+    @Override
+    public Resilience4jConfigurationDefinition getResilience4jConfiguration(String id) {
+        return model.getResilience4jConfiguration(id);
+    }
+
+    @Override
+    public void setResilience4jConfiguration(Resilience4jConfigurationDefinition configuration) {
+        model.setResilience4jConfiguration(configuration);
+    }
+
+    @Override
+    public void setResilience4jConfigurations(List<Resilience4jConfigurationDefinition> configurations) {
+        model.setResilience4jConfigurations(configurations);
+    }
+
+    @Override
+    public void addResilience4jConfiguration(String id, Resilience4jConfigurationDefinition configuration) {
+        model.addResilience4jConfiguration(id, configuration);
+    }
+
+    @Override
+    public FaultToleranceConfigurationDefinition getFaultToleranceConfiguration(String id) {
+        return model.getFaultToleranceConfiguration(id);
+    }
+
+    @Override
+    public void setFaultToleranceConfiguration(FaultToleranceConfigurationDefinition configuration) {
+        model.setFaultToleranceConfiguration(configuration);
+    }
+
+    @Override
+    public void setFaultToleranceConfigurations(List<FaultToleranceConfigurationDefinition> configurations) {
+        model.setFaultToleranceConfigurations(configurations);
+    }
+
+    @Override
+    public void addFaultToleranceConfiguration(String id, FaultToleranceConfigurationDefinition configuration) {
+        model.addFaultToleranceConfiguration(id, configuration);
+    }
+
+    @Override
+    public List<ValidatorDefinition> getValidators() {
+        return model.getValidators();
+    }
+
+    @Override
+    public void setTransformers(List<TransformerDefinition> transformers) {
+        model.setTransformers(transformers);
+    }
+
+    @Override
+    public List<TransformerDefinition> getTransformers() {
+        return model.getTransformers();
+    }
+
+    @Override
+    public ServiceCallConfigurationDefinition getServiceCallConfiguration(String serviceName) {
+        return model.getServiceCallConfiguration(serviceName);
+    }
+
+    @Override
+    public void setServiceCallConfiguration(ServiceCallConfigurationDefinition configuration) {
+        model.setServiceCallConfiguration(configuration);
+    }
+
+    @Override
+    public void setServiceCallConfigurations(List<ServiceCallConfigurationDefinition> configurations) {
+        model.setServiceCallConfigurations(configurations);
+    }
+
+    @Override
+    public void addServiceCallConfiguration(String serviceName, ServiceCallConfigurationDefinition configuration) {
+        model.addServiceCallConfiguration(serviceName, configuration);
+    }
+
+    @Override
+    public void setRouteFilterPattern(String include, String exclude) {
+        model.setRouteFilterPattern(include, exclude);
+    }
+
+    @Override
+    public void setRouteFilter(Function<RouteDefinition, Boolean> filter) {
+        model.setRouteFilter(filter);
+    }
+
+    @Override
+    public Function<RouteDefinition, Boolean> getRouteFilter() {
+        return model.getRouteFilter();
+    }
+
+    @Override
+    protected void doStartStandardServices() {
+        super.doStartStandardServices();
+    }
+
+    @Override
+    protected void bindDataFormats() throws Exception {
+        // eager lookup data formats and bind to registry so the dataformats can
+        // be looked up and used
+        for (Map.Entry<String, DataFormatDefinition> e : model.getDataFormats().entrySet()) {
+            String id = e.getKey();
+            DataFormatDefinition def = e.getValue();
+            LOG.debug("Creating Dataformat with id: {} and definition: {}", id, def);
+            DataFormat df = DataFormatReifier.reifier(this, def).createDataFormat();
+            addService(df, true);
+            getRegistry().bind(id, df);
         }
-        return null;
     }
 
     @Override
-    protected Injector createInjector() {
-        FactoryFinder finder = getDefaultFactoryFinder();
-        return finder.newInstance("Injector", Injector.class).orElse(new DefaultInjector(this));
-    }
-
-    @Override
-    protected PropertiesComponent createPropertiesComponent() {
-        return new PropertiesComponentFactoryResolver().resolve(this);
-    }
-
-    @Override
-    protected CamelBeanPostProcessor createBeanPostProcessor() {
-        return new DefaultCamelBeanPostProcessor(this);
-    }
-
-    @Override
-    protected ComponentResolver createComponentResolver() {
-        return new DefaultComponentResolver();
-    }
-
-    @Override
-    protected Registry createRegistry() {
-        return new DefaultRegistry();
-    }
-
-    @Override
-    protected UuidGenerator createUuidGenerator() {
-        return new DefaultUuidGenerator();
-    }
-
-    @Override
-    protected ModelJAXBContextFactory createModelJAXBContextFactory() {
-        return new DefaultModelJAXBContextFactory();
-    }
-
-    @Override
-    protected NodeIdFactory createNodeIdFactory() {
-        return new DefaultNodeIdFactory();
-    }
-
-    @Override
-    protected FactoryFinderResolver createFactoryFinderResolver() {
-        return new DefaultFactoryFinderResolver();
-    }
-
-    @Override
-    protected ClassResolver createClassResolver() {
-        return new DefaultClassResolver(this);
-    }
-
-    @Override
-    protected ProcessorFactory createProcessorFactory() {
-        return new DefaultProcessorFactory();
-    }
-
-    @Override
-    protected DataFormatResolver createDataFormatResolver() {
-        return new DefaultDataFormatResolver();
-    }
-
-    @Override
-    protected MessageHistoryFactory createMessageHistoryFactory() {
-        return new DefaultMessageHistoryFactory();
-    }
-
-    @Override
-    protected InflightRepository createInflightRepository() {
-        return new DefaultInflightRepository();
-    }
-
-    @Override
-    protected AsyncProcessorAwaitManager createAsyncProcessorAwaitManager() {
-        return new DefaultAsyncProcessorAwaitManager();
-    }
-
-    @Override
-    protected RouteController createRouteController() {
-        return new DefaultRouteController(this);
-    }
-
-    @Override
-    protected HealthCheckRegistry createHealthCheckRegistry() {
-        return new DefaultHealthCheckRegistry(this);
-    }
-
-    @Override
-    protected ShutdownStrategy createShutdownStrategy() {
-        return new DefaultShutdownStrategy(this);
-    }
-
-    @Override
-    protected PackageScanClassResolver createPackageScanClassResolver() {
-        PackageScanClassResolver packageScanClassResolver;
-        // use WebSphere specific resolver if running on WebSphere
-        if (WebSpherePackageScanClassResolver.isWebSphereClassLoader(this.getClass().getClassLoader())) {
-            log.info("Using WebSphere specific PackageScanClassResolver");
-            packageScanClassResolver = new WebSpherePackageScanClassResolver("META-INF/services/org/apache/camel/TypeConverter");
-        } else {
-            packageScanClassResolver = new DefaultPackageScanClassResolver();
+    protected synchronized void shutdownRouteService(RouteService routeService) throws Exception {
+        RouteDefinition rd = model.getRouteDefinition(routeService.getId());
+        if (rd != null) {
+            model.getRouteDefinitions().remove(rd);
         }
-        return packageScanClassResolver;
+        super.shutdownRouteService(routeService);
     }
 
     @Override
-    protected PackageScanResourceResolver createPackageScanResourceResolver() {
-        return new DefaultPackageScanResourceResolver();
+    protected boolean isStreamCachingInUse() throws Exception {
+        boolean streamCachingInUse = super.isStreamCachingInUse();
+        if (!streamCachingInUse) {
+            for (RouteDefinition route : model.getRouteDefinitions()) {
+                Boolean routeCache = CamelContextHelper.parseBoolean(this, route.getStreamCache());
+                if (routeCache != null && routeCache) {
+                    streamCachingInUse = true;
+                    break;
+                }
+            }
+        }
+        return streamCachingInUse;
+    }
+
+    @Override
+    public void startRouteDefinitions() throws Exception {
+        List<RouteDefinition> routeDefinitions = model.getRouteDefinitions();
+        if (routeDefinitions != null) {
+            startRouteDefinitions(routeDefinitions);
+        }
+    }
+
+    public void startRouteDefinitions(List<RouteDefinition> routeDefinitions) throws Exception {
+        // indicate we are staring the route using this thread so
+        // we are able to query this if needed
+        boolean alreadyStartingRoutes = isStartingRoutes();
+        if (!alreadyStartingRoutes) {
+            setStartingRoutes(true);
+        }
+
+        PropertiesComponent pc = getCamelContextReference().getPropertiesComponent();
+        try {
+            RouteDefinitionHelper.forceAssignIds(getCamelContextReference(), routeDefinitions);
+            for (RouteDefinition routeDefinition : routeDefinitions) {
+                // assign ids to the routes and validate that the id's is all unique
+                String duplicate = RouteDefinitionHelper.validateUniqueIds(routeDefinition, routeDefinitions);
+                if (duplicate != null) {
+                    throw new FailedToStartRouteException(routeDefinition.getId(), "duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");
+                }
+
+                // if the route definition was created via a route template then we need to prepare its parameters when the route is being created and started
+                if (routeDefinition.isTemplate() != null && routeDefinition.isTemplate() && routeDefinition.getTemplateParameters() != null) {
+                    Properties prop = new Properties();
+                    prop.putAll(routeDefinition.getTemplateParameters());
+                    pc.setLocalProperties(prop);
+                }
+
+                // must ensure route is prepared, before we can start it
+                if (!routeDefinition.isPrepared()) {
+                    RouteDefinitionHelper.prepareRoute(getCamelContextReference(), routeDefinition);
+                    routeDefinition.markPrepared();
+                }
+
+                Route route = new RouteReifier(getCamelContextReference(), routeDefinition).createRoute();
+                RouteService routeService = new RouteService(route);
+                startRouteService(routeService, true);
+
+                // clear local after the route is created via the reifier
+                pc.setLocalProperties(null);
+            }
+        } finally {
+            if (!alreadyStartingRoutes) {
+                setStartingRoutes(false);
+            }
+            pc.setLocalProperties(null);
+        }
     }
 
     @Override
@@ -289,87 +432,47 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
     }
 
     @Override
-    protected UnitOfWorkFactory createUnitOfWorkFactory() {
-        return new DefaultUnitOfWorkFactory();
+    public Processor createErrorHandler(Route route, Processor processor) throws Exception {
+        return ErrorHandlerReifier.reifier(route, route.getErrorHandlerFactory())
+                .createErrorHandler(processor);
     }
 
     @Override
-    protected RuntimeCamelCatalog createRuntimeCamelCatalog() {
-        return new DefaultRuntimeCamelCatalog(this, true);
+    public Expression createExpression(ExpressionDefinition definition) {
+        return ExpressionReifier.reifier(this, definition).createExpression();
     }
 
     @Override
-    protected CamelContextNameStrategy createCamelContextNameStrategy() {
-        return new DefaultCamelContextNameStrategy();
+    public Predicate createPredicate(ExpressionDefinition definition) {
+        return ExpressionReifier.reifier(this, definition).createPredicate();
     }
 
     @Override
-    protected ManagementNameStrategy createManagementNameStrategy() {
-        return new DefaultManagementNameStrategy(this);
+    public RouteDefinition adviceWith(RouteDefinition definition, AdviceWithRouteBuilder builder) throws Exception {
+        return RouteReifier.adviceWith(definition, this, builder);
     }
 
     @Override
-    protected HeadersMapFactory createHeadersMapFactory() {
-        return new HeadersMapFactoryResolver().resolve(this);
+    public void registerValidator(ValidatorDefinition def) {
+        model.getValidators().add(def);
+        Validator validator = ValidatorReifier.reifier(this, def).createValidator();
+        getValidatorRegistry().put(createValidatorKey(def), validator);
     }
 
-    @Override
-    protected BeanProxyFactory createBeanProxyFactory() {
-        return new BeanProxyFactoryResolver().resolve(this);
+    private static ValueHolder<String> createValidatorKey(ValidatorDefinition def) {
+        return new ValidatorKey(new DataType(def.getType()));
     }
 
-    @Override
-    protected BeanProcessorFactory createBeanProcessorFactory() {
-        return new BeanProcessorFactoryResolver().resolve(this);
-    }
 
     @Override
-    protected BeanIntrospection createBeanIntrospection() {
-        return new DefaultBeanIntrospection();
+    public void registerTransformer(TransformerDefinition def) {
+        model.getTransformers().add(def);
+        Transformer transformer = TransformerReifier.reifier(this, def).createTransformer();
+        getTransformerRegistry().put(createTransformerKey(def), transformer);
     }
 
-    @Override
-    protected Tracer createTracer() {
-        Tracer tracer = null;
-        if (getRegistry() != null) {
-            // lookup in registry
-            Map<String, Tracer> map = getRegistry().findByTypeWithName(Tracer.class);
-            if (map.size() == 1) {
-                tracer = map.values().iterator().next();
-            }
-        }
-        if (tracer == null) {
-            tracer = getExtension(Tracer.class);
-        }
-        if (tracer == null) {
-            tracer = new DefaultTracer();
-            setExtension(Tracer.class, tracer);
-        }
-        return tracer;
+    private static ValueHolder<String> createTransformerKey(TransformerDefinition def) {
+        return ObjectHelper.isNotEmpty(def.getScheme()) ? new TransformerKey(def.getScheme()) : new TransformerKey(new DataType(def.getFromType()), new DataType(def.getToType()));
     }
 
-    @Override
-    protected LanguageResolver createLanguageResolver() {
-        return new DefaultLanguageResolver();
-    }
-
-    @Override
-    protected RestRegistryFactory createRestRegistryFactory() {
-        return new RestRegistryFactoryResolver().resolve(this);
-    }
-
-    @Override
-    protected EndpointRegistry<EndpointKey> createEndpointRegistry(Map<EndpointKey, Endpoint> endpoints) {
-        return new DefaultEndpointRegistry(this, endpoints);
-    }
-
-    @Override
-    protected StreamCachingStrategy createStreamCachingStrategy() {
-        return new DefaultStreamCachingStrategy();
-    }
-
-    @Override
-    protected ReactiveExecutor createReactiveExecutor() {
-        return new ReactiveExecutorResolver().resolve(this);
-    }
 }

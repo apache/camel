@@ -63,7 +63,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The cxfrs component is used for JAX-RS REST services using Apache CXF.
+ * Expose JAX-RS REST services using Apache CXF or connect to external REST services using CXF REST client.
  */
 @UriEndpoint(firstVersion = "2.0.0", scheme = "cxfrs", title = "CXF-RS", syntax = "cxfrs:beanId:address", label = "rest", lenientProperties = true)
 public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
@@ -84,8 +84,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private String address;
     @UriParam
     private List<Class<?>> resourceClasses;
-    @UriParam(label = "consumer,advanced")
-    private String serviceBeans;
+    @UriParam(label = "consumer,advanced", javaType = "java.lang.String")
+    private List<Object> serviceBeans = new LinkedList<>();
+    private String serviceBeansRef;
     @UriParam
     private String modelRef;
     @UriParam(label = "consumer", defaultValue = "Default")
@@ -121,7 +122,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private int loggingSizeLimit;
     @UriParam
     private boolean skipFaultLogging;
-    @UriParam(label = "advanced", defaultValue = "30000")
+    @UriParam(label = "advanced", defaultValue = "30000", javaType = "java.time.Duration")
     private long continuationTimeout = 30000;
     @UriParam(label = "advanced")
     private boolean defaultBus;
@@ -248,10 +249,12 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         if (getResourceClasses() != null) {
             sfb.setResourceClasses(getResourceClasses());
         }
-        if (serviceBeans != null) {
-            List<Object> beans = EndpointHelper.resolveReferenceListParameter(getCamelContext(), serviceBeans, Object.class);
-            sfb.setServiceBeans(beans);
+
+        List<Object> beans = new ArrayList<>(serviceBeans);
+        if (serviceBeansRef != null) {
+            beans.addAll(EndpointHelper.resolveReferenceListParameter(getCamelContext(), serviceBeansRef, Object.class));
         }
+        sfb.setServiceBeans(beans);
 
         // setup the resource providers for interfaces
         List<ClassResourceInfo> cris = sfb.getServiceFactory().getClassResourceInfo();
@@ -274,7 +277,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     private void processResourceModel(JAXRSServerFactoryBean sfb) {
-        // Currently a CXF model document is the only possible source 
+        // Currently a CXF model document is the only possible source
         // of the model. Other sources will be supported going forward
         if (modelRef != null) {
 
@@ -295,10 +298,10 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
                 resource.setName(DefaultModelResource.class.getName());
             }
         }
-        // The CXF to Camel exchange binding may need to be customized 
+        // The CXF to Camel exchange binding may need to be customized
         // for the operation name, request, response types be derived from
         // the model info (when a given model does provide this info) as opposed
-        // to a matched method which is of no real use with a default handler. 
+        // to a matched method which is of no real use with a default handler.
         sfb.setModelBeans(resources);
 
     }
@@ -438,7 +441,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         setResourceClasses(Arrays.asList(classes));
     }
 
-    public String getServiceBeans() {
+    public List<?> getServiceBeans() {
         return serviceBeans;
     }
 
@@ -447,7 +450,15 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
      * Multiple beans can be separated by comma
      */
     public void setServiceBeans(String beans) {
-        this.serviceBeans = beans;
+        this.serviceBeansRef = beans;
+    }
+
+    public void setServiceBeans(List<?> beans) {
+        this.serviceBeans.addAll(beans);
+    }
+
+    public void setServiceBean(Object bean) {
+        this.serviceBeans.add(bean);
     }
 
     /**
@@ -709,7 +720,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
+
         if (headerFilterStrategy == null) {
             headerFilterStrategy = new CxfRsHeaderFilterStrategy();
         }

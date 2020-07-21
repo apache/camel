@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -33,16 +32,16 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing,circuitbreaker")
 @XmlRootElement(name = "circuitBreaker")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CircuitBreakerDefinition extends ProcessorDefinition<CircuitBreakerDefinition> implements OutputNode {
+public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDefinition> {
 
     @XmlElement
     private HystrixConfigurationDefinition hystrixConfiguration;
     @XmlElement
     private Resilience4jConfigurationDefinition resilience4jConfiguration;
+    @XmlElement
+    private FaultToleranceConfigurationDefinition faultToleranceConfiguration;
     @XmlAttribute
     private String configurationRef;
-    @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
     @XmlTransient
     private OnFallbackDefinition onFallback;
 
@@ -69,13 +68,10 @@ public class CircuitBreakerDefinition extends ProcessorDefinition<CircuitBreaker
         return outputs;
     }
 
+    @XmlElementRef
+    @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
-        this.outputs = outputs;
-        if (outputs != null) {
-            for (ProcessorDefinition<?> output : outputs) {
-                configureChild(output);
-            }
-        }
+        super.setOutputs(outputs);
     }
 
     @Override
@@ -117,10 +113,12 @@ public class CircuitBreakerDefinition extends ProcessorDefinition<CircuitBreaker
     // Getter/Setter
     // -------------------------------------------------------------------------
 
+    @Deprecated
     public HystrixConfigurationDefinition getHystrixConfiguration() {
         return hystrixConfiguration;
     }
 
+    @Deprecated
     public void setHystrixConfiguration(HystrixConfigurationDefinition hystrixConfiguration) {
         this.hystrixConfiguration = hystrixConfiguration;
     }
@@ -131,6 +129,14 @@ public class CircuitBreakerDefinition extends ProcessorDefinition<CircuitBreaker
 
     public void setResilience4jConfiguration(Resilience4jConfigurationDefinition resilience4jConfiguration) {
         this.resilience4jConfiguration = resilience4jConfiguration;
+    }
+
+    public FaultToleranceConfigurationDefinition getFaultToleranceConfiguration() {
+        return faultToleranceConfiguration;
+    }
+
+    public void setFaultToleranceConfiguration(FaultToleranceConfigurationDefinition faultToleranceConfiguration) {
+        this.faultToleranceConfiguration = faultToleranceConfiguration;
     }
 
     public String getConfigurationRef() {
@@ -162,6 +168,7 @@ public class CircuitBreakerDefinition extends ProcessorDefinition<CircuitBreaker
      * Use <tt>end</tt> when configuration is complete, to return back to the
      * Circuit Breaker EIP.
      */
+    @Deprecated
     public HystrixConfigurationDefinition hystrixConfiguration() {
         hystrixConfiguration = hystrixConfiguration == null ? new HystrixConfigurationDefinition(this) : hystrixConfiguration;
         return hystrixConfiguration;
@@ -170,6 +177,7 @@ public class CircuitBreakerDefinition extends ProcessorDefinition<CircuitBreaker
     /**
      * Configures the circuit breaker to use Hystrix with the given configuration.
      */
+    @Deprecated
     public CircuitBreakerDefinition hystrixConfiguration(HystrixConfigurationDefinition configuration) {
         hystrixConfiguration = configuration;
         return this;
@@ -191,6 +199,25 @@ public class CircuitBreakerDefinition extends ProcessorDefinition<CircuitBreaker
      */
     public CircuitBreakerDefinition resilience4jConfiguration(Resilience4jConfigurationDefinition configuration) {
         resilience4jConfiguration = configuration;
+        return this;
+    }
+
+    /**
+     * Configures the circuit breaker to use MicroProfile Fault Tolerance.
+     * <p/>
+     * Use <tt>end</tt> when configuration is complete, to return back to the
+     * Circuit Breaker EIP.
+     */
+    public FaultToleranceConfigurationDefinition faultToleranceConfiguration() {
+        faultToleranceConfiguration = faultToleranceConfiguration == null ? new FaultToleranceConfigurationDefinition(this) : faultToleranceConfiguration;
+        return faultToleranceConfiguration;
+    }
+
+    /**
+     * Configures the circuit breaker to use MicroProfile Fault Tolerance with the given configuration.
+     */
+    public CircuitBreakerDefinition faultToleranceConfiguration(FaultToleranceConfigurationDefinition configuration) {
+        faultToleranceConfiguration = configuration;
         return this;
     }
 

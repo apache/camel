@@ -58,20 +58,20 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_PERSISTENT_VOLUMES:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_PERSISTENT_VOLUMES:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_PERSISTENT_VOLUMES_BY_LABELS_OPERATION:
-            doListPersistentVolumesByLabels(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_PERSISTENT_VOLUMES_BY_LABELS_OPERATION:
+                doListPersistentVolumesByLabels(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_PERSISTENT_VOLUME_OPERATION:
-            doGetPersistentVolume(exchange, operation);
-            break;
+            case KubernetesOperations.GET_PERSISTENT_VOLUME_OPERATION:
+                doGetPersistentVolume(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 

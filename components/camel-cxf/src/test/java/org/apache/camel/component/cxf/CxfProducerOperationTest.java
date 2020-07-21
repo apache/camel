@@ -22,7 +22,9 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfProducerOperationTest extends CxfProducerTest {
     private static final String NAMESPACE = "http://apache.org/hello_world_soap_http";
@@ -98,7 +100,7 @@ public class CxfProducerOperationTest extends CxfProducerTest {
             throw exchange.getException();
         }
         
-        assertEquals("Get a wrong response.", "param:para1para2", exchange.getOut().getBody(String.class));
+        assertEquals("param:para1para2", exchange.getOut().getBody(String.class), "Get a wrong response.");
         
     }
 }

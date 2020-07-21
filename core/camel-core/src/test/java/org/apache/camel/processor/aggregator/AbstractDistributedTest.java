@@ -22,9 +22,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.service.ServiceHelper;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class AbstractDistributedTest extends ContextTestSupport {
 
@@ -32,7 +31,7 @@ public abstract class AbstractDistributedTest extends ContextTestSupport {
     protected ProducerTemplate template2;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         context.setUseMDCLogging(true);
@@ -40,16 +39,18 @@ public abstract class AbstractDistributedTest extends ContextTestSupport {
         context2 = new DefaultCamelContext();
         context2.setUseMDCLogging(true);
         template2 = context2.createProducerTemplate();
-        ServiceHelper.startService(template2, context2);
+        context2.start();
+        template2.start();
 
         // add routes after CamelContext has been started
         context2.addRoutes(createRouteBuilder2());
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
-        ServiceHelper.stopAndShutdownServices(context2, template2);
+        context2.stop();
+        template2.stop();
 
         super.tearDown();
     }

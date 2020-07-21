@@ -23,9 +23,9 @@ import org.apache.camel.support.DefaultTimeoutMap;
 import static org.apache.camel.TimeoutMap.Listener.Type.*;
 
 /**
- * A {@link org.apache.camel.TimeoutMap} which is used to track reply messages which
- * has been timed out, and thus should trigger the waiting {@link org.apache.camel.Exchange} to
- * timeout as well.
+ * A {@link org.apache.camel.TimeoutMap} which is used to track reply messages
+ * which has been timed out, and thus should trigger the waiting
+ * {@link org.apache.camel.Exchange} to timeout as well.
  */
 class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
 
@@ -35,7 +35,9 @@ class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
     }
 
     private static long encode(long timeoutMillis) {
-        return timeoutMillis > 0 ? timeoutMillis : Integer.MAX_VALUE; // TODO why not Long.MAX_VALUE!
+        return timeoutMillis > 0 ? timeoutMillis : Integer.MAX_VALUE; // TODO
+                                                                      // why not
+                                                                      // Long.MAX_VALUE!
     }
 
     private void listener(Listener.Type type, String key, ReplyHandler handler) {

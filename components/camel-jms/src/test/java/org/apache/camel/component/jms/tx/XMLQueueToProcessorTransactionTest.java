@@ -17,7 +17,7 @@
 package org.apache.camel.component.jms.tx;
 
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
 /**

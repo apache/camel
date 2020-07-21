@@ -105,7 +105,7 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
         return instanceClassName;
     }
 
-    public void setInstanceClassName(String className) throws Exception {
+    public void setInstanceClassName(String className) {
         instanceClassName = className;
     }
 

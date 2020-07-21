@@ -25,17 +25,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jpa.JpaConstants;
 import org.apache.camel.examples.Customer;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.service.ServiceHelper;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class JpaProducerWithQueryParametersHeaderTest extends Assert {
-    
-    protected static final Logger LOG = LoggerFactory.getLogger(JpaProducerWithQueryParametersHeaderTest.class);
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class JpaProducerWithQueryParametersHeaderTest {
     
     protected DefaultCamelContext camelContext;
     protected ProducerTemplate template;
@@ -62,7 +58,7 @@ public class JpaProducerWithQueryParametersHeaderTest extends Assert {
         assertEquals(2, integer);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         camelContext = new DefaultCamelContext();
 
@@ -80,12 +76,12 @@ public class JpaProducerWithQueryParametersHeaderTest extends Assert {
             }
         });
 
+        camelContext.start();
         template = camelContext.createProducerTemplate();
-        ServiceHelper.startService(template, camelContext);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
-        ServiceHelper.stopService(template, camelContext);
+        camelContext.stop();
     }
 }

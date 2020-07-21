@@ -20,8 +20,10 @@ import java.io.File;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests to ensure that When the allowNullBody option is set to true it
@@ -32,7 +34,7 @@ import org.junit.Test;
 public class FileProducerAllowNullBodyTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/allow");
         super.setUp();
@@ -54,6 +56,6 @@ public class FileProducerAllowNullBodyTest extends ContextTestSupport {
             assertTrue(cause.getMessage().endsWith("allowNullBody.txt"));
         }
 
-        assertFalse("allowNullBody set to false with null body should not create a new file", new File("target/data/allow/allowNullBody.txt").exists());
+        assertFalse(new File("target/data/allow/allowNullBody.txt").exists(), "allowNullBody set to false with null body should not create a new file");
     }
 }

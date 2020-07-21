@@ -18,16 +18,16 @@ package org.apache.camel.http.common;
 
 import org.apache.camel.http.base.HttpSendDynamicAware;
 import org.apache.camel.spi.SendDynamicAware.DynamicAwareEntry;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpSendDynamicAwareTest {
 
     private HttpSendDynamicAware httpSendDynamicAware;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         this.httpSendDynamicAware = new HttpSendDynamicAware();
     }
@@ -37,7 +37,7 @@ public class HttpSendDynamicAwareTest {
         this.httpSendDynamicAware.setScheme("http");
         DynamicAwareEntry entry = new DynamicAwareEntry("http://localhost/test", null, null, null);
         String[] result = httpSendDynamicAware.parseUri(entry);
-        assertEquals("Parse should not add port if http and not specified", "localhost", result[0]);
+        assertEquals("localhost", result[0], "Parse should not add port if http and not specified");
     }
     
     @Test
@@ -45,7 +45,7 @@ public class HttpSendDynamicAwareTest {
         this.httpSendDynamicAware.setScheme("https");
         DynamicAwareEntry entry = new DynamicAwareEntry("https://localhost/test", null, null, null);
         String[] result = httpSendDynamicAware.parseUri(entry);
-        assertEquals("Parse should not add port if https and not specified", "localhost", result[0]);
+        assertEquals("localhost", result[0], "Parse should not add port if https and not specified");
     }
     
     @Test
@@ -53,7 +53,7 @@ public class HttpSendDynamicAwareTest {
         this.httpSendDynamicAware.setScheme("http");
         DynamicAwareEntry entry = new DynamicAwareEntry("http://localhost:80/test", null, null, null);
         String[] result = httpSendDynamicAware.parseUri(entry);
-        assertEquals("Parse should not port if http and port 80 specified", "localhost", result[0]);
+        assertEquals("localhost", result[0], "Parse should not port if http and port 80 specified");
     }
     
     @Test
@@ -61,7 +61,7 @@ public class HttpSendDynamicAwareTest {
         this.httpSendDynamicAware.setScheme("https");
         DynamicAwareEntry entry = new DynamicAwareEntry("https://localhost:443/test", null, null, null);
         String[] result = httpSendDynamicAware.parseUri(entry);
-        assertEquals("Parse should not port if https and port 443 specified", "localhost", result[0]);
+        assertEquals("localhost", result[0], "Parse should not port if https and port 443 specified");
     }
     
     @Test
@@ -69,7 +69,7 @@ public class HttpSendDynamicAwareTest {
         this.httpSendDynamicAware.setScheme("http");
         DynamicAwareEntry entry = new DynamicAwareEntry("http://localhost:8080/test", null, null, null);
         String[] result = httpSendDynamicAware.parseUri(entry);
-        assertEquals("Parse should add port if http and port other than 80 specified", "localhost:8080", result[0]);
+        assertEquals("localhost:8080", result[0], "Parse should add port if http and port other than 80 specified");
     }
     
     @Test
@@ -77,7 +77,7 @@ public class HttpSendDynamicAwareTest {
         this.httpSendDynamicAware.setScheme("https");
         DynamicAwareEntry entry = new DynamicAwareEntry("https://localhost:8443/test", null, null, null);
         String[] result = httpSendDynamicAware.parseUri(entry);
-        assertEquals("Parse should add port if https and port other than 443 specified", "localhost:8443", result[0]);
+        assertEquals("localhost:8443", result[0], "Parse should add port if https and port other than 443 specified");
     }
 
 }

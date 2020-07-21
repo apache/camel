@@ -30,14 +30,19 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm;
 import org.apache.camel.component.grpc.auth.jwt.JwtServerInterceptor;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class GrpcProducerSecurityTest extends CamelTestSupport {
+
     private static final Logger LOG = LoggerFactory.getLogger(GrpcProducerSecurityTest.class);
 
     private static final int GRPC_TLS_TEST_PORT = AvailablePortFinder.getNextAvailable();
@@ -54,7 +59,7 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
     private static Server grpcServerWithTLS;
     private static Server grpcServerWithJWT;
     
-    @BeforeClass
+    @BeforeAll
     public static void startGrpcServer() throws Exception {
         grpcServerWithTLS = NettyServerBuilder.forPort(GRPC_TLS_TEST_PORT)
                                               .sslContext(GrpcSslContexts.forServer(new File("src/test/resources/certs/server.pem"),
@@ -75,7 +80,7 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
         LOG.info("gRPC server with the JWT auth started on port {}", GRPC_JWT_TEST_PORT);
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopGrpcServer() throws IOException {
         if (grpcServerWithTLS != null) {
             grpcServerWithTLS.shutdown();

@@ -31,6 +31,7 @@ import org.apache.camel.util.ObjectHelper;
 @Component("zookeeper-master")
 public class MasterComponent extends ZookeeperComponentSupport {
 
+    @Metadata(label = "advanced")
     private ContainerIdFactory containerIdFactory = new DefaultContainerIdFactory();
 
     @Metadata(defaultValue = "/camel/zookeepermaster/clusters/master")

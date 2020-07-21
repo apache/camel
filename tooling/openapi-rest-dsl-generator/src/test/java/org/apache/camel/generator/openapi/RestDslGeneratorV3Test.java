@@ -16,11 +16,8 @@
  */
 package org.apache.camel.generator.openapi;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -33,69 +30,72 @@ import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.rest.RestsDefinition;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class RestDslGeneratorV3Test {
 
-    static OasDocument openapi;
-    
+    static OasDocument document;
+
     final Instant generated = Instant.parse("2017-10-17T00:00:00.000Z");
 
-       
-    @BeforeClass
-    public static void readOpenApiDoc() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        FileInputStream fis = new FileInputStream(new File("openapi-spec.json"));
-        JsonNode node = mapper.readTree(fis);
-        openapi = (OasDocument)Library.readDocument(node);
+    @Test
+    public void shouldCreateDefinitions() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            final RestsDefinition definition = RestDslGenerator.toDefinition(document).generate(context);
+            assertThat(definition).isNotNull();
+            assertThat(definition.getRests()).hasSize(1);
+            assertThat(definition.getRests().get(0).getPath()).isEqualTo("/api/v3");
+        }
     }
 
     @Test
-    public void shouldCreateDefinitions() {
-        final CamelContext context = new DefaultCamelContext();
-        final RestsDefinition definition = RestDslGenerator.toDefinition(openapi).generate(context);
-        assertThat(definition).isNotNull();
-        assertThat(definition.getRests()).hasSize(1);
-        assertThat(definition.getRests().get(0).getPath()).isEqualTo("/api/v3");
-        
-    }
-
-    @Test
-    public void shouldGenerateSourceCodeWithDefaults() throws IOException, URISyntaxException {
+    public void shouldGenerateSourceCodeWithDefaults() throws Exception {
         final StringBuilder code = new StringBuilder();
 
-        RestDslGenerator.toAppendable(openapi).withGeneratedTime(generated).generate(code);
+        RestDslGenerator.toAppendable(document)
+            .withGeneratedTime(generated)
+            .generate(code);
 
         final URI file = RestDslGeneratorV3Test.class.getResource("/OpenApiV3Petstore.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
         assertThat(code.toString()).isEqualTo(expectedContent);
-        
+
     }
 
     @Test
-    public void shouldGenerateSourceCodeWithRestComponent() throws IOException, URISyntaxException {
+    public void shouldGenerateSourceCodeWithFilter() throws Exception {
         final StringBuilder code = new StringBuilder();
 
-        RestDslGenerator.toAppendable(openapi).withGeneratedTime(generated).withRestComponent("servlet").withRestContextPath("/").generate(code);
+        RestDslGenerator.toAppendable(document)
+            .withGeneratedTime(generated)
+            .withClassName("MyRestRoute")
+            .withPackageName("com.example")
+            .withIndent("\t")
+            .withSourceCodeTimestamps()
+            .withOperationFilter("find*,deletePet,updatePet")
+            .withDestinationGenerator(o -> "direct:rest-" + o.operationId)
+            .generate(code);
 
-        final URI file = RestDslGeneratorV3Test.class.getResource("/OpenApiV3PetstoreWithRestComponent.txt").toURI();
+        final URI file = RestDslGeneratorV3Test.class.getResource("/MyRestRouteFilterV3.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
-        
         assertThat(code.toString()).isEqualTo(expectedContent);
     }
 
     @Test
-    public void shouldGenerateSourceCodeWithOptions() throws IOException, URISyntaxException {
+    public void shouldGenerateSourceCodeWithOptions() throws Exception {
         final StringBuilder code = new StringBuilder();
 
-        RestDslGenerator.toAppendable(openapi).withGeneratedTime(generated).withClassName("MyRestRoute")
-            .withPackageName("com.example").withIndent("\t").withSourceCodeTimestamps()
-            .withDestinationGenerator(o -> "direct:rest-" + o.operationId).generate(code);
+        RestDslGenerator.toAppendable(document)
+            .withGeneratedTime(generated)
+            .withClassName("MyRestRoute")
+            .withPackageName("com.example")
+            .withIndent("\t")
+            .withSourceCodeTimestamps()
+            .withDestinationGenerator(o -> "direct:rest-" + o.operationId)
+            .generate(code);
 
         final URI file = RestDslGeneratorV3Test.class.getResource("/MyRestRouteV3.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
@@ -103,16 +103,27 @@ public class RestDslGeneratorV3Test {
     }
 
     @Test
-    public void shouldGenerateSourceCodeWithFilter() throws IOException, URISyntaxException {
+    public void shouldGenerateSourceCodeWithRestComponent() throws Exception {
         final StringBuilder code = new StringBuilder();
 
-        RestDslGenerator.toAppendable(openapi).withGeneratedTime(generated).withClassName("MyRestRoute")
-            .withPackageName("com.example").withIndent("\t").withSourceCodeTimestamps()
-            .withOperationFilter("find*,deletePet,updatePet")
-            .withDestinationGenerator(o -> "direct:rest-" + o.operationId).generate(code);
+        RestDslGenerator.toAppendable(document)
+            .withGeneratedTime(generated)
+            .withRestComponent("servlet")
+            .withRestContextPath("/")
+            .generate(code);
 
-        final URI file = RestDslGeneratorV3Test.class.getResource("/MyRestRouteFilterV3.txt").toURI();
+        final URI file = RestDslGeneratorV3Test.class.getResource("/OpenApiV3PetstoreWithRestComponent.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
+
         assertThat(code.toString()).isEqualTo(expectedContent);
+    }
+
+    @BeforeAll
+    public static void readOpenApiDoc() throws Exception {
+        final ObjectMapper mapper = new ObjectMapper();
+        try (InputStream is = RestDslGeneratorTest.class.getResourceAsStream("openapi-spec.json")) {
+            final JsonNode node = mapper.readTree(is);
+            document = (OasDocument) Library.readDocument(node);
+        }
     }
 }

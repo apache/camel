@@ -18,10 +18,11 @@ package org.apache.camel.support.builder;
 
 import java.io.ByteArrayInputStream;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class RecordableReaderTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class RecordableReaderTest {
     private static final byte[] DATA;
 
     static {

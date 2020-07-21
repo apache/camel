@@ -21,12 +21,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.management.MXBean;
+import org.apache.camel.tooling.model.BaseModel;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.OtherModel;
 
 /**
  * Catalog of components, data formats, models (EIPs), languages, and more from this Apache Camel release.
  */
-@MXBean
 public interface CamelCatalog {
 
     /**
@@ -98,7 +102,7 @@ public interface CamelCatalog {
      *
      * @param name       the component name
      * @param className  the fully qualified class name for the component class
-     * @param jsonSchema the component JSon schema
+     * @param jsonSchema the component JSON schema
      */
     void addComponent(String name, String className, String jsonSchema);
 
@@ -115,7 +119,7 @@ public interface CamelCatalog {
      *
      * @param name      the data format name
      * @param className the fully qualified class name for the data format class
-     * @param jsonSchema the data format JSon schema
+     * @param jsonSchema the data format JSON schema
      */
     void addDataFormat(String name, String className, String jsonSchema);
 
@@ -194,6 +198,27 @@ public interface CamelCatalog {
     List<String> findOtherNames();
 
     /**
+     * @param kind the kind to look for
+     * @return the list of part names of the given {@link Kind} available in this {@link CamelCatalog}
+     */
+    default List<String> findNames(Kind kind) {
+        switch (kind) {
+            case component:
+                return findComponentNames();
+            case dataformat:
+                return findDataFormatNames();
+            case language:
+                return findLanguageNames();
+            case other:
+                return findOtherNames();
+            case eip:
+                return findModelNames();
+            default:
+                throw new IllegalArgumentException("Unexpected kind " + kind);
+        }
+    }
+
+    /**
      * Find all the component names from the Camel catalog that matches the label
      */
     List<String> findComponentNames(String filter);
@@ -219,7 +244,7 @@ public interface CamelCatalog {
     List<String> findOtherNames(String filter);
 
     /**
-     * Returns the component information as JSon format.
+     * Returns the component information as JSON format.
      *
      * @param name the component name
      * @return component details in JSon
@@ -227,7 +252,7 @@ public interface CamelCatalog {
     String componentJSonSchema(String name);
 
     /**
-     * Returns the data format information as JSon format.
+     * Returns the data format information as JSON format.
      *
      * @param name the data format name
      * @return data format details in JSon
@@ -235,7 +260,7 @@ public interface CamelCatalog {
     String dataFormatJSonSchema(String name);
 
     /**
-     * Returns the language information as JSon format.
+     * Returns the language information as JSON format.
      *
      * @param name the language name
      * @return language details in JSon
@@ -243,7 +268,7 @@ public interface CamelCatalog {
     String languageJSonSchema(String name);
 
     /**
-     * Returns the other (miscellaneous) information as JSon format.
+     * Returns the other (miscellaneous) information as JSON format.
      *
      * @param name the other (miscellaneous) name
      * @return other (miscellaneous) details in JSon
@@ -251,7 +276,7 @@ public interface CamelCatalog {
     String otherJSonSchema(String name);
 
     /**
-     * Returns the model information as JSon format.
+     * Returns the model information as JSON format.
      *
      * @param name the model name
      * @return model details in JSon
@@ -370,13 +395,6 @@ public interface CamelCatalog {
      * @return the spring XML schema
      */
     String springSchemaAsXml();
-
-    /**
-     * Returns the Camel Blueprint XML schema
-     *
-     * @return the blueprint XML schema
-     */
-    String blueprintSchemaAsXml();
 
     /**
      * Returns the camel-main json schema
@@ -540,5 +558,57 @@ public interface CamelCatalog {
      * Reports a summary what the catalog contains in JSon
      */
     String summaryAsJson();
+
+    /**
+     * @param name the component name to look up
+     * @return the requested component or {@code null} in case it is not available in this {@link CamelCatalog}
+     */
+    ComponentModel componentModel(String name);
+
+    /**
+     * @param name the data format name to look up
+     * @return the requested data format or {@code null} in case it is not available in this {@link CamelCatalog}
+     */
+    DataFormatModel dataFormatModel(String name);
+
+    /**
+     * @param name the language name to look up
+     * @return the requested language or {@code null} in case it is not available in this {@link CamelCatalog}
+     */
+    LanguageModel languageModel(String name);
+
+    /**
+     * @param name the other name to look up
+     * @return the requested other or {@code null} in case it is not available in this {@link CamelCatalog}
+     */
+    OtherModel otherModel(String name);
+
+    /**
+     * @param name the EIP model name to look up
+     * @return the requested EIP model or {@code null} in case it is not available in this {@link CamelCatalog}
+     */
+    EipModel eipModel(String name);
+
+    /**
+     * @param kind the requested kind
+     * @param name the name to look up
+     * @return the requested model or {@code null} in case it is not available in this {@link CamelCatalog}
+     */
+    default BaseModel<?> model(Kind kind, String name) {
+        switch (kind) {
+            case component:
+                return componentModel(name);
+            case dataformat:
+                return dataFormatModel(name);
+            case language:
+                return languageModel(name);
+            case other:
+                return otherModel(name);
+            case eip:
+                return eipModel(name);
+            default:
+                throw new IllegalArgumentException("Unexpected kind " + kind);
+        }
+    }
 
 }

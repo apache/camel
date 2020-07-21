@@ -34,8 +34,10 @@ import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AggregateProcessorTest extends ContextTestSupport {
 
@@ -47,7 +49,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         executorService = Executors.newSingleThreadExecutor();
@@ -612,7 +614,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         ap.process(e3);
         ap.process(e4);
 
-        assertEquals("should not have completed yet", 0, mock.getExchanges().size());
+        assertEquals(0, mock.getExchanges().size(), "should not have completed yet");
 
         ap.forceCompletionOfAllGroups();
 

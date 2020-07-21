@@ -1,12 +1,17 @@
 [[jmx-component]]
 = JMX Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jmx/src/main/docs/jmx-component.adoc
+:docTitle: JMX
+:artifactId: camel-jmx
+:description: Receive JMX notifications.
+:since: 2.6
+:supportLevel: Stable
+:component-header: Only consumer is supported
 
-*Since Camel 2.6*
+*Since Camel {since}*
 
-// HEADER START
-*Only consumer is supported*
-// HEADER END
+*{component-header}*
 
 Apache Camel has extensive support for JMX to allow you to monitor and
 control the Camel managed objects with a JMX client.
@@ -15,6 +20,10 @@ Camel also provides a xref:jmx-component.adoc[JMX] component that allows you to
 subscribe to MBean notifications. This page is about how to manage and
 monitor Camel using JMX.
 
+[NOTE]
+====
+If you run Camel standalone with just `camel-core` as a dependency, and you want JMX enabled out of the box, then you need to add `camel-management` as a dependency.
+====
 
 == Options
 
@@ -26,8 +35,8 @@ The JMX component supports 2 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -57,26 +66,23 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *format* (consumer) | Format for the message body. Either xml or raw. If xml, the notification is serialized to xml. If raw, then the raw java object is set as the body. | xml | String
+| *format* (consumer) | Format for the message body. Either xml or raw. If xml, the notification is serialized to xml. If raw, then the raw java object is set as the body. The value can be one of: xml, raw | xml | String
 | *granularityPeriod* (consumer) | The frequency to poll the bean to check the monitor (monitor types only). | 10000 | long
-| *monitorType* (consumer) | The type of monitor to create. One of string, gauge, counter (monitor types only). |  | String
+| *monitorType* (consumer) | The type of monitor to create. One of string, gauge, counter (monitor types only). The value can be one of: counter, gauge, string |  | String
 | *objectDomain* (consumer) | *Required* The domain for the mbean you're connecting to |  | String
 | *objectName* (consumer) | The name key for the mbean you're connecting to. This value is mutually exclusive with the object properties that get passed. |  | String
 | *observedAttribute* (consumer) | The attribute to observe for the monitor bean or consumer. |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *executorService* (advanced) | To use a custom shared thread pool for the consumers. By default each consume has their own thread-pool to process and route notifications. |  | ExecutorService
 | *handback* (advanced) | Value to handback to the listener when a notification is received. This value will be put in the message header with the key jmx.handback |  | Object
 | *notificationFilter* (advanced) | Reference to a bean that implements the NotificationFilter. |  | NotificationFilter
 | *objectProperties* (advanced) | Properties for the object name. These values will be used if the objectName param is not set |  | Map
 | *reconnectDelay* (advanced) | The number of seconds to wait before attempting to retry establishment of the initial connection or attempt to reconnect a lost connection | 10 | int
-| *reconnectOnConnection Failure* (advanced) | If true the consumer will attempt to reconnect to the JMX server when any connection failure occurs. The consumer will attempt to re-establish the JMX connection every 'x' seconds until the connection is made-- where 'x' is the configured reconnectionDelay | false | boolean
+| *reconnectOnConnectionFailure* (advanced) | If true the consumer will attempt to reconnect to the JMX server when any connection failure occurs. The consumer will attempt to re-establish the JMX connection every 'x' seconds until the connection is made-- where 'x' is the configured reconnectionDelay | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *testConnectionOnStartup* (advanced) | If true the consumer will throw an exception if unable to establish the JMX connection upon startup. If false, the consumer will attempt to establish the JMX connection every 'x' seconds until the connection is made -- where 'x' is the configured reconnectionDelay | true | boolean
-| *notifyDiffer* (string) | If true, will fire a notification when the string attribute differs from the string to compare (string monitor or consumer). By default the consumer will notify match if observed attribute and string to compare has been configured. | false | boolean
-| *notifyMatch* (string) | If true, will fire a notification when the string attribute matches the string to compare (string monitor or consumer). By default the consumer will notify match if observed attribute and string to compare has been configured. | false | boolean
-| *stringToCompare* (string) | Value for attribute to compare (string monitor or consumer). By default the consumer will notify match if observed attribute and string to compare has been configured. |  | String
 | *initThreshold* (counter) | Initial threshold for the monitor. The value must exceed this before notifications are fired (counter monitor only). |  | int
 | *modulus* (counter) | The value at which the counter is reset to zero (counter monitor only). |  | int
 | *offset* (counter) | The amount to increment the threshold after it's been exceeded (counter monitor only). |  | int
@@ -87,36 +93,12 @@ with the following path and query parameters:
 | *thresholdLow* (gauge) | Value for the gauge's low threshold (gauge monitor only). |  | Double
 | *password* (security) | Credentials for making a remote connection |  | String
 | *user* (security) | Credentials for making a remote connection |  | String
+| *notifyDiffer* (string) | If true, will fire a notification when the string attribute differs from the string to compare (string monitor or consumer). By default the consumer will notify match if observed attribute and string to compare has been configured. | false | boolean
+| *notifyMatch* (string) | If true, will fire a notification when the string attribute matches the string to compare (string monitor or consumer). By default the consumer will notify match if observed attribute and string to compare has been configured. | false | boolean
+| *stringToCompare* (string) | Value for attribute to compare (string monitor or consumer). By default the consumer will notify match if observed attribute and string to compare has been configured. |  | String
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-jmx-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 4 options, which are listed below.
 
 
 
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.jmx.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.jmx.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.jmx.enabled* | Whether to enable auto configuration of the jmx component. This is enabled by default. |  | Boolean
-| *camel.component.jmx.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-|===
-// spring-boot-auto-configure options: END
-
-
+include::camel-spring-boot::page$jmx-starter.adoc[]

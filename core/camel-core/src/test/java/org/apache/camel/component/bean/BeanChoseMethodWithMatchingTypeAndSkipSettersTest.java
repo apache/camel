@@ -21,24 +21,24 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTestSupport {
 
     private OrderServiceBean service = new OrderServiceBean();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/file/order");
         super.setUp();
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("orderService", service);
         return jndi;
     }
@@ -46,7 +46,6 @@ public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTe
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        service.setConverter(context.getTypeConverter());
         return context;
     }
 
@@ -76,6 +75,8 @@ public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTe
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                service.setConverter(context.getTypeConverter());
+
                 from("file://target/data/file/order?initialDelay=0&delay=10").bean("orderService").to("mock:queue:order");
 
                 from("seda:xml").bean("orderService").to("mock:queue:order");

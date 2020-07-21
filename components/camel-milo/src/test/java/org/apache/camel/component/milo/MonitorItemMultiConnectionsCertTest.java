@@ -29,7 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.milo.server.MiloServerComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -43,18 +43,18 @@ public class MonitorItemMultiConnectionsCertTest extends AbstractMiloServerTest 
     private static final String MILO_SERVER_ITEM_1 = "milo-server:myitem1";
 
     // with key
-    private static final String MILO_CLIENT_ITEM_C1_1 = "milo-client:tcp://foo:bar@localhost:@@port@@?node="
+    private static final String MILO_CLIENT_ITEM_C1_1 = "milo-client:opc.tcp://foo:bar@localhost:@@port@@?node="
                                                         + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1")
-                                                        + "&keyStoreUrl=file:src/test/resources/cert/cert.p12&keyStorePassword=pwd1&keyPassword=pwd1"
+                                                        + "&keyStoreUrl=file:src/test/resources/keystore&keyStorePassword=testtest&keyPassword=test&keyAlias=test"
                                                         + "&discoveryEndpointSuffix=/discovery&overrideHost=true";
 
     // with wrong password
-    private static final String MILO_CLIENT_ITEM_C2_1 = "milo-client:tcp://foo:bar2@localhost:@@port@@?node="
+    private static final String MILO_CLIENT_ITEM_C2_1 = "milo-client:opc.tcp://foo:bar2@localhost:@@port@@?node="
                                                         + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1")
                                                         + "&discoveryEndpointSuffix=/discovery&overrideHost=true";
 
     // without key, clientId=1
-    private static final String MILO_CLIENT_ITEM_C3_1 = "milo-client:tcp://foo:bar@localhost:@@port@@?clientId=1&node="
+    private static final String MILO_CLIENT_ITEM_C3_1 = "milo-client:opc.tcp://foo:bar@localhost:@@port@@?clientId=1&node="
                                                         + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1")
                                                         + "&discoveryEndpointSuffix=/discovery&overrideHost=true";
 
@@ -79,13 +79,13 @@ public class MonitorItemMultiConnectionsCertTest extends AbstractMiloServerTest 
         super.configureMiloServer(server);
 
         final Path baseDir = Paths.get("target/testing/cert/default");
-        final Path trusted = baseDir.resolve("trusted");
+        final Path trusted = baseDir.resolve("trusted/certs");
 
         Files.createDirectories(trusted);
-        Files.copy(Paths.get("src/test/resources/cert/certificate.der"), trusted.resolve("certificate.der"), REPLACE_EXISTING);
+        Files.copy(Paths.get("src/test/resources/ca/cacert.pem"), trusted.resolve("cacert.pem"), REPLACE_EXISTING);
 
-        server.setServerCertificate(loadDefaultTestKey());
-        server.setDefaultCertificateValidator(baseDir.toFile());
+        server.loadServerCertificate(loadDefaultTestKey());
+        server.setDefaultCertificateValidator(baseDir.toFile().toString());
 
         server.setSecurityPolicies(EnumSet.of(SecurityPolicy.Basic256Sha256));
         server.setUsernameSecurityPolicyUri(SecurityPolicy.Basic256Sha256);

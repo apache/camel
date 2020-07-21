@@ -30,9 +30,9 @@ public interface ManagementInterceptStrategy {
 
     interface InstrumentationProcessor<T> extends AsyncProcessor, Ordered {
 
-        T before(Exchange exchange) throws Exception;
+        T before(Exchange exchange);
 
-        void after(Exchange exchange, T data) throws Exception;
+        void after(Exchange exchange, T data);
 
         void setProcessor(Processor processor);
 

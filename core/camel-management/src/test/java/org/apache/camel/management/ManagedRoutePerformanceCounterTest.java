@@ -23,9 +23,13 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
 
@@ -65,8 +69,8 @@ public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
         Long total = (Long) mbeanServer.getAttribute(on, "TotalProcessingTime");
 
         assertNotNull(delta);
-        assertTrue("Should take around 1 sec: was " + last, last > 900);
-        assertTrue("Should take around 1 sec: was " + total, total > 900);
+        assertTrue(last > 900, "Should take around 1 sec: was " + last);
+        assertTrue(total > 900, "Should take around 1 sec: was " + total);
 
         // send in another message
         template.sendBody("direct:start", "Bye World");
@@ -78,8 +82,8 @@ public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
         total = (Long) mbeanServer.getAttribute(on, "TotalProcessingTime");
 
         assertNotNull(delta);
-        assertTrue("Should take around 1 sec: was " + last, last > 900);
-        assertTrue("Should be around 2 sec now: was " + total, total > 1900);
+        assertTrue(last > 900, "Should take around 1 sec: was " + last);
+        assertTrue(total > 1900, "Should be around 2 sec now: was " + total);
 
         Date reset = (Date) mbeanServer.getAttribute(on, "ResetTimestamp");
         assertNotNull(reset);

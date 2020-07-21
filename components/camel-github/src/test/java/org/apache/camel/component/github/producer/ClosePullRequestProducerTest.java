@@ -28,9 +28,12 @@ import org.apache.camel.component.github.GitHubComponent;
 import org.apache.camel.component.github.GitHubComponentTestBase;
 import org.apache.camel.component.github.GitHubConstants;
 import org.eclipse.egit.github.core.PullRequest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ClosePullRequestProducerTest extends GitHubComponentTestBase {
     public static final String PULL_REQUEST_PRODUCER_ENDPOINT = "direct:validPullRequest";
@@ -81,7 +84,7 @@ public class ClosePullRequestProducerTest extends GitHubComponentTestBase {
             }
         }
 
-        assertTrue("Didn't find pull request " + latestPullRequestId, found);
+        assertTrue(found, "Didn't find pull request " + latestPullRequestId);
     }
 
 

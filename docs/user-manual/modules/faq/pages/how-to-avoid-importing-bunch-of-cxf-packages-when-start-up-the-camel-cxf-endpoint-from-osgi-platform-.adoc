@@ -1,0 +1,70 @@
+[[HowtoavoidimportingbunchofcxfpackageswhenstartupthecamelcxfendpointfromOSGiplatform-HowtoavoidimportingbunchofcxfpackageswhenstartupthecamelcxfendpointfromOSGiplatform]]
+= How to avoid importing bunch of cxf packages when start up the camel-cxf endpoint from OSGi platform?
+
+If you are using camel-cxf endpoint in your OSGi bundle and want to get
+full of control of CXF component loading. (eg. you just want to use the
+http jetty transport, soap binding and don't want to load jms transport,
+jaxrs modules). You may need to tell SpringBusFactory which module
+should be load, in this way you need to import bunch of cxf packages or
+using the `*` on the `DynamicImport-Package` section of your application's
+OSGi meta information.
+
+As the CXF bundle have the most cxf configuration file, here is a way to
+do it by setting the right thread context class loader to load the cxf
+module configures, without any additional setting.
+This is the code snippet to show to create a CXF bus with soap binding
+and http-jetty transport.
+
+[NOTE]
+====
+If you have other CXF configuration which want to be load, you
+need to make sure the thread context class loader can load it.
+====
+
+[source,java]
+----
+ClassLoader oldCL = Thread.currentThread().getContextClassLoader();
+try {
+    Thread.currentThread().setContextClassLoader(
+    BusFactory.class.getClassLoader());
+    SpringBusFactory springBusFactory = new SpringBusFactory();
+    Bus bus = springBusFactory.createBus(new String[]
+        { "META-INF/cxf/cxf.xml", "META-INF/cxf/cxf-extension-soap.xml",
+          "META-INF/cxf/cxf-extension-http-jetty.xml" }, false);
+    // The last parameter is telling CXF not to load the cxf-extension-*.xml from META-INF/cxf
+    // You can set the bus the normal CXF endpoint or other camel-cxf endpoint
+} finally {
+    Thread.currentThread().setContextClassLoader(oldCL);
+}
+----
+
+From *Camel 2.2.0*, we introduced a `SpringBusFactoryBean` which leverage
+the `BusApplicationContext` will use the `BusApplicationContext.class`
+classloader as a fall back classloader, so you can configure the
+SpringBusFactoryBean and set the bus directly into the camel-cxf
+endpoint without using any java code. The Spring configuration snippet
+is below:
+
+NOTE: If you are using URI to specify the camel-cxf endpoint , you can set the
+URI with bus option like this: `cxf://ADDRESS?bus=myBus&...`
+
+[source,xml]
+----
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:cxf="http://camel.apache.org/schema/cxf"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+    ">
+
+  <bean id="myBus" class="org.apache.camel.component.cxf.spring.SpringBusFactoryBean">
+     <property name="cfgFiles" value="META-INF/cxf/cxf.xml;META-INF/cxf/cxf-extension-soap.xml;META-INF/cxf/cxf-extension-http-jetty.xml" />
+     <property name="includeDefaultBus" value="false" />
+  </bean>
+  
+   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:9000/router"
+    serviceClass="org.apache.camel.component.cxf.HelloService" bus="myBus"/>
+
+</beans>
+----

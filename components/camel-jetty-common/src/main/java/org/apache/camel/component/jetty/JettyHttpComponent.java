@@ -34,6 +34,7 @@ import javax.management.MBeanServer;
 import javax.servlet.Filter;
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -57,6 +58,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.RestComponentHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
@@ -88,6 +90,8 @@ import org.eclipse.jetty.util.component.Container;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An HttpComponent which starts an embedded Jetty for to handle consuming from
@@ -98,6 +102,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
 
     protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<>();
 
+    private static final Logger LOG = LoggerFactory.getLogger(JettyHttpComponent.class);
     private static final String JETTY_SSL_KEYSTORE = "org.eclipse.jetty.ssl.keystore";
     private static final String JETTY_SSL_KEYPASSWORD = "org.eclipse.jetty.ssl.keypassword";
     private static final String JETTY_SSL_PASSWORD = "org.eclipse.jetty.ssl.password";
@@ -317,7 +322,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                 Server server = createServer();
                 Connector connector = getConnector(server, endpoint);
                 if ("localhost".equalsIgnoreCase(endpoint.getHttpUri().getHost())) {
-                    log.warn("You use localhost interface! It means that no external connections will be available."
+                    LOG.warn("You use localhost interface! It means that no external connections will be available."
                             + " Don't you want to use 0.0.0.0 instead (all network interfaces)? " + endpoint);
                 }
                 if (endpoint.isEnableJmx()) {
@@ -332,11 +337,11 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                 }
                 connectorRef.server.start();
 
-                log.debug("Adding connector key: {} -> {}", connectorKey, connectorRef);
+                LOG.debug("Adding connector key: {} -> {}", connectorKey, connectorRef);
                 CONNECTORS.put(connectorKey, connectorRef);
 
             } else {
-                log.debug("Using existing connector key: {} -> {}", connectorKey, connectorRef);
+                LOG.debug("Using existing connector key: {} -> {}", connectorKey, connectorRef);
 
                 // check if there are any new handlers, and if so then we need to re-start the server
                 if (endpoint.getHandlers() != null && !endpoint.getHandlers().isEmpty()) {
@@ -347,7 +352,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                     List<Handler> newHandlers = new ArrayList<>(endpoint.getHandlers());
                     boolean changed = !existingHandlers.containsAll(newHandlers) && !newHandlers.containsAll(existingHandlers);
                     if (changed) {
-                        log.debug("Restarting Jetty server due to adding new Jetty Handlers: {}", newHandlers);
+                        LOG.debug("Restarting Jetty server due to adding new Jetty Handlers: {}", newHandlers);
                         connectorRef.server.stop();
                         addJettyHandlers(connectorRef.server, endpoint.getHandlers());
                         connectorRef.server.start();
@@ -375,7 +380,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     private void enableJmx(Server server) {
         MBeanContainer containerToRegister = getMbContainer();
         if (containerToRegister != null) {
-            log.info("Jetty JMX Extensions is enabled");
+            LOG.info("Jetty JMX Extensions is enabled");
             addServerMBean(server);
             // Since we may have many Servers running, don't tie the MBeanContainer
             // to a Server lifecycle or we end up closing it while it is still in use.
@@ -448,7 +453,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
         }
         addFilter(context, filterHolder, pathSpec);
-        log.debug("using multipart filter implementation " + filter.getClass().getName() + " for path " + pathSpec);
+        LOG.debug("using multipart filter implementation " + filter.getClass().getName() + " for path " + pathSpec);
     }
 
     /**
@@ -708,6 +713,10 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         this.socketConnectors = socketConnectors;
     }
 
+    public Map<Integer, Connector> getSocketConnectors() {
+        return socketConnectors;
+    }
+
     public Integer getMinThreads() {
         return minThreads;
     }
@@ -800,7 +809,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             if (mbs != null) {
                 mbContainer = new MBeanContainer(mbs);
             } else {
-                log.warn("JMX disabled in CamelContext. Jetty JMX extensions will remain disabled.");
+                LOG.warn("JMX disabled in CamelContext. Jetty JMX extensions will remain disabled.");
             }
         }
 
@@ -1045,8 +1054,9 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         // if no explicit port/host configured, then use port from rest configuration
         RestConfiguration config = configuration;
         if (config == null) {
-            config = camelContext.getRestConfiguration("jetty", true);
+            config = CamelContextHelper.getRestConfiguration(getCamelContext(), "jetty");
         }
+
         if (config.getScheme() != null) {
             scheme = config.getScheme();
         }
@@ -1080,17 +1090,17 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             // allow HTTP Options as we want to handle CORS in rest-dsl
             map.put("optionsEnabled", "true");
         }
-        
+
         if (api) {
             map.put("matchOnUriPrefix", "true");
         }
-        
+
         RestComponentHelper.addHttpRestrictParam(map, verb, cors);
 
         String url = RestComponentHelper.createRestConsumerUrl("jetty", scheme, host, port, path, map);
 
         JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);
-        setProperties(camelContext, endpoint, parameters);
+        setProperties(endpoint, parameters);
 
         if (!map.containsKey("httpBindingRef")) {
             // use the rest binding, if not using a custom http binding
@@ -1123,19 +1133,24 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         holder.setAsyncSupported(true);
         holder.setInitParameter(CamelServlet.ASYNC_PARAM, Boolean.toString(endpoint.isAsync()));
         context.addServlet(holder, "/*");
-        
+
         File file = File.createTempFile("camel", "");
         file.delete();
-        
+
         //must register the MultipartConfig to make jetty server multipart aware
         holder.getRegistration().setMultipartConfig(new MultipartConfigElement(file.getParentFile().getAbsolutePath(), -1, -1, 0));
 
         // use rest enabled resolver in case we use rest
         camelServlet.setServletResolveConsumerStrategy(new HttpRestServletResolveConsumerStrategy());
-        
+
         //must make RFC7578 as default to avoid using the deprecated MultiPartInputStreamParser
-        connector.getConnectionFactory(HttpConnectionFactory.class).getHttpConfiguration()
-             .setMultiPartFormDataCompliance(MultiPartFormDataCompliance.RFC7578);
+        try {
+            connector.getConnectionFactory(HttpConnectionFactory.class).getHttpConfiguration()
+                    .setMultiPartFormDataCompliance(MultiPartFormDataCompliance.RFC7578);
+        } catch (Throwable e) {
+            // ignore this due to OSGi problems
+            LOG.debug("Cannot set MultiPartFormDataCompliance to RFC7578 due to " + e.getMessage() + ". This exception is ignored.", e);
+        }
 
         return camelServlet;
     }
@@ -1222,7 +1237,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             ErrorHandler eh = new ErrorHandler() {
                 public void handle(String target, Request baseRequest,
                                    HttpServletRequest request, HttpServletResponse response)
-                    throws IOException {
+                        throws IOException, ServletException {
                     String msg = HttpStatus.getMessage(response.getStatus());
                     request.setAttribute(RequestDispatcher.ERROR_MESSAGE, msg);
                     super.handle(target, baseRequest, request, response);
@@ -1242,10 +1257,17 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     protected void doStart() throws Exception {
         super.doStart();
 
-        RestConfiguration config = getCamelContext().getRestConfiguration("jetty", true);
-        // configure additional options on jetty configuration
-        if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
-            setProperties(this, config.getComponentProperties());
+        try {
+            RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), "jetty");
+
+            // configure additional options on jetty configuration
+            if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
+                setProperties(this, config.getComponentProperties());
+            }
+        } catch (IllegalArgumentException e) {
+            // if there's a mismatch between the component and the rest-configuration,
+            // then getRestConfiguration throws IllegalArgumentException which can be
+            // safely ignored as it means there's no special conf for this componet.
         }
     }
 

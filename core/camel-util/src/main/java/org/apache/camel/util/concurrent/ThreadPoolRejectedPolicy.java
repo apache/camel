@@ -20,9 +20,6 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
-
 /**
  * Represent the kinds of options for rejection handlers for thread pools.
  * <p/>
@@ -32,8 +29,6 @@ import javax.xml.bind.annotation.XmlType;
  * <p/>
  * Camel will by default use <tt>CallerRuns</tt>.
  */
-@XmlType
-@XmlEnum
 public enum ThreadPoolRejectedPolicy {
 
     Abort, CallerRuns, DiscardOldest, Discard;

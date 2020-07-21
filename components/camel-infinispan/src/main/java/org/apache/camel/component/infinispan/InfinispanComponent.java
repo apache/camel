@@ -24,17 +24,21 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.infinispan.commons.api.BasicCacheContainer;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;
+import org.infinispan.manager.CacheContainer;
 import org.infinispan.manager.DefaultCacheManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component("infinispan")
 public class InfinispanComponent extends DefaultComponent {
-    @Metadata(description = "Default configuration")
-    private InfinispanConfiguration configuration;
-    @Metadata(description = "Default Cache container")
-    private BasicCacheContainer cacheContainer;
-    private boolean setCacheFromComponent;
+
+    private static final Logger LOG = LoggerFactory.getLogger(InfinispanComponent.class);
+
+    private transient CacheContainer defaultCacheManager;
+
+    @Metadata(description = "Component configuration")
+    private InfinispanConfiguration configuration = new InfinispanConfiguration();
 
     public InfinispanComponent() {
     }
@@ -43,56 +47,30 @@ public class InfinispanComponent extends DefaultComponent {
         super(camelContext);
     }
 
-    public InfinispanConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    /**
-     * The default configuration shared among endpoints.
-     */
-    public void setConfiguration(InfinispanConfiguration configuration) {
-        this.configuration = configuration;
-    }
-
-    public BasicCacheContainer getCacheContainer() {
-        return cacheContainer;
-    }
-
-    /**
-     * The default cache container.
-     */
-    public void setCacheContainer(BasicCacheContainer cacheContainer) {
-        this.cacheContainer = cacheContainer;
-        this.setCacheFromComponent = true;
-    }
-
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        InfinispanConfiguration conf;
-        if (configuration != null) {
-            conf = configuration.copy();
-        } else {
-            conf = new InfinispanConfiguration();
-        }
-        //     init default embedded cache if config parameters aren't specified or cacheContainer is set using setMethod
-        if (!isConfigProvided(parameters, conf) || setCacheFromComponent) {
-            if (cacheContainer == null) {
-                cacheContainer = new DefaultCacheManager(new GlobalConfigurationBuilder().defaultCacheName("default").build(),
-                    new org.infinispan.configuration.cache.ConfigurationBuilder().build());
-
-                setCacheFromComponent = false;
-                log.debug("Default cacheContainer has been created");
+        InfinispanConfiguration conf = configuration.copy();
+        // init default embedded cache if config parameters aren't specified or cacheContainer is set using setMethod
+        if (!isConfigProvided(parameters, conf)) {
+            if (defaultCacheManager == null) {
+                defaultCacheManager = new DefaultCacheManager(new GlobalConfigurationBuilder().defaultCacheName("default").build(),
+                        new org.infinispan.configuration.cache.ConfigurationBuilder().build());
+                LOG.debug("Default cacheContainer has been created");
             }
-            conf.setCacheContainer(cacheContainer);
-
-        } else {
-            // cacheContainer  will be initialized in InfinispanManager according defined options.
-            conf.setCacheContainer(null);
+            conf.setCacheContainer(defaultCacheManager);
         }
 
         InfinispanEndpoint endpoint = new InfinispanEndpoint(uri, remaining, this, conf);
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    public void setConfiguration(InfinispanConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    public InfinispanConfiguration getConfiguration() {
+        return configuration;
     }
 
     /**
@@ -114,5 +92,15 @@ public class InfinispanComponent extends DefaultComponent {
 
         String[] confParameters = new String[] {"hosts", "cacheContainerConfiguration", "configurationUri", "cacheContainer"};
         return Arrays.stream(confParameters).anyMatch(parameters::containsKey);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+
+        if (defaultCacheManager != null) {
+            defaultCacheManager.stop();
+            defaultCacheManager = null;
+        }
     }
 }

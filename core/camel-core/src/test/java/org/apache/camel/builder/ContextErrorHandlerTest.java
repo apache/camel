@@ -24,17 +24,19 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.impl.engine.EventDrivenConsumerRoute;
+import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ContextErrorHandlerTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         setUseRouteBuilder(false);
         super.setUp();
@@ -75,12 +77,12 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
         };
 
         List<Route> list = getRouteListWithCurrentContext(builder);
-        assertEquals("Number routes created" + list, 1, list.size());
+        assertEquals(1, list.size(), "Number routes created" + list);
         for (Route route : list) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+            assertEquals("seda://a", key.getEndpointUri(), "From endpoint");
 
-            EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
             Processor processor = consumerRoute.getProcessor();
 
             Channel channel = unwrapChannel(processor);
@@ -101,10 +103,10 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
         };
 
         List<Route> list = getRouteListWithCurrentContext(builder);
-        assertEquals("Number routes created" + list, 2, list.size());
+        assertEquals(2, list.size(), "Number routes created" + list);
         for (Route route : list) {
 
-            EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
             Processor processor = consumerRoute.getProcessor();
 
             Channel channel = unwrapChannel(processor);
@@ -112,8 +114,8 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
 
             RedeliveryPolicy redeliveryPolicy = deadLetterChannel.getRedeliveryPolicy();
 
-            assertEquals("getMaximumRedeliveries()", 1, redeliveryPolicy.getMaximumRedeliveries());
-            assertEquals("isUseExponentialBackOff()", true, redeliveryPolicy.isUseExponentialBackOff());
+            assertEquals(1, redeliveryPolicy.getMaximumRedeliveries(), "getMaximumRedeliveries()");
+            assertEquals(true, redeliveryPolicy.isUseExponentialBackOff(), "isUseExponentialBackOff()");
         }
     }
 

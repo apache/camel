@@ -42,7 +42,7 @@ public interface XmlSignatureProperties {
      * @throws Exception
      *             if an error occurs during creating the output
      */
-    Output get(Input input) throws Exception; //NOPMD
+    Output get(Input input) throws Exception;
 
     public interface Input {
 

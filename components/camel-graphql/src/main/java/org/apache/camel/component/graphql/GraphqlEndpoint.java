@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -45,7 +46,10 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 
-@UriEndpoint(firstVersion = "3.0.0", scheme = "graphql", title = "GraphQL", syntax = "graphql:httpUri", label = "api", producerOnly = true)
+/**
+ * Send GraphQL queries and mutations to external systems.
+ */
+@UriEndpoint(firstVersion = "3.0.0", scheme = "graphql", title = "GraphQL", syntax = "graphql:httpUri", category = {Category.API}, producerOnly = true)
 public class GraphqlEndpoint extends DefaultEndpoint {
 
     @UriPath
@@ -127,7 +131,7 @@ public class GraphqlEndpoint extends DefaultEndpoint {
         this.httpUri = httpUri;
     }
 
-    public String getProxyHostname() {
+    public String getProxyHost() {
         return proxyHost;
     }
 

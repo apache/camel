@@ -24,10 +24,14 @@ import javax.management.ObjectName;
 
 import io.micrometer.core.instrument.Meter;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedMicrometerRoutePolicyTest extends AbstractMicrometerRoutePolicyTest {
-
 
     protected MBeanServer getMBeanServer() {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
@@ -48,9 +52,9 @@ public class ManagedMicrometerRoutePolicyTest extends AbstractMicrometerRoutePol
 
         assertMockEndpointsSatisfied();
 
-        // there should be 3 names
+        // there should be 7 names
         List<Meter> meters = meterRegistry.getMeters();
-        assertEquals(3, meters.size());
+        assertEquals(7, meters.size());
 
         String name = String.format("org.apache.camel:context=%s,type=services,name=MicrometerRoutePolicyService", context.getManagementName());
         ObjectName on = ObjectName.getInstance(name);

@@ -164,7 +164,7 @@ public class DefaultHttpBinding implements HttpBinding {
             // use http helper to extract parameter value as it may contain multiple values
             Object extracted = HttpHelper.extractHttpParameterValue(value);
             // mapping the content-type
-            if (name.toLowerCase().equals("content-type")) {
+            if (name.equalsIgnoreCase("content-type")) {
                 name = Exchange.CONTENT_TYPE;
             }
             if (headerFilterStrategy != null

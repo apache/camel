@@ -26,14 +26,18 @@ import io.grpc.stub.StreamObserver;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.test.junit5.TestSupport.assertListSize;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class GrpcProducerStreamingTest extends CamelTestSupport {
+
     private static final Logger LOG = LoggerFactory.getLogger(GrpcProducerStreamingTest.class);
 
     private static final int GRPC_TEST_PORT = AvailablePortFinder.getNextAvailable();
@@ -41,14 +45,14 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
     private static Server grpcServer;
     private static PingPongImpl pingPongServer;
 
-    @Before
+    @BeforeEach
     public void startGrpcServer() throws Exception {
         pingPongServer = new PingPongImpl();
         grpcServer = ServerBuilder.forPort(GRPC_TEST_PORT).addService(pingPongServer).build().start();
         LOG.info("gRPC server started on port {}", GRPC_TEST_PORT);
     }
 
-    @After
+    @AfterEach
     public void stopGrpcServer() throws IOException {
         if (grpcServer != null) {
             grpcServer.shutdown();

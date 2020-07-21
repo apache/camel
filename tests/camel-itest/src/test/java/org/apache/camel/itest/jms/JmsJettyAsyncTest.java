@@ -25,21 +25,19 @@ import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.junit5.TestSupport.body;
 
-/**
- *
- */
 public class JmsJettyAsyncTest extends CamelTestSupport {
 
     private int size = 100;
     private int port;
 
     @Test
-    public void testJmsJettyAsyncTest() throws Exception {
+    void testJmsJettyAsyncTest() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(size);
         getMockEndpoint("mock:result").expectsNoDuplicates(body());
 
@@ -51,12 +49,12 @@ public class JmsJettyAsyncTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // enable async consumer to process messages faster
                 from("activemq:queue:inbox?asyncConsumer=false")
                     .to("http://0.0.0.0:" + port + "/myapp")
@@ -70,7 +68,7 @@ public class JmsJettyAsyncTest extends CamelTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         // add ActiveMQ with embedded broker
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);

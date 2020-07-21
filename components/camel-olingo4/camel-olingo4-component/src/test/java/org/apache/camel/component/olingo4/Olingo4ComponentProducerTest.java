@@ -22,7 +22,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.olingo4.api.batch.Olingo4BatchChangeRequest;
@@ -41,9 +44,15 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for {@link org.apache.camel.component.olingo4.api.Olingo4App}
@@ -66,6 +75,14 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
     private static final String TEST_CREATE_JSON = "{\n" + "  \"UserName\": \"lewisblack\",\n" + "  \"FirstName\": \"Lewis\",\n" + "  \"LastName\": \"Black\"\n" + "}";
     private static final String TEST_UPDATE_JSON = "{\n" + "  \"UserName\": \"lewisblack\",\n" + "  \"FirstName\": \"Lewis\",\n" + "  \"MiddleName\": \"Black\",\n"
                                                    + "  \"LastName\": \"Black\"\n" + "}";
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setLoggingLevel(LoggingLevel.INFO);
+        context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setExtendedStatistics(true);
+        return context;
+    }
 
     @Test
     public void testRead() throws Exception {
@@ -119,6 +136,10 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
 
         final ClientEntity unbFuncReturn = (ClientEntity)requestBodyAndHeaders("direct:callunboundfunction", null, headers);
         assertNotNull(unbFuncReturn);
+
+        // should be reflection free
+        long counter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
+        assertEquals(0, counter);
     }
 
     @Test
@@ -143,14 +164,14 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
         clientEntity.getProperties().add(objFactory.newPrimitiveProperty("MiddleName", objFactory.newPrimitiveValueBuilder().buildString("Lewis")));
 
         HttpStatusCode status = requestBody("direct:update-entity", clientEntity);
-        assertNotNull("Update status", status);
-        assertEquals("Update status", HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
+        assertNotNull(status, "Update status");
+        assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode(), "Update status");
         LOG.info("Update entity status: {}", status);
 
         // delete
         status = requestBody("direct:delete-entity", null);
-        assertNotNull("Delete status", status);
-        assertEquals("Delete status", HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
+        assertNotNull(status, "Delete status");
+        assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode(), "Delete status");
         LOG.info("Delete status: {}", status);
 
         // check for delete
@@ -173,14 +194,14 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
 
         // update
         HttpStatusCode status = requestBody("direct:update-entity", TEST_UPDATE_JSON);
-        assertNotNull("Update status", status);
-        assertEquals("Update status", HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
+        assertNotNull(status, "Update status");
+        assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode(), "Update status");
         LOG.info("Update entity status: {}", status);
 
         // delete
         status = requestBody("direct:delete-entity", null);
-        assertNotNull("Delete status", status);
-        assertEquals("Delete status", HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
+        assertNotNull(status, "Delete status");
+        assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode(), "Delete status");
         LOG.info("Delete status: {}", status);
 
         // check for delete
@@ -238,8 +259,8 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
 
         // execute batch request
         final List<Olingo4BatchResponse> responseParts = requestBody("direct:batch", batchParts);
-        assertNotNull("Batch response", responseParts);
-        assertEquals("Batch responses expected", 8, responseParts.size());
+        assertNotNull(responseParts, "Batch response");
+        assertEquals(8, responseParts.size(), "Batch responses expected");
 
         final Edm edm = (Edm)responseParts.get(0).getBody();
         assertNotNull(edm);

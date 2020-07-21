@@ -18,35 +18,35 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.IdempotentConsumerDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 public class IdempotentConsumerReifier extends ExpressionReifier<IdempotentConsumerDefinition> {
 
-    public IdempotentConsumerReifier(ProcessorDefinition<?> definition) {
-        super(IdempotentConsumerDefinition.class.cast(definition));
+    public IdempotentConsumerReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, IdempotentConsumerDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = this.createChildProcessor(routeContext, true);
+    public Processor createProcessor() throws Exception {
+        Processor childProcessor = this.createChildProcessor(true);
 
-        IdempotentRepository idempotentRepository = resolveMessageIdRepository(routeContext);
+        IdempotentRepository idempotentRepository = resolveMessageIdRepository();
         ObjectHelper.notNull(idempotentRepository, "idempotentRepository", definition);
 
-        Expression expression = definition.getExpression().createExpression(routeContext);
+        Expression expression = createExpression(definition.getExpression());
 
         // these boolean should be true by default
-        boolean eager = definition.getEager() == null || Boolean.parseBoolean(definition.getEager());
-        boolean duplicate = definition.getSkipDuplicate() == null || Boolean.parseBoolean(definition.getSkipDuplicate());
-        boolean remove = definition.getRemoveOnFailure() == null || Boolean.parseBoolean(definition.getRemoveOnFailure());
+        boolean eager = parseBoolean(definition.getEager(), true);
+        boolean duplicate = parseBoolean(definition.getSkipDuplicate(), true);
+        boolean remove = parseBoolean(definition.getRemoveOnFailure(), true);
 
         // these boolean should be false by default
-        boolean completionEager = definition.getCompletionEager() != null && Boolean.parseBoolean(definition.getCompletionEager());
+        boolean completionEager = parseBoolean(definition.getCompletionEager(), false);
 
         return new IdempotentConsumer(expression, idempotentRepository, eager, completionEager, duplicate, remove, childProcessor);
     }
@@ -55,12 +55,11 @@ public class IdempotentConsumerReifier extends ExpressionReifier<IdempotentConsu
      * Strategy method to resolve the
      * {@link org.apache.camel.spi.IdempotentRepository} to use
      *
-     * @param routeContext route context
      * @return the repository
      */
-    protected <T> IdempotentRepository resolveMessageIdRepository(RouteContext routeContext) {
+    protected <T> IdempotentRepository resolveMessageIdRepository() {
         if (definition.getMessageIdRepositoryRef() != null) {
-            definition.setMessageIdRepository(routeContext.mandatoryLookup(definition.getMessageIdRepositoryRef(), IdempotentRepository.class));
+            definition.setMessageIdRepository(mandatoryLookup(parseString(definition.getMessageIdRepositoryRef()), IdempotentRepository.class));
         }
         return definition.getMessageIdRepository();
     }

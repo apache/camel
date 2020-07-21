@@ -18,7 +18,7 @@ package org.apache.camel.builder;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.WaitForTaskToComplete;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
 

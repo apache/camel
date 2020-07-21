@@ -37,7 +37,6 @@ import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
-import org.springframework.jms.core.SessionCallback;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.listener.SimpleMessageListenerContainer;
@@ -155,20 +154,20 @@ public class JmsConfiguration implements Cloneable {
                     + " Possible values are: CACHE_AUTO, CACHE_CONNECTION, CACHE_CONSUMER, CACHE_NONE, and CACHE_SESSION."
                     + " The default setting is CACHE_AUTO. See the Spring documentation and Transactions Cache Levels for more information.")
     private String cacheLevelName;
-    @UriParam(defaultValue = "5000", label = "advanced",
+    @UriParam(defaultValue = "5000", label = "advanced", javaType = "java.time.Duration",
             description = "Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds."
                     + " The default is 5000 ms, that is, 5 seconds.")
     private long recoveryInterval = 5000;
-    @UriParam(defaultValue = "1000", label = "advanced",
+    @UriParam(defaultValue = "1000", label = "advanced", javaType = "java.time.Duration",
             description = "The timeout for receiving messages (in milliseconds).")
     private long receiveTimeout = 1000;
-    @UriParam(defaultValue = "20000", label = "producer",
+    @UriParam(defaultValue = "20000", label = "producer", javaType = "java.time.Duration",
             description = "The timeout for waiting for a reply when using the InOut Exchange Pattern (in milliseconds)."
                     + " The default is 20 seconds. You can include the header \"CamelJmsRequestTimeout\" to override this endpoint configured"
                     + " timeout value, and thus have per message individual timeout values."
                     + " See also the requestTimeoutCheckerInterval option.")
     private long requestTimeout = 20000L;
-    @UriParam(defaultValue = "1000", label = "advanced",
+    @UriParam(defaultValue = "1000", label = "advanced", javaType = "java.time.Duration",
             description = "Configures how often Camel should check for timed out Exchanges when doing request/reply over JMS."
                     + " By default Camel checks once per second. But if you must react faster when a timeout occurs,"
                     + " then you can lower this interval, to check more frequently. The timeout is determined by the option requestTimeout.")
@@ -182,7 +181,7 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(defaultValue = "1", label = "advanced",
             description = "Specify the limit for the number of consumers that are allowed to be idle at any given time.")
     private int idleConsumerLimit = 1;
-    @UriParam(defaultValue = "100", label = "advanced",
+    @UriParam(defaultValue = "100", label = "advanced", javaType = "java.time.Duration",
             description = "Interval in millis to sleep each time while waiting for provisional correlation id to be updated.")
     private long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime = 100L;
     @UriParam(defaultValue = "50", label = "advanced",
@@ -335,8 +334,8 @@ public class JmsConfiguration implements Cloneable {
     private boolean transferExchange;
     @UriParam(label = "advanced",
             description = "Controls whether or not to include serialized headers."
-                + " Applies only when {@code transferExchange} is {@code true}."
-                + " This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level.")
+                    + " Applies only when {@code transferExchange} is {@code true}."
+                    + " This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level.")
     private boolean allowSerializedHeaders;
     @UriParam(label = "advanced",
             description = "If enabled and you are using Request Reply messaging (InOut) and an Exchange failed on the consumer side,"
@@ -452,47 +451,46 @@ public class JmsConfiguration implements Cloneable {
                     + " For example some message systems such as WMQ do this with header names using prefix JMS_IBM_MQMD_ containing values with byte array or other invalid types."
                     + " You can specify multiple header names separated by comma, and use * as suffix for wildcard matching.")
     private String allowAdditionalHeaders;
+    @UriParam(label = "producer", description = "Sets whether JMS date properties should be formatted according to the ISO 8601 standard.")
+    private boolean formatDateHeadersToIso8601;
+    @UriParam(defaultValue = "true", label = "advanced", description = "Whether optimizing for Apache Artemis streaming mode.")
+    private boolean artemisStreamingEnabled = true;
 
     // JMS 2.0 API
     @UriParam(label = "consumer", description = "Set the name of a subscription to create. To be applied in case"
-        + " of a topic (pub-sub domain) with a shared or durable subscription."
-        + " The subscription name needs to be unique within this client's"
-        + " JMS client id. Default is the class name of the specified message listener."
-        + " Note: Only 1 concurrent consumer (which is the default of this"
-        + " message listener container) is allowed for each subscription,"
-        + " except for a shared subscription (which requires JMS 2.0).")
+            + " of a topic (pub-sub domain) with a shared or durable subscription."
+            + " The subscription name needs to be unique within this client's"
+            + " JMS client id. Default is the class name of the specified message listener."
+            + " Note: Only 1 concurrent consumer (which is the default of this"
+            + " message listener container) is allowed for each subscription,"
+            + " except for a shared subscription (which requires JMS 2.0).")
     private String subscriptionName;
     @UriParam(label = "consumer", description = "Set whether to make the subscription durable. The durable subscription name"
-        + " to be used can be specified through the subscriptionName property."
-        + " Default is false. Set this to true to register a durable subscription,"
-        + " typically in combination with a subscriptionName value (unless"
-        + " your message listener class name is good enough as subscription name)."
-        + " Only makes sense when listening to a topic (pub-sub domain),"
-        + " therefore this method switches the pubSubDomain flag as well.")
+            + " to be used can be specified through the subscriptionName property."
+            + " Default is false. Set this to true to register a durable subscription,"
+            + " typically in combination with a subscriptionName value (unless"
+            + " your message listener class name is good enough as subscription name)."
+            + " Only makes sense when listening to a topic (pub-sub domain),"
+            + " therefore this method switches the pubSubDomain flag as well.")
     private boolean subscriptionDurable;
     @UriParam(label = "consumer", description = "Set whether to make the subscription shared. The shared subscription name"
-        + " to be used can be specified through the subscriptionName property."
-        + " Default is false. Set this to true to register a shared subscription,"
-        + " typically in combination with a subscriptionName value (unless"
-        + " your message listener class name is good enough as subscription name)."
-        + " Note that shared subscriptions may also be durable, so this flag can"
-        + " (and often will) be combined with subscriptionDurable as well."
-        + " Only makes sense when listening to a topic (pub-sub domain),"
-        + " therefore this method switches the pubSubDomain flag as well."
-        + " Requires a JMS 2.0 compatible message broker.")
+            + " to be used can be specified through the subscriptionName property."
+            + " Default is false. Set this to true to register a shared subscription,"
+            + " typically in combination with a subscriptionName value (unless"
+            + " your message listener class name is good enough as subscription name)."
+            + " Note that shared subscriptions may also be durable, so this flag can"
+            + " (and often will) be combined with subscriptionDurable as well."
+            + " Only makes sense when listening to a topic (pub-sub domain),"
+            + " therefore this method switches the pubSubDomain flag as well."
+            + " Requires a JMS 2.0 compatible message broker.")
     private boolean subscriptionShared;
-
     @UriParam(label = "producer,advanced", description = "Sets whether StreamMessage type is enabled or not."
-        + " Message payloads of streaming kind such as files, InputStream, etc will either by sent as BytesMessage or StreamMessage."
-        + " This option controls which kind will be used. By default BytesMessage is used which enforces the entire message payload to be read into memory."
-        + " By enabling this option the message payload is read into memory in chunks and each chunk is then written to the StreamMessage until no more data.")
+            + " Message payloads of streaming kind such as files, InputStream, etc will either by sent as BytesMessage or StreamMessage."
+            + " This option controls which kind will be used. By default BytesMessage is used which enforces the entire message payload to be read into memory."
+            + " By enabling this option the message payload is read into memory in chunks and each chunk is then written to the StreamMessage until no more data.")
     private boolean streamMessageTypeEnabled;
-
-    @UriParam(label = "producer", description = "Sets whether JMS date properties should be formatted according to the ISO 8601 standard.")
-    private boolean formatDateHeadersToIso8601;
-
     @UriParam(defaultValue = "-1", label = "producer", description = "Sets delivery delay to use for send calls for JMS. "
-         + "This option requires JMS 2.0 compliant broker.")
+            + "This option requires JMS 2.0 compliant broker.")
     private long deliveryDelay = -1;
 
     public JmsConfiguration() {
@@ -524,43 +522,31 @@ public class JmsConfiguration implements Cloneable {
         public void send(final String destinationName,
                          final MessageCreator messageCreator,
                          final MessageSentCallback callback) throws JmsException {
-            execute(new SessionCallback<Object>() {
-                public Object doInJms(Session session) throws JMSException {
-                    Destination destination = resolveDestinationName(session, destinationName);
-                    return doSendToDestination(destination, messageCreator, callback, session);
-                }
+            execute(session -> {
+                Destination destination = resolveDestinationName(session, destinationName);
+                return doSendToDestination(destination, messageCreator, callback, session);
             }, false);
         }
 
         public void send(final Destination destination,
                          final MessageCreator messageCreator,
                          final MessageSentCallback callback) throws JmsException {
-            execute(new SessionCallback<Object>() {
-                public Object doInJms(Session session) throws JMSException {
-                    return doSendToDestination(destination, messageCreator, callback, session);
-                }
-            }, false);
+            execute(session -> doSendToDestination(destination, messageCreator, callback, session), false);
         }
 
         @Override
         public void send(final String destinationName,
                          final MessageCreator messageCreator) throws JmsException {
-            execute(new SessionCallback<Object>() {
-                public Object doInJms(Session session) throws JMSException {
-                    Destination destination = resolveDestinationName(session, destinationName);
-                    return doSendToDestination(destination, messageCreator, null, session);
-                }
+            execute(session -> {
+                Destination destination = resolveDestinationName(session, destinationName);
+                return doSendToDestination(destination, messageCreator, null, session);
             }, false);
         }
 
         @Override
         public void send(final Destination destination,
                          final MessageCreator messageCreator) throws JmsException {
-            execute(new SessionCallback<Object>() {
-                public Object doInJms(Session session) throws JMSException {
-                    return doSendToDestination(destination, messageCreator, null, session);
-                }
-            }, false);
+            execute(session -> doSendToDestination(destination, messageCreator, null, session), false);
         }
 
         private Object doSendToDestination(final Destination destination,
@@ -653,7 +639,7 @@ public class JmsConfiguration implements Cloneable {
 
             // prefer to use timeToLive over requestTimeout if both specified
             long ttl = timeToLive > 0 ? timeToLive : requestTimeout;
-            if (ttl > 0 && !isDisableTimeToLive()) {
+            if (!isDisableTimeToLive()) {
                 // only use TTL if not disabled
                 jmsTemplate.setTimeToLive(ttl);
             }
@@ -742,14 +728,14 @@ public class JmsConfiguration implements Cloneable {
 
     public AbstractMessageListenerContainer chooseMessageListenerContainerImplementation(JmsEndpoint endpoint) {
         switch (consumerType) {
-        case Simple:
-            return new SimpleJmsMessageListenerContainer(endpoint);
-        case Default:
-            return new DefaultJmsMessageListenerContainer(endpoint);
-        case Custom:
-            return getCustomMessageListenerContainer(endpoint);
-        default:
-            throw new IllegalArgumentException("Unknown consumer type: " + consumerType);
+            case Simple:
+                return new SimpleJmsMessageListenerContainer(endpoint);
+            case Default:
+                return new DefaultJmsMessageListenerContainer(endpoint);
+            case Custom:
+                return getCustomMessageListenerContainer(endpoint);
+            default:
+                throw new IllegalArgumentException("Unknown consumer type: " + consumerType);
         }
     }
 
@@ -1474,17 +1460,11 @@ public class JmsConfiguration implements Cloneable {
     // -------------------------------------------------------------------------
 
     public static DestinationResolver createDestinationResolver(final DestinationEndpoint destinationEndpoint) {
-        return new DestinationResolver() {
-            public Destination resolveDestinationName(Session session, String destinationName, boolean pubSubDomain) throws JMSException {
-                return destinationEndpoint.getJmsDestination(session);
-            }
-        };
+        return (session, destinationName, pubSubDomain) -> destinationEndpoint.getJmsDestination(session);
     }
 
     protected void configureMessageListenerContainer(AbstractMessageListenerContainer container,
                                                      JmsEndpoint endpoint) throws Exception {
-        container.setConnectionFactory(getOrCreateListenerConnectionFactory());
-        container.setConnectionFactory(getOrCreateListenerConnectionFactory());
         container.setConnectionFactory(getOrCreateListenerConnectionFactory());
         if (endpoint instanceof DestinationEndpoint) {
             container.setDestinationResolver(createDestinationResolver((DestinationEndpoint) endpoint));
@@ -2225,4 +2205,14 @@ public class JmsConfiguration implements Cloneable {
         this.deliveryDelay = deliveryDelay;
     }
 
+    public boolean isArtemisStreamingEnabled() {
+        return artemisStreamingEnabled;
+    }
+
+    /**
+     * Whether optimizing for Apache Artemis streaming mode.
+     */
+    public void setArtemisStreamingEnabled(boolean artemisStreamingEnabled) {
+        this.artemisStreamingEnabled = artemisStreamingEnabled;
+    }
 }

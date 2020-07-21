@@ -18,9 +18,7 @@ package org.apache.camel.processor;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.naming.Context;
-
-import org.apache.camel.support.jndi.JndiContext;
+import org.apache.camel.spi.Registry;
 
 public class BeanRecipientListInterfaceAnnotationTest extends BeanRecipientListTest {
     @Override
@@ -29,8 +27,8 @@ public class BeanRecipientListInterfaceAnnotationTest extends BeanRecipientListT
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
         answer.bind("myBean", new MyBean());
         return answer;
     }

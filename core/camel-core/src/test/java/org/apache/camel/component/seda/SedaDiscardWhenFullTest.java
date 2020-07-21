@@ -19,7 +19,7 @@ package org.apache.camel.component.seda;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SedaDiscardWhenFullTest extends ContextTestSupport {
 
@@ -35,6 +35,9 @@ public class SedaDiscardWhenFullTest extends ContextTestSupport {
 
         // start route
         context.getRouteController().startRoute("foo");
+
+        // wait a little bit for flaky CI
+        Thread.sleep(10);
 
         // and now there is room for me
         template.sendBody("seda:foo?discardWhenFull=true", "Camel World");

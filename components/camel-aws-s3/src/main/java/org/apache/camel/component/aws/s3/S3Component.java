@@ -30,13 +30,7 @@ import org.apache.camel.support.DefaultComponent;
 public class S3Component extends DefaultComponent {
 
     @Metadata
-    private String accessKey;
-    @Metadata
-    private String secretKey;
-    @Metadata
-    private String region;
-    @Metadata(label = "advanced")
-    private S3Configuration configuration;
+    private S3Configuration configuration = new S3Configuration();
 
     public S3Component() {
         this(null);
@@ -55,16 +49,15 @@ public class S3Component extends DefaultComponent {
             throw new IllegalArgumentException("Bucket name must be specified.");
         }
         if (remaining.startsWith("arn:")) {
-            remaining = remaining.substring(remaining.lastIndexOf(":") + 1, remaining.length());
+            remaining = remaining.substring(remaining.lastIndexOf(':') + 1, remaining.length());
         }
         final S3Configuration configuration = this.configuration != null ? this.configuration.copy() : new S3Configuration();
         configuration.setBucketName(remaining);
         S3Endpoint endpoint = new S3Endpoint(uri, this, configuration);
-        endpoint.getConfiguration().setAccessKey(accessKey);
-        endpoint.getConfiguration().setSecretKey(secretKey);
-        endpoint.getConfiguration().setRegion(region);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration);
+        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration);
+        }
         if (!configuration.isUseIAMCredentials() && configuration.getAmazonS3Client() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("useIAMCredentials is set to false, AmazonS3Client or accessKey and secretKey must be specified");
         }
@@ -77,44 +70,10 @@ public class S3Component extends DefaultComponent {
     }
 
     /**
-     * The AWS S3 default configuration
+     * The component configuration
      */
     public void setConfiguration(S3Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Access Key
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Secret Key
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    /**
-     * The region where the bucket is located. This option is used in the
-     * `com.amazonaws.services.s3.model.CreateBucketRequest`.
-     */
-    public void setRegion(String region) {
-        this.region = region;
     }
 
     private void checkAndSetRegistryClient(S3Configuration configuration) {

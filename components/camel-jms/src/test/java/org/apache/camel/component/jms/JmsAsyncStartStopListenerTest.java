@@ -19,12 +19,10 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -54,8 +52,8 @@ public class JmsAsyncStartStopListenerTest extends CamelTestSupport {
         // so we need a persistent store in case no active consumers when we send the messages
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
         JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-        jms.setAsyncStartListener(true);
-        jms.setAsyncStopListener(true);
+        jms.getConfiguration().setAsyncStartListener(true);
+        jms.getConfiguration().setAsyncStopListener(true);
         camelContext.addComponent(componentName, jms);
 
         return camelContext;
@@ -65,11 +63,7 @@ public class JmsAsyncStartStopListenerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("activemq:queue:hello").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getIn().setBody("Bye World");
-                    }
-                }).to("mock:result");
+                from("activemq:queue:hello").process(exchange -> exchange.getIn().setBody("Bye World")).to("mock:result");
             }
         };
     }

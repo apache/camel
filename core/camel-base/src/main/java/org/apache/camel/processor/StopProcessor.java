@@ -33,7 +33,7 @@ public class StopProcessor extends AsyncProcessorSupport implements IdAware, Rou
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // mark the exchange to stop continue routing
-        exchange.setProperty(Exchange.ROUTE_STOP, Boolean.TRUE);
+        exchange.setRouteStop(true);
 
         callback.done(true);
         return true;

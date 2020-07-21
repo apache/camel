@@ -28,10 +28,16 @@ import com.google.api.services.drive.model.FileList;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Files APIs.
@@ -57,7 +63,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
 
         final File result = requestBodyAndHeaders("direct://COPY", null, headers);
 
-        assertNotNull("copy result", result);
+        assertNotNull(result, "copy result");
         assertEquals(toFile.getTitle(), result.getTitle());        
         LOG.debug("copy: " + result);
     }
@@ -73,7 +79,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
         try {
             // the file should be gone now
             final File result = requestBody("direct://GET", fileId);
-            assertTrue("Should have not found deleted file.", false);
+            fail("Should have not found deleted file.");
         } catch (Exception e) {               
             e.printStackTrace();
         }        
@@ -87,7 +93,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
         // using String message body for single parameter "fileId"
         final File result = requestBody("direct://GET", fileId);
 
-        assertNotNull("get result", result);
+        assertNotNull(result, "get result");
         LOG.debug("get: " + result);
     }
 
@@ -97,7 +103,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
         file.setTitle(UPLOAD_FILE.getName());
         // using com.google.api.services.drive.model.File message body for single parameter "content"
         File result = requestBody("direct://INSERT", file);
-        assertNotNull("insert result", result);
+        assertNotNull(result, "insert result");
         LOG.debug("insert: " + result);
     }
 
@@ -105,7 +111,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
     public void testInsert1() throws Exception {        
         File result = uploadTestFile();
 
-        assertNotNull("insert result", result);
+        assertNotNull(result, "insert result");
         LOG.debug("insert: " + result);
     }
 
@@ -115,7 +121,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
         File testFile = uploadTestFile();
         
         FileList result = requestBody("direct://LIST", null);
-        assertNotNull("list result", result);
+        assertNotNull(result, "list result");
         assertTrue(result.getItems().size() >= 1);
         
         File testFile2 = uploadTestFile();
@@ -124,7 +130,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
         headers.put("CamelGoogleDrive.maxResults", 1);
         
         result = requestBodyAndHeaders("direct://LIST", null, headers);
-        assertNotNull("list result", result);
+        assertNotNull(result, "list result");
         assertTrue(result.getItems().size() == 1);
         
         // test paging the list
@@ -164,7 +170,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
 
         File result = requestBodyAndHeaders("direct://PATCH", null, headers);
 
-        assertNotNull("patch result", result);
+        assertNotNull(result, "patch result");
         assertEquals(UPLOAD_FILE.getName() + "PATCHED", result.getTitle());
         LOG.debug("patch: " + result);
     }
@@ -176,7 +182,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
         // using String message body for single parameter "fileId"
         File result = requestBody("direct://TOUCH", theTestFile.getId());
 
-        assertNotNull("touch result", result);
+        assertNotNull(result, "touch result");
         assertTrue(result.getModifiedDate().getValue() > createdDate.getValue());
     }
 
@@ -185,8 +191,8 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
         File testFile = uploadTestFile();
         String fileId = testFile.getId();       
 
-        assertNotNull("trash result", requestBody("direct://TRASH", fileId));
-        assertNotNull("untrash result", requestBody("direct://UNTRASH", fileId));
+        assertNotNull(requestBody("direct://TRASH", fileId), "trash result");
+        assertNotNull(requestBody("direct://UNTRASH", fileId), "untrash result");
 
     }   
 
@@ -202,7 +208,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
 
         File result = requestBodyAndHeaders("direct://UPDATE", null, headers);
 
-        assertNotNull("update result", result);
+        assertNotNull(result, "update result");
         LOG.debug("update: " + result);
     }
 
@@ -235,12 +241,12 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
 
         File result = requestBodyAndHeaders("direct://UPDATE_1", null, headers);
 
-        assertNotNull("update result", result);
+        assertNotNull(result, "update result");
         LOG.debug("update: " + result);
     }
 
     // TODO provide parameter values for watch
-    @Ignore
+    @Disabled
     @Test
     public void testWatch() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
@@ -251,7 +257,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
 
         final com.google.api.services.drive.Drive.Files.Watch result = requestBodyAndHeaders("direct://WATCH", null, headers);
 
-        assertNotNull("watch result", result);
+        assertNotNull(result, "watch result");
         LOG.debug("watch: " + result);
     }
 

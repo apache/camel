@@ -25,9 +25,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JCacheProducerGetTest extends JCacheComponentTestSupport {
 
@@ -52,7 +57,7 @@ public class JCacheProducerGetTest extends JCacheComponentTestSupport {
         mock.expectedMessagesMatches(new Predicate() {
             @Override
             public boolean matches(Exchange exchange) {
-                assertNotNull("body", exchange.getIn().getBody());
+                assertNotNull(exchange.getIn().getBody(), "body");
                 return exchange.getIn().getBody().equals(val);
             }
         });
@@ -81,7 +86,7 @@ public class JCacheProducerGetTest extends JCacheComponentTestSupport {
         mock.expectedMessagesMatches(new Predicate() {
             @Override
             public boolean matches(Exchange exchange) {
-                assertNotNull("body", exchange.getIn().getBody());
+                assertNotNull(exchange.getIn().getBody(), "body");
                 return exchange.getIn().getBody().equals(val);
             }
         });
@@ -114,7 +119,7 @@ public class JCacheProducerGetTest extends JCacheComponentTestSupport {
         mock.expectedMessagesMatches(new Predicate() {
             @Override
             public boolean matches(Exchange exchange) {
-                assertNotNull("body", exchange.getIn().getBody());
+                assertNotNull(exchange.getIn().getBody(), "body");
                 return exchange.getIn().getBody().equals(val);
             }
         });

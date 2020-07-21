@@ -19,10 +19,10 @@ package org.apache.camel.component.sjms.support;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,15 +42,15 @@ public abstract class SjmsConnectionTestSupport {
 
     public abstract String getConnectionUri();
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpBeforeClass() throws Exception {
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownAfterClass() throws Exception {
     }
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         if (ObjectHelper.isEmpty(getConnectionUri())
                 || getConnectionUri().startsWith("vm")) {
@@ -61,7 +61,7 @@ public abstract class SjmsConnectionTestSupport {
         }
     }
 
-    @After
+    @AfterEach
     public void teardown() throws Exception {
 
         if (vmTestConnectionFactory != null) {

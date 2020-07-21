@@ -20,18 +20,19 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.MaskingFormatter;
-import org.apache.camel.support.jndi.JndiTest;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LogEipMaskTest {
 
-    protected JndiRegistry registry;
+    protected Registry registry;
 
     protected CamelContext createCamelContext() throws Exception {
-        registry = new JndiRegistry(JndiTest.createInitialContext());
+        registry = new DefaultRegistry();
         CamelContext context = new DefaultCamelContext(registry);
         context.addRoutes(createRouteBuilder());
         return context;
@@ -58,7 +59,7 @@ public class LogEipMaskTest {
         context.setLogMask(true);
         context.start();
         context.createProducerTemplate().sendBody("direct:foo", "mock password=\"my passw0rd!\"");
-        Assert.assertEquals("Got mock password=\"my passw0rd!\"", customFormatter.received);
+        assertEquals("Got mock password=\"my passw0rd!\"", customFormatter.received);
         context.stop();
     }
 

@@ -18,7 +18,9 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.BeanProxyFactory;
+import org.apache.camel.spi.annotations.JdkService;
 
+@JdkService(BeanProxyFactory.FACTORY)
 public final class DefaultBeanProxyFactory implements BeanProxyFactory {
 
     public DefaultBeanProxyFactory() {

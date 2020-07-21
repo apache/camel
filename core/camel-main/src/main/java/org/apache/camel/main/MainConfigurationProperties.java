@@ -16,9 +16,16 @@
  */
 package org.apache.camel.main;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.camel.RoutesBuilder;
+import org.apache.camel.spi.Configurer;
+
 /**
  * Global configuration for Camel Main to setup context name, stream caching and other global configurations.
  */
+@Configurer
 public class MainConfigurationProperties extends DefaultConfigurationProperties<MainConfigurationProperties> {
 
     private boolean autoConfigurationEnabled = true;
@@ -30,20 +37,51 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private boolean autowireComponentPropertiesNonNullOnly;
     private boolean autowireComponentPropertiesAllowPrivateSetter = true;
     private int durationHitExitCode;
-    private boolean hangupInterceptorEnabled = true;
     private String packageScanRouteBuilders;
 
+    private String routesBuilderClasses;
+    private String configurationClasses;
+
+    private List<RoutesBuilder> routesBuilders = new ArrayList<>();
+    private List<Object> configurations = new ArrayList<>();
+
     // extended configuration
+    private final HealthConfigurationProperties healthConfigurationProperties = new HealthConfigurationProperties(this);
+    private final LraConfigurationProperties lraConfigurationProperties = new LraConfigurationProperties(this);
+    private final ThreadPoolConfigurationProperties threadPool = new ThreadPoolConfigurationProperties(this);
     private final HystrixConfigurationProperties hystrixConfigurationProperties = new HystrixConfigurationProperties(this);
     private final Resilience4jConfigurationProperties resilience4jConfigurationProperties = new Resilience4jConfigurationProperties(this);
+    private final FaultToleranceConfigurationProperties faultToleranceConfigurationProperties = new FaultToleranceConfigurationProperties(this);
     private final RestConfigurationProperties restConfigurationProperties = new RestConfigurationProperties(this);
 
     // extended
     // --------------------------------------------------------------
 
     /**
+     * To configure Health Check
+     */
+    public HealthConfigurationProperties health() {
+        return healthConfigurationProperties;
+    }
+
+    /**
+     * To configure Saga LRA
+     */
+    public LraConfigurationProperties lra() {
+        return lraConfigurationProperties;
+    }
+
+    /**
+     * To configure thread pools
+     */
+    public ThreadPoolConfigurationProperties threadPool() {
+        return threadPool;
+    }
+
+    /**
      * To configure Circuit Breaker EIP with Hystrix
      */
+    @Deprecated
     public HystrixConfigurationProperties hystrix() {
         return hystrixConfigurationProperties;
     }
@@ -53,6 +91,13 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public Resilience4jConfigurationProperties resilience4j() {
         return resilience4jConfigurationProperties;
+    }
+
+    /**
+     * To configure Circuit Breaker EIP with MicroProfile Fault Tolerance
+     */
+    public FaultToleranceConfigurationProperties faultTolerance() {
+        return faultToleranceConfigurationProperties;
     }
 
     /**
@@ -190,17 +235,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         this.autowireComponentPropertiesAllowPrivateSetter = autowireComponentPropertiesAllowPrivateSetter;
     }
 
-    public boolean isHangupInterceptorEnabled() {
-        return hangupInterceptorEnabled;
-    }
-
-    /**
-     * Whether to use graceful hangup when Camel is stopping or when the JVM terminates.
-     */
-    public void setHangupInterceptorEnabled(boolean hangupInterceptorEnabled) {
-        this.hangupInterceptorEnabled = hangupInterceptorEnabled;
-    }
-
     public String getPackageScanRouteBuilders() {
         return packageScanRouteBuilders;
     }
@@ -223,6 +257,109 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public void setDurationHitExitCode(int durationHitExitCode) {
         this.durationHitExitCode = durationHitExitCode;
+    }
+
+    // getter and setters - configurations
+    // --------------------------------------------------------------
+
+    public String getConfigurationClasses() {
+        return configurationClasses;
+    }
+
+    /**
+     * Sets classes names that will be used to configure the camel context as example by providing custom beans
+     * through {@link org.apache.camel.BindToRegistry} annotation.
+     */
+    public void setConfigurationClasses(String configurations) {
+        this.configurationClasses = configurations;
+    }
+
+    /**
+     * Add an additional configuration class to the known list of configurations classes.
+     */
+    public void addConfigurationClass(Class<?>... configuration) {
+        String existing = configurationClasses;
+        if (existing == null) {
+            existing = "";
+        }
+        if (configuration != null) {
+            for (Class clazz : configuration) {
+                if (!existing.isEmpty()) {
+                    existing = existing + ",";
+                }
+                existing = existing + clazz.getName();
+            }
+        }
+        setConfigurationClasses(existing);
+    }
+
+    /**
+     * Add an additional configuration object to the known list of configurations objects.
+     */
+    public void addConfiguration(Object configuration) {
+        configurations.add(configuration);
+    }
+
+    public List<Object> getConfigurations() {
+        return configurations;
+    }
+
+    /**
+     * Sets the configuration objects used to configure the camel context.
+     */
+    public void setConfigurations(List<Object> configurations) {
+        this.configurations = configurations;
+    }
+
+    // getter and setters - routes builders
+    // --------------------------------------------------------------
+
+    public String getRoutesBuilderClasses() {
+        return routesBuilderClasses;
+    }
+
+    /**
+     * Sets classes names that implement {@link RoutesBuilder}.
+     */
+    public void setRoutesBuilderClasses(String builders) {
+        this.routesBuilderClasses = builders;
+    }
+
+    public List<RoutesBuilder> getRoutesBuilders() {
+        return this.routesBuilders;
+    }
+
+    /**
+     * Sets the RoutesBuilder instances.
+     */
+    public void setRoutesBuilders(List<RoutesBuilder> routesBuilders) {
+        this.routesBuilders = routesBuilders;
+    }
+
+    /**
+     * Add an additional {@link RoutesBuilder} object to the known list of builders.
+     */
+    public void addRoutesBuilder(RoutesBuilder routeBuilder) {
+        this.routesBuilders.add(routeBuilder);
+    }
+
+    /**
+     * Add an additional {@link RoutesBuilder} class to the known list of builders.
+     */
+    public void addRoutesBuilder(Class<?>... routeBuilder) {
+        String existing = routesBuilderClasses;
+        if (existing == null) {
+            existing = "";
+        }
+        if (routeBuilder != null) {
+            for (Class clazz : routeBuilder) {
+                if (!existing.isEmpty()) {
+                    existing = existing + ",";
+                }
+                existing = existing + clazz.getName();
+            }
+        }
+        setRoutesBuilderClasses(existing);
     }
 
     // fluent builders
@@ -332,14 +469,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Whether to use graceful hangup when Camel is stopping or when the JVM terminates.
-     */
-    public MainConfigurationProperties withHangupInterceptorEnabled(boolean hangupInterceptorEnabled) {
-        this.hangupInterceptorEnabled = hangupInterceptorEnabled;
-        return this;
-    }
-
-    /**
      * Sets the exit code for the application if duration was hit
      */
     public MainConfigurationProperties withDurationHitExitCode(int durationHitExitCode) {
@@ -357,4 +486,74 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         return this;
     }
 
+    // fluent builders - configurations
+    // --------------------------------------------------------------
+
+    /**
+     * Sets classes names that will be used to configure the camel context as example by providing custom beans
+     * through {@link org.apache.camel.BindToRegistry} annotation.
+     */
+    public MainConfigurationProperties withConfigurationClasses(String configurations) {
+        setConfigurationClasses(configurations);
+        return this;
+    }
+
+    /**
+     * Add an additional configuration class to the known list of configurations classes.
+     */
+    public MainConfigurationProperties withAdditionalConfigurationClasses(Class... configuration) {
+        addConfigurationClass(configuration);
+        return this;
+    }
+
+    /**
+     * Add an additional configuration object to the known list of configurations objects.
+     */
+    public MainConfigurationProperties withAdditionalConfiguration(Object configuration) {
+        addConfiguration(configuration);
+        return this;
+    }
+
+    /**
+     * Sets the configuration objects used to configure the camel context.
+     */
+    public MainConfigurationProperties withConfigurations(List<Object> configurations) {
+        setConfigurations(configurations);
+        return this;
+    }
+
+    // fluent  builder - routes builders
+    // --------------------------------------------------------------
+
+    /**
+     * Sets classes names that implement {@link RoutesBuilder}.
+     */
+    public MainConfigurationProperties withRoutesBuilderClasses(String builders) {
+        setRoutesBuilderClasses(builders);
+        return this;
+    }
+
+    /**
+     * Sets the RoutesBuilder instances.
+     */
+    public MainConfigurationProperties withRoutesBuilders(List<RoutesBuilder> builders) {
+        setRoutesBuilders(builders);
+        return this;
+    }
+
+    /**
+     * Add an additional {@link RoutesBuilder} object to the known list of builders.
+     */
+    public MainConfigurationProperties withAdditionalRoutesBuilder(RoutesBuilder builder) {
+        addRoutesBuilder(builder);
+        return this;
+    }
+
+    /**
+     * Add an additional {@link RoutesBuilder} class to the known list of builders.
+     */
+    public MainConfigurationProperties withAdditionalRoutesBuilder(Class... builders) {
+        addRoutesBuilder(builders);
+        return this;
+    }
 }

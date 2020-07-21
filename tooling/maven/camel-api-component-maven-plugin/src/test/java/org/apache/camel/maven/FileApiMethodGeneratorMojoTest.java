@@ -22,7 +22,7 @@ import java.io.IOException;
 import org.apache.camel.component.test.TestProxy;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests {@link FileApiMethodGeneratorMojo}

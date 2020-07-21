@@ -23,20 +23,30 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-http-base</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: HTTP :: Bae</name>
+    <name>Camel :: HTTP :: Base</name>
     <description>Camel HTTP base</description>
+
+    <properties>
+        <firstVersion>3.1.0</firstVersion>
+    </properties>
 
     <dependencies>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
+        </dependency>
+
+        <!-- needed for dynamic to -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-catalog</artifactId>
         </dependency>
 
     </dependencies>

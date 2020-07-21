@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
@@ -49,14 +50,18 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.pool.ConnPoolControl;
 import org.apache.http.pool.PoolStats;
 import org.apache.http.protocol.HttpContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * For calling out to external HTTP servers using Apache HTTP Client 4.x.
+ * Send requests to external HTTP servers using Apache HTTP Client 4.x.
  */
 @UriEndpoint(firstVersion = "2.3.0", scheme = "http,https", title = "HTTP,HTTPS", syntax = "http:httpUri",
-    producerOnly = true, label = "http", lenientProperties = true)
+    producerOnly = true, category = {Category.HTTP}, lenientProperties = true)
 @ManagedResource(description = "Managed HttpEndpoint")
 public class HttpEndpoint extends HttpCommonEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
 
     @UriParam(label = "security", description = "To configure security using SSLContextParameters."
         + " Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent."
@@ -83,19 +88,22 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     @Metadata(label = "timeout", defaultValue = "-1", description = "The timeout in milliseconds used when requesting a connection"
         + " from the connection manager. A timeout value of zero is interpreted as an infinite timeout."
         + " A timeout value of zero is interpreted as an infinite timeout."
-        + " A negative value is interpreted as undefined (system default).")
-    private int connectionRequestTimeout = -1;
+        + " A negative value is interpreted as undefined (system default).",
+             javaType = "java.time.Duration")
+    private long connectionRequestTimeout = -1;
     @Metadata(label = "timeout", defaultValue = "-1", description = "Determines the timeout in milliseconds until a connection is established."
         + " A timeout value of zero is interpreted as an infinite timeout."
         + " A timeout value of zero is interpreted as an infinite timeout."
-        + " A negative value is interpreted as undefined (system default).")
-    private int connectTimeout = -1;
+        + " A negative value is interpreted as undefined (system default).",
+            javaType = "java.time.Duration")
+    private long connectTimeout = -1;
     @Metadata(label = "timeout", defaultValue = "-1", description = "Defines the socket timeout in milliseconds,"
         + " which is the timeout for waiting for data  or, put differently,"
         + " a maximum period inactivity between two consecutive data packets)."
         + " A timeout value of zero is interpreted as an infinite timeout."
-        + " A negative value is interpreted as undefined (system default).")
-    private int socketTimeout = -1;
+        + " A negative value is interpreted as undefined (system default).",
+            javaType = "java.time.Duration")
+    private long socketTimeout = -1;
     @UriParam(label = "producer,advanced", description = "To use a custom CookieStore."
         + " By default the BasicCookieStore is used which is an in-memory only cookie store."
         + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy)."
@@ -118,7 +126,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     private int connectionsPerRoute;
     @UriParam(label = "security", description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier")
     private HostnameVerifier x509HostnameVerifier;
-    @UriParam(label = "producer", description = "To use custom host header for producer.")
+    @UriParam(label = "producer", description = "To use custom host header for producer. When not set in query will "
+        + "be ignored. When set will override host header derived from url.")
     private String customHostHeader;
 
     public HttpEndpoint() {
@@ -203,7 +212,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
                 if (scheme == null) {
                     scheme = HttpHelper.isSecureConnection(getEndpointUri()) ? "https" : "http";
                 }
-                log.debug("CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}", host, port, scheme);
+                LOG.debug("CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}", host, port, scheme);
                 HttpHost proxy = new HttpHost(host, port, scheme);
                 clientBuilder.setProxy(proxy);
             }
@@ -226,7 +235,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
             clientBuilder.setDefaultCookieStore(new NoopCookieStore());
         }
 
-        log.debug("Setup the HttpClientBuilder {}", clientBuilder);
+        LOG.debug("Setup the HttpClientBuilder {}", clientBuilder);
         return clientBuilder.build();
     }
 
@@ -438,7 +447,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         this.sslContextParameters = sslContextParameters;
     }
 
-    public int getConnectionRequestTimeout() {
+    public long getConnectionRequestTimeout() {
         return connectionRequestTimeout;
     }
 
@@ -454,11 +463,11 @@ public class HttpEndpoint extends HttpCommonEndpoint {
      * Default: {@code -1}
      * </p>
      */
-    public void setConnectionRequestTimeout(int connectionRequestTimeout) {
+    public void setConnectionRequestTimeout(long connectionRequestTimeout) {
         this.connectionRequestTimeout = connectionRequestTimeout;
     }
 
-    public int getConnectTimeout() {
+    public long getConnectTimeout() {
         return connectTimeout;
     }
 
@@ -473,11 +482,11 @@ public class HttpEndpoint extends HttpCommonEndpoint {
      * Default: {@code -1}
      * </p>
      */
-    public void setConnectTimeout(int connectTimeout) {
+    public void setConnectTimeout(long connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
 
-    public int getSocketTimeout() {
+    public long getSocketTimeout() {
         return socketTimeout;
     }
 
@@ -493,7 +502,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
      * Default: {@code -1}
      * </p>
      */
-    public void setSocketTimeout(int socketTimeout) {
+    public void setSocketTimeout(long socketTimeout) {
         this.socketTimeout = socketTimeout;
     }
 

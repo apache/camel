@@ -23,9 +23,12 @@ import javax.management.ObjectName;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedRefEndpointTest extends SpringTestSupport {
 
@@ -63,14 +66,14 @@ public class ManagedRefEndpointTest extends SpringTestSupport {
 
         for (ObjectName on : set) {
             boolean registered = mbeanServer.isRegistered(on);
-            assertEquals("Should be registered", true, registered);
+            assertEquals(true, registered, "Should be registered");
 
             String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
-            assertTrue(uri, uri.equals("mock://foo") || uri.equals("mock://result"));
+            assertTrue(uri.equals("mock://foo") || uri.equals("mock://result"), uri);
 
             // should be started
             String state = (String) mbeanServer.getAttribute(on, "State");
-            assertEquals("Should be started", ServiceStatus.Started.name(), state);
+            assertEquals(ServiceStatus.Started.name(), state, "Should be started");
         }
 
         set = mbeanServer.queryNames(new ObjectName("*:type=endpoints,*"), null);
@@ -78,11 +81,11 @@ public class ManagedRefEndpointTest extends SpringTestSupport {
 
         for (ObjectName on : set) {
             boolean registered = mbeanServer.isRegistered(on);
-            assertTrue("Should be registered", registered);
+            assertTrue(registered, "Should be registered");
 
             String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
-            assertTrue(uri, uri.equals("direct://start") || uri.equals("mock://foo")
-                    || uri.equals("mock://result") || uri.equals("ref://foo"));
+            assertTrue(uri.equals("direct://start") || uri.equals("mock://foo")
+                    || uri.equals("mock://result") || uri.equals("ref://foo"), uri);
         }
     }
 

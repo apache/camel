@@ -24,7 +24,10 @@ import org.apache.camel.Processor;
  * every message will be processed in order of their arrival time
  * this consumer support both Sync and Async processors.
  */
+
+//CHECKSTYLE:OFF
 public class SoroushBotSingleThreadConsumer extends SoroushBotAbstractConsumer {
+
     public SoroushBotSingleThreadConsumer(SoroushBotEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
@@ -35,16 +38,14 @@ public class SoroushBotSingleThreadConsumer extends SoroushBotAbstractConsumer {
             if (endpoint.isSynchronous()) {
                 getProcessor().process(exchange);
             } else {
-                getAsyncProcessor().process(exchange, e -> {
-                });
+                getAsyncProcessor().process(exchange, doneSync -> {});
             }
         } catch (Exception e) {
-            if (exchange.getException() != null) {
-                getExceptionHandler().handleException("Error processing exchange",
-                        exchange, exchange.getException());
-            } else {
-                log.error("exception occur while processing exchange", e);
-            }
+            exchange.setException(e);
+        }
+        if (exchange.getException() != null) {
+            getExceptionHandler().handleException("Error processing exchange",
+                    exchange, exchange.getException());
         }
     }
 }

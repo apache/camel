@@ -44,7 +44,7 @@ public class SftpConsumerAutoCreateTest extends SftpServerTestSupport {
         if (!canTest()) {
             return;
         }
-        SftpEndpoint endpoint = (SftpEndpoint) this.getMandatoryEndpoint(getFtpUrl() + "&autoCreate=true");
+        SftpEndpoint endpoint = (SftpEndpoint)this.getMandatoryEndpoint(getFtpUrl() + "&autoCreate=true");
         endpoint.start();
         endpoint.getExchanges();
         assertTrue(new File(FTP_ROOT_DIR + "/foo/bar/baz/xxx").exists());
@@ -60,7 +60,7 @@ public class SftpConsumerAutoCreateTest extends SftpServerTestSupport {
 
     @Test
     public void testNoAutoCreate() throws Exception {
-        SftpEndpoint endpoint = (SftpEndpoint) this.getMandatoryEndpoint(getFtpUrl() + "&autoCreate=false");
+        SftpEndpoint endpoint = (SftpEndpoint)this.getMandatoryEndpoint(getFtpUrl() + "&autoCreate=false");
         endpoint.start();
         try {
             endpoint.getExchanges();

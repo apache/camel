@@ -28,10 +28,10 @@ etc) on sections/segments of a camel route.
 The components offering authentication and authorization Services
 utilizing Route Policies are
 
-* xref:components::shiro.adoc[Shiro Security]
-* xref:components::spring-security.adoc[Spring Security]
+* xref:components:others:shiro.adoc[Shiro Security]
+* xref:components:others:spring-security.adoc[Spring Security]
 
-[[Security-PayloadSecurity-DataFormatsandProducers/Consumersofferingencryption/decryptionservices]]
+[[Security-PayloadSecurity-DataFormatsandProducersConsumersofferingencryptiondecryptionservices]]
 == Payload Security - Data Formats and Producers/Consumers offering encryption/decryption services
 
 Camel offers encryption/decryption services to secure payloads or
@@ -40,11 +40,9 @@ portions/sections of a payload.
 
 These capabilites are offered by the following components
 
-* xref:components::secureXML-dataformat.adoc[XMLSecurity DataFormat] (XML
+* xref:components:dataformats:secureXML-dataformat.adoc[XMLSecurity DataFormat] (XML
 Encryption support)
-* xref:components::xmlsecurity-component.adoc[XML Security component] (XML
-Signature support)
-* xref:components::crypto-dataformat.adoc[Crypto DataFormat] (Encryption + PGP support)
+* xref:components:dataformats:crypto-dataformat.adoc[Crypto DataFormat] (Encryption + PGP support)
 * xref:components::crypto-component.adoc[Crypto component] (Signature
 support)
 
@@ -81,7 +79,7 @@ externalize configuration values to properties files. Those values could
 contain sensitive information such as usernames and passwords. Those
 values can be encrypted and automatic decrypted by Camel.
 
-* xref:components::jasypt.adoc[Jasypt]
+* xref:components:others:jasypt.adoc[Jasypt]
 
 *Since Camel 2.8*
 

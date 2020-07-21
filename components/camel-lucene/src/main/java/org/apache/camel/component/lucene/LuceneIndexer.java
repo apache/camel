@@ -134,7 +134,7 @@ public class LuceneIndexer {
                 try (InputStream is = new FileInputStream(file)) {
                     ByteArrayOutputStream bos = new ByteArrayOutputStream();
                     IOHelper.copy(IOHelper.buffered(is), bos);
-                    contents = new String(bos.toByteArray());
+                    contents = bos.toString();
                 }
                 openIndexWriter();
                 add("path", file.getPath(), false);

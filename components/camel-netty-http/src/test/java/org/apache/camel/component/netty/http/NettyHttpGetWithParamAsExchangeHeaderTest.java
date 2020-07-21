@@ -19,8 +19,8 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
 
@@ -52,7 +52,7 @@ public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testHttpGetWithISO8859EncodedParamsViaURI() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -91,7 +91,7 @@ public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
     }
 
     @Test
-    @Ignore("HTTP_QUERY not yet supported")
+    @Disabled("HTTP_QUERY not yet supported")
     public void testHttpGetWithParamsViaHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

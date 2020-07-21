@@ -19,7 +19,7 @@ package org.apache.camel.component.seda;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SedaDefaultDiscardWhenFullTest extends ContextTestSupport {
 
@@ -30,11 +30,15 @@ public class SedaDefaultDiscardWhenFullTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "Hello World");
         template.sendBody("seda:foo", "Bye World");
+
         // this message will be discarded
         template.sendBody("seda:foo", "Hi World");
 
         // start route
         context.getRouteController().startRoute("foo");
+
+        // wait a little bit until the route is started and the first messages are consumed
+        Thread.sleep(100);
 
         // and now there is room for me
         template.sendBody("seda:foo", "Camel World");

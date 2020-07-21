@@ -29,8 +29,10 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MDCAsyncTest extends ContextTestSupport {
 
@@ -132,7 +134,7 @@ public class MDCAsyncTest extends ContextTestSupport {
 
             if (threadId != null) {
                 Long currId = Thread.currentThread().getId();
-                assertNotEquals(threadId, currId);
+                assertNotEquals(threadId, (Object) currId);
             } else {
                 threadId = Thread.currentThread().getId();
             }

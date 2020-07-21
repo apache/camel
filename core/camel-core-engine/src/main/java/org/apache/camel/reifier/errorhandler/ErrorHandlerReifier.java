@@ -16,16 +16,21 @@
  */
 package org.apache.camel.reifier.errorhandler;
 
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NamedNode;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
@@ -35,24 +40,23 @@ import org.apache.camel.builder.ErrorHandlerBuilderSupport;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.processor.errorhandler.ExceptionPolicy;
 import org.apache.camel.processor.errorhandler.ExceptionPolicy.RedeliveryOption;
+import org.apache.camel.processor.errorhandler.ExceptionPolicyKey;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.reifier.AbstractReifier;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.Language;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> extends AbstractReifier {
 
-    public static final String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";
-    private static final Map<Class<?>, Function<ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>> ERROR_HANDLERS;
+    private static final Map<Class<?>, BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>> ERROR_HANDLERS;
     static {
-        Map<Class<?>, Function<ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>> map = new HashMap<>();
+        Map<Class<?>, BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>> map = new HashMap<>();
         map.put(DeadLetterChannelBuilder.class, DeadLetterChannelReifier::new);
         map.put(DefaultErrorHandlerBuilder.class, DefaultErrorHandlerReifier::new);
         map.put(ErrorHandlerBuilderRef.class, ErrorHandlerRefReifier::new);
@@ -65,37 +69,44 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
     /**
      * Utility classes should not have a public constructor.
      */
-    ErrorHandlerReifier(T definition) {
+    protected ErrorHandlerReifier(Route route, T definition) {
+        super(route);
         this.definition = definition;
     }
 
-    public static void registerReifier(Class<?> errorHandlerClass, Function<ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> creator) {
+    public static void registerReifier(Class<?> errorHandlerClass, BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> creator) {
         ERROR_HANDLERS.put(errorHandlerClass, creator);
     }
 
-    public static ErrorHandlerReifier<? extends ErrorHandlerFactory> reifier(ErrorHandlerFactory definition) {
-        Function<ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> reifier = ERROR_HANDLERS.get(definition.getClass());
+    public static ErrorHandlerReifier<? extends ErrorHandlerFactory> reifier(Route route, ErrorHandlerFactory definition) {
+        BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> reifier = ERROR_HANDLERS.get(definition.getClass());
         if (reifier != null) {
-            return reifier.apply(definition);
-        } else if (definition instanceof ErrorHandlerBuilderSupport) {
-            return new ErrorHandlerReifier<ErrorHandlerBuilderSupport>((ErrorHandlerBuilderSupport)definition) {
-                @Override
-                public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
-                    return definition.createErrorHandler(routeContext, processor);
-                }
-            };
-        } else {
-            throw new IllegalStateException("Unsupported definition: " + definition);
+            return reifier.apply(route, definition);
         }
+        throw new IllegalStateException("Unsupported definition: " + definition);
     }
 
-    public static ExceptionPolicy createExceptionPolicy(OnExceptionDefinition def, RouteContext routeContext) {
+    public ExceptionPolicy createExceptionPolicy(OnExceptionDefinition def) {
+        Predicate handled = def.getHandledPolicy();
+        if (handled == null && def.getHandled() != null) {
+            handled = createPredicate(def.getHandled());
+        }
+        Predicate continued = def.getContinuedPolicy();
+        if (continued == null && def.getContinued() != null) {
+            continued = createPredicate(def.getContinued());
+        }
+        Predicate retryWhile = def.getRetryWhilePolicy();
+        if (retryWhile == null && def.getRetryWhile() != null) {
+            retryWhile = createPredicate(def.getRetryWhile());
+        }
+        Processor onRedelivery = getBean(Processor.class, def.getOnRedelivery(), def.getOnRedeliveryRef());
+        Processor onExceptionOccurred = getBean(Processor.class, def.getOnExceptionOccurred(), def.getOnExceptionOccurredRef());
         return new ExceptionPolicy(def.getId(), CamelContextHelper.getRouteId(def),
-                                   def.getUseOriginalMessage() != null && parseBoolean(routeContext, def.getUseOriginalMessage()),
-                                   def.getUseOriginalBody() != null && parseBoolean(routeContext, def.getUseOriginalBody()),
-                                   ObjectHelper.isNotEmpty(def.getOutputs()), def.getHandledPolicy(),
-                                   def.getContinuedPolicy(), def.getRetryWhilePolicy(), def.getOnRedelivery(),
-                                   def.getOnExceptionOccurred(), def.getRedeliveryPolicyRef(),
+                                   parseBoolean(def.getUseOriginalMessage(), false),
+                                   parseBoolean(def.getUseOriginalBody(), false),
+                                   ObjectHelper.isNotEmpty(def.getOutputs()), handled,
+                                   continued, retryWhile, onRedelivery,
+                                   onExceptionOccurred, def.getRedeliveryPolicyRef(),
                                    getRedeliveryPolicy(def.getRedeliveryPolicyType()), def.getExceptions());
     }
 
@@ -140,25 +151,26 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
     /**
      * Lookup the error handler by the given ref
      *
-     * @param routeContext the route context
+     * @param route the route context
      * @param ref reference id for the error handler
      * @return the error handler
      */
-    public static ErrorHandlerFactory lookupErrorHandlerFactory(RouteContext routeContext, String ref) {
-        return lookupErrorHandlerFactory(routeContext, ref, true);
+    public static ErrorHandlerFactory lookupErrorHandlerFactory(Route route, String ref) {
+        return lookupErrorHandlerFactory(route, ref, true);
     }
 
     /**
      * Lookup the error handler by the given ref
      *
-     * @param routeContext the route context
+     * @param route the route
      * @param ref reference id for the error handler
      * @param mandatory whether the error handler must exists, if not a
      *            {@link org.apache.camel.NoSuchBeanException} is thrown
      * @return the error handler
      */
-    public static ErrorHandlerFactory lookupErrorHandlerFactory(RouteContext routeContext, String ref, boolean mandatory) {
+    public static ErrorHandlerFactory lookupErrorHandlerFactory(Route route, String ref, boolean mandatory) {
         ErrorHandlerFactory answer;
+        CamelContext camelContext = route.getCamelContext();
 
         // if the ref is the default then we do not have any explicit error
         // handler configured
@@ -168,8 +180,6 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
         // so we should use that one
         if (!isErrorHandlerFactoryConfigured(ref)) {
             // see if there has been configured a error handler builder on the route
-            // TODO: Avoid using RouteDefinition - tests should pass: https://issues.apache.org/jira/browse/CAMEL-13984
-            RouteDefinition route = (RouteDefinition)routeContext.getRoute();
             answer = route.getErrorHandlerFactory();
             // check if its also a ref with no error handler configuration like me
             if (answer instanceof ErrorHandlerBuilderRef) {
@@ -179,7 +189,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
                     // the other has also no explicit error handler configured
                     // then fallback to the handler
                     // configured on the parent camel context
-                    answer = lookupErrorHandlerFactory(routeContext.getCamelContext());
+                    answer = lookupErrorHandlerFactory(camelContext);
                 }
                 if (answer == null) {
                     // the other has also no explicit error handler configured
@@ -192,14 +202,14 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
                 // shared
                 // this is needed by camel-spring when none error handler has
                 // been explicit configured
-                routeContext.addErrorHandlerFactoryReference(other, answer);
+                route.addErrorHandlerFactoryReference(other, answer);
             }
         } else {
             // use specific configured error handler
             if (mandatory) {
-                answer = routeContext.mandatoryLookup(ref, ErrorHandlerBuilder.class);
+                answer = CamelContextHelper.mandatoryLookup(camelContext, ref, ErrorHandlerBuilder.class);
             } else {
-                answer = routeContext.lookup(ref, ErrorHandlerBuilder.class);
+                answer = CamelContextHelper.lookup(camelContext, ref, ErrorHandlerBuilder.class);
             }
         }
 
@@ -212,7 +222,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
             ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef)answer;
             String otherRef = other.getRef();
             if (isErrorHandlerFactoryConfigured(otherRef)) {
-                answer = camelContext.getRegistry().lookupByNameAndType(otherRef, ErrorHandlerBuilder.class);
+                answer = CamelContextHelper.lookup(camelContext, otherRef, ErrorHandlerBuilder.class);
                 if (answer == null) {
                     throw new IllegalArgumentException("ErrorHandlerBuilder with id " + otherRef + " not found in registry.");
                 }
@@ -233,32 +243,68 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
      * TransactedErrorHandlerBuilder in camel-spring.
      */
     public static boolean isErrorHandlerFactoryConfigured(String ref) {
-        return !DEFAULT_ERROR_HANDLER_BUILDER.equals(ref);
+        return !ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER.equals(ref);
+    }
+
+    public void addExceptionPolicy(ErrorHandlerSupport handlerSupport, OnExceptionDefinition exceptionType) {
+        // add error handler as child service so they get lifecycle handled
+        Processor errorHandler = route.getOnException(exceptionType.getId());
+        handlerSupport.addErrorHandler(errorHandler);
+
+        // load exception classes
+        List<Class<? extends Throwable>> list;
+        if (ObjectHelper.isNotEmpty(exceptionType.getExceptions())) {
+            list = createExceptionClasses(exceptionType);
+            for (Class<? extends Throwable> clazz : list) {
+                String routeId = null;
+                // only get the route id, if the exception type is route scoped
+                if (exceptionType.isRouteScoped()) {
+                    routeId = route.getRouteId();
+                }
+                Predicate when = exceptionType.getOnWhen() != null ? exceptionType.getOnWhen().getExpression() : null;
+                ExceptionPolicyKey key = new ExceptionPolicyKey(routeId, clazz, when);
+                ExceptionPolicy policy = createExceptionPolicy(exceptionType);
+                handlerSupport.addExceptionPolicy(key, policy);
+            }
+        }
+    }
+
+    protected List<Class<? extends Throwable>> createExceptionClasses(OnExceptionDefinition exceptionType) {
+        List<String> list = exceptionType.getExceptions();
+        List<Class<? extends Throwable>> answer = new ArrayList<>(list.size());
+        for (String name : list) {
+            try {
+                Class<? extends Throwable> type = camelContext.getClassResolver().resolveMandatoryClass(name, Throwable.class);
+                answer.add(type);
+            } catch (ClassNotFoundException e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            }
+        }
+        return answer;
     }
 
     /**
      * Creates the error handler
      *
-     * @param routeContext the route context
      * @param processor the outer processor
      * @return the error handler
      * @throws Exception is thrown if the error handler could not be created
      */
-    public abstract Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception;
+    public abstract Processor createErrorHandler(Processor processor) throws Exception;
 
-    public void configure(RouteContext routeContext, ErrorHandler handler) {
+    public void configure(ErrorHandler handler) {
         if (handler instanceof ErrorHandlerSupport) {
             ErrorHandlerSupport handlerSupport = (ErrorHandlerSupport)handler;
 
-            for (NamedNode exception : routeContext.getErrorHandlers(definition)) {
-                ErrorHandlerBuilderSupport.addExceptionPolicy(handlerSupport, routeContext, (OnExceptionDefinition)exception);
+            for (NamedNode exception : route.getErrorHandlers(definition)) {
+                addExceptionPolicy(handlerSupport, (OnExceptionDefinition) exception);
             }
         }
         if (handler instanceof RedeliveryErrorHandler) {
-            boolean original = ((RedeliveryErrorHandler)handler).isUseOriginalMessagePolicy() || ((RedeliveryErrorHandler)handler).isUseOriginalMessagePolicy();
+            boolean original = ((RedeliveryErrorHandler)handler).isUseOriginalMessagePolicy() || ((RedeliveryErrorHandler)handler).isUseOriginalBodyPolicy();
             if (original) {
                 // ensure allow original is turned on
-                routeContext.setAllowUseOriginalMessage(true);
+                route.setAllowUseOriginalMessage(true);
             }
         }
     }
@@ -282,16 +328,17 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
                 answer.setMaximumRedeliveries(CamelContextHelper.parseInteger(context, definition.getMaximumRedeliveries()));
             }
             if (definition.getRedeliveryDelay() != null) {
-                answer.setRedeliveryDelay(CamelContextHelper.parseLong(context, definition.getRedeliveryDelay()));
+                Duration duration = CamelContextHelper.parseDuration(context, definition.getRedeliveryDelay());
+                answer.setRedeliveryDelay(duration.toMillis());
             }
             if (definition.getAsyncDelayedRedelivery() != null) {
                 answer.setAsyncDelayedRedelivery(CamelContextHelper.parseBoolean(context, definition.getAsyncDelayedRedelivery()));
             }
             if (definition.getRetriesExhaustedLogLevel() != null) {
-                answer.setRetriesExhaustedLogLevel(LoggingLevel.valueOf(definition.getRetriesExhaustedLogLevel()));
+                answer.setRetriesExhaustedLogLevel(CamelContextHelper.parse(context, LoggingLevel.class, definition.getRetriesExhaustedLogLevel()));
             }
             if (definition.getRetryAttemptedLogLevel() != null) {
-                answer.setRetryAttemptedLogLevel(LoggingLevel.valueOf(definition.getRetryAttemptedLogLevel()));
+                answer.setRetryAttemptedLogLevel(CamelContextHelper.parse(context, LoggingLevel.class, definition.getRetryAttemptedLogLevel()));
             }
             if (definition.getRetryAttemptedLogInterval() != null) {
                 answer.setRetryAttemptedLogInterval(CamelContextHelper.parseInteger(context, definition.getRetryAttemptedLogInterval()));
@@ -309,7 +356,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
                 answer.setUseCollisionAvoidance(CamelContextHelper.parseBoolean(context, definition.getUseCollisionAvoidance()));
             }
             if (definition.getMaximumRedeliveryDelay() != null) {
-                answer.setMaximumRedeliveryDelay(CamelContextHelper.parseLong(context, definition.getMaximumRedeliveryDelay()));
+                Duration duration = CamelContextHelper.parseDuration(context, definition.getMaximumRedeliveryDelay());
+                answer.setMaximumRedeliveryDelay(duration.toMillis());
             }
             if (definition.getLogStackTrace() != null) {
                 answer.setLogStackTrace(CamelContextHelper.parseBoolean(context, definition.getLogStackTrace()));
@@ -357,6 +405,22 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
         }
 
         return answer;
+    }
+
+    protected Predicate getPredicate(Predicate pred, String ref) {
+        if (pred == null && ref != null) {
+            // its a bean expression
+            Language bean = camelContext.resolveLanguage("bean");
+            pred = bean.createPredicate(ref);
+        }
+        return pred;
+    }
+
+    protected <T> T getBean(Class<T> clazz, T bean, String ref) {
+        if (bean == null && ref != null) {
+            bean = lookup(ref, clazz);
+        }
+        return bean;
     }
 
 }

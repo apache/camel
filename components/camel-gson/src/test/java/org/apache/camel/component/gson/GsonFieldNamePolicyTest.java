@@ -18,13 +18,16 @@ package org.apache.camel.component.gson;
 
 import com.google.gson.FieldNamingPolicy;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class GsonFieldNamePolicyTest extends CamelTestSupport {
 
     @Test
-    public void testUnmarshalPojo() throws Exception {
+    public void testUnmarshalPojo() {
         String json = "{\"id\":\"123\",\"first_name\":\"Donald\",\"last_name\":\"Duck\"}";
         PersonPojo pojo = template.requestBody("direct:backPojo", json, PersonPojo.class);
         assertNotNull(pojo);
@@ -35,7 +38,7 @@ public class GsonFieldNamePolicyTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMarshalPojo() throws Exception {
+    public void testMarshalPojo() {
         PersonPojo pojo = new PersonPojo();
         pojo.setId(123);
         pojo.setFirstName("Donald");
@@ -47,10 +50,10 @@ public class GsonFieldNamePolicyTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 GsonDataFormat formatPojo = new GsonDataFormat();
                 formatPojo.setUnmarshalType(PersonPojo.class);
                 formatPojo.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);

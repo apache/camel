@@ -16,36 +16,24 @@
  */
 package org.apache.camel.reifier.dataformat;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.Any23DataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class Any23DataFormatReifier extends DataFormatReifier<Any23DataFormat> {
 
-    public Any23DataFormatReifier(DataFormatDefinition definition) {
-        super((Any23DataFormat)definition);
+    public Any23DataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (Any23DataFormat)definition);
     }
 
     @Override
-    protected DataFormat doCreateDataFormat(CamelContext camelContext) {
-        return super.doCreateDataFormat(camelContext);
-    }
-
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (definition.getOutputFormat() != null) {
-            setProperty(camelContext, dataFormat, "outputFormat", definition.getOutputFormat());
-        }
-        if (definition.getConfiguration() != null) {
-            setProperty(camelContext, dataFormat, "configurations", definition.getConfiguration());
-        }
-        if (definition.getExtractors() != null) {
-            setProperty(camelContext, dataFormat, "extractors", definition.getExtractors());
-        }
-        if (definition.getBaseURI() != null) {
-            setProperty(camelContext, dataFormat, "baseURI", definition.getBaseURI());
-        }
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("outputFormat", definition.getOutputFormat());
+        properties.put("configurations", definition.getConfigurationAsMap());
+        properties.put("extractors", definition.getExtractors());
+        properties.put("baseURI", definition.getBaseURI());
     }
 
 }

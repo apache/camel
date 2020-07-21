@@ -21,7 +21,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import io.undertow.Handlers;
 import io.undertow.server.HttpHandler;
@@ -52,16 +54,29 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Undertow consumer which is also an Undertow HttpHandler implementation to handle incoming request.
  */
 public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Suspendable {
 
+    private static final Logger LOG = LoggerFactory.getLogger(UndertowConsumer.class);
     private CamelWebSocketHandler webSocketHandler;
+    private boolean rest;
+    private volatile boolean suspended;
 
     public UndertowConsumer(UndertowEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
+    }
+
+    public boolean isRest() {
+        return rest;
+    }
+
+    public void setRest(boolean rest) {
+        this.rest = rest;
     }
 
     @Override
@@ -69,8 +84,17 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         return (UndertowEndpoint) super.getEndpoint();
     }
 
+    public List<String> computeAllowedRoles() {
+        String allowedRolesString = getEndpoint().getAllowedRoles();
+        if (allowedRolesString == null) {
+            allowedRolesString = getEndpoint().getComponent().getAllowedRoles();
+        }
+        return allowedRolesString == null ? null : Arrays.asList(allowedRolesString.split("\\s*,\\s*"));
+    }
+
     @Override
     protected void doStart() throws Exception {
+        this.suspended = false;
         super.doStart();
         final UndertowEndpoint endpoint = getEndpoint();
         if (endpoint.isWebSocket()) {
@@ -78,27 +102,27 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
              * note that the new CamelWebSocketHandler() we pass to registerEndpoint() does not necessarily have to be
              * the same instance that is returned from there
              */
-            this.webSocketHandler = (CamelWebSocketHandler) endpoint.getComponent().registerEndpoint(endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), new CamelWebSocketHandler());
+            this.webSocketHandler = (CamelWebSocketHandler) endpoint.getComponent().registerEndpoint(this, endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), new CamelWebSocketHandler());
             this.webSocketHandler.setConsumer(this);
         } else {
             // allow for HTTP 1.1 continue
             HttpHandler httpHandler = new EagerFormParsingHandler().setNext(UndertowConsumer.this);
             if (endpoint.getAccessLog()) {
-                AccessLogReceiver accessLogReciever = null;
+                AccessLogReceiver accessLogReceiver = null;
                 if (endpoint.getAccessLogReceiver() != null) {
-                    accessLogReciever = endpoint.getAccessLogReceiver();
+                    accessLogReceiver = endpoint.getAccessLogReceiver();
                 } else {
-                    accessLogReciever = new JBossLoggingAccessLogReceiver();
+                    accessLogReceiver = new JBossLoggingAccessLogReceiver();
                 }
                 httpHandler = new AccessLogHandler(httpHandler,
-                        accessLogReciever,
+                        accessLogReceiver,
                         "common",
                         AccessLogHandler.class.getClassLoader());
             }
             if (endpoint.getHandlers() != null) {
                 httpHandler = this.wrapHandler(httpHandler, endpoint);
             }
-            endpoint.getComponent().registerEndpoint(endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), Handlers.httpContinueRead(
+            endpoint.getComponent().registerEndpoint(this, endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), Handlers.httpContinueRead(
                     // wrap with EagerFormParsingHandler to enable undertow form parsers
                     httpHandler));
         }
@@ -106,18 +130,32 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
 
     @Override
     protected void doStop() throws Exception {
+        this.suspended = false;
         super.doStop();
         if (this.webSocketHandler != null) {
             this.webSocketHandler.setConsumer(null);
         }
         UndertowEndpoint endpoint = getEndpoint();
-        endpoint.getComponent().unregisterEndpoint(endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext());
+        endpoint.getComponent().unregisterEndpoint(this, endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext());
+    }
+
+    protected void doSuspend() throws Exception {
+        this.suspended = true;
+        super.doSuspend();
+    }
+
+    protected void doResume() throws Exception {
+        this.suspended = false;
+        super.doResume();
+    }
+
+    public boolean isSuspended() {
+        return this.suspended;
     }
 
     @Override
     public void handleRequest(HttpServerExchange httpExchange) throws Exception {
         HttpString requestMethod = httpExchange.getRequestMethod();
-
         if (Methods.OPTIONS.equals(requestMethod) && !getEndpoint().isOptionsEnabled()) {
             CollectionStringBuffer csb = new CollectionStringBuffer(",");
 
@@ -158,6 +196,30 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
             return;
         }
 
+        // are we suspended
+        if (isSuspended()) {
+            httpExchange.setStatusCode(StatusCodes.SERVICE_UNAVAILABLE);
+            httpExchange.endExchange();
+            return;
+        }
+
+        if (getEndpoint().getSecurityProvider() != null) {
+            //security provider decides, whether endpoint is accessible
+            int statusCode = getEndpoint().getSecurityProvider().authenticate(httpExchange, computeAllowedRoles());
+            if (statusCode != StatusCodes.OK) {
+                httpExchange.setStatusCode(statusCode);
+                httpExchange.endExchange();
+                return;
+            }
+        } else if (computeAllowedRoles() != null && !computeAllowedRoles().isEmpty()) {
+            //this case could happen due to bad configuration
+            //if allowedRoles are present but securityProvider is not, access has to be denied in this case
+            LOG.warn("Illegal state caused by missing securitProvider but existing allowed roles!");
+            httpExchange.setStatusCode(StatusCodes.FORBIDDEN);
+            httpExchange.endExchange();
+            return;
+        }
+
         //create new Exchange
         //binding is used to extract header and payload(if available)
         Exchange camelExchange = getEndpoint().createExchange(httpExchange);
@@ -172,18 +234,14 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         } finally {
             doneUoW(camelExchange);
         }
-
-        
     }
 
-    
-    
     private void sendResponse(HttpServerExchange httpExchange, Exchange camelExchange) throws IOException, NoTypeConversionAvailableException {
         Object body = getResponseBody(httpExchange, camelExchange);
 
         if (body == null) {
             String message = httpExchange.getStatusCode() == 500 ? "Exception" : "No response available";
-            log.trace("No payload to send as reply for exchange: {}", camelExchange);
+            LOG.trace("No payload to send as reply for exchange: {}", camelExchange);
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_TYPE, MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"));
             httpExchange.getResponseSender().send(message);
             return;

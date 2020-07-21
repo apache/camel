@@ -35,7 +35,6 @@ public class QueueServiceConsumer extends ScheduledPollConsumer {
     protected int poll() throws Exception {
         Exchange exchange = super.getEndpoint().createExchange();
         try {
-            log.trace("Retrieving a message");
             retrieveMessage(exchange);
             super.getAsyncProcessor().process(exchange);
             return 1;

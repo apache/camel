@@ -18,9 +18,11 @@ package org.apache.camel.component.salesforce;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
+import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.processor.AnalyticsApiProcessor;
 import org.apache.camel.component.salesforce.internal.processor.BulkApiProcessor;
 import org.apache.camel.component.salesforce.internal.processor.CompositeApiProcessor;
@@ -29,11 +31,15 @@ import org.apache.camel.component.salesforce.internal.processor.SalesforceProces
 import org.apache.camel.component.salesforce.internal.processor.XmlRestProcessor;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.service.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Salesforce producer.
  */
 public class SalesforceProducer extends DefaultAsyncProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SalesforceProducer.class);
 
     private final SalesforceProcessor processor;
 
@@ -64,52 +70,62 @@ public class SalesforceProducer extends DefaultAsyncProducer {
 
     private static boolean isBulkOperation(OperationName operationName) {
         switch (operationName) {
-        case CREATE_JOB:
-        case GET_JOB:
-        case CLOSE_JOB:
-        case ABORT_JOB:
-        case CREATE_BATCH:
-        case GET_BATCH:
-        case GET_ALL_BATCHES:
-        case GET_REQUEST:
-        case GET_RESULTS:
-        case CREATE_BATCH_QUERY:
-        case GET_QUERY_RESULT_IDS:
-        case GET_QUERY_RESULT:
-            return true;
-        default:
-            return false;
+            case CREATE_JOB:
+            case GET_JOB:
+            case CLOSE_JOB:
+            case ABORT_JOB:
+            case CREATE_BATCH:
+            case GET_BATCH:
+            case GET_ALL_BATCHES:
+            case GET_REQUEST:
+            case GET_RESULTS:
+            case CREATE_BATCH_QUERY:
+            case GET_QUERY_RESULT_IDS:
+            case GET_QUERY_RESULT:
+                return true;
+            default:
+                return false;
         }
     }
 
     private static boolean isAnalyticsOperation(OperationName operationName) {
         switch (operationName) {
-        case GET_RECENT_REPORTS:
-        case GET_REPORT_DESCRIPTION:
-        case EXECUTE_SYNCREPORT:
-        case EXECUTE_ASYNCREPORT:
-        case GET_REPORT_INSTANCES:
-        case GET_REPORT_RESULTS:
-            return true;
-        default:
-            return false;
+            case GET_RECENT_REPORTS:
+            case GET_REPORT_DESCRIPTION:
+            case EXECUTE_SYNCREPORT:
+            case EXECUTE_ASYNCREPORT:
+            case GET_REPORT_INSTANCES:
+            case GET_REPORT_RESULTS:
+                return true;
+            default:
+                return false;
         }
     }
 
     private static boolean isCompositeOperation(OperationName operationName) {
         switch (operationName) {
-        case COMPOSITE_TREE:
-        case COMPOSITE_BATCH:
-        case COMPOSITE:
-            return true;
-        default:
-            return false;
+            case COMPOSITE_TREE:
+            case COMPOSITE_BATCH:
+            case COMPOSITE:
+                return true;
+            default:
+                return false;
         }
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        log.debug("Processing {}", ((SalesforceEndpoint)getEndpoint()).getOperationName());
+        SalesforceEndpoint endpoint = (SalesforceEndpoint) getEndpoint();
+        SalesforceSession session = endpoint.getComponent().getSession();
+        if (session != null && session.getAccessToken() == null) {
+            try {
+                session.login(null);
+            } catch (SalesforceException e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            }
+        }
+
+        LOG.debug("Processing {}", endpoint.getOperationName());
         return processor.process(exchange, callback);
     }
 

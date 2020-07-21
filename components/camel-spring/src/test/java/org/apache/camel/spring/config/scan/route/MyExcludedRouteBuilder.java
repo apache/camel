@@ -22,6 +22,6 @@ public class MyExcludedRouteBuilder extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("direct:shouldNeverRecieveExchange").to("mock:definitelyShouldNeverReceiveExchange");
+        from("direct:shouldNeverReceiveExchange").to("mock:definitelyShouldNeverReceiveExchange");
     }
 }

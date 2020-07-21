@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -42,9 +43,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
 
 /**
- * Integrates Camel with Wordpress.
+ * Manage posts and users using Wordpress API.
  */
-@UriEndpoint(firstVersion = "2.21.0", scheme = "wordpress", title = "Wordpress", syntax = "wordpress:operation", label = "cms")
+@UriEndpoint(firstVersion = "2.21.0", scheme = "wordpress", title = "Wordpress", syntax = "wordpress:operation", category = {Category.CLOUD, Category.API, Category.CMS})
 public class WordpressEndpoint extends DefaultEndpoint {
 
     public static final String ENDPOINT_SERVICE_POST = "post, user";
@@ -87,12 +88,12 @@ public class WordpressEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         switch (WordpressOperationType.valueOf(operation)) {
-        case post:
-            return new WordpressPostProducer(this);
-        case user:
-            return new WordpressUserProducer(this);
-        default:
-            break;
+            case post:
+                return new WordpressPostProducer(this);
+            case user:
+                return new WordpressUserProducer(this);
+            default:
+                break;
         }
         throw new UnsupportedOperationException(String.format("Operation '%s' not supported.", operation));
     }
@@ -100,12 +101,12 @@ public class WordpressEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         switch (WordpressOperationType.valueOf(operation)) {
-        case post:
-            return new WordpressPostConsumer(this, processor);
-        case user:
-            return new WordpressUserConsumer(this, processor);
-        default:
-            break;
+            case post:
+                return new WordpressPostConsumer(this, processor);
+            case user:
+                return new WordpressUserConsumer(this, processor);
+            default:
+                break;
         }
         throw new UnsupportedOperationException(String.format("Operation '%s' not supported.", operation));
     }

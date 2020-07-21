@@ -23,8 +23,11 @@ import org.apache.camel.ExchangeException;
 import org.apache.camel.Header;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for the retry until predicate
@@ -34,8 +37,8 @@ public class OnExceptionRetryUntilTest extends ContextTestSupport {
     private static int invoked;
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myRetryHandler", new MyRetryBean());
         return jndi;
     }
@@ -83,7 +86,8 @@ public class OnExceptionRetryUntilTest extends ContextTestSupport {
             invoked++;
 
             assertEquals("Hello World", body);
-            assertTrue(causedBy instanceof MyFunctionalException);
+            boolean b = causedBy instanceof MyFunctionalException;
+            assertTrue(b);
 
             // we can of course do what ever we want to determine the result but
             // this is a unit test so we end after 3 attempts

@@ -22,18 +22,20 @@ import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.service.ServiceSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LanguageServiceTest extends ContextTestSupport {
 
     private MyLanguage my = new MyLanguage();
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("my", my);
         return jndi;
     }

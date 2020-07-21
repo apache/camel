@@ -78,6 +78,10 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
     @Metadata(label = "advanced", defaultValue = "5000", description = "The max wait time in millis to block and wait on free connection when the pool"
         + " is exhausted when using the default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}.")
     private long connectionMaxWait = 5000;
+    @Metadata(label = "consumer", description = "Try to apply reconnection logic on consumer pool", defaultValue = "true")
+    private boolean reconnectOnError = true;
+    @Metadata(label = "consumer", description = "Backoff in millis on consumer pool reconnection attempts", defaultValue = "5000")
+    private long reconnectBackOff = 5000;
 
     public SjmsComponent() {
     }
@@ -89,7 +93,6 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         validateMepAndReplyTo(parameters);
         SjmsEndpoint endpoint = createSjmsEndpoint(uri, remaining);
-        setProperties(endpoint, parameters);
         if (endpoint.isTransacted()) {
             endpoint.setSynchronous(true);
         }
@@ -105,6 +108,9 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
         if (messageCreatedStrategy != null) {
             endpoint.setMessageCreatedStrategy(messageCreatedStrategy);
         }
+        endpoint.setReconnectOnError(reconnectOnError);
+        endpoint.setReconnectBackOff(reconnectBackOff);
+        setProperties(endpoint, parameters);
         return endpoint;
     }
 
@@ -319,5 +325,27 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
      */
     public void setConnectionMaxWait(long connectionMaxWait) {
         this.connectionMaxWait = connectionMaxWait;
+    }
+
+    public boolean isReconnectOnError() {
+        return reconnectOnError;
+    }
+
+    /**
+     * Try to apply reconnection logic on consumer pool
+     */
+    public void setReconnectOnError(boolean reconnectOnError) {
+        this.reconnectOnError = reconnectOnError;
+    }
+
+    public long getReconnectBackOff() {
+        return reconnectBackOff;
+    }
+
+    /**
+     * Backoff in millis on consumer pool reconnection attempts
+     */
+    public void setReconnectBackOff(long reconnectBackOff) {
+        this.reconnectBackOff = reconnectBackOff;
     }
 }

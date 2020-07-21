@@ -19,6 +19,7 @@ package org.apache.camel.component.vm;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.seda.SedaConsumer;
 import org.apache.camel.support.ExchangeHelper;
@@ -52,7 +53,7 @@ public class VmConsumer extends SedaConsumer implements CamelContextAware {
         // send a new copied exchange with the camel context from this consumer
         Exchange newExchange = ExchangeHelper.copyExchangeAndSetCamelContext(exchange, getCamelContext());
         // set the from endpoint
-        newExchange.setFromEndpoint(getEndpoint());
+        newExchange.adapt(ExtendedExchange.class).setFromEndpoint(getEndpoint());
         return newExchange;
     }
 

@@ -50,7 +50,7 @@ public class VelocityValuesInPropertiesTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:a")
-                    .to("velocity:dummy")
+                    .to("velocity:dummy?allowTemplateFromHeader=true&allowContextMapAll=true")
                     .to("mock:result");
             }
         };

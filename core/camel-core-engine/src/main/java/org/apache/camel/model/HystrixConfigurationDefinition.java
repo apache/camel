@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -31,6 +32,8 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing,circuitbreaker")
 @XmlRootElement(name = "hystrixConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Configurer
+@Deprecated
 public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
 
     public static final String DEFAULT_GROUP_KEY = "CamelHystrix";
@@ -112,7 +115,7 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
      * <p>
      * This property takes precedence over circuitBreakerForceClosed();
      */
-    public HystrixConfigurationDefinition circuitBreakerForceOpen(Boolean circuitBreakerForceOpen) {
+    public HystrixConfigurationDefinition circuitBreakerForceOpen(boolean circuitBreakerForceOpen) {
         setCircuitBreakerForceOpen(Boolean.toString(circuitBreakerForceOpen));
         return this;
     }

@@ -24,12 +24,16 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.impl.lw.LightweightCamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.jndi.JndiTest;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * A useful base class which creates a {@link CamelContext} with some routes
@@ -42,6 +46,7 @@ public abstract class ContextTestSupport extends TestSupport {
     protected volatile ConsumerTemplate consumer;
     protected volatile NotifyBuilder oneExchangeDone;
     private boolean useRouteBuilder = true;
+    private boolean useLightweightContext;
     private Service camelContextService;
 
     /**
@@ -57,6 +62,14 @@ public abstract class ContextTestSupport extends TestSupport {
 
     public void setUseRouteBuilder(boolean useRouteBuilder) {
         this.useRouteBuilder = useRouteBuilder;
+    }
+
+    public boolean isUseLightweightContext() {
+        return useLightweightContext;
+    }
+
+    public void setUseLightweightContext(boolean useLightweightContext) {
+        this.useLightweightContext = useLightweightContext;
     }
 
     public Service getCamelContextService() {
@@ -81,7 +94,7 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -95,19 +108,11 @@ public abstract class ContextTestSupport extends TestSupport {
             throw new Exception("Context must be a ModelCamelContext");
         }
         assertValidContext(context);
-        context.init();
 
-        // reduce default shutdown timeout to avoid waiting for 300 seconds
-        context.getShutdownStrategy().setTimeout(10);
+        context.build();
 
         template = context.createProducerTemplate();
-        template.start();
         consumer = context.createConsumerTemplate();
-        consumer.start();
-
-        // create a default notifier when 1 exchange is done which is the most
-        // common case
-        oneExchangeDone = event().whenDone(1).create();
 
         if (isUseRouteBuilder()) {
             RouteBuilder[] builders = createRouteBuilders();
@@ -115,15 +120,27 @@ public abstract class ContextTestSupport extends TestSupport {
                 log.debug("Using created route builder: {}", builder);
                 context.addRoutes(builder);
             }
-            startCamelContext();
         } else {
             log.debug("isUseRouteBuilder() is false");
         }
 
+        template.start();
+        consumer.start();
+
+        // create a default notifier when 1 exchange is done which is the most
+        // common case
+        oneExchangeDone = event().whenDone(1).create();
+
+        if (isUseRouteBuilder()) {
+            startCamelContext();
+        }
+
+        // reduce default shutdown timeout to avoid waiting for 300 seconds
+        context.getShutdownStrategy().setTimeout(10);
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         log.debug("tearDown test: {}", getName());
         if (consumer != null) {
@@ -169,29 +186,30 @@ public abstract class ContextTestSupport extends TestSupport {
         if (camelContextService != null) {
             camelContextService.start();
         } else {
-            if (context instanceof DefaultCamelContext) {
-                DefaultCamelContext defaultCamelContext = (DefaultCamelContext)context;
-                if (!defaultCamelContext.isStarted()) {
-                    defaultCamelContext.start();
-                }
-            } else {
-                context.start();
-            }
+            context.start();
         }
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        DefaultCamelContext context = new DefaultCamelContext(false);
+        CamelContext context;
+        if (useLightweightContext) {
+            LightweightCamelContext ctx = new LightweightCamelContext();
+            ctx.setRegistry(createRegistry());
+            context = ctx;
+        } else {
+            DefaultCamelContext ctx = new DefaultCamelContext(true);
+            ctx.setRegistry(createRegistry());
+            context = ctx;
+        }
         if (!useJmx()) {
             context.disableJMX();
         }
-        context.setRegistry(createRegistry());
         context.setLoadTypeConverters(isLoadTypeConverters());
         return context;
     }
 
-    protected JndiRegistry createRegistry() throws Exception {
-        return new JndiRegistry(createJndiContext());
+    protected Registry createRegistry() throws Exception {
+        return new DefaultRegistry();
     }
 
     protected Context createJndiContext() throws Exception {
@@ -319,7 +337,7 @@ public abstract class ContextTestSupport extends TestSupport {
         Language language = assertResolveLanguage(languageName);
 
         Expression expression = language.createExpression(expressionText);
-        assertNotNull("No Expression could be created for text: " + expressionText + " language: " + language, expression);
+        assertNotNull(expression, "No Expression could be created for text: " + expressionText + " language: " + language);
 
         assertExpression(expression, exchange, expectedValue);
     }
@@ -332,7 +350,7 @@ public abstract class ContextTestSupport extends TestSupport {
         Language language = assertResolveLanguage(languageName);
 
         Predicate predicate = language.createPredicate(expressionText);
-        assertNotNull("No Predicate could be created for text: " + expressionText + " language: " + language, predicate);
+        assertNotNull(predicate, "No Predicate could be created for text: " + expressionText + " language: " + language);
 
         assertPredicate(predicate, exchange, expected);
     }
@@ -342,7 +360,7 @@ public abstract class ContextTestSupport extends TestSupport {
      */
     protected Language assertResolveLanguage(String languageName) {
         Language language = context.resolveLanguage(languageName);
-        assertNotNull("No language found for name: " + languageName, language);
+        assertNotNull(language, "No language found for name: " + languageName);
         return language;
     }
 
@@ -368,18 +386,18 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     protected void assertValidContext(CamelContext context) {
-        assertNotNull("No context found!", context);
+        assertNotNull(context, "No context found!");
     }
 
     protected <T extends Endpoint> T getMandatoryEndpoint(String uri, Class<T> type) {
         T endpoint = context.getEndpoint(uri, type);
-        assertNotNull("No endpoint found for uri: " + uri, endpoint);
+        assertNotNull(endpoint, "No endpoint found for uri: " + uri);
         return endpoint;
     }
 
     protected Endpoint getMandatoryEndpoint(String uri) {
         Endpoint endpoint = context.getEndpoint(uri);
-        assertNotNull("No endpoint found for uri: " + uri, endpoint);
+        assertNotNull(endpoint, "No endpoint found for uri: " + uri);
         return endpoint;
     }
 

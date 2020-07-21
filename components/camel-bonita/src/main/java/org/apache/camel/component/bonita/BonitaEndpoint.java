@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.bonita;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -27,9 +28,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Used for communicating with a remote Bonita BPM process engine.
+ * Communicate with a remote Bonita BPM process engine.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "bonita", title = "Bonita", syntax = "bonita:operation", producerOnly = true, label = "process")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "bonita", title = "Bonita", syntax = "bonita:operation", producerOnly = true, category = {Category.PROCESS})
 public class BonitaEndpoint extends DefaultEndpoint {
 
     @UriParam

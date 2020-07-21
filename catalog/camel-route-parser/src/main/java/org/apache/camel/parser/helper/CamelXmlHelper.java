@@ -28,7 +28,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import org.jboss.forge.roaster.model.util.Strings;
+import org.apache.camel.tooling.util.Strings;
 
 /**
  * Various XML helper methods used for parsing XML routes.
@@ -203,7 +203,7 @@ public final class CamelXmlHelper {
 
     private static Node findCamelNodeInDocument(Document root, String key) {
         Node selectedNode = null;
-        if (root != null && !Strings.isBlank(key)) {
+        if (root != null && !Strings.isNullOrEmpty(key)) {
             String[] paths = key.split("/");
             NodeList camels = getCamelContextElements(root);
             if (camels != null) {
@@ -263,7 +263,7 @@ public final class CamelXmlHelper {
             int count = countObject != null ? countObject : 0;
             nodeCounts.put(elementName, ++count);
             answer = element.getAttribute("id");
-            if (Strings.isBlank(answer)) {
+            if (Strings.isNullOrEmpty(answer)) {
                 answer = "_" + elementName + count;
             }
         }

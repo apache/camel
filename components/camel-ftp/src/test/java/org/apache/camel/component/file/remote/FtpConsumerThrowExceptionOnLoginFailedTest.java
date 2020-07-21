@@ -28,23 +28,24 @@ import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 
 /**
- * Unit test for login failure due bad password and no re connect attempts allowed
+ * Unit test for login failure due bad password and no re connect attempts
+ * allowed
  */
 public class FtpConsumerThrowExceptionOnLoginFailedTest extends FtpServerTestSupport {
 
     private CountDownLatch latch = new CountDownLatch(1);
-    
+
     @BindToRegistry("myPoll")
     private MyPoll poll = new MyPoll();
 
     private String getFtpUrl() {
         return "ftp://dummy@localhost:" + getPort() + "/badlogin?password=cantremember"
-                + "&throwExceptionOnConnectFailed=true&maximumReconnectAttempts=0&pollStrategy=#myPoll&autoCreate=false";
+               + "&throwExceptionOnConnectFailed=true&maximumReconnectAttempts=0&pollStrategy=#myPoll&autoCreate=false";
     }
 
     @Test

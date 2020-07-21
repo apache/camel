@@ -29,9 +29,8 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.ws.DefaultWebSocketListener;
 import org.asynchttpclient.ws.WebSocket;
-import org.asynchttpclient.ws.WebSocketTextListener;
+import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,26 +59,41 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
 
         WebSocket websocket = c.prepareGet("ws://localhost:" + port + "/shop").execute(
             new WebSocketUpgradeHandler.Builder()
-                .addWebSocketListener(new WebSocketTextListener() {
-
-                    @Override
-                    public void onMessage(String message) {
-                        received.add(message);
-                        log.info("received --> " + message);
-                        latch.countDown();
-                    }
+                .addWebSocketListener(new WebSocketListener() {
 
                     @Override
                     public void onOpen(WebSocket websocket) {
                     }
 
                     @Override
-                    public void onClose(WebSocket websocket) {
+                    public void onClose(WebSocket websocket, int code, String reason) {
                     }
 
                     @Override
                     public void onError(Throwable t) {
                         t.printStackTrace();
+                    }
+
+                    @Override
+                    public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
+
+                    }
+
+                    @Override
+                    public void onTextFrame(String payload, boolean finalFragment, int rsv) {
+                        received.add(payload);
+                        log.info("received --> " + payload);
+                        latch.countDown();
+                    }
+
+                    @Override
+                    public void onPingFrame(byte[] payload) {
+
+                    }
+
+                    @Override
+                    public void onPongFrame(byte[] payload) {
+
                     }
                 }).build()).get();
 
@@ -93,7 +107,7 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
         assertTrue(r instanceof String);
         assertEquals("Beer on stock at Apache Mall", r);
 
-        websocket.close();
+        websocket.sendCloseFrame();
         c.close();
     }
 
@@ -103,26 +117,42 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
 
         WebSocket websocket = c.prepareGet("ws://localhost:" + port + "/shop").execute(
             new WebSocketUpgradeHandler.Builder()
-                .addWebSocketListener(new DefaultWebSocketListener() {
-
-                    @Override
-                    public void onMessage(byte[] message) {
-                        received.add(message);
-                        log.info("received --> " + Arrays.toString(message));
-                        latch.countDown();
-                    }
-
+                .addWebSocketListener(new WebSocketListener() {
                     @Override
                     public void onOpen(WebSocket websocket) {
+
                     }
 
                     @Override
-                    public void onClose(WebSocket websocket) {
+                    public void onClose(WebSocket websocket, int code, String reason) {
+
                     }
 
                     @Override
                     public void onError(Throwable t) {
-                        t.printStackTrace();
+
+                    }
+
+                    @Override
+                    public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
+                        received.add(payload);
+                        log.info("received --> " + Arrays.toString(payload));
+                        latch.countDown();
+                    }
+
+                    @Override
+                    public void onTextFrame(String payload, boolean finalFragment, int rsv) {
+
+                    }
+
+                    @Override
+                    public void onPingFrame(byte[] payload) {
+
+                    }
+
+                    @Override
+                    public void onPongFrame(byte[] payload) {
+
                     }
                 }).build()).get();
 
@@ -137,7 +167,7 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
         assertTrue(r instanceof byte[]);
         assertArrayEquals(testmessage, (byte[])r);
 
-        websocket.close();
+        websocket.sendCloseFrame();
         c.close();
     }
 

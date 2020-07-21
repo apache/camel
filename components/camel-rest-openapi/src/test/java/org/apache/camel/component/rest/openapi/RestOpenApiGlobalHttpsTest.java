@@ -18,7 +18,6 @@ package org.apache.camel.component.rest.openapi;
 
 import org.apache.camel.CamelContext;
 
-
 public class RestOpenApiGlobalHttpsTest extends HttpsTest {
 
     @Override

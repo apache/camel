@@ -28,8 +28,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * TidyMarkup data format is used for parsing HTML and return it as pretty
- * well-formed HTML.
+ * Parse (potentially invalid) HTML into valid HTML or DOM.
  */
 @Metadata(firstVersion = "2.0.0", label = "dataformat,transformation", title = "TidyMarkup")
 @XmlRootElement(name = "tidyMarkup")
@@ -39,7 +38,8 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
     @Metadata(defaultValue = "org.w3c.dom.Node")
     private String dataObjectTypeName;
     @XmlAttribute
-    private Boolean omitXmlDeclaration;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String omitXmlDeclaration;
     @XmlTransient
     private Class<?> dataObjectType;
 
@@ -84,14 +84,14 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
         this.dataObjectTypeName = dataObjectTypeName;
     }
 
-    public Boolean getOmitXmlDeclaration() {
+    public String getOmitXmlDeclaration() {
         return omitXmlDeclaration;
     }
 
     /**
      * When returning a String, do we omit the XML declaration in the top.
      */
-    public void setOmitXmlDeclaration(Boolean omitXmlDeclaration) {
+    public void setOmitXmlDeclaration(String omitXmlDeclaration) {
         this.omitXmlDeclaration = omitXmlDeclaration;
     }
 

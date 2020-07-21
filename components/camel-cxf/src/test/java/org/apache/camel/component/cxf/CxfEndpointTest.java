@@ -29,10 +29,10 @@ import org.apache.cxf.bus.extension.ExtensionManagerBus;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -41,7 +41,7 @@ import static org.mockito.Mockito.verify;
 /**
  * A unit test for spring configured cxf endpoint.
  */
-public class CxfEndpointTest extends Assert {
+public class CxfEndpointTest {
     private int port1 = CXFTestSupport.getPort1();
     private int port2 = CXFTestSupport.getPort2();
 
@@ -57,9 +57,11 @@ public class CxfEndpointTest extends Assert {
     @Test
     public void testSettingContinucationTimout() throws Exception {
         CamelContext context = new DefaultCamelContext();
+        context.start();
+
         CxfEndpoint endpoint = context.getEndpoint(routerEndpointURI + "&continuationTimeout=800000",
                 CxfEndpoint.class);
-        assertEquals("Get a wrong continucationTimeout value", 800000, endpoint.getContinuationTimeout());
+        assertEquals(800000, endpoint.getContinuationTimeout(), "Get a wrong continucationTimeout value");
     }
 
     @Test
@@ -67,14 +69,17 @@ public class CxfEndpointTest extends Assert {
 
         ClassPathXmlApplicationContext ctx =
                 new ClassPathXmlApplicationContext(new String[]{"org/apache/camel/component/cxf/CxfEndpointBeans.xml"});
-        CxfComponent cxfComponent = new CxfComponent(new SpringCamelContext(ctx));
+
+        SpringCamelContext context = new SpringCamelContext(ctx);
+        context.start();
+
+        CxfComponent cxfComponent = new CxfComponent(context);
         CxfSpringEndpoint endpoint = (CxfSpringEndpoint)cxfComponent.createEndpoint("cxf://bean:serviceEndpoint");
 
-        assertEquals("Got the wrong endpoint address", endpoint.getAddress(),
-                "http://localhost:" + port2 + "/CxfEndpointTest/helloworld");
-        assertEquals("Got the wrong endpont service class",
-                endpoint.getServiceClass().getCanonicalName(),
-                "org.apache.camel.component.cxf.HelloService");
+        assertEquals(endpoint.getAddress(),
+                "http://localhost:" + port2 + "/CxfEndpointTest/helloworld", "Got the wrong endpoint address");
+        assertEquals(endpoint.getServiceClass().getCanonicalName(),
+                "org.apache.camel.component.cxf.HelloService", "Got the wrong endpont service class");
     }
 
     @Test
@@ -85,16 +90,20 @@ public class CxfEndpointTest extends Assert {
 
         ExtensionManagerBus newBus = (ExtensionManagerBus) BusFactory.newInstance().createBus();
         newBus.setId("newCXF");
-        CxfComponent cxfComponent = new CxfComponent(new DefaultCamelContext());
+
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+
+        CxfComponent cxfComponent = new CxfComponent(context);
         CxfEndpoint endpoint = (CxfEndpoint)cxfComponent.createEndpoint(routerEndpointURI);
         endpoint.setBus(newBus);
         CamelCxfClientImpl client = (CamelCxfClientImpl)endpoint.createClient();
-        assertEquals("CamelCxfClientImpl should has the same bus with CxfEndpoint", newBus, client.getBus());
+        assertEquals(newBus, client.getBus(), "CamelCxfClientImpl should has the same bus with CxfEndpoint");
 
         endpoint = (CxfEndpoint)cxfComponent.createEndpoint(wsdlEndpointURI);
         endpoint.setBus(newBus);
         client = (CamelCxfClientImpl)endpoint.createClient();
-        assertEquals("CamelCxfClientImpl should has the same bus with CxfEndpoint", newBus, client.getBus());
+        assertEquals(newBus, client.getBus(), "CamelCxfClientImpl should has the same bus with CxfEndpoint");
     }
 
     @Test
@@ -104,6 +113,8 @@ public class CxfEndpointTest extends Assert {
         Processor processor = mock(Processor.class);
         registry.bind("myConfigurer", configurer);
         CamelContext camelContext = new DefaultCamelContext(registry);
+        camelContext.start();
+
         CxfComponent cxfComponent = new CxfComponent(camelContext);
         CxfEndpoint endpoint = (CxfEndpoint)cxfComponent.createEndpoint(routerEndpointURI + "&cxfConfigurer=#myConfigurer");
 

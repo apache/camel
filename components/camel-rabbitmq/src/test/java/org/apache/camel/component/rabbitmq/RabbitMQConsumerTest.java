@@ -25,7 +25,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Consumer;
 import org.apache.camel.Processor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.assertFalse;
@@ -45,7 +45,7 @@ public class RabbitMQConsumerTest {
     public void testStoppingConsumerShutdownExecutor() throws Exception {
         RabbitMQConsumer consumer = new RabbitMQConsumer(endpoint, processor);
 
-        ThreadPoolExecutor e = (ThreadPoolExecutor) Executors.newFixedThreadPool(3);
+        ThreadPoolExecutor e = (ThreadPoolExecutor)Executors.newFixedThreadPool(3);
         Mockito.when(endpoint.createExecutor()).thenReturn(e);
         Mockito.when(endpoint.getConcurrentConsumers()).thenReturn(1);
         Mockito.when(endpoint.connect(any(ExecutorService.class))).thenReturn(conn);

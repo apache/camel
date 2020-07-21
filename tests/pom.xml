@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.5.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -44,38 +44,38 @@
         <module>camel-itest-cdi</module>
         <module>camel-itest-jms2</module>
         <module>camel-jmh</module>
-        <module>camel-blueprint-cxf-test</module>
-        <module>camel-blueprint-test</module>
         <module>camel-partial-classpath-test</module>
         <module>camel-typeconverterscan-test</module>
     </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-bundle-plugin</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                 </configuration>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
     <profiles>
         <!-- includes these modules when doing the release -->
         <profile>
             <id>release</id>
             <modules>
-                <module>camel-itest-karaf</module>
-                <module>camel-itest-osgi</module>
                 <module>camel-itest-performance</module>
                 <module>camel-performance</module>
-            </modules>
-        </profile>
-
-        <!-- osgi tests -->
-        <profile>
-            <id>osgi.test</id>
-            <modules>
-                <module>camel-itest-karaf</module>
-                <module>camel-itest-osgi</module>
-            </modules>
-        </profile>
-
-        <!-- spring-boot tests -->
-        <profile>
-            <id>spring-boot.test</id>
-            <modules>
-                <module>camel-itest-spring-boot</module>
             </modules>
         </profile>
 

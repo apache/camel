@@ -24,17 +24,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The uniVocity Fixed Length data format is used for working with fixed length
- * flat payloads.
+ * Marshal and unmarshal Java objects from and to fixed length records using UniVocity Parsers.
  */
 @Metadata(firstVersion = "2.15.0", label = "dataformat,transformation,csv", title = "uniVocity Fixed Length")
 @XmlRootElement(name = "univocity-fixed")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityFixedWidthDataFormat extends UniVocityAbstractDataFormat {
     @XmlAttribute
-    private Boolean skipTrailingCharsUntilNewline;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String skipTrailingCharsUntilNewline;
     @XmlAttribute
-    private Boolean recordEndsOnNewline;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String recordEndsOnNewline;
     @XmlAttribute
     private String padding;
 
@@ -42,7 +43,7 @@ public class UniVocityFixedWidthDataFormat extends UniVocityAbstractDataFormat {
         super("univocity-fixed");
     }
 
-    public Boolean getSkipTrailingCharsUntilNewline() {
+    public String getSkipTrailingCharsUntilNewline() {
         return skipTrailingCharsUntilNewline;
     }
 
@@ -51,11 +52,11 @@ public class UniVocityFixedWidthDataFormat extends UniVocityAbstractDataFormat {
      * <p/>
      * The default value is false
      */
-    public void setSkipTrailingCharsUntilNewline(Boolean skipTrailingCharsUntilNewline) {
+    public void setSkipTrailingCharsUntilNewline(String skipTrailingCharsUntilNewline) {
         this.skipTrailingCharsUntilNewline = skipTrailingCharsUntilNewline;
     }
 
-    public Boolean getRecordEndsOnNewline() {
+    public String getRecordEndsOnNewline() {
         return recordEndsOnNewline;
     }
 
@@ -64,7 +65,7 @@ public class UniVocityFixedWidthDataFormat extends UniVocityAbstractDataFormat {
      * <p/>
      * The default value is false
      */
-    public void setRecordEndsOnNewline(Boolean recordEndsOnNewline) {
+    public void setRecordEndsOnNewline(String recordEndsOnNewline) {
         this.recordEndsOnNewline = recordEndsOnNewline;
     }
 

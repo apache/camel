@@ -26,7 +26,6 @@ public class TelegramApiConfig {
     private final String chatId;
 
     public TelegramApiConfig(String baseUri, int port, String authorizationToken, String chatId) {
-        super();
         this.baseUri = baseUri;
         this.port = port;
         this.authorizationToken = authorizationToken;

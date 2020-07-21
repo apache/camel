@@ -26,7 +26,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * HTTP producer concurrent test.
@@ -72,7 +75,7 @@ public class HttpProducerConcurrentTest extends BaseJettyTest {
         }
 
         // should be 'files' unique responses
-        assertEquals("Should be " + files + " unique responses", files, unique.size());
+        assertEquals(files, unique.size(), "Should be " + files + " unique responses");
         executor.shutdownNow();
     }
 

@@ -65,7 +65,7 @@ public class GenericFileMessage<T> extends DefaultMessage {
         super.copyFrom(that);
 
         if (that instanceof GenericFileMessage) {
-            setGenericFile(((GenericFileMessage) that).getGenericFile());
+            setGenericFile(((GenericFileMessage)that).getGenericFile());
         }
     }
 

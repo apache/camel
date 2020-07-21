@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.apache.http.Consts;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
@@ -30,15 +31,15 @@ import org.apache.http.HttpStatus;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
+@CamelSpringTest
 @ContextConfiguration
-public class HttpEndpointTest extends AbstractJUnit4SpringContextTests {
+public class HttpEndpointTest {
     protected static HttpTestServer localServer;
 
     @Autowired
@@ -50,9 +51,7 @@ public class HttpEndpointTest extends AbstractJUnit4SpringContextTests {
     @EndpointInject("mock:result")
     protected MockEndpoint mock;
 
-    
-
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws Exception {
         localServer = new HttpTestServer(null, null);
         localServer.register("/", new HttpRequestHandler() {
@@ -65,7 +64,7 @@ public class HttpEndpointTest extends AbstractJUnit4SpringContextTests {
         localServer.start();
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws Exception {
         if (localServer != null) {
             localServer.stop();
@@ -73,7 +72,7 @@ public class HttpEndpointTest extends AbstractJUnit4SpringContextTests {
     }
 
     @Test
-    public void testMocksIsValid() throws Exception {
+    void testMocksIsValid() throws Exception {
         mock.expectedMessageCount(1);
 
         producer.sendBody(null);

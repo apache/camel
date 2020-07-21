@@ -18,14 +18,14 @@ package org.apache.camel.itest.jms2;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class Jms2TopicSharedTest extends BaseJms2TestSupport {
 
     private static final String TEST_DESTINATION_NAME = "jms:topic:in.only.topic.consumer.test";
 
     @Test
-    public void testSharedTopic() throws Exception {
+    void testSharedTopic() throws Exception {
         final String expectedBody = "Hello World";
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -42,7 +42,7 @@ public class Jms2TopicSharedTest extends BaseJms2TestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")

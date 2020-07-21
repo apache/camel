@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class BraintreeLogHandler extends Handler {
     public static final Handler INSTANCE = new BraintreeLogHandler();
-    public static final Level DEFAULT_LOGGER_VERSION = Level.WARNING;
+    public static final Level DEFAULT_LOGGER_LEVEL = Level.WARNING;
     public static final String DEFAULT_LOGGER_NAME = "org.apache.camel.component.braintree.camel-braintree";
 
     private static final int TRACE_LEVEL_THRESHOLD = Level.FINEST.intValue();

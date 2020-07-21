@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -42,8 +41,6 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -72,7 +69,6 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
@@ -303,9 +299,9 @@ public abstract class CamelTestSupport extends TestSupport {
 
     @Before
     public void setUp() throws Exception {
-        log.info("********************************************************************************");
-        log.info("Testing: " + getTestMethodName() + "(" + getClass().getName() + ")");
-        log.info("********************************************************************************");
+        LOG.info("********************************************************************************");
+        LOG.info("Testing: " + getTestMethodName() + "(" + getClass().getName() + ")");
+        LOG.info("********************************************************************************");
 
         if (isCreateCamelContextPerClass()) {
             INSTANCE.set(this);
@@ -368,7 +364,7 @@ public abstract class CamelTestSupport extends TestSupport {
     }
 
     private void doSetUp() throws Exception {
-        log.debug("setUp test");
+        LOG.debug("setUp test");
         // jmx is enabled if we have configured to use it, or if dump route coverage is enabled (it requires JMX)
         boolean jmx = useJmx() || isRouteCoverageEnabled();
         if (jmx) {
@@ -391,7 +387,7 @@ public abstract class CamelTestSupport extends TestSupport {
         // set debugger if enabled
         if (isUseDebugger()) {
             if (context.getStatus().equals(ServiceStatus.Started)) {
-                log.info("Cannot setting the Debugger to the starting CamelContext, stop the CamelContext now.");
+                LOG.info("Cannot setting the Debugger to the starting CamelContext, stop the CamelContext now.");
                 // we need to stop the context first to setup the debugger
                 context.stop();
             }
@@ -437,7 +433,7 @@ public abstract class CamelTestSupport extends TestSupport {
         String include = getRouteFilterIncludePattern();
         String exclude = getRouteFilterExcludePattern();
         if (include != null || exclude != null) {
-            log.info("Route filtering pattern: include={}, exclude={}", include, exclude);
+            LOG.info("Route filtering pattern: include={}, exclude={}", include, exclude);
             context.getExtension(Model.class).setRouteFilterPattern(include, exclude);
         }
 
@@ -447,23 +443,23 @@ public abstract class CamelTestSupport extends TestSupport {
         if (isUseRouteBuilder()) {
             RoutesBuilder[] builders = createRouteBuilders();
             for (RoutesBuilder builder : builders) {
-                log.debug("Using created route builder: " + builder);
+                LOG.debug("Using created route builder: " + builder);
                 context.addRoutes(builder);
             }
             replaceFromEndpoints();
             boolean skip = "true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"));
             if (skip) {
-                log.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
+                LOG.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
             } else if (isUseAdviceWith()) {
-                log.info("Skipping starting CamelContext as isUseAdviceWith is set to true.");
+                LOG.info("Skipping starting CamelContext as isUseAdviceWith is set to true.");
             } else {
                 startCamelContext();
             }
         } else {
             replaceFromEndpoints();
-            log.debug("Using route builder from the created context: " + context);
+            LOG.debug("Using route builder from the created context: " + context);
         }
-        log.debug("Routing Rules are: " + context.getRoutes());
+        LOG.debug("Routing Rules are: " + context.getRoutes());
 
         assertValidContext(context);
     }
@@ -487,9 +483,9 @@ public abstract class CamelTestSupport extends TestSupport {
     public void tearDown() throws Exception {
         long time = watch.taken();
 
-        log.info("********************************************************************************");
-        log.info("Testing done: " + getTestMethodName() + "(" + getClass().getName() + ")");
-        log.info("Took: " + TimeUtils.printDuration(time) + " (" + time + " millis)");
+        LOG.info("********************************************************************************");
+        LOG.info("Testing done: " + getTestMethodName() + "(" + getClass().getName() + ")");
+        LOG.info("Took: " + TimeUtils.printDuration(time) + " (" + time + " millis)");
 
         // if we should dump route stats, then write that to a file
         if (isRouteCoverageEnabled()) {
@@ -500,7 +496,7 @@ public abstract class CamelTestSupport extends TestSupport {
             ManagedCamelContext mc = context != null ? context.getExtension(ManagedCamelContext.class) : null;
             ManagedCamelContextMBean managedCamelContext = mc != null ? mc.getManagedCamelContext() : null;
             if (managedCamelContext == null) {
-                log.warn("Cannot dump route coverage to file as JMX is not enabled. "
+                LOG.warn("Cannot dump route coverage to file as JMX is not enabled. "
                         + "Add camel-management JAR as dependency and/or override useJmx() method to enable JMX in the unit test classes.");
             } else {
                 logCoverageSummary(managedCamelContext);
@@ -513,14 +509,14 @@ public abstract class CamelTestSupport extends TestSupport {
                 file.mkdirs();
                 file = new File(dir, name);
 
-                log.info("Dumping route coverage to file: {}", file);
+                LOG.info("Dumping route coverage to file: {}", file);
                 InputStream is = new ByteArrayInputStream(combined.getBytes());
                 OutputStream os = new FileOutputStream(file, false);
                 IOHelper.copyAndCloseInput(is, os);
                 IOHelper.close(os);
             }
         }
-        log.info("********************************************************************************");
+        LOG.info("********************************************************************************");
 
         if (isCreateCamelContextPerClass()) {
             // will tear down test specially in CamelTearDownRule
@@ -618,7 +614,7 @@ public abstract class CamelTestSupport extends TestSupport {
         }
 
         builder.append(routesSummary);
-        log.info(builder.toString());
+        LOG.info(builder.toString());
     }
 
     /**
@@ -827,22 +823,7 @@ public abstract class CamelTestSupport extends TestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
         // for backwards compatibility
-        Registry registry = createRegistry();
-        if (registry instanceof FakeJndiRegistry) {
-            boolean inUse = ((FakeJndiRegistry) registry).isInUse();
-            if (!inUse) {
-                registry = null;
-            }
-        }
-        if (registry != null) {
-            String msg = "createRegistry() from camel-test is deprecated. Use createCamelRegistry if you want to control which registry to use, however"
-                    + " if you need to bind beans to the registry then this is possible already with the bind method on registry,"
-                    + " and there is no need to override this method.";
-            LOG.warn(msg);
-        } else {
-            registry = createCamelRegistry();
-        }
-
+        Registry registry = createCamelRegistry();
         CamelContext context;
         if (registry != null) {
             context = new DefaultCamelContext(registry);
@@ -867,56 +848,6 @@ public abstract class CamelTestSupport extends TestSupport {
      */
     protected Registry createCamelRegistry() throws Exception {
         return null;
-    }
-
-    /**
-     * @deprecated use createCamelRegistry if you want to control which registry to use, however
-     * if you need to bind beans to the registry then this is possible already with the bind method on registry,
-     * and there is no need to override this method.
-     */
-    @Deprecated
-    protected JndiRegistry createRegistry() throws Exception {
-        return new FakeJndiRegistry(createJndiContext());
-    }
-
-    /**
-     * @deprecated use createCamelRegistry if you want to control which registry to use, however
-     * if you need to bind beans to the registry then this is possible already with the bind method on registry,
-     * and there is no need to use JndiRegistry and override this method.
-     */
-    @Deprecated
-    protected Context createJndiContext() throws Exception {
-        Properties properties = new Properties();
-
-        // jndi.properties is optional
-        InputStream in = getClass().getClassLoader().getResourceAsStream("jndi.properties");
-        if (in != null) {
-            log.debug("Using jndi.properties from classpath root");
-            properties.load(in);
-        } else {
-            properties.put("java.naming.factory.initial", "org.apache.camel.support.jndi.CamelInitialContextFactory");
-        }
-        return new InitialContext(new Hashtable<>(properties));
-    }
-
-    private class FakeJndiRegistry extends JndiRegistry {
-
-        private boolean inUse;
-
-        public FakeJndiRegistry(Context context) {
-            super(context);
-        }
-
-        @Override
-        public void bind(String name, Object object) {
-            super.bind(name, object);
-            inUse = true;
-        }
-
-        public boolean isInUse() {
-            // only if the end user bind beans then its in use
-            return inUse;
-        }
     }
 
     /**

@@ -72,7 +72,6 @@ public class DirectVmComponent extends DefaultComponent {
         answer.setBlock(block);
         answer.setTimeout(timeout);
         answer.setPropagateProperties(propagateProperties);
-        answer.configureProperties(parameters);
         setProperties(answer, parameters);
         return answer;
     }

@@ -23,6 +23,7 @@ import java.net.URISyntaxException;
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400ConnectionPool;
 import com.ibm.as400.access.ConnectionPoolException;
+import com.ibm.as400.access.MessageQueue;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -56,6 +57,35 @@ public class Jt400Configuration {
          * Using <code>byte[]</code> for transferring data
          */
         binary
+    }
+
+    public enum MessageAction {
+        /**
+         * Keep the message in the message queue and mark it as an old message
+         */
+        OLD(MessageQueue.OLD),
+        /**
+         * Remove the message from the message queue
+         */
+        REMOVE(MessageQueue.REMOVE),
+        /**
+         * Keep the message in the message queue without changing its new or old designation
+         */
+        SAME(MessageQueue.SAME);
+
+        private String jt400Value;
+        private MessageAction(final String jt400Value) {
+            this.jt400Value = jt400Value;
+        }
+        /**
+         * Returns the string literal value that can be used for
+         * APIs from the JTOpen (jt400) libraries
+         *
+         * @return a value suitable for use with jt400 libraries
+         */
+        public String getJt400Value() {
+            return jt400Value;
+        }
     }
 
     /**
@@ -119,6 +149,9 @@ public class Jt400Configuration {
     @UriParam(label = "producer")
     private String procedureName;
 
+    @UriParam(label = "consumer", defaultValue = "OLD")
+    private MessageAction messageAction = MessageAction.OLD;
+
     public Jt400Configuration(String endpointUri, AS400ConnectionPool connectionPool) throws URISyntaxException {
         ObjectHelper.notNull(endpointUri, "endpointUri", this);
         ObjectHelper.notNull(connectionPool, "connectionPool", this);
@@ -145,7 +178,7 @@ public class Jt400Configuration {
     }
 
     /**
-     * Returns the name of the AS/400 system.
+     * Returns the name of the IBM i system.
      */
     public String getSystemName() {
         return systemName;
@@ -156,7 +189,7 @@ public class Jt400Configuration {
     }
 
     /**
-     * Returns the ID of the AS/400 user.
+     * Returns the ID of the IBM i user.
      */
     public String getUserID() {
         return userID;
@@ -167,7 +200,7 @@ public class Jt400Configuration {
     }
 
     /**
-     * Returns the password of the AS/400 user.
+     * Returns the password of the IBM i user.
      */
     public String getPassword() {
         return password;
@@ -192,7 +225,7 @@ public class Jt400Configuration {
     // Options
     
     /**
-     * Returns the CCSID to use for the connection with the AS/400 system.
+     * Returns the CCSID to use for the connection with the IBM i system.
      * Returns -1 if the CCSID to use is the default system CCSID.
      */
     public int getCssid() {
@@ -200,7 +233,7 @@ public class Jt400Configuration {
     }
     
     /**
-     * Sets the CCSID to use for the connection with the AS/400 system.
+     * Sets the CCSID to use for the connection with the IBM i system.
      */
     public void setCcsid(int ccsid) {
         this.ccsid = (ccsid < 0) ? DEFAULT_SYSTEM_CCSID : ccsid;
@@ -222,7 +255,7 @@ public class Jt400Configuration {
     }
     
     /**
-     * Returns whether AS/400 prompting is enabled in the environment running
+     * Returns whether IBM i prompting is enabled in the environment running
      * Camel.
      */
     public boolean isGuiAvailable() {
@@ -230,7 +263,7 @@ public class Jt400Configuration {
     }
     
     /**
-     * Sets whether AS/400 prompting is enabled in the environment running
+     * Sets whether IBM i prompting is enabled in the environment running
      * Camel.
      */
     public void setGuiAvailable(boolean guiAvailable) {
@@ -283,7 +316,7 @@ public class Jt400Configuration {
     }
 
     /**
-     * Whether connections to AS/400 are secured with SSL.
+     * Whether connections to IBM i are secured with SSL.
      */
     public void setSecured(boolean secured) {
         this.secured = secured;
@@ -301,7 +334,7 @@ public class Jt400Configuration {
     }
 
     /**
-     * Specifies the fields (program parameters) length as in the AS/400 program definition.
+     * Specifies the fields (program parameters) length as in the IBM i program definition.
      */
     public void setOutputFieldsLengthArray(Integer[] outputFieldsLengthArray) {
         this.outputFieldsLengthArray = outputFieldsLengthArray;
@@ -327,6 +360,19 @@ public class Jt400Configuration {
      */
     public void setProcedureName(String procedureName) {
         this.procedureName = procedureName;
+    }
+
+    public MessageAction getMessageAction() {
+        return messageAction;
+    }
+
+    /**
+     * Action to be taken on messages when read from a message queue.
+     * Messages can be marked as old ("OLD"), removed from the queue
+     * ("REMOVE"), or neither ("SAME").
+     */
+    public void setMessageAction(MessageAction messageAction) {
+        this.messageAction = messageAction;
     }
 
     public void setOutputFieldsIdx(String outputFieldsIdx) {
@@ -380,11 +426,11 @@ public class Jt400Configuration {
             try {
                 system.setGuiAvailable(guiAvailable);
             } catch (PropertyVetoException e) {
-                LOG.warn("Failed to disable AS/400 prompting in the environment running Camel. This exception will be ignored.", e);
+                LOG.warn("Failed to disable IBM i prompting in the environment running Camel. This exception will be ignored.", e);
             }
             return system; // Not null here.
         } catch (ConnectionPoolException e) {
-            throw new RuntimeCamelException(String.format("Unable to obtain an AS/400 connection for system name '%s' and user ID '%s'", systemName, userID), e);
+            throw new RuntimeCamelException(String.format("Unable to obtain an IBM i connection for system name '%s' and user ID '%s'", systemName, userID), e);
         } catch (PropertyVetoException e) {
             throw new RuntimeCamelException("Unable to set the CSSID to use with " + system, e);
         }

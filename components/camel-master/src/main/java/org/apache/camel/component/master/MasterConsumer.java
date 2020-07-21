@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedResource(description = "Managed Master Consumer")
 public class MasterConsumer extends DefaultConsumer {
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(MasterConsumer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(MasterConsumer.class);
 
     private final CamelClusterService clusterService;
     private final MasterEndpoint masterEndpoint;
@@ -65,7 +65,7 @@ public class MasterConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        LOGGER.debug("Using ClusterService instance {} (id={}, type={})", clusterService, clusterService.getId(), clusterService.getClass().getName());
+        LOG.debug("Using ClusterService instance {} (id={}, type={})", clusterService, clusterService.getId(), clusterService.getClass().getName());
 
         view = clusterService.getView(masterEndpoint.getNamespace());
         view.addEventListener(leadershipListener);
@@ -132,7 +132,7 @@ public class MasterConsumer extends DefaultConsumer {
         ServiceHelper.startService(delegatedEndpoint);
         ServiceHelper.startService(delegatedConsumer);
 
-        LOGGER.info("Leadership taken: consumer started: {}", delegatedEndpoint);
+        LOG.info("Leadership taken: consumer started: {}", delegatedEndpoint);
     }
 
     private synchronized void onLeadershipLost() throws Exception {
@@ -141,7 +141,7 @@ public class MasterConsumer extends DefaultConsumer {
 
         delegatedConsumer = null;
 
-        LOGGER.info("Leadership lost: consumer stopped: {}", delegatedEndpoint);
+        LOG.info("Leadership lost: consumer stopped: {}", delegatedEndpoint);
     }
 
     // **************************************

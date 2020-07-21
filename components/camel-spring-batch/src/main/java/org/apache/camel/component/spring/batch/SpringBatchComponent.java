@@ -19,6 +19,7 @@ package org.apache.camel.component.spring.batch;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.springframework.batch.core.configuration.JobRegistry;
@@ -32,7 +33,9 @@ public class SpringBatchComponent extends DefaultComponent {
     private JobLauncher defaultResolvedJobLauncher;
     private Map<String, JobLauncher> allResolvedJobLaunchers;
 
+    @Metadata
     private JobLauncher jobLauncher;
+    @Metadata
     private JobRegistry jobRegistry;
 
     public SpringBatchComponent() {
@@ -47,7 +50,8 @@ public class SpringBatchComponent extends DefaultComponent {
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
         defaultResolvedJobLauncher = getCamelContext().getRegistry().lookupByNameAndType(DEFAULT_JOB_LAUNCHER_REF_NAME, JobLauncher.class);
         allResolvedJobLaunchers = getCamelContext().getRegistry().findByTypeWithName(JobLauncher.class);
     }

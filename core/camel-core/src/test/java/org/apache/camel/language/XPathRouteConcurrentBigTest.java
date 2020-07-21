@@ -18,7 +18,7 @@ package org.apache.camel.language;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,17 +61,17 @@ public class XPathRouteConcurrentBigTest extends ContextTestSupport {
 
         for (int i = 0; i < messageCount; i++) {
             switch (i % 3) {
-            case 0:
-                template.sendBody("seda:foo", XMLTEST1);
-                break;
-            case 1:
-                template.sendBody("seda:foo", XMLTEST2);
-                break;
-            case 2:
-                template.sendBody("seda:foo", XMLTEST3);
-                break;
-            default:
-                break;
+                case 0:
+                    template.sendBody("seda:foo", XMLTEST1);
+                    break;
+                case 1:
+                    template.sendBody("seda:foo", XMLTEST2);
+                    break;
+                case 2:
+                    template.sendBody("seda:foo", XMLTEST3);
+                    break;
+                default:
+                    break;
             }
         }
 

@@ -1,12 +1,17 @@
 [[jdbc-component]]
 = JDBC Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jdbc/src/main/docs/jdbc-component.adoc
+:docTitle: JDBC
+:artifactId: camel-jdbc
+:description: Access databases through SQL and JDBC.
+:since: 1.2
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 1.2*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The JDBC component enables you to access databases through JDBC, where
 SQL queries (SELECT) and operations (INSERT, UPDATE, etc) are sent in
@@ -53,8 +58,8 @@ The JDBC component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *dataSource* (producer) | To use the DataSource instance instead of looking up the data source by name from the registry. |  | DataSource
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -91,14 +96,14 @@ with the following path and query parameters:
 | *allowNamedParameters* (producer) | Whether to allow using named parameters in the queries. | true | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *outputClass* (producer) | Specify the full package and class name to use as conversion when outputType=SelectOne or SelectList. |  | String
-| *outputType* (producer) | Determines the output the producer should use. | SelectList | JdbcOutputType
+| *outputType* (producer) | Determines the output the producer should use. The value can be one of: SelectOne, SelectList, StreamList | SelectList | JdbcOutputType
 | *parameters* (producer) | Optional parameters to the java.sql.Statement. For example to set maxRows, fetchSize etc. |  | Map
 | *readSize* (producer) | The default maximum number of rows that can be read by a polling query. The default value is 0. |  | int
 | *resetAutoCommit* (producer) | Camel will set the autoCommit on the JDBC connection to be false, commit the change after executed the statement and reset the autoCommit flag of the connection at the end, if the resetAutoCommit is true. If the JDBC connection doesn't support to reset the autoCommit flag, you can set the resetAutoCommit flag to be false, and Camel will not try to reset the autoCommit flag. When used with XA transactions you most likely need to set it to false so that the transaction manager is in charge of committing this tx. | true | boolean
 | *transacted* (producer) | Whether transactions are in use. | false | boolean
 | *useGetBytesForBlob* (producer) | To read BLOB columns as bytes instead of string data. This may be needed for certain databases such as Oracle where you must read BLOB columns as bytes. | false | boolean
 | *useHeadersAsParameters* (producer) | Set this option to true to use the prepareStatementStrategy with named parameters. This allows to define queries with named placeholders, and use headers with the dynamic values for the query placeholders. | false | boolean
-| *useJDBC4ColumnNameAnd LabelSemantics* (producer) | Sets whether to use JDBC 4 or JDBC 3.0 or older semantic when retrieving column name. JDBC 4.0 uses columnLabel to get the column name where as JDBC 3.0 uses both columnName or columnLabel. Unfortunately JDBC drivers behave differently so you can use this option to work out issues around your JDBC driver if you get problem using this component This option is default true. | true | boolean
+| *useJDBC4ColumnNameAndLabel Semantics* (producer) | Sets whether to use JDBC 4 or JDBC 3.0 or older semantic when retrieving column name. JDBC 4.0 uses columnLabel to get the column name where as JDBC 3.0 uses both columnName or columnLabel. Unfortunately JDBC drivers behave differently so you can use this option to work out issues around your JDBC driver if you get problem using this component This option is default true. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *beanRowMapper* (advanced) | To use a custom org.apache.camel.component.jdbc.BeanRowMapper when using outputClass. The default implementation will lower case the row names and skip underscores, and dashes. For example CUST_ID is mapped as custId. |  | BeanRowMapper
 | *prepareStatementStrategy* (advanced) | Allows the plugin to use a custom org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy to control preparation of the query and prepared statement. |  | JdbcPrepareStatementStrategy
@@ -106,36 +111,6 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-jdbc-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 5 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.jdbc.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.jdbc.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.jdbc.data-source* | To use the DataSource instance instead of looking up the data source by name from the registry. The option is a javax.sql.DataSource type. |  | String
-| *camel.component.jdbc.enabled* | Whether to enable auto configuration of the jdbc component. This is enabled by default. |  | Boolean
-| *camel.component.jdbc.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-|===
-// spring-boot-auto-configure options: END
 
 == Result
 
@@ -220,6 +195,80 @@ bound in the previous step:
 
 Or you can create a `DataSource` in Spring like this:
 
+With spring xml:
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans                                                                                                                                                                                                                                                         
+                           http://www.springframework.org/schema/beans/spring-beans.xsd                                                                                                                                                                                                                                        
+                           http://camel.apache.org/schema/spring                                                                                                                                                                                                                                                               
+                           http://camel.apache.org/schema/spring/camel-spring.xsd                                                                                                                                                                                                                                              
+                           http://www.springframework.org/schema/jdbc                                                                                                                                                                                                                                                          
+                           http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd                                                                                                                                                                                                                                      
+                           http://activemq.apache.org/schema/core                                                                                                                                                                                                                                                              
+                           http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+  <!--  PROPERTY PLACEHOLDERS  -->
+  <!--                                                                                                                                                                                                                                                                                                                         
+       You may use property placeholders data store configuration                                                                                                                                                                                                                                                              
+       for to do that, you can resolve this properties with srping                                                                                                                                                                                                                                                             
+  -->
+  <bean id="db" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
+    <property name="location" value="classpath:db.properties"/>
+  </bean>
+
+  <!-- DATA STORE CONFIGURATION -->
+
+  <!--                                                                                                                                                                                                                                                                                                                         
+       In this example the DataStore is a postgres database, you can change the jdbc connector.                                                                                                                                                                                                                                
+       Also, the property testWhileIdle and validationQuery keep connection open.                                                                                                                                                                                                                                              
+  -->                                                                                                                                                                                                                                                                                                                          
+  
+  <bean id="DataStore" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    <property name="driverClassName" value="org.postgresql.Driver" />
+    <property name="url" value="jdbc:postgresql://${DB_HOST}/${DB_NAME}"/>
+    <property name="username" value="${DB_USER}" />
+    <property name="password" value="${DB_PASS}" />
+    <property name="initialSize" value="4"/>
+    <property name="maxActive" value="15"/>
+    <property name="maxIdle" value="16"/>
+    <property name="minIdle" value="8"/>
+    <property name="timeBetweenEvictionRunsMillis" value="1800"/>
+    <property name="minEvictableIdleTimeMillis" value="1800"/>
+    <property name="testOnBorrow" value="true"/>
+    <property name="testWhileIdle" value="true"/>
+    <property name="testOnReturn" value="true"/>
+    <property name="validationQuery" value="SELECT 1"/>
+    <property name="maxWait"  value="1000"/>
+    <property name="removeAbandoned" value="true"/>
+    <property name="logAbandoned" value="true"/>
+    <property name="removeAbandonedTimeout" value="30000"/>
+  </bean>
+
+  <!-- You shuould write a file with an script to initialize your database.                                                                                                                                                                                                                                                    
+  If you have nothing to do with your database, then you can write just a                                                                                                                                                                                                                                                      
+  validation query like 'SELECT *; '-->
+  <jdbc:initialize-database data-source="DataStore" enabled="true">
+    <jdbc:script location="classpath:datastore-schema.sql" />
+  </jdbc:initialize-database>
+
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+
+    <!-- CAMEL ROUTE -->
+    <route id="Reporter">
+      <from uri="direct:to-datastore"/>
+      <!-- this example is done with camel-jdbc but you can make it work with camel-sql -->
+      <setBody>
+        <simple>insert into test '${body[value]}'</simple>
+      </setBody>
+      <to uri="jdbc:DataStore"/>
+    </route>                                         
+----
+
 We create an endpoint, add the SQL query to the body of the IN message,
 and then send the exchange. The result of the query is returned in the
 OUT body:
@@ -273,3 +322,5 @@ from("timer://MoveNewCustomersEveryHour?period=3600000")
         .to("jdbc:testdb");
 ----
 
+
+include::camel-spring-boot::page$jdbc-starter.adoc[]

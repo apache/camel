@@ -36,12 +36,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jira.JiraComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.apache.camel.component.jira.JiraConstants.JIRA;
 import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
@@ -54,7 +54,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class NewCommentsConsumerTest extends CamelTestSupport {
 
     private static List<Issue> issues = new ArrayList<>();
@@ -81,7 +81,7 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
         registry.bind(JIRA_REST_CLIENT_FACTORY, jiraRestClientFactory);
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeAll() {
         issues.add(createIssueWithComments(1L, 1));
         issues.add(createIssueWithComments(2L, 1));

@@ -37,10 +37,11 @@ public class RabbitMQDeclareSupport {
     }
 
     private void declareAndBindDeadLetterExchangeWithQueue(final Channel channel) throws IOException {
-        if (endpoint.getDeadLetterExchange() != null) {
-            // TODO Do we need to setup the args for the DeadLetter?
+        if (endpoint.getDeadLetterExchange() != null && !endpoint.isSkipDlqDeclare()) {
+            Map<String, Object> queueArgs = new HashMap<>(endpoint.getDlqArgs());
+            formatSpecialQueueArguments(queueArgs);
             declareExchange(channel, endpoint.getDeadLetterExchange(), endpoint.getDeadLetterExchangeType(), Collections.<String, Object> emptyMap());
-            declareAndBindQueue(channel, endpoint.getDeadLetterQueue(), endpoint.getDeadLetterExchange(), endpoint.getDeadLetterRoutingKey(), null, null);
+            declareAndBindQueue(channel, endpoint.getDeadLetterQueue(), endpoint.getDeadLetterExchange(), endpoint.getDeadLetterRoutingKey(), queueArgs, endpoint.getDlqBindingArgs());
         }
     }
 
@@ -68,22 +69,22 @@ public class RabbitMQDeclareSupport {
         // some arguments must be in numeric values so we need to fix this
         Object queueLengthLimit = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_LENGTH_LIMIT_KEY);
         if (queueLengthLimit instanceof String) {
-            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_LENGTH_LIMIT_KEY, Long.parseLong((String) queueLengthLimit));
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_LENGTH_LIMIT_KEY, Long.parseLong((String)queueLengthLimit));
         }
-        
+
         Object queueMaxPriority = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_MAX_PRIORITY_KEY);
         if (queueMaxPriority instanceof String) {
-            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_MAX_PRIORITY_KEY, Integer.parseInt((String) queueMaxPriority));
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_MAX_PRIORITY_KEY, Integer.parseInt((String)queueMaxPriority));
         }
 
         Object queueMessageTtl = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_MESSAGE_TTL_KEY);
         if (queueMessageTtl instanceof String) {
-            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_MESSAGE_TTL_KEY, Long.parseLong((String) queueMessageTtl));
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_MESSAGE_TTL_KEY, Long.parseLong((String)queueMessageTtl));
         }
 
         Object queueExpiration = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY);
         if (queueExpiration instanceof String) {
-            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY, Long.parseLong((String) queueExpiration));
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY, Long.parseLong((String)queueExpiration));
         }
     }
 

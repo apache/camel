@@ -24,9 +24,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
     private static int port = AvailablePortFinder.getNextAvailable();
     private static final String RESPONSE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
@@ -34,11 +39,7 @@ public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
         + "<return xmlns=\"http://cxf.component.camel.apache.org/\">echo Hello World!</return>"
         + "</ns1:echoResponse></soap:Body></soap:Envelope>";
 
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -47,8 +48,8 @@ public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
                     .process(new Processor() {
 
                         public void process(Exchange exchange) throws Exception {
-                            assertNull("We should not get this header", exchange.getIn().getHeader("CamelCxfTest"));
-                            assertNull("We should not get this header", exchange.getIn().getHeader("Transfer-Encoding"));
+                            assertNull(exchange.getIn().getHeader("CamelCxfTest"), "We should not get this header");
+                            assertNull(exchange.getIn().getHeader("Transfer-Encoding"), "We should not get this header");
                             //check the headers
                             exchange.getOut().setHeader("Content-Type", "text/xml");
                             exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
@@ -84,7 +85,7 @@ public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
                                               + "?serviceClass=org.apache.camel.component.cxf.HelloService");
         org.apache.camel.Message out = exchange.getOut();
         String result = out.getBody(String.class);        
-        assertEquals("reply body on Camel", "echo " + "Hello World!", result); 
+        assertEquals("echo " + "Hello World!", result, "reply body on Camel");
     }
 
 }

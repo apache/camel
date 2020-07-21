@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.mail;
 
 import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -26,24 +27,25 @@ import org.apache.camel.spi.UriPath;
  * Component configuration for GoogleMail component.
  */
 @UriParams
+@Configurer
 public class GoogleMailConfiguration {
     @UriPath @Metadata(required = true)
     private GoogleMailApiName apiName;
 
-    @UriPath(enums = "attachments,create,delete,get,getProfile,gmailImport,insert,list,modify,patch,send,trash,untrash,update")
+    @UriPath(enums = "attachments,create,delete,get,getProfile,gmailImport,insert,list,modify,patch,send,stop,trash,untrash,update,watch")
     @Metadata(required = true)
     private String methodName;
 
     @UriParam
     private String clientId;
 
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String clientSecret;
 
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessToken;
 
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String refreshToken;
 
     @UriParam

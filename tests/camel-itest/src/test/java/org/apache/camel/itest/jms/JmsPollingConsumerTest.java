@@ -23,15 +23,16 @@ import org.apache.camel.Handler;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
+@CamelSpringTest
 @ContextConfiguration
-public class JmsPollingConsumerTest extends AbstractJUnit4SpringContextTests {
+public class JmsPollingConsumerTest {
 
     @Produce("activemq:startConsumer")
     protected ProducerTemplate startConsumer;
@@ -52,8 +53,8 @@ public class JmsPollingConsumerTest extends AbstractJUnit4SpringContextTests {
      */
     @Test
     @DirtiesContext
-    @Ignore("CAMEL-2305")
-    public void testConsumerFromJMSRoute() throws Exception {
+    @Disabled("CAMEL-2305")
+    void testConsumerFromJMSRoute() throws Exception {
         result.expectedBodiesReceived("foobar");
 
         queue.sendBody("foo");
@@ -71,7 +72,7 @@ public class JmsPollingConsumerTest extends AbstractJUnit4SpringContextTests {
      */
     @Test
     @DirtiesContext
-    public void testConsumerFromDirectRoute() throws Exception {
+    void testConsumerFromDirectRoute() throws Exception {
         result.expectedBodiesReceived("foobar");
 
         queue.sendBody("foo");

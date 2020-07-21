@@ -36,7 +36,7 @@ public class FtpConsumerMoveExpressionTest extends FtpServerTestSupport {
 
     @BindToRegistry("myguidgenerator")
     private MyGuidGenerator guid = new MyGuidGenerator();
-    
+
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/filelanguage?password=admin&delay=5000";
     }

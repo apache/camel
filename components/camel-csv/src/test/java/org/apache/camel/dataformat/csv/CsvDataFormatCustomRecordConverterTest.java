@@ -22,10 +22,13 @@ import java.util.stream.Stream;
 
 import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.camel.util.CastUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test cases for {@link CsvRecordConverter}.
@@ -33,7 +36,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class CsvDataFormatCustomRecordConverterTest extends CamelSpringTestSupport {
 
     @Test
-    public void unmarshalTest() throws InterruptedException {
+    void unmarshalTest() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:unmarshaled");
         mock.expectedMessageCount(1);
         template.sendBody("direct:unmarshal", getData());

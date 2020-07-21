@@ -38,11 +38,17 @@ import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test class for {@link org.apache.camel.component.olingo2.api.Olingo2App}
@@ -73,13 +79,13 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
         setDefaultTestProperty("serviceUri", "http://localhost:" + PORT + "/MyFormula.svc");
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws Exception {
         startServers(PORT);
         Olingo2SampleServer.generateSampleData(TEST_SERVICE_URL);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() throws Exception {
         if (server != null) {
             server.stop();
@@ -99,7 +105,7 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
         // read ServiceDocument
         final ServiceDocument document = requestBodyAndHeaders("direct:READSERVICEDOC", null, headers);
         assertNotNull(document);
-        assertFalse("ServiceDocument entity sets", document.getEntitySetsInfo().isEmpty());
+        assertFalse(document.getEntitySetsInfo().isEmpty(), "ServiceDocument entity sets");
         LOG.info("Service document has {} entity sets", document.getEntitySetsInfo().size());
 
         // parameter type is java.util.Map
@@ -111,7 +117,7 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
         final ODataFeed manufacturers = requestBodyAndHeaders("direct:READFEED", null, headers);
         assertNotNull(manufacturers);
         final List<ODataEntry> manufacturersEntries = manufacturers.getEntries();
-        assertFalse("Manufacturers empty entries", manufacturersEntries.isEmpty());
+        assertFalse(manufacturersEntries.isEmpty(), "Manufacturers empty entries");
         LOG.info("Manufacturers feed has {} entries", manufacturersEntries.size());
 
         // read ODataEntry
@@ -120,7 +126,7 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
         final ODataEntry manufacturer = requestBodyAndHeaders("direct:READENTRY", null, headers);
         assertNotNull(manufacturer);
         final Map<String, Object> properties = manufacturer.getProperties();
-        assertEquals("Manufacturer Id", "1", properties.get(ID_PROPERTY));
+        assertEquals("1", properties.get(ID_PROPERTY), "Manufacturer Id");
         LOG.info("Manufacturer: {}", properties);
     }
 
@@ -130,9 +136,9 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
         Map<String, Object> address;
 
         final ODataEntry manufacturer = requestBody("direct:CREATE", data);
-        assertNotNull("Created Manufacturer", manufacturer);
+        assertNotNull(manufacturer, "Created Manufacturer");
         final Map<String, Object> properties = manufacturer.getProperties();
-        assertEquals("Created Manufacturer Id", "123", properties.get(ID_PROPERTY));
+        assertEquals("123", properties.get(ID_PROPERTY), "Created Manufacturer Id");
         LOG.info("Created Manufacturer: {}", properties);
 
         // update
@@ -141,14 +147,14 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
         address.put("Street", "Main Street");
 
         HttpStatusCodes status = requestBody("direct:UPDATE", data);
-        assertNotNull("Update status", status);
-        assertEquals("Update status", HttpStatusCodes.NO_CONTENT.getStatusCode(), status.getStatusCode());
+        assertNotNull(status, "Update status");
+        assertEquals(HttpStatusCodes.NO_CONTENT.getStatusCode(), status.getStatusCode(), "Update status");
         LOG.info("Update status: {}", status);
 
         // delete
         status = requestBody("direct:DELETE", null);
-        assertNotNull("Delete status", status);
-        assertEquals("Delete status", HttpStatusCodes.NO_CONTENT.getStatusCode(), status.getStatusCode());
+        assertNotNull(status, "Delete status");
+        assertEquals(HttpStatusCodes.NO_CONTENT.getStatusCode(), status.getStatusCode(), "Delete status");
         LOG.info("Delete status: {}", status);
     }
 
@@ -206,8 +212,8 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
 
         // execute batch request
         final List<Olingo2BatchResponse> responseParts = requestBody("direct:BATCH", batchParts);
-        assertNotNull("Batch response", responseParts);
-        assertEquals("Batch responses expected", 9, responseParts.size());
+        assertNotNull(responseParts, "Batch response");
+        assertEquals(9, responseParts.size(), "Batch responses expected");
 
         final Edm edm = (Edm)responseParts.get(0).getBody();
         assertNotNull(edm);

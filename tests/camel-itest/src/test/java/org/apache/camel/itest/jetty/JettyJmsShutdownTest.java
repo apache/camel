@@ -22,14 +22,17 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@CamelSpringTest
 @ContextConfiguration
-public class JettyJmsShutdownTest extends AbstractJUnit4SpringContextTests {
+public class JettyJmsShutdownTest {
     private static int port = AvailablePortFinder.getNextAvailable();
     private static final String URL = "http://localhost:" + port + "/test";
     static {
@@ -45,7 +48,7 @@ public class JettyJmsShutdownTest extends AbstractJUnit4SpringContextTests {
     protected ProducerTemplate template;
 
     @Test
-    public void testShutdown() throws Exception {
+    void testShutdown() throws Exception {
         Future<String> reply1 = template.asyncRequestBody(URL, "World", String.class);
         Future<String> reply2 = template.asyncRequestBody(URL, "Camel", String.class);
         Future<String> reply3 = template.asyncRequestBody(URL, "Tiger", String.class);
@@ -55,9 +58,9 @@ public class JettyJmsShutdownTest extends AbstractJUnit4SpringContextTests {
         // shutdown while in progress
         camelContext.stop();
 
-        Assert.assertEquals("Bye World", reply1.get(5, TimeUnit.SECONDS));
-        Assert.assertEquals("Bye Camel", reply2.get(5, TimeUnit.SECONDS));
-        Assert.assertEquals("Bye Tiger", reply3.get(5, TimeUnit.SECONDS));
+        assertEquals("Bye World", reply1.get(5, TimeUnit.SECONDS));
+        assertEquals("Bye Camel", reply2.get(5, TimeUnit.SECONDS));
+        assertEquals("Bye Tiger", reply3.get(5, TimeUnit.SECONDS));
     }
 
 }

@@ -25,7 +25,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.impl.converter.StaticMethodTypeConverter;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Testing for CAMEL-5002
@@ -61,7 +64,7 @@ public class TypeConverterConcurrencyIssueTest extends ContextTestSupport {
             });
         }
 
-        assertTrue("The expected mandatory conversions failed!", latch.await(1, TimeUnit.MINUTES));
+        assertTrue(latch.await(1, TimeUnit.MINUTES), "The expected mandatory conversions failed!");
         log.info("Took {} millis to convert {} objects", watch.taken(), size);
     }
 

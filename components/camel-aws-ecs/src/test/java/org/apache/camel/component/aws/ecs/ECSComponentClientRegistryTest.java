@@ -16,8 +16,13 @@
  */
 package org.apache.camel.component.aws.ecs;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ECSComponentClientRegistryTest extends CamelTestSupport {
 
@@ -32,10 +37,33 @@ public class ECSComponentClientRegistryTest extends CamelTestSupport {
         assertNotNull(endpoint.getConfiguration().getEcsClient());
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithMinimalECSClientMisconfiguration() throws Exception {
 
         ECSComponent component = context.getComponent("aws-ecs", ECSComponent.class);
-        ECSEndpoint endpoint = (ECSEndpoint)component.createEndpoint("aws-ecs://TestDomain");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("aws-ecs://TestDomain"));
+    }
+    
+    @Test
+    public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
+
+        AmazonECSClientMock clientMock = new AmazonECSClientMock();
+        context.getRegistry().bind("amazonEcsClient", clientMock);
+        ECSComponent component = context.getComponent("aws-ecs", ECSComponent.class);
+        ECSEndpoint endpoint = (ECSEndpoint)component.createEndpoint("aws-ecs://TestDomain?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
+
+        assertNotSame(clientMock, endpoint.getConfiguration().getEcsClient());
+    }
+    
+    @Test
+    public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
+
+        AmazonECSClientMock clientMock = new AmazonECSClientMock();
+        context.getRegistry().bind("amazonEcsClient", clientMock);
+        ECSComponent component = context.getComponent("aws-ecs", ECSComponent.class);
+        ECSEndpoint endpoint = (ECSEndpoint)component.createEndpoint("aws-ecs://TestDomain?accessKey=xxx&secretKey=yyy");
+
+        assertSame(clientMock, endpoint.getConfiguration().getEcsClient());
     }
 }

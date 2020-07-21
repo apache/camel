@@ -34,7 +34,9 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StaxConverterTest extends ContextTestSupport {
 
@@ -110,7 +112,7 @@ public class StaxConverterTest extends ContextTestSupport {
             result = result.replace('\'', '"');
         }
         boolean equals = TEST_XML_WITH_XML_HEADER.equals(result) || TEST_XML_WITH_XML_HEADER_ISO_8859_1.equals(result);
-        assertTrue("Should match header", equals);
+        assertTrue(equals, "Should match header");
     }
 
     @Test
@@ -133,23 +135,23 @@ public class StaxConverterTest extends ContextTestSupport {
             while (reader.hasNext()) {
                 reader.next();
                 switch (reader.getEventType()) {
-                case XMLStreamConstants.START_DOCUMENT:
-                    writer.writeStartDocument();
-                    break;
-                case XMLStreamConstants.END_DOCUMENT:
-                    writer.writeEndDocument();
-                    break;
-                case XMLStreamConstants.START_ELEMENT:
-                    writer.writeStartElement(reader.getName().getLocalPart());
-                    break;
-                case XMLStreamConstants.CHARACTERS:
-                    writer.writeCharacters(reader.getText());
-                    break;
-                case XMLStreamConstants.END_ELEMENT:
-                    writer.writeEndElement();
-                    break;
-                default:
-                    break;
+                    case XMLStreamConstants.START_DOCUMENT:
+                        writer.writeStartDocument();
+                        break;
+                    case XMLStreamConstants.END_DOCUMENT:
+                        writer.writeEndDocument();
+                        break;
+                    case XMLStreamConstants.START_ELEMENT:
+                        writer.writeStartElement(reader.getName().getLocalPart());
+                        break;
+                    case XMLStreamConstants.CHARACTERS:
+                        writer.writeCharacters(reader.getText());
+                        break;
+                    case XMLStreamConstants.END_ELEMENT:
+                        writer.writeEndElement();
+                        break;
+                    default:
+                        break;
                 }
             }
         } finally {

@@ -21,6 +21,7 @@ import java.util.Map;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import org.apache.camel.AsyncEndpoint;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -32,20 +33,25 @@ import org.apache.camel.component.netty.NettyEndpoint;
 import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.SynchronousDelegateProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Netty HTTP server and client using the Netty 4.x library.
+ * Netty HTTP server and client using the Netty 4.x.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "netty-http", extendsScheme = "netty", title = "Netty HTTP",
-        syntax = "netty-http:protocol:host:port/path",  label = "http", lenientProperties = true,
-        excludeProperties = "textline,delimiter,autoAppendDelimiter,decoderMaxLineLength,encoding,allowDefaultCodec,udpConnectionlessSending,networkInterface"
+        syntax = "netty-http:protocol:host:port/path",  category = {Category.NETWORKING, Category.HTTP}, lenientProperties = true)
+@Metadata(excludeProperties = "textline,delimiter,autoAppendDelimiter,decoderMaxLineLength,encoding,allowDefaultCodec,udpConnectionlessSending,networkInterface"
                 + ",clientMode,reconnect,reconnectInterval,useByteBuf,udpByteArrayCodec,broadcast,correlationManager")
 public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);
 
     @UriParam
     private NettyHttpConfiguration configuration;
@@ -85,13 +91,13 @@ public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, H
 
         if (nettySharedHttpServer != null) {
             answer.setNettyServerBootstrapFactory(nettySharedHttpServer.getServerBootstrapFactory());
-            log.info("NettyHttpConsumer: {} is using NettySharedHttpServer on port: {}", answer, nettySharedHttpServer.getPort());
+            LOG.info("NettyHttpConsumer: {} is using NettySharedHttpServer on port: {}", answer, nettySharedHttpServer.getPort());
         } else {
             // reuse pipeline factory for the same address
             HttpServerBootstrapFactory factory = getComponent().getOrCreateHttpNettyServerBootstrapFactory(answer);
             // force using our server bootstrap factory
             answer.setNettyServerBootstrapFactory(factory);
-            log.debug("Created NettyHttpConsumer: {} using HttpServerBootstrapFactory: {}", answer, factory);
+            LOG.debug("Created NettyHttpConsumer: {} using HttpServerBootstrapFactory: {}", answer, factory);
         }
         return answer;
     }
@@ -248,8 +254,8 @@ public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, H
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         ObjectHelper.notNull(nettyHttpBinding, "nettyHttpBinding", this);
         ObjectHelper.notNull(headerFilterStrategy, "headerFilterStrategy", this);
@@ -262,7 +268,7 @@ public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, H
                 // setup default JAAS authenticator if none was configured
                 JAASSecurityAuthenticator jaas = new JAASSecurityAuthenticator();
                 jaas.setName(securityConfiguration.getRealm());
-                log.info("No SecurityAuthenticator configured, using JAASSecurityAuthenticator as authenticator: {}", jaas);
+                LOG.info("No SecurityAuthenticator configured, using JAASSecurityAuthenticator as authenticator: {}", jaas);
                 securityConfiguration.setSecurityAuthenticator(jaas);
             }
         }

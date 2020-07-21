@@ -2,7 +2,7 @@
 = CamelContext
 
 The
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/CamelContext.html[CamelContext]
+https://www.javadoc.io/doc/org.apache.camel/camel-api/latest/org/apache/camel/CamelContext.html[CamelContext]
 represents a single Camel routing rulebase. You use the CamelContext in
 a similar way to the Spring
 http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/context/ApplicationContext.html[ApplicationContext].

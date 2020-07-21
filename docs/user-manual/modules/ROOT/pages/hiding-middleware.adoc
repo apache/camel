@@ -35,7 +35,7 @@ xref:spring-remoting.adoc[Spring Remoting] which can then use any
 messaging or remoting technology under the covers. When using Camel's
 implementation you can then use any of the Camel
 xref:components::index.adoc[Components] along with any of the
-xref:enterprise-integration-patterns.adoc[Enterprise Integration
+xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns].
 
 Another approach is to bind Java beans to Camel endpoints via the

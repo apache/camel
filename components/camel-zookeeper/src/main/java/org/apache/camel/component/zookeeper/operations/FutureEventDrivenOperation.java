@@ -52,7 +52,7 @@ public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOp
         this.event = event;
         EventType received = event.getType();
         if (LOG.isDebugEnabled()) {
-            LOG.debug(format("Recieved event of type %s for node '%s'", received, event.getPath()));
+            LOG.debug(format("Received event of type %s for node '%s'", received, event.getPath()));
         }
 
         for (EventType watched : awaitedTypes) {
@@ -71,7 +71,7 @@ public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOp
             if (b.length() > 0) {
                 b.setLength(b.length() - 2);
             }
-            LOG.trace(String.format("Recieved event of type %s did not match any watched types %s", received, Arrays.toString(awaitedTypes)));
+            LOG.trace(String.format("Received event of type %s did not match any watched types %s", received, Arrays.toString(awaitedTypes)));
         }
     }
 

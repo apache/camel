@@ -25,10 +25,11 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterExists;
 import org.apache.camel.TypeConverterExistsException;
 import org.apache.camel.support.TypeConverterSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class TypeConverterRegistryTest extends Assert {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class TypeConverterRegistryTest {
 
     @Test
     public void testDefaultTypeConverterRegistry() {
@@ -104,10 +105,10 @@ public class TypeConverterRegistryTest extends Assert {
 
         // now remove it
         boolean removed = context.getTypeConverterRegistry().removeTypeConverter(MyOrder.class, String.class);
-        assertTrue("Type converter should be removed", removed);
+        assertTrue(removed, "Type converter should be removed");
 
         order = context.getTypeConverter().convertTo(MyOrder.class, "123");
-        assertNull("Type converter should be removed", order);
+        assertNull(order, "Type converter should be removed");
     }
 
     private static class MyOrder {

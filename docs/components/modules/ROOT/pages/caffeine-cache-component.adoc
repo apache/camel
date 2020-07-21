@@ -1,12 +1,17 @@
 [[caffeine-cache-component]]
 = Caffeine Cache Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-caffeine/src/main/docs/caffeine-cache-component.adoc
+:docTitle: Caffeine Cache
+:artifactId: camel-caffeine
+:description: Perform caching operations using Caffeine Cache.
+:since: 2.20
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.20*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Caffeine Cache component enables you to perform caching operations using
 the simple cache from Caffeine.
@@ -38,16 +43,31 @@ format, `?option=value&option=#beanRef&...`
 
 
 // component options: START
-The Caffeine Cache component supports 3 options, which are listed below.
+The Caffeine Cache component supports 18 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (advanced) | Sets the global component configuration |  | CaffeineConfiguration
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *action* (producer) | To configure the default cache action. If an action is set in the message header, then the operation from the header takes precedence. |  | String
+| *cache* (producer) | To configure an already instantiated cache to be used |  | Cache
+| *cacheLoader* (producer) | To configure a CacheLoader in case of a LoadCache use |  | CacheLoader
+| *createCacheIfNotExist* (producer) | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | boolean
+| *evictionType* (producer) | Set the eviction Type for this cache. The value can be one of: size_based, time_based | SIZE_BASED | EvictionType
+| *expireAfterAccessTime* (producer) | Set the expire After Access Time in case of time based Eviction (in seconds) | 300 | int
+| *expireAfterWriteTime* (producer) | Set the expire After Access Write in case of time based Eviction (in seconds) | 300 | int
+| *initialCapacity* (producer) | Set the initial Capacity for the cache | 10000 | int
+| *key* (producer) | To configure the default action key. If a key is set in the message header, then the key from the header takes precedence. |  | Object
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *maximumSize* (producer) | Set the maximum size for the cache | 10000 | int
+| *removalListener* (producer) | Set a specific removal Listener for the cache |  | RemovalListener
+| *statsCounter* (producer) | Set a specific Stats Counter for the cache stats |  | StatsCounter
+| *statsEnabled* (producer) | To enable stats on the cache | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *configuration* (advanced) | Sets the global component configuration |  | CaffeineConfiguration
+| *keyType* (advanced) | The cache key type, default java.lang.Object |  | String
+| *valueType* (advanced) | The cache value type, default java.lang.Object |  | String
 |===
 // component options: END
 
@@ -82,7 +102,7 @@ with the following path and query parameters:
 | *cache* (producer) | To configure an already instantiated cache to be used |  | Cache
 | *cacheLoader* (producer) | To configure a CacheLoader in case of a LoadCache use |  | CacheLoader
 | *createCacheIfNotExist* (producer) | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | boolean
-| *evictionType* (producer) | Set the eviction Type for this cache | SIZE_BASED | EvictionType
+| *evictionType* (producer) | Set the eviction Type for this cache. The value can be one of: size_based, time_based | SIZE_BASED | EvictionType
 | *expireAfterAccessTime* (producer) | Set the expire After Access Time in case of time based Eviction (in seconds) | 300 | int
 | *expireAfterWriteTime* (producer) | Set the expire After Access Write in case of time based Eviction (in seconds) | 300 | int
 | *initialCapacity* (producer) | Set the initial Capacity for the cache | 10000 | int
@@ -98,50 +118,6 @@ with the following path and query parameters:
 | *valueType* (advanced) | The cache value type, default java.lang.Object |  | String
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-caffeine-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 19 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.caffeine-cache.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.caffeine-cache.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.caffeine-cache.configuration.action* | To configure the default cache action. If an action is set in the message header, then the operation from the header takes precedence. |  | String
-| *camel.component.caffeine-cache.configuration.cache* | To configure an already instantiated cache to be used |  | Cache
-| *camel.component.caffeine-cache.configuration.cache-loader* | To configure a CacheLoader in case of a LoadCache use |  | CacheLoader
-| *camel.component.caffeine-cache.configuration.create-cache-if-not-exist* | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | Boolean
-| *camel.component.caffeine-cache.configuration.eviction-type* | Set the eviction Type for this cache |  | EvictionType
-| *camel.component.caffeine-cache.configuration.expire-after-access-time* | Set the expire After Access Time in case of time based Eviction (in seconds) | 300 | Integer
-| *camel.component.caffeine-cache.configuration.expire-after-write-time* | Set the expire After Access Write in case of time based Eviction (in seconds) | 300 | Integer
-| *camel.component.caffeine-cache.configuration.initial-capacity* | Set the initial Capacity for the cache | 10000 | Integer
-| *camel.component.caffeine-cache.configuration.key* | To configure the default action key. If a key is set in the message header, then the key from the header takes precedence. |  | Object
-| *camel.component.caffeine-cache.configuration.key-type* | The cache key type, default "java.lang.Object" |  | String
-| *camel.component.caffeine-cache.configuration.maximum-size* | Set the maximum size for the cache | 10000 | Integer
-| *camel.component.caffeine-cache.configuration.removal-listener* | Set a specific removal Listener for the cache |  | RemovalListener
-| *camel.component.caffeine-cache.configuration.stats-counter* | Set a specific Stats Counter for the cache stats |  | StatsCounter
-| *camel.component.caffeine-cache.configuration.stats-enabled* | To enable stats on the cache | false | Boolean
-| *camel.component.caffeine-cache.configuration.value-type* | The cache value type, default "java.lang.Object" |  | String
-| *camel.component.caffeine-cache.enabled* | Whether to enable auto configuration of the caffeine-cache component. This is enabled by default. |  | Boolean
-| *camel.component.caffeine-cache.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-|===
-// spring-boot-auto-configure options: END
 
 
 == Examples
@@ -150,18 +126,18 @@ You can use your cache with the following code:
 
 [source,java]
 ------------------------------------------------------------
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() {
-                from("direct://start")
-                    .toF("caffeine-cache://%s?cache=#cache&action=PUT&key=1", "test")
-                    .toF("caffeine-cache://%s?cache=#cache&key=1&action=GET", "test")
-                    .log("Test! ${body}")
-                    .to("mock:result");
-            }
-        };
-    }
+@Override
+protected RouteBuilder createRouteBuilder() throws Exception {
+    return new RouteBuilder() {
+        public void configure() {
+            from("direct://start")
+                .toF("caffeine-cache://%s?cache=#cache&action=PUT&key=1", "test")
+                .toF("caffeine-cache://%s?cache=#cache&key=1&action=GET", "test")
+                .log("Test! ${body}")
+                .to("mock:result");
+        }
+    };
+}
 ------------------------------------------------------------
 
 In this way you'll work always on the same cache in the registry.
@@ -175,3 +151,5 @@ Each time you'll use an operation on the cache you'll have two different headers
 CaffeineConstants.ACTION_HAS_RESULT
 CaffeineConstants.ACTION_SUCCEEDED
 ------------------------------------------------------------
+
+include::camel-spring-boot::page$caffeine-starter.adoc[]

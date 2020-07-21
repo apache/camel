@@ -24,6 +24,7 @@ import java.util.concurrent.Future;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -35,6 +36,7 @@ import org.apache.camel.util.StringHelper;
  * Default {@link ExchangeFormatter} that have fine grained options to configure what to include in the output.
  */
 @UriParams
+@Configurer
 public class DefaultExchangeFormatter implements ExchangeFormatter {
 
     protected static final String LS = System.lineSeparator();
@@ -173,8 +175,8 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             }
         }
 
-        // only cut if we hit max-chars limit
-        if (maxChars > 0 && sb.length() > maxChars) {
+        // only cut if we hit max-chars limit (or are using multiline
+        if (multiline || (maxChars > 0 && sb.length() > maxChars)) {
             StringBuilder answer = new StringBuilder();
             for (String s : sb.toString().split(SEPARATOR)) {
                 if (s != null) {

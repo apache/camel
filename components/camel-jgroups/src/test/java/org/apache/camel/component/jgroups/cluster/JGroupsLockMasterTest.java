@@ -28,10 +28,12 @@ import java.util.stream.IntStream;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JGroupsLockMasterTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(JGroupsLockMasterTest.class);
@@ -53,8 +55,8 @@ public class JGroupsLockMasterTest {
         LATCH.await(1, TimeUnit.MINUTES);
         SCHEDULER.shutdownNow();
 
-        Assert.assertEquals(CLIENTS.size(), RESULTS.size());
-        Assert.assertTrue(RESULTS.containsAll(CLIENTS));
+        assertEquals(CLIENTS.size(), RESULTS.size());
+        assertTrue(RESULTS.containsAll(CLIENTS));
     }
 
     // ************************************
@@ -76,7 +78,7 @@ public class JGroupsLockMasterTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("master:jgl:timer:master?delay=1s&period=1s")
+                    from("master:jgl:timer:master?delay=1000&period=1000")
                             .routeId("route-" + id)
                             .log("From ${routeId}")
                             .process(e -> contextLatch.countDown());

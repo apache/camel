@@ -550,7 +550,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         // Is not correct as it does not support to add port in the URI
         //return String.format("/%s/*", remaining);
 
-        int index = remaining.indexOf("/");
+        int index = remaining.indexOf('/');
         if (index != -1) {
             return remaining.substring(index, remaining.length());
         } else {
@@ -559,8 +559,8 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
     }
 
     private int extractPortNumber(String remaining) {
-        int index1 = remaining.indexOf(":");
-        int index2 = remaining.indexOf("/");
+        int index1 = remaining.indexOf(':');
+        int index2 = remaining.indexOf('/');
 
         if ((index1 != -1) && (index2 != -1)) {
             String result = remaining.substring(index1 + 1, index2);
@@ -571,7 +571,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
     }
 
     private String extractHostName(String remaining) {
-        int index = remaining.indexOf(":");
+        int index = remaining.indexOf(':');
         if (index != -1) {
             return remaining.substring(0, index);
         } else {

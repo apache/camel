@@ -35,8 +35,12 @@ import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OpenshiftBuildsProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(OpenshiftBuildsProducer.class);
 
     public OpenshiftBuildsProducer(AbstractKubernetesEndpoint endpoint) {
         super(endpoint);
@@ -59,20 +63,20 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_BUILD:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_BUILD:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_BUILD_BY_LABELS_OPERATION:
-            doListBuildByLabels(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_BUILD_BY_LABELS_OPERATION:
+                doListBuildByLabels(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_BUILD_OPERATION:
-            doGetBuild(exchange, operation);
-            break;
+            case KubernetesOperations.GET_BUILD_OPERATION:
+                doGetBuild(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
@@ -87,14 +91,14 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
             NonNamespaceOperation<Build, BuildList, DoneableBuild, BuildResource<Build, DoneableBuild, String, LogWatch>> builds = getEndpoint().getKubernetesClient()
-                .adapt(OpenShiftClient.class).builds().inNamespace(namespaceName);
+                    .adapt(OpenShiftClient.class).builds().inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 builds.withLabel(entry.getKey(), entry.getValue());
             }
             buildList = builds.list();
         } else {
             FilterWatchListMultiDeletable<Build, BuildList, Boolean, Watch, Watcher<Build>> builds = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds()
-                .inAnyNamespace();
+                    .inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 builds.withLabel(entry.getKey(), entry.getValue());
             }
@@ -109,11 +113,11 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
         String buildName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILD_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(buildName)) {
-            log.error("Get a specific Build require specify a Build name");
+            LOG.error("Get a specific Build require specify a Build name");
             throw new IllegalArgumentException("Get a specific Build require specify a Build name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            log.error("Get a specific Build require specify a namespace name");
+            LOG.error("Get a specific Build require specify a namespace name");
             throw new IllegalArgumentException("Get a specific Build require specify a namespace name");
         }
         build = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds().inNamespace(namespaceName).withName(buildName).get();

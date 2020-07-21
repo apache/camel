@@ -45,13 +45,15 @@ public class FtpPollingConsumerTest extends FtpServerTestSupport {
         assertNotNull(exchange);
         assertEquals("Hello World", exchange.getIn().getBody(String.class));
 
-        // sleep a bit to ensure polling consumer would be suspended after we have used it
+        // sleep a bit to ensure polling consumer would be suspended after we
+        // have used it
         Thread.sleep(1000);
 
         // drop a new file which should not be picked up by the consumer
         template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "bye.txt");
 
-        // sleep a bit to ensure polling consumer would not have picked up that file
+        // sleep a bit to ensure polling consumer would not have picked up that
+        // file
         Thread.sleep(1000);
 
         File file = new File(FTP_ROOT_DIR + "/polling/bye.txt");

@@ -19,6 +19,7 @@ package org.apache.camel.component.disruptor;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.UnitOfWorkHelper;
 import org.slf4j.Logger;
@@ -31,7 +32,7 @@ public abstract class AbstractSynchronizedExchange implements SynchronizedExchan
 
     public AbstractSynchronizedExchange(Exchange exchange) {
         this.exchange = exchange;
-        synchronizations = exchange.handoverCompletions();
+        synchronizations = exchange.adapt(ExtendedExchange.class).handoverCompletions();
     }
 
     @Override
@@ -43,7 +44,7 @@ public abstract class AbstractSynchronizedExchange implements SynchronizedExchan
     public Exchange cancelAndGetOriginalExchange() {
         if (synchronizations != null) {
             for (Synchronization synchronization : synchronizations) {
-                exchange.addOnCompletion(synchronization);
+                exchange.adapt(ExtendedExchange.class).addOnCompletion(synchronization);
             }
         }
 

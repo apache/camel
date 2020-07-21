@@ -82,9 +82,9 @@ public class SqsConfiguration implements Cloneable {
     // producer properties
     @UriParam(label = "advanced")
     private boolean delayQueue;
-    @UriParam(label = "producer", enums = "useConstant,useExchangeId,usePropertyValue")
+    @UriParam(label = "producer", javaType = "java.lang.String", enums = "useConstant,useExchangeId,usePropertyValue")
     private MessageGroupIdStrategy messageGroupIdStrategy;
-    @UriParam(label = "producer", defaultValue = "useExchangeId", enums = "useExchangeId,useContentBasedDeduplication")
+    @UriParam(label = "producer", javaType = "java.lang.String", defaultValue = "useExchangeId", enums = "useExchangeId,useContentBasedDeduplication")
     private MessageDeduplicationIdStrategy messageDeduplicationIdStrategy = new ExchangeIdMessageDeduplicationIdStrategy();
     @UriParam(label = "producer")
     private SqsOperations operation;

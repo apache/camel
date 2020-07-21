@@ -19,8 +19,8 @@ package org.apache.camel.component.hazelcast.queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import com.hazelcast.collection.IQueue;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IQueue;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -91,10 +91,7 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
                             getExceptionHandler().handleException("Error during processing", exchange, e);
                         }
                     } catch (InterruptedException e) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Hazelcast Queue Consumer Interrupted: {}", e, e);
-                            continue;
-                        }
+                        // ignore
                     }
                 }
             }

@@ -20,8 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class JettyHttpTest extends CamelTestSupport {
 
@@ -31,7 +31,7 @@ public class JettyHttpTest extends CamelTestSupport {
     private String sourceProducerUri = "http://localhost:6323/myservice";
 
     @Test
-    public void testGetRootPath() throws Exception {
+    void testGetRootPath() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hi! /someservice");
 
@@ -41,7 +41,7 @@ public class JettyHttpTest extends CamelTestSupport {
     }
     
     @Test
-    public void testGetWithRelativePath() throws Exception {
+    void testGetWithRelativePath() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hi! /someservice/relative");
         
@@ -50,15 +50,15 @@ public class JettyHttpTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(targetConsumerUri)
                     .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
+                        public void process(Exchange exchange) {
                             String path = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
-                            exchange.getOut().setBody("Hi! " + path);
+                            exchange.getMessage().setBody("Hi! " + path);
                         }   
                     });
 

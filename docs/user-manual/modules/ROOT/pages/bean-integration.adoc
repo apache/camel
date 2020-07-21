@@ -32,9 +32,9 @@ See more details at:
 
 * xref:pojo-consuming.adoc[POJO Consuming] to consume and possibly route messages from Camel
 * xref:pojo-producing.adoc[POJO Producing] to make it easy to produce camel messages from your POJOs
-* `@DynamicRouter` Annotation for creating a xref:dynamic-router.adoc[Dynamic Router] from a POJO method
-* `@RecipientList` Annotation for creating a xref:recipientList-eip.adoc[Recipient List] from a POJO method
-* `@RoutingSlip` Annotation for creating a xref:routingSlip-eip.adoc[Routing Slip] for a POJO method
+* `@DynamicRouter` Annotation for creating a xref:{eip-vc}:eips:dynamicRouter-eip.adoc[Dynamic Router] from a POJO method
+* `@RecipientList` Annotation for creating a xref:{eip-vc}:eips:recipientList-eip.adoc[Recipient List] from a POJO method
+* `@RoutingSlip` Annotation for creating a xref:{eip-vc}:eips:routingSlip-eip.adoc[Routing Slip] for a POJO method
 * xref:bean-injection.adoc[Bean Injection] to inject Camel related resources into your POJOs
 * xref:using-exchange-pattern-annotations.adoc[Using Exchange Pattern Annotations]
   describes how the pattern annotations can be used to change
@@ -42,7 +42,7 @@ See more details at:
 
 *Example*
 
-See the https://github.com/apache/camel/tree/master/examples/camel-example-pojo-messaging[POJO Messaging Example]
+See the https://github.com/apache/camel-examples/tree/master/examples/camel-example-pojo-messaging[POJO Messaging Example]
 for how to use the annotations for routing and messaging.
 
 [[BeanIntegration-BeanComponent]]
@@ -61,7 +61,7 @@ uses Camel as the underlying transport mechanism. The nice thing about
 this approach is we can use any of the Camel transport
 Components to communicate between beans. It also
 means we can use Content Based Router
-and the other xref:enterprise-integration-patterns.adoc[Enterprise
+and the other xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise
 Integration Patterns] in between the beans; in particular we can use
 Message Translator to be able to convert
 what the on-the-wire messages look like in addition to adding various

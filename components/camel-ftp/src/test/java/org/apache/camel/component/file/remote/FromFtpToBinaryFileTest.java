@@ -30,14 +30,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Unit test to verify that we can pool a BINARY file from the FTP Server and store it on a local file path
+ * Unit test to verify that we can pool a BINARY file from the FTP Server and
+ * store it on a local file path
  */
 public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
 
     // must user "consumer." prefix on the parameters to the file component
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/tmp4/camel?password=admin&binary=true"
-                + "&delay=5000&recursive=false";
+        return "ftp://admin@localhost:" + getPort() + "/tmp4/camel?password=admin&binary=true" + "&delay=5000&recursive=false";
     }
 
     @Override
@@ -63,7 +63,8 @@ public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want to unit
+        // prepares the FTP Server by creating a file on the server that we want
+        // to unit
         // test that we can pool and store as a local file
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
@@ -80,8 +81,7 @@ public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 String fileUrl = "file:target/ftptest/?noop=true&fileExist=Override";
-                from(getFtpUrl()).setHeader(Exchange.FILE_NAME, constant("deleteme.jpg"))
-                        .to(fileUrl, "mock:result");
+                from(getFtpUrl()).setHeader(Exchange.FILE_NAME, constant("deleteme.jpg")).to(fileUrl, "mock:result");
             }
         };
     }

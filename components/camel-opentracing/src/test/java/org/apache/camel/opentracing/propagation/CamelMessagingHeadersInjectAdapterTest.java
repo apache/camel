@@ -19,22 +19,18 @@ package org.apache.camel.opentracing.propagation;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.opentracing.propagation.CamelMessagingHeadersInjectAdapter.JMS_DASH;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CamelMessagingHeadersInjectAdapterTest {
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     private Map<String, Object> map;
 
-    @Before
+    @BeforeEach
     public void before() {
         map = new HashMap<>();
     }
@@ -42,8 +38,8 @@ public class CamelMessagingHeadersInjectAdapterTest {
     @Test
     public void cannotGetIterator() {
         CamelMessagingHeadersInjectAdapter adapter = new CamelMessagingHeadersInjectAdapter(map, true);
-        thrown.expect(UnsupportedOperationException.class);
-        adapter.iterator();
+        assertThrows(UnsupportedOperationException.class,
+            () -> adapter.iterator());
     }
 
     @Test

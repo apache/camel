@@ -41,15 +41,21 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ProcessorEndpoint;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Transforms the message using a XSLT template.
+ * Transforms XML payload using an XSLT template.
  */
 @ManagedResource(description = "Managed XsltEndpoint")
 @UriEndpoint(firstVersion = "1.3.0", scheme = "xslt", title = "XSLT", syntax = "xslt:resourceUri", producerOnly = true, label = "core,transformation")
 public class XsltEndpoint extends ProcessorEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(XsltEndpoint.class);
+
     private volatile boolean cacheCleared;
     private volatile XsltBuilder xslt;
     private Map<String, Object> parameters;
@@ -97,7 +103,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
 
     public XsltEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
         String newUri = uri.replace(resourceUri, newResourceUri);
-        log.trace("Getting endpoint with URI: {}", newUri);
+        LOG.trace("Getting endpoint with URI: {}", newUri);
         return getCamelContext().getEndpoint(newUri, XsltEndpoint.class);
     }
 
@@ -310,7 +316,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
      * @throws IOException is thrown if error loading resource
      */
     protected void loadResource(String resourceUri, XsltBuilder xslt) throws TransformerException, IOException {
-        log.trace("{} loading schema resource: {}", this, resourceUri);
+        LOG.trace("{} loading schema resource: {}", this, resourceUri);
         Source source = xslt.getUriResolver().resolve(resourceUri, null);
         if (source == null) {
             throw new IOException("Cannot load schema resource " + resourceUri);
@@ -322,12 +328,26 @@ public class XsltEndpoint extends ProcessorEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         // the processor is the xslt builder
         setXslt(createXsltBuilder());
+
+        // must load resource first which sets a template and do a stylesheet compilation to catch errors early
+        // load resource from classpath otherwise load in doStart()
+        if (ResourceHelper.isClasspathUri(resourceUri)) {
+            loadResource(resourceUri, xslt);
+        }
         setProcessor(getXslt());
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (!ResourceHelper.isClasspathUri(resourceUri)) {
+            loadResource(resourceUri, xslt);
+        }
     }
 
     protected XsltBuilder createXsltBuilder() throws Exception {
@@ -335,7 +355,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
         final ClassResolver resolver = ctx.getClassResolver();
         final Injector injector = ctx.getInjector();
 
-        log.debug("{} using schema resource: {}", this, resourceUri);
+        LOG.debug("{} using schema resource: {}", this, resourceUri);
 
         final XsltBuilder xslt = injector.newInstance(XsltBuilder.class);
 
@@ -347,7 +367,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
             if (trFactoryClass != null) {
                 // provide the class loader of this component to work in OSGi environments
                 Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(trFactoryClass, TransformerFactory.class, XsltComponent.class.getClassLoader());
-                log.debug("Using TransformerFactoryClass {}", factoryClass);
+                LOG.debug("Using TransformerFactoryClass {}", factoryClass);
                 factory = injector.newInstance(factoryClass);
 
                 final TransformerFactoryConfigurationStrategy tfConfigStrategy = transformerFactoryConfigurationStrategy != null
@@ -360,7 +380,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
         }
 
         if (factory != null) {
-            log.debug("Using TransformerFactory {}", factory);
+            LOG.debug("Using TransformerFactory {}", factory);
             xslt.setTransformerFactory(factory);
         }
         if (resultHandlerFactory != null) {
@@ -382,9 +402,6 @@ public class XsltEndpoint extends ProcessorEndpoint {
             Map<String, Object> copy = new HashMap<>(parameters);
             xslt.setParameters(copy);
         }
-
-        // must load resource first which sets a template and do a stylesheet compilation to catch errors early
-        loadResource(resourceUri, xslt);
 
         return xslt;
     }

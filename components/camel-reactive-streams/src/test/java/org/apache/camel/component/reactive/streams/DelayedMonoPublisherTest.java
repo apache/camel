@@ -30,10 +30,11 @@ import org.apache.camel.component.reactive.streams.engine.DelayedMonoPublisher;
 import org.apache.camel.component.reactive.streams.support.TestSubscriber;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DelayedMonoPublisherTest {
 
@@ -256,34 +257,38 @@ public class DelayedMonoPublisherTest {
         assertEquals(new Integer(2), res);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testDataOrExceptionAllowed() throws Exception {
         DelayedMonoPublisher<Integer> pub = new DelayedMonoPublisher<>(service);
         Exception ex = new RuntimeException("An exception");
         pub.setException(ex);
-        pub.setData(1);
+        assertThrows(IllegalStateException.class,
+            () -> pub.setData(1));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testDataOrExceptionAllowed2() throws Exception {
         DelayedMonoPublisher<Integer> pub = new DelayedMonoPublisher<>(service);
         pub.setData(1);
         Exception ex = new RuntimeException("An exception");
-        pub.setException(ex);
+        assertThrows(IllegalStateException.class,
+            () -> pub.setException(ex));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testOnlyOneDataAllowed() throws Exception {
         DelayedMonoPublisher<Integer> pub = new DelayedMonoPublisher<>(service);
         pub.setData(1);
-        pub.setData(2);
+        assertThrows(IllegalStateException.class,
+            () -> pub.setData(2));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testOnlyOneExceptionAllowed() throws Exception {
         DelayedMonoPublisher<Integer> pub = new DelayedMonoPublisher<>(service);
         pub.setException(new RuntimeException("An exception"));
-        pub.setException(new RuntimeException("An exception"));
+        assertThrows(IllegalStateException.class,
+            () -> pub.setException(new RuntimeException("An exception")));
     }
 
 }

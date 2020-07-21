@@ -33,8 +33,8 @@ public class SftpProduceTempFileTest extends SftpServerTestSupport {
             return;
         }
 
-        template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
-                + "?username=admin&password=admin&tempFileName=temp-${file:name}", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&tempFileName=temp-${file:name}", "Hello World",
+                                   Exchange.FILE_NAME, "hello.txt");
 
         File file = new File(FTP_ROOT_DIR + "/hello.txt");
         assertTrue(file.exists(), "File should exist: " + file);
@@ -47,8 +47,8 @@ public class SftpProduceTempFileTest extends SftpServerTestSupport {
             return;
         }
 
-        template.sendBodyAndHeader("sftp://localhost:" + getPort()
-                + "/?username=admin&password=admin&tempFileName=temp-${file:name}", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/?username=admin&password=admin&tempFileName=temp-${file:name}", "Hello World", Exchange.FILE_NAME,
+                                   "hello.txt");
 
         File file = new File("hello.txt");
         assertTrue(file.exists(), "File should exist: " + file);

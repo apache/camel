@@ -18,7 +18,7 @@ package org.apache.camel.converter.crypto;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringPGPDataFormatNoPassPhraseTest extends AbstractPGPDataFormatTest {
@@ -29,12 +29,12 @@ public class SpringPGPDataFormatNoPassPhraseTest extends AbstractPGPDataFormatTe
     }
 
     @Test
-    public void testEncryption() throws Exception {
+    void testEncryption() throws Exception {
         doRoundTripEncryptionTests("direct:inline");
     }
     
     @Test
-    public void testEncryptionWithKeyRingByteArray() throws Exception {
+    void testEncryptionWithKeyRingByteArray() throws Exception {
         doRoundTripEncryptionTests("direct:pgp-key-ring-byte-array");
     }
 

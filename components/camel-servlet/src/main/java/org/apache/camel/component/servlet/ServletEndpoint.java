@@ -19,6 +19,7 @@ package org.apache.camel.component.servlet;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -32,10 +33,11 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * To use a HTTP Servlet as entry for Camel routes when running in a servlet container.
+ * Serve HTTP requests by a Servlet.
  */
 @UriEndpoint(firstVersion = "2.0.0", scheme = "servlet", extendsScheme = "http", title = "Servlet",
-        syntax = "servlet:contextPath", excludeProperties = "httpUri", consumerOnly = true, label = "http")
+        syntax = "servlet:contextPath", consumerOnly = true, category = {Category.HTTP})
+@Metadata(excludeProperties = "httpUri")
 public class ServletEndpoint extends HttpCommonEndpoint {
 
     private HttpBinding binding;

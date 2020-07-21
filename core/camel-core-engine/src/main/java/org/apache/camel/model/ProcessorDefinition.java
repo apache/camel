@@ -16,14 +16,13 @@
  */
 package org.apache.camel.model;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -31,10 +30,8 @@ import java.util.function.Supplier;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.namespace.QName;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.BeanScope;
@@ -72,7 +69,8 @@ import org.slf4j.LoggerFactory;
  * Base class for processor types that most XML types extend.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type> implements Block, OtherAttributesAware {
+@SuppressWarnings("rawtypes")
+public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type> implements Block {
     @XmlTransient
     private static final AtomicInteger COUNTER = new AtomicInteger();
     @XmlTransient
@@ -85,9 +83,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     private ProcessorDefinition<?> parent;
     @XmlTransient
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<>();
-    // use xs:any to support optional property placeholders
-    @XmlAnyAttribute
-    private Map<QName, Object> otherAttributes;
     @XmlTransient
     private final int index;
 
@@ -217,36 +212,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     // -------------------------------------------------------------------------
 
     /**
-     * Adds a placeholder for the given option
-     * <p/>
-     * Requires using the
-     * {@link org.apache.camel.component.properties.PropertiesComponent}
-     *
-     * @param option the name of the option
-     * @param key the placeholder key
-     * @return the builder
-     */
-    public Type placeholder(String option, String key) {
-        QName name = new QName(Constants.PLACEHOLDER_QNAME, option);
-        return attribute(name, key);
-    }
-
-    /**
-     * Adds an optional attribute
-     *
-     * @param name the name of the attribute
-     * @param value the value
-     * @return the builder
-     */
-    public Type attribute(QName name, Object value) {
-        if (otherAttributes == null) {
-            otherAttributes = new HashMap<>();
-        }
-        otherAttributes.put(name, value);
-        return asType();
-    }
-
-    /**
      * Sends the exchange to the given endpoint
      *
      * @param uri the endpoint to send to
@@ -255,6 +220,17 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public Type to(@AsEndpointUri String uri) {
         addOutput(new ToDefinition(uri));
         return asType();
+    }
+
+    /**
+     * Sends the exchange to the given dynamic endpoint
+     *
+     * @return the builder
+     */
+    public ToDynamicDefinition toD() {
+        ToDynamicDefinition answer = new ToDynamicDefinition();
+        addOutput(answer);
+        return answer;
     }
 
     /**
@@ -291,7 +267,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param uri the dynamic endpoint to send to (resolved using simple
      *            language by default)
      * @param cacheSize sets the maximum size used by the
-     *            {@link org.apache.camel.spi.ConsumerCache} which is used to
+     *            {@link org.apache.camel.spi.ProducerCache} which is used to
      *            cache and reuse producers.
      * @return the builder
      */
@@ -309,7 +285,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param endpointProducerBuilder the dynamic endpoint to send to (resolved
      *            using simple language by default)
      * @param cacheSize sets the maximum size used by the
-     *            {@link org.apache.camel.spi.ConsumerCache} which is used to
+     *            {@link org.apache.camel.spi.ProducerCache} which is used to
      *            cache and reuse producers.
      * @return the builder
      */
@@ -502,6 +478,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param endpoints list of endpoints to send to
      * @return the builder
      */
+    @Deprecated
     public Type to(Iterable<Endpoint> endpoints) {
         for (Endpoint endpoint : endpoints) {
             addOutput(new ToDefinition(endpoint));
@@ -561,6 +538,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param endpoints list of endpoints to send to
      * @return the builder
      */
+    @Deprecated
     public Type to(ExchangePattern pattern, Iterable<Endpoint> endpoints) {
         for (Endpoint endpoint : endpoints) {
             addOutput(new ToDefinition(endpoint, pattern));
@@ -611,7 +589,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param uri The endpoint uri which is used for sending the exchange
      * @return the builder
+     * @deprecated use to where you can specify the exchange pattern as well
      */
+    @Deprecated
     public Type inOnly(@AsEndpointUri String uri) {
         return to(ExchangePattern.InOnly, uri);
     }
@@ -627,7 +607,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param endpoint The endpoint which is used for sending the exchange
      * @return the builder
+     * @deprecated use to where you can specify the exchange pattern as well
      */
+    @Deprecated
     public Type inOnly(Endpoint endpoint) {
         return to(ExchangePattern.InOnly, endpoint);
     }
@@ -643,7 +625,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param uris list of endpoints to send to
      * @return the builder
+     * @deprecated use to where you can specify the exchange pattern as well
      */
+    @Deprecated
     public Type inOnly(@AsEndpointUri String... uris) {
         return to(ExchangePattern.InOnly, uris);
     }
@@ -659,7 +643,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param endpoints list of endpoints to send to
      * @return the builder
+     * @deprecated use to where you can specify the exchange pattern as well
      */
+    @Deprecated
     public Type inOnly(@AsEndpointUri Endpoint... endpoints) {
         return to(ExchangePattern.InOnly, endpoints);
     }
@@ -675,7 +661,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param endpoints list of endpoints to send to
      * @return the builder
+     * @deprecated use to where you can specify the exchange pattern as well
      */
+    @Deprecated
     public Type inOnly(Iterable<Endpoint> endpoints) {
         return to(ExchangePattern.InOnly, endpoints);
     }
@@ -691,7 +679,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param uri The endpoint uri which is used for sending the exchange
      * @return the builder
+     * @deprecated use to where you can specify the exchange pattern as well
      */
+    @Deprecated
     public Type inOut(@AsEndpointUri String uri) {
         return to(ExchangePattern.InOut, uri);
     }
@@ -707,7 +697,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param endpoint The endpoint which is used for sending the exchange
      * @return the builder
+     * @deprecated use to where you can specify the exchange pattern as well
      */
+    @Deprecated
     public Type inOut(Endpoint endpoint) {
         return to(ExchangePattern.InOut, endpoint);
     }
@@ -723,7 +715,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param uris list of endpoints to send to
      * @return the builder
+     * @deprecated use to where you can specify the exchange pattern as well
      */
+    @Deprecated
     public Type inOut(@AsEndpointUri String... uris) {
         return to(ExchangePattern.InOut, uris);
     }
@@ -739,7 +733,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param endpoints list of endpoints to send to
      * @return the builder
+     * @deprecated use to where you can specify the exchange pattern as well
      */
+    @Deprecated
     public Type inOut(Endpoint... endpoints) {
         return to(ExchangePattern.InOut, endpoints);
     }
@@ -755,7 +751,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param endpoints list of endpoints to send to
      * @return the builder
+     * @deprecated use to where you can specify the exchange pattern as well
      */
+    @Deprecated
     public Type inOut(Iterable<Endpoint> endpoints) {
         return to(ExchangePattern.InOut, endpoints);
     }
@@ -998,10 +996,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param endpoints list of endpoints
      * @return the builder
      */
+    @Deprecated
     public Type pipeline(Collection<Endpoint> endpoints) {
         PipelineDefinition answer = new PipelineDefinition();
+        for (Endpoint endpoint : endpoints) {
+            answer.addOutput(new ToDefinition(endpoint));
+        }
         addOutput(answer);
-        answer.to(endpoints);
         return asType();
     }
 
@@ -1309,7 +1310,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Creates a validation expression which only if it is <tt>true</tt> then
      * the exchange is forwarded to the destination. Otherwise a
-     * {@link org.apache.camel.support.processor.validation.PredicateValidationException}
+     * {@link org.apache.camel.support.processor.PredicateValidationException}
      * is thrown.
      *
      * @param expression the expression
@@ -1324,7 +1325,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Creates a validation expression which only if it is <tt>true</tt> then
      * the exchange is forwarded to the destination. Otherwise a
-     * {@link org.apache.camel.support.processor.validation.PredicateValidationException}
+     * {@link org.apache.camel.support.processor.PredicateValidationException}
      * is thrown.
      *
      * @param predicate the predicate
@@ -1339,7 +1340,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Creates a validation expression which only if it is <tt>true</tt> then
      * the exchange is forwarded to the destination. Otherwise a
-     * {@link org.apache.camel.support.processor.validation.PredicateValidationException}
+     * {@link org.apache.camel.support.processor.PredicateValidationException}
      * is thrown.
      *
      * @return the builder
@@ -1703,6 +1704,23 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public SamplingDefinition sample() {
         return sample(1, TimeUnit.SECONDS);
+    }
+
+    /**
+     * <a href="http://camel.apache.org/sampling.html">Sampling Throttler</a>
+     * Creates a sampling throttler allowing you to extract a sample of
+     * exchanges from the traffic through a route. It is configured with a
+     * sampling period during which only a single exchange is allowed to pass
+     * through. All other exchanges will be stopped.
+     *
+     * @param samplePeriod this is the sample interval, only one exchange is
+     *            allowed through in this interval
+     * @return the builder
+     */
+    public SamplingDefinition sample(Duration samplePeriod) {
+        SamplingDefinition answer = new SamplingDefinition(samplePeriod);
+        addOutput(answer);
+        return answer;
     }
 
     /**
@@ -2306,7 +2324,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public OnExceptionDefinition onException(Class<? extends Throwable> exceptionType) {
         OnExceptionDefinition answer = new OnExceptionDefinition(exceptionType);
-        answer.setRouteScoped(true);
         addOutput(answer);
         return answer;
     }
@@ -2320,7 +2337,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public OnExceptionDefinition onException(Class<? extends Throwable>... exceptions) {
         OnExceptionDefinition answer = new OnExceptionDefinition(Arrays.asList(exceptions));
-        answer.setRouteScoped(true);
         addOutput(answer);
         return answer;
     }
@@ -2785,6 +2801,25 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type setProperty(String name, Expression expression) {
         SetPropertyDefinition answer = new SetPropertyDefinition(name, expression);
+        addOutput(answer);
+        return asType();
+    }
+
+    /**
+     * Adds a processor which sets the exchange property
+     *
+     * @param name the property name
+     * @param supplier the supplier used to set the property
+     * @return the builder
+     */
+    public Type setProperty(String name, final Supplier<Object> supplier) {
+        SetPropertyDefinition answer = new SetPropertyDefinition(name, new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return supplier.get();
+            }
+        });
+
         addOutput(answer);
         return asType();
     }
@@ -4023,16 +4058,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     public void setInheritErrorHandler(Boolean inheritErrorHandler) {
         this.inheritErrorHandler = inheritErrorHandler;
-    }
-
-    @Override
-    public Map<QName, Object> getOtherAttributes() {
-        return otherAttributes;
-    }
-
-    @Override
-    public void setOtherAttributes(Map<QName, Object> otherAttributes) {
-        this.otherAttributes = otherAttributes;
     }
 
     /**

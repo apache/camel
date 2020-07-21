@@ -25,6 +25,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import com.lmax.disruptor.InsufficientCapacityException;
 import org.apache.camel.AsyncEndpoint;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -43,13 +44,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The disruptor component provides asynchronous SEDA behavior using LMAX Disruptor.
+ * Provides asynchronous SEDA behavior using LMAX Disruptor.
  *
  * This component works much as the standard SEDA Component, but utilizes a Disruptor
  * instead of a BlockingQueue utilized by the standard SEDA.
  */
 @ManagedResource(description = "Managed Disruptor Endpoint")
-@UriEndpoint(firstVersion = "2.12.0", scheme = "disruptor,disruptor-vm", title = "Disruptor,Disruptor VM", syntax = "disruptor:name", label = "endpoint")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "disruptor,disruptor-vm", title = "Disruptor,Disruptor VM", syntax = "disruptor:name", category = {Category.ENDPOINT})
 public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint, MultipleConsumersSupport {
     public static final String DISRUPTOR_IGNORE_EXCHANGE = "disruptor.ignoreExchange";
     private static final Logger LOGGER = LoggerFactory.getLogger(DisruptorEndpoint.class);
@@ -66,7 +67,7 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     private boolean multipleConsumers;
     @UriParam(label = "producer", defaultValue = "IfReplyExpected")
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
-    @UriParam(label = "producer", defaultValue = "30000")
+    @UriParam(label = "producer", defaultValue = "30000", javaType = "java.time.Duration")
     private long timeout = 30000;
     @UriParam(defaultValue = "" + DisruptorComponent.DEFAULT_BUFFER_SIZE)
     private int size;
@@ -249,10 +250,10 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
         // notify reference we are shutting down this endpoint
         disruptorReference.addEndpoint(this);
-        super.doStart();
     }
 
     @Override
@@ -349,7 +350,7 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
         boolean result = super.equals(object);
         return result && getCamelContext().equals(((DisruptorEndpoint)object).getCamelContext());
     }
-    
+
     @Override
     public int hashCode() {
         return getEndpointUri().hashCode() * 37 + getCamelContext().hashCode();

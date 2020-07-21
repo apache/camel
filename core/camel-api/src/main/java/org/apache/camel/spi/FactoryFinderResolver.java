@@ -27,7 +27,9 @@ public interface FactoryFinderResolver {
      * @param classResolver the class resolver to use
      * @return a factory finder.
      */
-    FactoryFinder resolveDefaultFactoryFinder(ClassResolver classResolver);
+    default FactoryFinder resolveDefaultFactoryFinder(ClassResolver classResolver) {
+        return resolveFactoryFinder(classResolver, FactoryFinder.DEFAULT_PATH);
+    }
 
     /**
      * Creates a new factory finder.

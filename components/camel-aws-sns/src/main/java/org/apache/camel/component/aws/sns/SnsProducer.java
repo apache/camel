@@ -34,12 +34,16 @@ import org.apache.camel.Message;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Producer which sends messages to the Amazon Web Service Simple Notification Service
  * <a href="http://aws.amazon.com/sns/">AWS SNS</a>
  */
 public class SnsProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SnsProducer.class);
 
     private transient String snsProducerToString;
 
@@ -57,11 +61,11 @@ public class SnsProducer extends DefaultProducer {
         request.setMessage(exchange.getIn().getBody(String.class));
         request.setMessageAttributes(this.translateAttributes(exchange.getIn().getHeaders(), exchange));
 
-        log.trace("Sending request [{}] from exchange [{}]...", request, exchange);
+        LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
 
         PublishResult result = getEndpoint().getSNSClient().publish(request);
 
-        log.trace("Received result [{}]", result);
+        LOG.trace("Received result [{}]", result);
 
         Message message = getMessageForResponse(exchange);
         message.setHeader(SnsConstants.MESSAGE_ID, result.getMessageId());
@@ -117,7 +121,7 @@ public class SnsProducer extends DefaultProducer {
                     result.put(entry.getKey(), mav);
                 } else {
                     // cannot translate the message header to message attribute value
-                    log.warn("Cannot put the message header key={}, value={} into Sns MessageAttribute", entry.getKey(), entry.getValue());
+                    LOG.warn("Cannot put the message header key={}, value={} into Sns MessageAttribute", entry.getKey(), entry.getValue());
                 }
             }
         }

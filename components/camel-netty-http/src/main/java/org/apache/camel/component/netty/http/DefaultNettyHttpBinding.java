@@ -46,6 +46,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.ReferenceCountUtil;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
@@ -103,7 +104,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             // for proxy use case pass the request body buffer directly to the response to avoid additional processing
             // we need to retain it so that the request can be released and we can keep the content
             answer.setBody(request.content().retain());
-            exchange.addOnCompletion(new SynchronizationAdapter() {
+            exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onDone(Exchange exchange) {
                     ReferenceCountUtil.release(request.content());
@@ -113,7 +114,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             // turn the body into stream cached (on the client/consumer side we can facade the netty stream instead of converting to byte array)
             NettyChannelBufferStreamCache cache = new NettyChannelBufferStreamCache(request.content());
             // add on completion to the cache which is needed for Camel to keep track of the lifecycle of the cache
-            exchange.addOnCompletion(new NettyChannelBufferStreamCacheOnCompletion(cache));
+            exchange.adapt(ExtendedExchange.class).addOnCompletion(new NettyChannelBufferStreamCacheOnCompletion(cache));
             answer.setBody(cache);
         }
         return answer;
@@ -149,9 +150,9 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         // we want the full path for the url, as the client may provide the url in the HTTP headers as absolute or relative, eg
         //   /foo
         //   http://servername/foo
-        String http = configuration.isSsl() ? "https://" : "http://";
-        if (!s.startsWith(http)) {
-            if (configuration.getPort() != 80) {
+        if (!s.startsWith("http://") && !s.startsWith("https://")) {
+            String http = configuration.isSsl() ? "https://" : "http://";
+            if (configuration.getPort() != 80 && configuration.getPort() != 443) {
                 s = http + configuration.getHost() + ":" + configuration.getPort() + s;
             } else {
                 s = http + configuration.getHost() + s;
@@ -168,7 +169,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         headers.put(Exchange.HTTP_SCHEME, uri.getScheme());
         headers.put(Exchange.HTTP_HOST, uri.getHost());
         final int port = uri.getPort();
-        headers.put(Exchange.HTTP_PORT, port > 0 ? port : 80);
+        headers.put(Exchange.HTTP_PORT, port > 0 ? port : configuration.isSsl() || "https".equals(uri.getScheme()) ? 443 : 80);
 
         // strip the starting endpoint path so the path is relative to the endpoint uri
         String path = uri.getRawPath();
@@ -190,11 +191,11 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
         for (String name : request.headers().names()) {
             // mapping the content-type
-            if (name.toLowerCase(Locale.US).equals("content-type")) {
+            if (name.equalsIgnoreCase("content-type")) {
                 name = Exchange.CONTENT_TYPE;
             }
 
-            if (name.toLowerCase(Locale.US).equals("authorization")) {
+            if (name.equalsIgnoreCase("authorization")) {
                 String value = request.headers().get(name);
                 // store a special header that this request was authenticated using HTTP Basic
                 if (value != null && value.trim().startsWith("Basic")) {
@@ -349,7 +350,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
         for (String name : response.headers().names()) {
             // mapping the content-type
-            if (name.toLowerCase().equals("content-type")) {
+            if (name.equalsIgnoreCase("content-type")) {
                 name = Exchange.CONTENT_TYPE;
             }
             // add the headers one by one, and use the header filter strategy

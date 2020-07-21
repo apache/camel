@@ -18,51 +18,50 @@ package org.apache.camel.processor.aggregate.jdbc;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JdbcAggregationRepositoryAlotDataTest extends AbstractJdbcAggregationTestSupport {
 
     @Test
     public void testWithAlotOfDataSameKey() {
+        final String key = "foo";
+        Exchange exchange = new DefaultExchange(context);
         for (int i = 0; i < 100; i++) {
-            Exchange exchange1 = new DefaultExchange(context);
-            exchange1.getIn().setBody("counter:" + i);
-            repo.add(context, "foo", exchange1);
+            exchange.getIn().setBody("counter:" + i);
+            exchange = repoAddAndGet(key, exchange);
         }
 
         // Get it back..
-        Exchange actual = repo.get(context, "foo");
+        Exchange actual = repo.get(context, key);
         assertEquals("counter:99", actual.getIn().getBody());
     }
 
     @Test
     public void testWithAlotOfDataTwoKeys() {
-        for (int i = 0; i < 100; i++) {
-            Exchange exchange1 = new DefaultExchange(context);
-            exchange1.getIn().setBody("counter:" + i);
-            String key = i % 2 == 0 ? "foo" : "bar";
-            repo.add(context, key, exchange1);
-        }
-
-        // Get it back..
-        Exchange actual = repo.get(context, "foo");
-        assertEquals("counter:98", actual.getIn().getBody());
-
-        actual = repo.get(context, "bar");
-        assertEquals("counter:99", actual.getIn().getBody());
+        assertThrows(RuntimeException.class, () -> {
+            for (int i = 0; i < 10; i++) {
+                Exchange exchange = new DefaultExchange(context);
+                exchange.getIn().setBody("counter:" + i);
+                String key = i % 2 == 0 ? "foo" : "bar";
+                repoAddAndGet(key, exchange);
+            }
+        });
     }
 
     @Test
     public void testWithAlotOfDataWithDifferentKeys() {
-        for (int i = 0; i < 100; i++) {
-            Exchange exchange1 = new DefaultExchange(context);
-            exchange1.getIn().setBody("counter:" + i);
+        for (int i = 0; i < 10; i++) {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getIn().setBody("counter:" + i);
             String key = "key" + i;
-            repo.add(context, key, exchange1);
+            repoAddAndGet(key, exchange);
         }
 
         // Get it back..
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             Exchange actual = repo.get(context, "key" + i);
             assertEquals("counter:" + i, actual.getIn().getBody());
         }

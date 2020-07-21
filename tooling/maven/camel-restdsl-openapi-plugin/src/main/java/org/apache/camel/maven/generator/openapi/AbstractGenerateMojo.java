@@ -26,6 +26,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -44,6 +45,8 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.twdata.maven.mojoexecutor.MojoExecutor;
+import org.yaml.snakeyaml.Yaml;
+
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.artifactId;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
@@ -81,7 +84,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     @Parameter
     String modelPackage;
 
-    @Parameter(defaultValue = "true")
+    @Parameter(defaultValue = "false")
     String modelWithXml;
 
     @Parameter(defaultValue = "${project}")
@@ -96,7 +99,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.basedir}/src/spec/openapi.json", required = true)
     String specificationUri;
 
-    @Parameter(defaultValue = "3.0.14")
+    @Parameter(defaultValue = "3.0.19")
     String swaggerCodegenMavenPluginVersion;
 
     @Parameter(defaultValue = "${project}", readonly = true)
@@ -107,6 +110,9 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
 
     @Component
     private BuildPluginManager pluginManager;
+
+    @Parameter
+    private Map<String, String> configOptions;
 
     DestinationGenerator createDestinationGenerator() throws MojoExecutionException {
         final Class<DestinationGenerator> destinationGeneratorClass;
@@ -176,7 +182,11 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
             elements.add(new MojoExecutor.Element("modelNameSuffix", modelNameSuffix));
         }
         if (modelWithXml != null) {
-            elements.add(new MojoExecutor.Element("withXml", modelPackage));
+            elements.add(new MojoExecutor.Element("withXml", modelWithXml));
+        }
+        if (configOptions != null) {
+            elements.add(new MojoExecutor.Element("configOptions", configOptions.entrySet().stream()
+                .map(e -> new MojoExecutor.Element(e.getKey(), e.getValue())).toArray(MojoExecutor.Element[]::new)));
         }
 
         executeMojo(
@@ -201,7 +211,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
 
     protected String detectRestComponentFromClasspath() {
         for (final Dependency dep : mavenProject.getDependencies()) {
-            if ("org.apache.camel".equals(dep.getGroupId())) {
+            if ("org.apache.camel".equals(dep.getGroupId()) || "org.apache.camel.springboot".equals(dep.getGroupId())) {
                 final String aid = dep.getArtifactId();
                 final Optional<String> comp = Arrays.asList(DEFAULT_REST_CONSUMER_COMPONENTS).stream()
                     .filter(c -> aid.startsWith("camel-" + c)).findFirst();
@@ -267,14 +277,55 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
 
     OasDocument readOpenApiDoc(String specificationUri) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        InputStream is = null;
+        InputStream is;
         try {
             is = new FileInputStream(new File(specificationUri));
         } catch (Exception ex) {
             //use classloader resource stream as fallback
             is = this.getClass().getClassLoader().getResourceAsStream(specificationUri);
         }
-        JsonNode node = mapper.readTree(is);
-        return (OasDocument)Library.readDocument(node);
+
+        String suffix = ".yaml";
+        if (specificationUri.regionMatches(true, specificationUri.length() - suffix.length(), suffix, 0, suffix.length())) {
+            Yaml loader = new Yaml();
+            Map map = loader.load(is);
+            JsonNode node = mapper.convertValue(map, JsonNode.class);
+            return (OasDocument) Library.readDocument(node);
+        } else {
+            JsonNode node = mapper.readTree(is);
+            return (OasDocument) Library.readDocument(node);
+        }
+    }
+
+    protected String findAppropriateComponent() {
+        String comp = detectRestComponentFromClasspath();
+        if (comp != null) {
+            getLog().info("Detected Camel Rest component from classpath: " + comp);
+        } else {
+            comp = "servlet";
+
+            String gid = "org.apache.camel";
+            String aid = "camel-servlet";
+
+            // is it spring boot?
+            if (detectSpringBootFromClasspath()) {
+                gid = "org.apache.camel.springboot";
+                aid = "camel-servlet-starter";
+            }
+
+            String dep = "\n\t\t<dependency>"
+                    + "\n\t\t\t<groupId>" + gid + "</groupId>"
+                    + "\n\t\t\t<artifactId>" + aid + "</artifactId>";
+            String ver = detectCamelVersionFromClasspath();
+            if (ver != null) {
+                dep += "\n\t\t\t<version>" + ver + "</version>";
+            }
+            dep += "\n\t\t</dependency>\n";
+
+            getLog().info("Cannot detect Rest component from classpath. Will use servlet as Rest component.");
+            getLog().info("Add the following dependency in the Maven pom.xml file:\n" + dep + "\n");
+        }
+
+        return comp;
     }
 }

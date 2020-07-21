@@ -21,9 +21,11 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.spring.config.scan.route.MyExcludedRouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteExclusionFromWithinSpringTestSupportTest extends SpringTestSupport {
 
@@ -38,7 +40,7 @@ public class RouteExclusionFromWithinSpringTestSupportTest extends SpringTestSup
         MockEndpoint mock = getMockEndpoint("mock:definitelyShouldNeverReceiveExchange");
         mock.expectedMessageCount(0);
 
-        sendBody("seda:shouldNeverRecieveExchange", "dropped like a hot rock");
+        sendBody("seda:shouldNeverReceiveExchange", "dropped like a hot rock");
         mock.await(500, TimeUnit.MILLISECONDS);
         mock.assertIsSatisfied();
     }

@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.s3;
 
 import com.amazonaws.Protocol;
+import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.EncryptionMaterials;
 import org.apache.camel.RuntimeCamelException;
@@ -34,6 +35,8 @@ public class S3Configuration implements Cloneable {
     private String accessKey;
     @UriParam(label = "security", secret = true)
     private String secretKey;
+    @UriParam
+    private EndpointConfiguration endpointConfiguration;
     @UriParam(label = "consumer")
     private String fileName;
     @UriParam(label = "consumer")
@@ -95,6 +98,8 @@ public class S3Configuration implements Cloneable {
     private boolean useIAMCredentials;
     @UriParam(label = "producer")
     private String keyName;
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean autoDiscoverClient = true;
 
     public long getPartSize() {
         return partSize;
@@ -140,6 +145,17 @@ public class S3Configuration implements Cloneable {
      */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
+    }
+
+    public EndpointConfiguration getEndpointConfiguration() {
+        return endpointConfiguration;
+    }
+
+    /**
+     * Amazon AWS Endpoint Configuration
+     */
+    public void setEndpointConfiguration(EndpointConfiguration endpointConfiguration) {
+        this.endpointConfiguration = endpointConfiguration;
     }
 
     public AmazonS3 getAmazonS3Client() {
@@ -314,7 +330,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * To define a proxy host when instantiating the SQS client
+     * To define a proxy host when instantiating the S3 client
      */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
@@ -502,6 +518,19 @@ public class S3Configuration implements Cloneable {
      */
     public void setKeyName(String keyName) {
         this.keyName = keyName;
+    }
+
+    public boolean isAutoDiscoverClient() {
+        return autoDiscoverClient;
+    }
+
+    /**
+     * Setting the autoDiscoverClient mechanism, if true, the component will
+     * look for a client instance in the registry automatically otherwise it
+     * will skip that checking.
+     */
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
     }
 
     public boolean hasProxyConfiguration() {

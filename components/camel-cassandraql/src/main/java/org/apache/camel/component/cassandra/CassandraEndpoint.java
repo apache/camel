@@ -21,6 +21,7 @@ import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Message;
@@ -35,10 +36,10 @@ import org.apache.camel.utils.cassandra.CassandraLoadBalancingPolicies;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 
 /**
- * The cql component aims at integrating Cassandra 2.0+ using the CQL3 API (not
- * the Thrift API). It's based on Cassandra Java Driver provided by DataStax.
+ * Integrate with Cassandra 2.0+ using the CQL3 API (not the Thrift API).
+ * Based on Cassandra Java Driver provided by DataStax.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "cql", title = "Cassandra CQL", syntax = "cql:beanRef:hosts:port/keyspace", label = "database,nosql")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "cql", title = "Cassandra CQL", syntax = "cql:beanRef:hosts:port/keyspace", category = {Category.DATABASE, Category.NOSQL})
 public class CassandraEndpoint extends ScheduledPollEndpoint {
 
     private volatile CassandraSessionHolder sessionHolder;

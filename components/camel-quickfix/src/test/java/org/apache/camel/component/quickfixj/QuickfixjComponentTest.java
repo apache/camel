@@ -40,9 +40,9 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.converter.StaticMethodTypeConverter;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import quickfix.Acceptor;
 import quickfix.DefaultMessageFactory;
 import quickfix.FixVersions;
@@ -98,7 +98,7 @@ public class QuickfixjComponentTest {
         return uri;
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         settingsFile = File.createTempFile("quickfixj_test_", ".cfg");
         settingsFile2 = File.createTempFile("quickfixj_test2_", ".cfg");
@@ -145,7 +145,7 @@ public class QuickfixjComponentTest {
         camelContext.getTypeConverterRegistry().addTypeConverter(SessionID.class, String.class,  new StaticMethodTypeConverter(converterMethod, false));
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         Thread.currentThread().setContextClassLoader(contextClassLoader);   
         if (component != null) {

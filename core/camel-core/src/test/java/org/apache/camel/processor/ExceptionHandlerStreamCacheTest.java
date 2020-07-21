@@ -30,8 +30,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test cases for dealing with stream types in an exception handler
@@ -56,7 +58,7 @@ public class ExceptionHandlerStreamCacheTest extends ContextTestSupport {
         exceptionEndpoint.assertIsSatisfied();
 
         InputStream body = (InputStream)exceptionEndpoint.getExchanges().get(0).getIn().getBody();
-        assertEquals("Ensure message re-readability in the exception handler", message, new String(IOConverter.toBytes(body)));
+        assertEquals(message, new String(IOConverter.toBytes(body)), "Ensure message re-readability in the exception handler");
     }
 
     @Test
@@ -74,11 +76,11 @@ public class ExceptionHandlerStreamCacheTest extends ContextTestSupport {
         exceptionEndpoint.assertIsSatisfied();
 
         StreamSource body = (StreamSource)exceptionEndpoint.getExchanges().get(0).getIn().getBody();
-        assertEquals("Ensure message re-readability in the exception handler", xml, new XmlConverter().toString(body, null));
+        assertEquals(xml, new XmlConverter().toString(body, null), "Ensure message re-readability in the exception handler");
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

@@ -21,18 +21,18 @@ import java.util.Map;
 
 import com.jcraft.jsch.JSch;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.file.FileProcessStrategy;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.remote.RemoteFileComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 
 /**
  * Component providing secure messaging using JSch
  */
 @Component("scp")
-@FileProcessStrategy(ScpProcessStrategyFactory.class)
 public class ScpComponent extends RemoteFileComponent<ScpFile> {
 
+    @Metadata
     private boolean verboseLogging;
 
     public ScpComponent() {
@@ -44,7 +44,7 @@ public class ScpComponent extends RemoteFileComponent<ScpFile> {
 
     @Override
     protected GenericFileEndpoint<ScpFile> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        int query = uri.indexOf("?");
+        int query = uri.indexOf('?');
         return new ScpEndpoint(uri, this, new ScpConfiguration(new URI(query >= 0 ? uri.substring(0, query) : uri)));
     }
 
@@ -54,17 +54,9 @@ public class ScpComponent extends RemoteFileComponent<ScpFile> {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
+    protected void doInit() throws Exception {
+        super.doInit();
         initJsch();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-
-        // noop
     }
 
     public boolean isVerboseLogging() {

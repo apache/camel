@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
@@ -50,7 +49,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "aggregate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition> implements OutputNode, ExecutorServiceAwareDefinition<AggregateDefinition> {
+public class AggregateDefinition extends OutputDefinition<AggregateDefinition> implements ExecutorServiceAwareDefinition<AggregateDefinition> {
     @XmlElement(name = "correlationExpression", required = true)
     private ExpressionSubElementDefinition correlationExpression;
     @XmlElement(name = "completionPredicate")
@@ -97,14 +96,14 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     @Metadata(javaType = "java.lang.Integer")
     private String completionSize;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Long")
+    @Metadata(javaType = "java.time.Duration")
     private String completionInterval;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Long")
+    @Metadata(javaType = "java.time.Duration")
     private String completionTimeout;
     @XmlAttribute
-    @Metadata(defaultValue = "1000", javaType = "java.lang.Long")
-    private String completionTimeoutCheckerInterval = Long.toString(1000L);
+    @Metadata(defaultValue = "1s", javaType = "java.time.Duration")
+    private String completionTimeoutCheckerInterval = "1s";
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String completionFromBatchConsumer;
@@ -136,8 +135,6 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private AggregateController aggregateController;
     @XmlAttribute
     private String aggregateControllerRef;
-    @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     public AggregateDefinition() {
     }
@@ -734,6 +731,44 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
+     * A repeating period in millis by which the aggregator will complete all
+     * current aggregated exchanges. Camel has a background task which is
+     * triggered every period. You cannot use this option together with
+     * completionTimeout, only one of them can be used.
+     *
+     * @param completionInterval the interval in millis, must be a positive
+     *            value
+     * @return the builder
+     */
+    public AggregateDefinition completionInterval(String completionInterval) {
+        setCompletionInterval(completionInterval);
+        return this;
+    }
+
+    /**
+     * Time in millis that an aggregated exchange should be inactive before its
+     * complete (timeout). This option can be set as either a fixed value or
+     * using an Expression which allows you to evaluate a timeout dynamically -
+     * will use Long as result. If both are set Camel will fallback to use the
+     * fixed value if the Expression result was null or 0. You cannot use this
+     * option together with completionInterval, only one of the two can be used.
+     * <p/>
+     * By default the timeout checker runs every second, you can use the
+     * completionTimeoutCheckerInterval option to configure how frequently to
+     * run the checker. The timeout is an approximation and there is no
+     * guarantee that the a timeout is triggered exactly after the timeout
+     * value. It is not recommended to use very low timeout values or checker
+     * intervals.
+     *
+     * @param completionTimeout the timeout in millis, must be a positive value
+     * @return the builder
+     */
+    public AggregateDefinition completionTimeout(String completionTimeout) {
+        setCompletionTimeout(completionTimeout);
+        return this;
+    }
+
+    /**
      * Time in millis that an aggregated exchange should be inactive before its
      * complete (timeout). This option can be set as either a fixed value or
      * using an Expression which allows you to evaluate a timeout dynamically -
@@ -914,7 +949,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Sets the custom aggregate repository to use
+     * Sets the custom aggregate repository to use.
      * <p/>
      * Will by default use
      * {@link org.apache.camel.processor.aggregate.MemoryAggregationRepository}
@@ -1145,8 +1180,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return outputs;
     }
 
+    @XmlElementRef
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
-        this.outputs = outputs;
+        super.setOutputs(outputs);
     }
 
 }

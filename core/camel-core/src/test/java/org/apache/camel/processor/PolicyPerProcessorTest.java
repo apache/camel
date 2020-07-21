@@ -20,11 +20,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Policy;
-import org.apache.camel.spi.RouteContext;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PolicyPerProcessorTest extends ContextTestSupport {
 
@@ -46,13 +48,13 @@ public class PolicyPerProcessorTest extends ContextTestSupport {
         MyPolicy foo = context.getRegistry().lookupByNameAndType("foo", MyPolicy.class);
         MyPolicy bar = context.getRegistry().lookupByNameAndType("bar", MyPolicy.class);
 
-        assertEquals("Should only be invoked 1 time", 1, foo.getInvoked());
-        assertEquals("Should only be invoked 1 time", 1, bar.getInvoked());
+        assertEquals(1, foo.getInvoked(), "Should only be invoked 1 time");
+        assertEquals(1, bar.getInvoked(), "Should only be invoked 1 time");
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("foo", new MyPolicy("foo"));
         jndi.bind("bar", new MyPolicy("bar"));
         return jndi;
@@ -88,12 +90,12 @@ public class PolicyPerProcessorTest extends ContextTestSupport {
         }
 
         @Override
-        public void beforeWrap(RouteContext routeContext, NamedNode definition) {
+        public void beforeWrap(Route route, NamedNode definition) {
             // no need to modify the route
         }
 
         @Override
-        public Processor wrap(RouteContext routeContext, final Processor processor) {
+        public Processor wrap(Route route, final Processor processor) {
             return new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     invoked++;

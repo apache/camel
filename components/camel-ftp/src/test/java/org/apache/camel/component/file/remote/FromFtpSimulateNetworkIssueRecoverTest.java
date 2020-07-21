@@ -34,10 +34,10 @@ public class FromFtpSimulateNetworkIssueRecoverTest extends FtpServerTestSupport
 
     private static int counter;
     private static int rollback;
-    
+
     @BindToRegistry("myPoll")
     private MyPollStrategy strategy = new MyPollStrategy();
-    
+
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/recover?password=admin&pollStrategy=#myPoll";
     }

@@ -23,10 +23,14 @@ import com.microsoft.azure.storage.StorageCredentialsAccountAndKey;
 import com.microsoft.azure.storage.core.Base64;
 import com.microsoft.azure.storage.queue.CloudQueue;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.component.azure.queue.QueueServiceComponent.MISSING_QUEUE_CREDNTIALS_EXCEPTION_MESSAGE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class QueueServiceComponentConfigurationTest extends CamelTestSupport {
     
@@ -103,16 +107,7 @@ public class QueueServiceComponentConfigurationTest extends CamelTestSupport {
         
         createConsumer(endpoint);
     }
-    
-    @Test
-    public void testNoCredentials() throws Exception {
-        try {
-            context.getEndpoint("azure-queue://camelazure/testqueue");
-            fail();
-        } catch (Exception ex) {
-            assertEquals("Credentials must be specified.", ex.getCause().getMessage());
-        }
-    }
+
     
     @Test
     public void testTooManyPathSegments() throws Exception {
@@ -130,17 +125,14 @@ public class QueueServiceComponentConfigurationTest extends CamelTestSupport {
             context.getEndpoint("azure-queue://camelazure?operation=addMessage");
             fail();
         } catch (Exception ex) {
-            assertEquals("Credentials must be specified.", ex.getCause().getMessage());
+            assertEquals(MISSING_QUEUE_CREDNTIALS_EXCEPTION_MESSAGE, ex.getCause().getMessage());
         }
     }
     
     
     private static void createConsumer(Endpoint endpoint) throws Exception {
-        endpoint.createConsumer(new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                // noop
-            }
+        endpoint.createConsumer(exchange -> {
+            // noop
         });
     }
     

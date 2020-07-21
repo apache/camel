@@ -100,7 +100,7 @@ final class HaConfigurationBuilder {
         String clusterName = HFDS_NAMED_SERVICE;
 
         if (StringUtils.isNotEmpty(rawClusterName)) {
-            clusterName = rawClusterName.replaceAll("\\.", HFDS_NAMED_SERVICE_SEPARATOR);
+            clusterName = rawClusterName.replace(".", HFDS_NAMED_SERVICE_SEPARATOR);
         }
 
         return clusterName;

@@ -23,13 +23,12 @@ import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.LogDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.LogProcessor;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.MaskingFormatter;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.processor.DefaultMaskingFormatter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -38,29 +37,30 @@ import org.slf4j.LoggerFactory;
 
 public class LogReifier extends ProcessorReifier<LogDefinition> {
 
-    public LogReifier(ProcessorDefinition<?> definition) {
-        super((LogDefinition)definition);
+    public LogReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (LogDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         StringHelper.notEmpty(definition.getMessage(), "message", this);
+        String msg = parseString(definition.getMessage());
 
         // use simple language for the message string to give it more power
-        Expression exp = routeContext.getCamelContext().resolveLanguage("simple").createExpression(definition.getMessage());
+        Expression exp = camelContext.resolveLanguage("simple").createExpression(msg);
 
-        // get logger explicitely set in the definition
+        // get logger explicitly set in the definition
         Logger logger = definition.getLogger();
 
         // get logger which may be set in XML definition
         if (logger == null && ObjectHelper.isNotEmpty(definition.getLoggerRef())) {
-            logger = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), definition.getLoggerRef(), Logger.class);
+            logger = mandatoryLookup(definition.getLoggerRef(), Logger.class);
         }
 
         if (logger == null) {
             // first - try to lookup single instance in the registry, just like
             // LogComponent
-            Map<String, Logger> availableLoggers = routeContext.lookupByType(Logger.class);
+            Map<String, Logger> availableLoggers = findByTypeWithName(Logger.class);
             if (availableLoggers.size() == 1) {
                 logger = availableLoggers.values().iterator().next();
                 log.debug("Using custom Logger: {}", logger);
@@ -71,30 +71,30 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
         }
 
         if (logger == null) {
-            String name = definition.getLogName();
+            String name = parseString(definition.getLogName());
             if (name == null) {
-                name = routeContext.getCamelContext().getGlobalOption(Exchange.LOG_EIP_NAME);
+                name = camelContext.getGlobalOption(Exchange.LOG_EIP_NAME);
                 if (name != null) {
                     log.debug("Using logName from CamelContext properties: {}", name);
                 }
             }
             if (name == null) {
-                name = routeContext.getRouteId();
+                name = route.getRouteId();
                 log.debug("LogName is not configured, using route id as logName: {}", name);
             }
             logger = LoggerFactory.getLogger(name);
         }
 
         // should be INFO by default
-        LoggingLevel level = definition.getLoggingLevel() != null ? parse(routeContext, LoggingLevel.class, definition.getLoggingLevel()) : LoggingLevel.INFO;
+        LoggingLevel level = definition.getLoggingLevel() != null ? parse(LoggingLevel.class, definition.getLoggingLevel()) : LoggingLevel.INFO;
         CamelLogger camelLogger = new CamelLogger(logger, level, definition.getMarker());
 
-        return new LogProcessor(exp, camelLogger, getMaskingFormatter(routeContext), routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getLogListeners());
+        return new LogProcessor(exp, camelLogger, getMaskingFormatter(), camelContext.adapt(ExtendedCamelContext.class).getLogListeners());
     }
 
-    private MaskingFormatter getMaskingFormatter(RouteContext routeContext) {
-        if (routeContext.isLogMask()) {
-            MaskingFormatter formatter = routeContext.lookup(MaskingFormatter.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
+    private MaskingFormatter getMaskingFormatter() {
+        if (route.isLogMask()) {
+            MaskingFormatter formatter = lookup(MaskingFormatter.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
             if (formatter == null) {
                 formatter = new DefaultMaskingFormatter();
             }

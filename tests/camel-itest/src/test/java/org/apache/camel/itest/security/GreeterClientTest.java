@@ -24,21 +24,22 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.apache.hello_world_soap_http.Greeter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
+@CamelSpringTest
 @ContextConfiguration(locations = {"camel-context.xml"})
-public class GreeterClientTest extends AbstractJUnit4SpringContextTests {
+public class GreeterClientTest {
     private static final java.net.URL WSDL_LOC;
     static {
         java.net.URL tmp = null;
@@ -63,7 +64,7 @@ public class GreeterClientTest extends AbstractJUnit4SpringContextTests {
         final javax.xml.ws.Service svc = javax.xml.ws.Service.create(WSDL_LOC, SERVICE_QNAME);
         final Greeter greeter = svc.getPort(PORT_QNAME, Greeter.class);
 
-        Client client = ClientProxy.getClient(greeter);        
+        Client client = ClientProxy.getClient(greeter);
         Map<String, Object> props = new HashMap<>();
         props.put("action", "UsernameToken");
         props.put("user", username);
@@ -78,7 +79,7 @@ public class GreeterClientTest extends AbstractJUnit4SpringContextTests {
     }
 
     @Test
-    public void testServiceWithValidateUser() throws Exception {
+    void testServiceWithValidateUser() throws Exception {
         
         String response = sendMessageWithUsernameToken("jim", "jimspassword", "CXF");
         
@@ -89,25 +90,24 @@ public class GreeterClientTest extends AbstractJUnit4SpringContextTests {
             fail("should fail");
         } catch (Exception ex) {
             String msg = ex.getMessage();
-            assertTrue("Get a wrong type exception.", ex instanceof SOAPFaultException);
-            assertTrue("Get a wrong exception message: " + msg,
-                       msg.startsWith("The security token could not be authenticated or authorized")
-                       || msg.startsWith("A security error was encountered when verifying the messag"));
+            assertTrue(ex instanceof SOAPFaultException, "Get a wrong type exception.");
+            assertTrue(msg.startsWith("The security token could not be authenticated or authorized")
+                       || msg.startsWith("A security error was encountered when verifying the messag"),
+                       "Get a wrong exception message: " + msg);
         }
-
     }
-    
+
     @Test
-    public void testServiceWithNotAuthorizedUser() throws Exception {
+    void testServiceWithNotAuthorizedUser() {
         try {
             // this user doesn't have the right to access the processor
             sendMessageWithUsernameToken("bob", "bobspassword", "CXF");
             fail("should fail");
         } catch (Exception ex) {
-            assertTrue("Get a wrong type exception.", ex instanceof SOAPFaultException);
-            assertTrue("Get a wrong exception message", ex.getMessage().startsWith("Cannot access the processor which has been protected."));
-            assertTrue("Get a wrong exception message", ex.getMessage().endsWith("Caused by: [org.springframework.security.access.AccessDeniedException - Access is denied]"));
-        }        
+            assertTrue(ex instanceof SOAPFaultException, "Get a wrong type exception.");
+            assertTrue(ex.getMessage().startsWith("Cannot access the processor which has been protected."), "Get a wrong exception message");
+            assertTrue(ex.getMessage().endsWith("Caused by: [org.springframework.security.access.AccessDeniedException - Access is denied]"), "Get a wrong exception message");
+        }
     }
 
 }

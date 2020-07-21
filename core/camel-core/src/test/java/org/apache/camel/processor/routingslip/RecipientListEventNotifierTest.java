@@ -23,7 +23,9 @@ import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RecipientListEventNotifierTest extends ContextTestSupport {
 
@@ -32,7 +34,6 @@ public class RecipientListEventNotifierTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.init();
         context.getManagementStrategy().addEventNotifier(notifier);
         return context;
     }
@@ -48,8 +49,8 @@ public class RecipientListEventNotifierTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Should have 5 sending events", 5, notifier.getSending());
-        assertEquals("Should have 5 sent events", 5, notifier.getSent());
+        assertEquals(5, notifier.getSending(), "Should have 5 sending events");
+        assertEquals(5, notifier.getSent(), "Should have 5 sent events");
     }
 
     @Override

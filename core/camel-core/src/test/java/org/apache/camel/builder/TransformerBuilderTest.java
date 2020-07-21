@@ -26,7 +26,10 @@ import org.apache.camel.impl.transformer.ProcessorTransformer;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TransformerBuilderTest extends TestSupport {
 

@@ -125,9 +125,7 @@ public final class DockerClientFactory {
                 factory = new JerseyDockerCmdExecFactory();
                 ((JerseyDockerCmdExecFactory) factory)
                     .withReadTimeout(clientProfile.getRequestTimeout())
-                    .withConnectTimeout(clientProfile.getRequestTimeout())
-                    .withMaxTotalConnections(clientProfile.getMaxTotalConnections())
-                    .withMaxPerRouteConnections(clientProfile.getMaxPerRouteConnections());
+                    .withConnectTimeout(clientProfile.getRequestTimeout());
             } else if (cmdExecFactory.equals(NettyDockerCmdExecFactory.class.getName())) {
                 factory = new NettyDockerCmdExecFactory();
                 ((NettyDockerCmdExecFactory) factory)

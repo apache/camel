@@ -20,7 +20,9 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class VmInOutChainedTimeoutTest extends AbstractVmTestSupport {
 
@@ -39,7 +41,7 @@ public class VmInOutChainedTimeoutTest extends AbstractVmTestSupport {
 
         long delta = watch.taken();
 
-        assertTrue("Should be faster than 1 sec, was: " + delta, delta < 1100);
+        assertTrue(delta < 1100, "Should be faster than 1 sec, was: " + delta);
     }
 
     @Override

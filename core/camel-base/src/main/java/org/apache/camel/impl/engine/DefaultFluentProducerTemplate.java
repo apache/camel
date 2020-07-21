@@ -177,6 +177,14 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     @Override
     public FluentProducerTemplate withTemplateCustomizer(final Consumer<ProducerTemplate> templateCustomizer) {
         this.templateCustomizer.set(templateCustomizer);
+
+        if (template != null) {
+            // need to re-initialize template since we have a customizer
+            ServiceHelper.stopService(template);
+            templateCustomizer.accept(template);
+            ServiceHelper.startService(template);
+        }
+
         return this;
     }
 
@@ -329,23 +337,12 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
      * @param context the camel context
      */
     public static FluentProducerTemplate on(CamelContext context) {
-        return new DefaultFluentProducerTemplate(context);
+        DefaultFluentProducerTemplate fluent = new DefaultFluentProducerTemplate(context);
+        fluent.start();
+        return fluent;
     }
 
     private ProducerTemplate template() {
-        ObjectHelper.notNull(context, "CamelContext");
-
-        if (template == null) {
-            template = context.createProducerTemplate(maximumCacheSize);
-            if (defaultEndpoint != null) {
-                template.setDefaultEndpoint(defaultEndpoint);
-            }
-            template.setEventNotifierEnabled(eventNotifierEnabled);
-            if (templateCustomizer.get() != null) {
-                templateCustomizer.get().accept(template);
-            }
-        }
-
         return template;
     }
 
@@ -374,14 +371,29 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
             return defaultEndpoint;
         }
 
+        if (template != null && template.getDefaultEndpoint() != null) {
+            return template.getDefaultEndpoint();
+        }
+
         throw new IllegalArgumentException("No endpoint configured on FluentProducerTemplate. You can configure an endpoint with to(uri)");
     }
 
     @Override
-    protected void doStart() throws Exception {
-        if (template == null) {
-            template = template();
+    protected void doInit() throws Exception {
+        ObjectHelper.notNull(context, "CamelContext");
+        template = context.createProducerTemplate(maximumCacheSize);
+        if (defaultEndpoint != null) {
+            template.setDefaultEndpoint(defaultEndpoint);
         }
+        template.setEventNotifierEnabled(eventNotifierEnabled);
+        if (templateCustomizer.get() != null) {
+            templateCustomizer.get().accept(template);
+        }
+        ServiceHelper.initService(template);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
         ServiceHelper.startService(template);
     }
 
@@ -392,7 +404,12 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         this.exchangeSupplier.remove();
         this.processorSupplier.remove();
         this.templateCustomizer.remove();
-
         ServiceHelper.stopService(template);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownService(template);
+        template = null;
     }
 }

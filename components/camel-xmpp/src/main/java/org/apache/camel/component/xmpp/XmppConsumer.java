@@ -44,11 +44,15 @@ import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link org.apache.camel.Consumer Consumer} which listens to XMPP packets
  */
 public class XmppConsumer extends DefaultConsumer implements IncomingChatMessageListener, MessageListener, StanzaListener {
+
+    private static final Logger LOG = LoggerFactory.getLogger(XmppConsumer.class);
 
     private final XmppEndpoint endpoint;
     private MultiUserChat muc;
@@ -70,7 +74,7 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
             if (endpoint.isTestConnectionOnStartup()) {
                 throw new RuntimeException("Could not connect to XMPP server.", e);
             } else {
-                log.warn(e.getMessage());
+                LOG.warn(e.getMessage());
                 if (getExceptionHandler() != null) {
                     getExceptionHandler().handleException(e.getMessage(), e);
                 }
@@ -108,7 +112,7 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
                 mucc.withPassword(roomPassword);
             }
             muc.join(mucc.build());
-            log.info("Joined room: {} as: {}", muc.getRoom(), endpoint.getNickname());
+            LOG.info("Joined room: {} as: {}", muc.getRoom(), endpoint.getNickname());
         }
 
         this.startRobustConnectionMonitor();
@@ -122,11 +126,11 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
                 try {
                     doStart();
                 } catch (Exception e) {
-                    log.warn("Ignoring an exception caught in the startup connection poller thread.", e);
+                    LOG.warn("Ignoring an exception caught in the startup connection poller thread.", e);
                 }
             }
         };
-        log.info("Delaying XMPP consumer startup for endpoint {}. Trying again in {} seconds.",
+        LOG.info("Delaying XMPP consumer startup for endpoint {}. Trying again in {} seconds.",
                 URISupport.sanitizeUri(endpoint.getEndpointUri()), endpoint.getConnectionPollDelay());
         getExecutor().schedule(startRunnable, endpoint.getConnectionPollDelay(), TimeUnit.SECONDS);
     }
@@ -138,7 +142,7 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
                 try {
                     checkConnection();
                 } catch (Exception e) {
-                    log.warn("Ignoring an exception caught in the connection poller thread.", e);
+                    LOG.warn("Ignoring an exception caught in the connection poller thread.", e);
                 }
             }
         };
@@ -149,12 +153,12 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
 
     private void checkConnection() throws Exception {
         if (!connection.isConnected()) {
-            log.info("Attempting to reconnect to: {}", XmppEndpoint.getConnectionMessage(connection));
+            LOG.info("Attempting to reconnect to: {}", XmppEndpoint.getConnectionMessage(connection));
             try {
                 connection.connect();
-                log.debug("Successfully connected to XMPP server through: {}", connection);
+                LOG.debug("Successfully connected to XMPP server through: {}", connection);
             } catch (SmackException e) {
-                log.warn("Connection to XMPP server failed. Will try to reconnect later again.", e);
+                LOG.warn("Connection to XMPP server failed. Will try to reconnect later again.", e);
             }
         }
     }
@@ -177,7 +181,7 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
         }
 
         if (muc != null) {
-            log.info("Leaving room: {}", muc.getRoom());
+            LOG.info("Leaving room: {}", muc.getRoom());
             muc.removeMessageListener(this);
             muc.leave();
             muc = null;
@@ -205,8 +209,8 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
     }
 
     public void processMessage(Chat chat, Message message) {
-        if (log.isDebugEnabled()) {
-            log.debug("Received XMPP message for {} from {} : {}", new Object[] {endpoint.getUser(), endpoint.getParticipant(), message.getBody()});
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Received XMPP message for {} from {} : {}", new Object[] {endpoint.getUser(), endpoint.getParticipant(), message.getBody()});
         }
 
         Exchange exchange = endpoint.createExchange(message);
@@ -226,7 +230,7 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
                 try {
                     muc.pollMessage();
                 } catch (MultiUserChatException.MucNotJoinedException e) {
-                    log.debug("Error while polling message from MultiUserChat. This exception will be ignored.", e);
+                    LOG.debug("Error while polling message from MultiUserChat. This exception will be ignored.", e);
                 }
             }
         }

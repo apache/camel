@@ -95,29 +95,29 @@ public class JsonXmlStreamReader implements XMLStreamReader {
             final StackElement previousElement = tokenStack.peek();
             if (previousElement != null) {
                 switch (previousElement.jsonToken) {
-                case VALUE_STRING:
-                case VALUE_NUMBER_INT:
-                case VALUE_NUMBER_FLOAT:
-                case VALUE_NULL:
-                case VALUE_TRUE:
-                case VALUE_FALSE: {
-                    switch (previousElement.xmlEvent) {
-                    case XMLStreamConstants.START_ELEMENT:
-                        previousElement.xmlEvent = XMLStreamConstants.CHARACTERS;
-                        return XMLStreamConstants.CHARACTERS;
-                    case XMLStreamConstants.CHARACTERS:
-                        removeStackElement(previousElement.jsonToken);
-                        removeStackElement(JsonToken.FIELD_NAME);
+                    case VALUE_STRING:
+                    case VALUE_NUMBER_INT:
+                    case VALUE_NUMBER_FLOAT:
+                    case VALUE_NULL:
+                    case VALUE_TRUE:
+                    case VALUE_FALSE: {
+                        switch (previousElement.xmlEvent) {
+                            case XMLStreamConstants.START_ELEMENT:
+                                previousElement.xmlEvent = XMLStreamConstants.CHARACTERS;
+                                return XMLStreamConstants.CHARACTERS;
+                            case XMLStreamConstants.CHARACTERS:
+                                removeStackElement(previousElement.jsonToken);
+                                removeStackElement(JsonToken.FIELD_NAME);
 
-                        assert tokenStack.peek() != null;
-                        tokenStack.peek().xmlEvent = XMLStreamConstants.END_ELEMENT;
-                        return XMLStreamConstants.END_ELEMENT;
-                    default:
-                        throw new IllegalStateException("illegal state");
+                                assert tokenStack.peek() != null;
+                                tokenStack.peek().xmlEvent = XMLStreamConstants.END_ELEMENT;
+                                return XMLStreamConstants.END_ELEMENT;
+                            default:
+                                throw new IllegalStateException("illegal state");
+                        }
                     }
-                }
-                default:
-                    break;
+                    default:
+                        break;
                 }
             }
 
@@ -141,33 +141,33 @@ public class JsonXmlStreamReader implements XMLStreamReader {
             }
 
             switch (currentToken) {
-            case START_OBJECT:
-            case START_ARRAY:
-            case VALUE_STRING:
-            case VALUE_NUMBER_INT:
-            case VALUE_NUMBER_FLOAT:
-            case VALUE_NULL:
-            case VALUE_TRUE:
-            case VALUE_FALSE:
-                stackElement.xmlEvent = XMLStreamConstants.START_ELEMENT;
+                case START_OBJECT:
+                case START_ARRAY:
+                case VALUE_STRING:
+                case VALUE_NUMBER_INT:
+                case VALUE_NUMBER_FLOAT:
+                case VALUE_NULL:
+                case VALUE_TRUE:
+                case VALUE_FALSE:
+                    stackElement.xmlEvent = XMLStreamConstants.START_ELEMENT;
 
-                return XMLStreamConstants.START_ELEMENT;
-            case END_OBJECT:
-                removeStackElement(JsonToken.END_OBJECT);
-                removeStackElement(JsonToken.START_OBJECT);
-                removeStackElement(JsonToken.FIELD_NAME);
-                eof = tokenStack.size() == 0;
+                    return XMLStreamConstants.START_ELEMENT;
+                case END_OBJECT:
+                    removeStackElement(JsonToken.END_OBJECT);
+                    removeStackElement(JsonToken.START_OBJECT);
+                    removeStackElement(JsonToken.FIELD_NAME);
+                    eof = tokenStack.size() == 0;
 
-                return XMLStreamConstants.END_ELEMENT;
-            case END_ARRAY:
-                removeStackElement(JsonToken.END_ARRAY);
-                removeStackElement(JsonToken.START_ARRAY);
-                removeStackElement(JsonToken.FIELD_NAME);
-                eof = tokenStack.size() == 0;
+                    return XMLStreamConstants.END_ELEMENT;
+                case END_ARRAY:
+                    removeStackElement(JsonToken.END_ARRAY);
+                    removeStackElement(JsonToken.START_ARRAY);
+                    removeStackElement(JsonToken.FIELD_NAME);
+                    eof = tokenStack.size() == 0;
 
-                return XMLStreamConstants.END_ELEMENT;
-            default:
-                throw new IllegalStateException("JsonToken: " + currentToken);
+                    return XMLStreamConstants.END_ELEMENT;
+                default:
+                    throw new IllegalStateException("JsonToken: " + currentToken);
             }
 
         } catch (IOException e) {
@@ -596,12 +596,12 @@ public class JsonXmlStreamReader implements XMLStreamReader {
         String getAttributeValue(int idx) {
             final QName attribute = getAttribute(idx);
             switch (attribute.getLocalPart()) {
-            case XJConstants.TYPE_HINT_NAME:
-                return this.name;
-            case XJConstants.TYPE_HINT_TYPE:
-                return XJConstants.JSONTYPE_TYPE_MAP.get(this.jsonToken);
-            default:
-                throw new IllegalArgumentException("Unknown attribute " + attribute.getLocalPart());
+                case XJConstants.TYPE_HINT_NAME:
+                    return this.name;
+                case XJConstants.TYPE_HINT_TYPE:
+                    return XJConstants.JSONTYPE_TYPE_MAP.get(this.jsonToken);
+                default:
+                    throw new IllegalArgumentException("Unknown attribute " + attribute.getLocalPart());
             }
         }
 

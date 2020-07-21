@@ -23,12 +23,15 @@ import java.util.stream.Collectors;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.caffeine.CaffeineConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CaffeineCacheStatsCounterProducerTest extends CaffeineCacheTestSupport {
 
     @Test
-    public void testStats() throws Exception {
+    void testStats() {
         final Map<String, String> map = generateRandomMapOfString(3);
         final Set<String> keys = map.keySet().stream().limit(2).collect(Collectors.toSet());
 
@@ -53,7 +56,7 @@ public class CaffeineCacheStatsCounterProducerTest extends CaffeineCacheTestSupp
     // ****************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://start").toF("caffeine-cache://%s?cache=#cacheSc", "test").to("log:org.apache.camel.component.caffeine?level=INFO&showAll=true&multiline=true")

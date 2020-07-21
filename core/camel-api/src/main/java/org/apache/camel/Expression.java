@@ -18,11 +18,7 @@ package org.apache.camel;
 
 /**
  * An <a href="http://camel.apache.org/expression.html">expression</a>
- * provides a plugin strategy for evaluating expressions on a message exchange to support things like
- * <a href="http://camel.apache.org/scripting-languages.html">scripting languages</a>,
- * <a href="http://camel.apache.org/xquery.html">XQuery</a>
- * or <a href="http://camel.apache.org/sql.html">SQL</a> as well
- * as any arbitrary Java expression.
+ * provides a plugin strategy for evaluating expressions on a message exchange.
  */
 public interface Expression {
 
@@ -34,4 +30,11 @@ public interface Expression {
      * @return the value of the expression
      */
     <T> T evaluate(Exchange exchange, Class<T> type);
+
+    /**
+     * Initialize the expression with the given camel context
+     */
+    default void init(CamelContext context) {
+    }
+
 }

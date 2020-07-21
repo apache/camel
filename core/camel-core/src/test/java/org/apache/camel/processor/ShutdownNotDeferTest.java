@@ -27,17 +27,18 @@ import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.ShutdownRoute.Default;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ShutdownNotDeferTest extends ContextTestSupport {
 
     private static final AtomicBoolean CONSUMER_SUSPENDED = new AtomicBoolean();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/deferred");
         super.setUp();
@@ -58,7 +59,7 @@ public class ShutdownNotDeferTest extends ContextTestSupport {
 
         context.stop();
 
-        assertTrue("Should have been suspended", CONSUMER_SUSPENDED.get());
+        assertTrue(CONSUMER_SUSPENDED.get(), "Should have been suspended");
     }
 
     @Override

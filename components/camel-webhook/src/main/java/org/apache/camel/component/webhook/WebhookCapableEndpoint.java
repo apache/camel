@@ -44,7 +44,7 @@ public interface WebhookCapableEndpoint extends Endpoint {
      * Register the webhook at the remote site using endpoint specific instruction.
      * <p>
      * Additional configuration is injected into the endpoint using the
-     * {@link WebhookCapableEndpoint#setWebhookConfiguration(WebhookConfiguration)} method.
+     * setWebhookConfiguration method.
      *
      * @throws Exception if something goes wrong during the registration.
      */
@@ -54,7 +54,7 @@ public interface WebhookCapableEndpoint extends Endpoint {
      * Unregister the webhook at the remote site using endpoint specific instruction.
      * <p>
      * Additional configuration is injected into the endpoint using the
-     * {@link WebhookCapableEndpoint#setWebhookConfiguration(WebhookConfiguration)} method.
+     * setWebhookConfiguration method.
      *
      * @throws Exception if something goes wrong during the un-registration.
      */

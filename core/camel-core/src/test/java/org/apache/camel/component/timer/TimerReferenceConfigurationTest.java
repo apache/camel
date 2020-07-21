@@ -22,8 +22,10 @@ import java.util.Date;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TimerReferenceConfigurationTest extends ContextTestSupport {
 
@@ -58,8 +60,8 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport {
     final String mockEndpointUri = "mock:result";
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry reg = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry reg = super.createRegistry();
         reg.bind("refExpectedTimeString", refExpectedTimeString);
         reg.bind("refExpectedPattern", refExpectedPattern);
         reg.bind("refExpectedPeriod", refExpectedPeriod);

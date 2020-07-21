@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -40,7 +42,7 @@ public class RedeliveryErrorHandlerNoRedeliveryOnShutdownTest extends ContextTes
         context.getRouteController().stopRoute("foo");
         watch.taken();
 
-        assertTrue("Should stop route faster, was " + watch.taken(), watch.taken() < 4000);
+        assertTrue(watch.taken() < 4000, "Should stop route faster, was " + watch.taken());
     }
 
     @Override

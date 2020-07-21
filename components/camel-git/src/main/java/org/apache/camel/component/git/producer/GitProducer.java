@@ -47,8 +47,12 @@ import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GitProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GitProducer.class);
 
     private final GitEndpoint endpoint;
 
@@ -89,104 +93,104 @@ public class GitProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case GitOperation.CLONE_OPERATION:
-            doClone(exchange, operation);
-            break;
+            case GitOperation.CLONE_OPERATION:
+                doClone(exchange, operation);
+                break;
 
-        case GitOperation.CHECKOUT_OPERATION:
-            doCheckout(exchange, operation);
-            break;
+            case GitOperation.CHECKOUT_OPERATION:
+                doCheckout(exchange, operation);
+                break;
 
-        case GitOperation.INIT_OPERATION:
-            doInit(exchange, operation);
-            break;
+            case GitOperation.INIT_OPERATION:
+                doInit(exchange, operation);
+                break;
 
-        case GitOperation.ADD_OPERATION:
-            doAdd(exchange, operation);
-            break;
+            case GitOperation.ADD_OPERATION:
+                doAdd(exchange, operation);
+                break;
 
-        case GitOperation.CHERRYPICK_OPERATION:
-            doCherryPick(exchange, operation);
-            break;
+            case GitOperation.CHERRYPICK_OPERATION:
+                doCherryPick(exchange, operation);
+                break;
 
-        case GitOperation.REMOVE_OPERATION:
-            doRemove(exchange, operation);
-            break;
+            case GitOperation.REMOVE_OPERATION:
+                doRemove(exchange, operation);
+                break;
 
-        case GitOperation.COMMIT_OPERATION:
-            doCommit(exchange, operation);
-            break;
+            case GitOperation.COMMIT_OPERATION:
+                doCommit(exchange, operation);
+                break;
 
-        case GitOperation.COMMIT_ALL_OPERATION:
-            doCommitAll(exchange, operation);
-            break;
+            case GitOperation.COMMIT_ALL_OPERATION:
+                doCommitAll(exchange, operation);
+                break;
 
-        case GitOperation.CREATE_BRANCH_OPERATION:
-            doCreateBranch(exchange, operation);
-            break;
+            case GitOperation.CREATE_BRANCH_OPERATION:
+                doCreateBranch(exchange, operation);
+                break;
 
-        case GitOperation.DELETE_BRANCH_OPERATION:
-            doDeleteBranch(exchange, operation);
-            break;
+            case GitOperation.DELETE_BRANCH_OPERATION:
+                doDeleteBranch(exchange, operation);
+                break;
 
-        case GitOperation.STATUS_OPERATION:
-            doStatus(exchange, operation);
-            break;
+            case GitOperation.STATUS_OPERATION:
+                doStatus(exchange, operation);
+                break;
 
-        case GitOperation.LOG_OPERATION:
-            doLog(exchange, operation);
-            break;
+            case GitOperation.LOG_OPERATION:
+                doLog(exchange, operation);
+                break;
 
-        case GitOperation.PUSH_OPERATION:
-            doPush(exchange, operation);
-            break;
+            case GitOperation.PUSH_OPERATION:
+                doPush(exchange, operation);
+                break;
 
-        case GitOperation.PUSH_TAG_OPERATION:
-            doPushTag(exchange, operation);
-            break;
+            case GitOperation.PUSH_TAG_OPERATION:
+                doPushTag(exchange, operation);
+                break;
 
-        case GitOperation.PULL_OPERATION:
-            doPull(exchange, operation);
-            break;
+            case GitOperation.PULL_OPERATION:
+                doPull(exchange, operation);
+                break;
 
-        case GitOperation.MERGE_OPERATION:
-            doMerge(exchange, operation);
-            break;
+            case GitOperation.MERGE_OPERATION:
+                doMerge(exchange, operation);
+                break;
 
-        case GitOperation.CREATE_TAG_OPERATION:
-            doCreateTag(exchange, operation);
-            break;
+            case GitOperation.CREATE_TAG_OPERATION:
+                doCreateTag(exchange, operation);
+                break;
 
-        case GitOperation.DELETE_TAG_OPERATION:
-            doDeleteTag(exchange, operation);
-            break;
+            case GitOperation.DELETE_TAG_OPERATION:
+                doDeleteTag(exchange, operation);
+                break;
 
-        case GitOperation.SHOW_BRANCHES_OPERATION:
-            doShowBranches(exchange, operation);
-            break;
+            case GitOperation.SHOW_BRANCHES_OPERATION:
+                doShowBranches(exchange, operation);
+                break;
 
-        case GitOperation.SHOW_TAGS_OPERATION:
-            doShowTags(exchange, operation);
-            break;
+            case GitOperation.SHOW_TAGS_OPERATION:
+                doShowTags(exchange, operation);
+                break;
 
-        case GitOperation.CLEAN_OPERATION:
-            doClean(exchange, operation);
-            break;
+            case GitOperation.CLEAN_OPERATION:
+                doClean(exchange, operation);
+                break;
 
-        case GitOperation.GC_OPERATION:
-            doGc(exchange, operation);
-            break;
+            case GitOperation.GC_OPERATION:
+                doGc(exchange, operation);
+                break;
 
-        case GitOperation.REMOTE_ADD_OPERATION:
-            doRemoteAdd(exchange, operation);
-            break;
+            case GitOperation.REMOTE_ADD_OPERATION:
+                doRemoteAdd(exchange, operation);
+                break;
 
-        case GitOperation.REMOTE_LIST_OPERATION:
-            doRemoteList(exchange, operation);
-            break;
+            case GitOperation.REMOTE_LIST_OPERATION:
+                doRemoteList(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
@@ -200,15 +204,26 @@ public class GitProducer extends DefaultProducer {
             if (!localRepo.exists()) {
                 if (ObjectHelper.isNotEmpty(endpoint.getUsername()) && ObjectHelper.isNotEmpty(endpoint.getPassword())) {
                     UsernamePasswordCredentialsProvider credentials = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
-                    result = Git.cloneRepository().setCredentialsProvider(credentials).setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).call();
+                    if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
+                        result = Git.cloneRepository().setCredentialsProvider(credentials).setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), ""))
+                            .call();
+                    } else {
+                        result = Git.cloneRepository().setCredentialsProvider(credentials).setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), ""))
+                            .setBranch(endpoint.getBranchName()).call();
+                    }
                 } else {
-                    result = Git.cloneRepository().setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).call();
+                    if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
+                        result = Git.cloneRepository().setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).call();
+                    } else {
+                        result = Git.cloneRepository().setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).setBranch(endpoint.getBranchName())
+                            .call();
+                    }
                 }
             } else {
                 throw new IllegalArgumentException("The local repository directory already exists");
             }
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         } finally {
             if (ObjectHelper.isNotEmpty(result)) {
@@ -228,7 +243,7 @@ public class GitProducer extends DefaultProducer {
                 git.checkout().setCreateBranch(true).setName(endpoint.getBranchName()).setStartPoint(endpoint.getTagName()).call();
             }
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
     }
@@ -241,7 +256,7 @@ public class GitProducer extends DefaultProducer {
         try {
             result = Git.init().setDirectory(new File(endpoint.getLocalPath(), "")).setBare(false).call();
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         } finally {
             if (ObjectHelper.isNotEmpty(result)) {
@@ -263,7 +278,7 @@ public class GitProducer extends DefaultProducer {
             }
             git.add().addFilepattern(fileName).call();
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
     }
@@ -281,7 +296,7 @@ public class GitProducer extends DefaultProducer {
             }
             git.rm().addFilepattern(fileName).call();
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
     }
@@ -296,7 +311,7 @@ public class GitProducer extends DefaultProducer {
             throw new IllegalArgumentException("Commit message must be specified to execute " + operation);
         }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME))
-            && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL))) {
+                && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL))) {
             username = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME, String.class);
             email = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL, String.class);
         }
@@ -315,7 +330,7 @@ public class GitProducer extends DefaultProducer {
                 git.commit().setAllowEmpty(allowEmpty).setMessage(commitMessage).call();
             }
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
     }
@@ -330,7 +345,7 @@ public class GitProducer extends DefaultProducer {
             throw new IllegalArgumentException("Commit message must be specified to execute " + operation);
         }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME))
-            && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL))) {
+                && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL))) {
             username = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME, String.class);
             email = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL, String.class);
         }
@@ -349,7 +364,7 @@ public class GitProducer extends DefaultProducer {
                 git.commit().setAllowEmpty(allowEmpty).setAll(true).setMessage(commitMessage).call();
             }
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
     }
@@ -361,7 +376,7 @@ public class GitProducer extends DefaultProducer {
         try {
             git.branchCreate().setName(endpoint.getBranchName()).call();
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
     }
@@ -373,7 +388,7 @@ public class GitProducer extends DefaultProducer {
         try {
             git.branchDelete().setBranchNames(endpoint.getBranchName()).call();
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
     }
@@ -386,7 +401,7 @@ public class GitProducer extends DefaultProducer {
             }
             status = git.status().call();
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, status);
@@ -400,7 +415,7 @@ public class GitProducer extends DefaultProducer {
             }
             revCommit = git.log().call();
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, revCommit);
@@ -422,7 +437,7 @@ public class GitProducer extends DefaultProducer {
                 result = git.push().setRemote(endpoint.getRemoteName()).call();
             }
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, result);
@@ -444,7 +459,7 @@ public class GitProducer extends DefaultProducer {
                 result = git.push().setRemote(endpoint.getRemoteName()).add(Constants.R_TAGS + endpoint.getTagName()).call();
             }
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, result);
@@ -466,7 +481,7 @@ public class GitProducer extends DefaultProducer {
                 result = git.pull().setRemote(endpoint.getRemoteName()).call();
             }
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, result);
@@ -483,7 +498,7 @@ public class GitProducer extends DefaultProducer {
             git.checkout().setName("master").call();
             result = git.merge().include(mergeBase).setFastForward(FastForwardMode.FF).setCommit(true).call();
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, result);
@@ -496,7 +511,7 @@ public class GitProducer extends DefaultProducer {
         try {
             git.tag().setName(endpoint.getTagName()).call();
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
     }
@@ -508,7 +523,7 @@ public class GitProducer extends DefaultProducer {
         try {
             git.tagDelete().setTags(endpoint.getTagName()).call();
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
     }
@@ -518,7 +533,7 @@ public class GitProducer extends DefaultProducer {
         try {
             result = git.branchList().setListMode(ListMode.ALL).call();
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, result);
@@ -529,7 +544,7 @@ public class GitProducer extends DefaultProducer {
         try {
             result = git.tagList().call();
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, result);
@@ -553,7 +568,7 @@ public class GitProducer extends DefaultProducer {
             }
             result = git.cherryPick().include(commit).call();
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, result);
@@ -567,7 +582,7 @@ public class GitProducer extends DefaultProducer {
             }
             result = git.clean().setCleanDirectories(true).call();
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, result);
@@ -578,7 +593,7 @@ public class GitProducer extends DefaultProducer {
         try {
             result = git.gc().call();
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, result);
@@ -598,7 +613,7 @@ public class GitProducer extends DefaultProducer {
             remoteAddCommand.setName(endpoint.getRemoteName());
             result = remoteAddCommand.call();
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, result);
@@ -609,7 +624,7 @@ public class GitProducer extends DefaultProducer {
         try {
             result = git.remoteList().call();
         } catch (Exception e) {
-            log.error("There was an error in Git {} operation", operation);
+            LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, result);
@@ -620,13 +635,13 @@ public class GitProducer extends DefaultProducer {
         Repository repo = null;
         try {
             repo = builder.setGitDir(new File(endpoint.getLocalPath(), ".git")).readEnvironment() // scan
-                // environment
-                // GIT_*
-                // variables
-                .findGitDir() // scan up the file system tree
-                .build();
+                    // environment
+                    // GIT_*
+                    // variables
+                    .findGitDir() // scan up the file system tree
+                    .build();
         } catch (IOException e) {
-            log.error("There was an error, cannot open {} repository", endpoint.getLocalPath());
+            LOG.error("There was an error, cannot open {} repository", endpoint.getLocalPath());
             throw e;
         }
         return repo;

@@ -22,19 +22,19 @@ import org.apache.camel.impl.validator.ProcessorValidator;
 import org.apache.camel.model.validator.PredicateValidatorDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.Validator;
-import org.apache.camel.support.processor.validation.PredicateValidatingProcessor;
+import org.apache.camel.support.processor.PredicateValidatingProcessor;
 
 public class PredicateValidatorReifier extends ValidatorReifier<PredicateValidatorDefinition> {
 
-    public PredicateValidatorReifier(ValidatorDefinition definition) {
-        super((PredicateValidatorDefinition)definition);
+    public PredicateValidatorReifier(CamelContext camelContext, ValidatorDefinition definition) {
+        super(camelContext, (PredicateValidatorDefinition)definition);
     }
 
     @Override
-    protected Validator doCreateValidator(CamelContext context) {
-        Predicate pred = definition.getExpression().createPredicate(context);
+    protected Validator doCreateValidator() {
+        Predicate pred = createPredicate(definition.getExpression());
         PredicateValidatingProcessor processor = new PredicateValidatingProcessor(pred);
-        return new ProcessorValidator(context).setProcessor(processor).setType(definition.getType());
+        return new ProcessorValidator(camelContext).setProcessor(processor).setType(definition.getType());
     }
 
 }

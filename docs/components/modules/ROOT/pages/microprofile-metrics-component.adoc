@@ -1,12 +1,17 @@
 [[microprofile-metrics-component]]
 = MicroProfile Metrics Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-microprofile-metrics/src/main/docs/microprofile-metrics-component.adoc
+:docTitle: MicroProfile Metrics
+:artifactId: camel-microprofile-metrics
+:description: Expose metrics from Camel routes.
+:since: 3.0
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 3.0*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The MircoProfile Metrics component provides the capability to expose metrics from Camel routes.
 
@@ -41,9 +46,9 @@ The MicroProfile Metrics component supports 3 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *metricRegistry* (advanced) | Use a custom MetricRegistry. |  | MetricRegistry
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *metricRegistry* (advanced) | Use a custom MetricRegistry. |  | MetricRegistry
 |===
 // component options: END
 
@@ -62,7 +67,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *metricType* | *Required* Metric type |  | MetricType
+| *metricType* | *Required* Metric type. The value can be one of: concurrent gauge, counter, gauge, meter, histogram, timer, simple timer, invalid |  | MetricType
 | *metricName* | *Required* Metric name |  | String
 |===
 
@@ -73,18 +78,18 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *action* (producer) | The action to use when using the Timer metric type |  | String
-| *counterIncrement* (producer) | The amount to increment to use when using the Counter metric type |  | Long
-| *description* (producer) | Sets a description within the metric metadata |  | String
-| *displayName* (producer) | Sets a display name within the metric metadata |  | String
-| *gaugeDecrement* (producer) | Decrements a gauge value when using the ConcurrentGauge metric type |  | Boolean
-| *gaugeIncrement* (producer) | Increments a gauge value when using the ConcurrentGauge metric type |  | Boolean
-| *gaugeValue* (producer) | Sets the gauge value when using the Gauge metric type |  | Number
+| *action* (producer) | Action to use when using the timer type |  | String
+| *counterIncrement* (producer) | Increment value when using the counter type |  | Long
+| *description* (producer) | Metric description |  | String
+| *displayName* (producer) | Metric display name |  | String
+| *gaugeDecrement* (producer) | Decrement metric value when using concurrent gauge type |  | Boolean
+| *gaugeIncrement* (producer) | Increment metric value when using the concurrent gauge type |  | Boolean
+| *gaugeValue* (producer) | Decrement metric value when using concurrent gauge type |  | Number
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *mark* (producer) | The mark value to set when using the Meter metric type |  | Long
-| *metricUnit* (producer) | Sets a metric unit within the metric metadata |  | String
+| *mark* (producer) | Mark value to set when using the meter type |  | Long
+| *metricUnit* (producer) | Metric unit. See org.eclipse.microprofile.metrics.MetricUnits |  | String
 | *tags* (producer) | Comma delimited list of tags associated with the metric in the format tagName=tagValue |  | String
-| *value* (producer) | The value to set when using the Histogram metric type |  | Long
+| *value* (producer) | Value to set when using the histogram type |  | Long
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
@@ -417,9 +422,12 @@ from("direct:in")
 This factory allows to add a RoutePolicy for each
 route and exposes route utilization statistics using MicroProfile metrics.
 
-NOTE: Instead of using the MicroProfileMetricsRoutePolicyFactory you can define a
+[NOTE]
+====
+Instead of using the MicroProfileMetricsRoutePolicyFactory you can define a
 MicroProfileMetricsRoutePolicy per route you want to instrument, in case you only
 want to instrument a few selected routes.
+====
 
 Add the factory to the `CamelContext` as shown below:
 

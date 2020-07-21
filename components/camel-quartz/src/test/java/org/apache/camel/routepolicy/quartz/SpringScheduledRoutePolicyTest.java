@@ -28,10 +28,11 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.test.junit4.TestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public abstract class SpringScheduledRoutePolicyTest extends TestSupport {
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public abstract class SpringScheduledRoutePolicyTest  {
     protected enum TestType {
         SIMPLE, CRON
     }

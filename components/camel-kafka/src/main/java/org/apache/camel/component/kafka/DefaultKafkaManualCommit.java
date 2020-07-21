@@ -36,8 +36,8 @@ public class DefaultKafkaManualCommit implements KafkaManualCommit {
     private final TopicPartition partition;
     private final long recordOffset;
 
-    public DefaultKafkaManualCommit(KafkaConsumer consumer, String topicName, String threadId,
-                                    StateRepository<String, String> offsetRepository, TopicPartition partition, long recordOffset) {
+    public DefaultKafkaManualCommit(KafkaConsumer consumer, String topicName, String threadId, StateRepository<String, String> offsetRepository, TopicPartition partition,
+                                    long recordOffset) {
         this.consumer = consumer;
         this.topicName = topicName;
         this.threadId = threadId;

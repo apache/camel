@@ -24,9 +24,14 @@ import org.w3c.dom.Document;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for setting arbitrary payload in MESSAGE mode
@@ -42,25 +47,25 @@ public class CxfDispatchMessageTest extends CxfDispatchTestSupport {
     public void testDipatchMessage() throws Exception {
         final String name = "Tila";
         Exchange exchange = sendJaxWsDispatchMessage(name, false);
-        assertEquals("The request should be handled sucessfully ", exchange.isFailed(), false);
+        assertEquals(exchange.isFailed(), false, "The request should be handled sucessfully");
         
         org.apache.camel.Message response = exchange.getOut();
-        assertNotNull("The response message must not be null ", response);
+        assertNotNull(response, "The response message must not be null");
         
         String value = decodeResponseFromMessage(response.getBody(InputStream.class), exchange);
-        assertTrue("The response body must match the request ", value.endsWith(name));
+        assertTrue(value.endsWith(name), "The response body must match the request");
     }
     
     @Test
     public void testDipatchMessageOneway() throws Exception {
         final String name = "Tila";
         Exchange exchange = sendJaxWsDispatchMessage(name, true);
-        assertEquals("The request should be handled sucessfully ", exchange.isFailed(), false);
+        assertEquals(exchange.isFailed(), false, "The request should be handled sucessfully");
         
         org.apache.camel.Message response = exchange.getOut();
-        assertNotNull("The response message must not be null ", response);
+        assertNotNull(response, "The response message must not be null");
         
-        assertNull("The response body must be null ", response.getBody());
+        assertNull(response.getBody(), "The response body must be null");
     }
 
 

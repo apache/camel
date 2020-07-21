@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Route;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationRouteAware;
@@ -45,31 +46,29 @@ public final class UnitOfWorkHelper {
      * @param exchange the exchange (will unset the UoW on the exchange)
      */
     public static void doneUow(UnitOfWork uow, Exchange exchange) {
+        if (uow == null) {
+            return;
+        }
         // unit of work is done
         try {
-            if (uow != null) {
-                uow.done(exchange);
-            }
+            uow.done(exchange);
         } catch (Throwable e) {
             LOG.warn("Exception occurred during done UnitOfWork for Exchange: " + exchange
                     + ". This exception will be ignored.", e);
         }
+        // stop
         try {
-            if (uow != null) {
-                uow.stop();
-            }
+            uow.stop();
         } catch (Throwable e) {
             LOG.warn("Exception occurred during stopping UnitOfWork for Exchange: " + exchange
                     + ". This exception will be ignored.", e);
         }
-
-        // remove uow from exchange as its done
-        exchange.setUnitOfWork(null);
+        // MUST clear and set uow to null on exchange after done
+        ExtendedExchange ee = (ExtendedExchange) exchange;
+        ee.setUnitOfWork(null);
     }
 
     public static void doneSynchronizations(Exchange exchange, List<Synchronization> synchronizations, Logger log) {
-        boolean failed = exchange.isFailed();
-
         if (synchronizations != null && !synchronizations.isEmpty()) {
             // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
             List<Synchronization> copy = new ArrayList<>(synchronizations);
@@ -78,6 +77,8 @@ public final class UnitOfWorkHelper {
             Collections.reverse(copy);
             // and honor if any was ordered by sorting it accordingly
             copy.sort(OrderedComparator.get());
+
+            boolean failed = exchange.isFailed();
 
             // invoke synchronization callbacks
             for (Synchronization synchronization : copy) {
@@ -98,50 +99,46 @@ public final class UnitOfWorkHelper {
     }
 
     public static void beforeRouteSynchronizations(Route route, Exchange exchange, List<Synchronization> synchronizations, Logger log) {
-        if (synchronizations != null && !synchronizations.isEmpty()) {
-            // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
-            List<Synchronization> copy = new ArrayList<>(synchronizations);
+        // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
+        List<Synchronization> copy = new ArrayList<>(synchronizations);
 
-            // reverse so we invoke it FILO style instead of FIFO
-            Collections.reverse(copy);
-            // and honor if any was ordered by sorting it accordingly
-            copy.sort(OrderedComparator.get());
+        // reverse so we invoke it FILO style instead of FIFO
+        Collections.reverse(copy);
+        // and honor if any was ordered by sorting it accordingly
+        copy.sort(OrderedComparator.get());
 
-            // invoke synchronization callbacks
-            for (Synchronization synchronization : copy) {
-                if (synchronization instanceof SynchronizationRouteAware) {
-                    try {
-                        log.trace("Invoking synchronization.onBeforeRoute: {} with {}", synchronization, exchange);
-                        ((SynchronizationRouteAware) synchronization).onBeforeRoute(route, exchange);
-                    } catch (Throwable e) {
-                        // must catch exceptions to ensure all synchronizations have a chance to run
-                        log.warn("Exception occurred during onBeforeRoute. This exception will be ignored.", e);
-                    }
+        // invoke synchronization callbacks
+        for (Synchronization synchronization : copy) {
+            if (synchronization instanceof SynchronizationRouteAware) {
+                try {
+                    log.trace("Invoking synchronization.onBeforeRoute: {} with {}", synchronization, exchange);
+                    ((SynchronizationRouteAware) synchronization).onBeforeRoute(route, exchange);
+                } catch (Throwable e) {
+                    // must catch exceptions to ensure all synchronizations have a chance to run
+                    log.warn("Exception occurred during onBeforeRoute. This exception will be ignored.", e);
                 }
             }
         }
     }
 
     public static void afterRouteSynchronizations(Route route, Exchange exchange, List<Synchronization> synchronizations, Logger log) {
-        if (synchronizations != null && !synchronizations.isEmpty()) {
-            // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
-            List<Synchronization> copy = new ArrayList<>(synchronizations);
+        // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
+        List<Synchronization> copy = new ArrayList<>(synchronizations);
 
-            // reverse so we invoke it FILO style instead of FIFO
-            Collections.reverse(copy);
-            // and honor if any was ordered by sorting it accordingly
-            copy.sort(OrderedComparator.get());
+        // reverse so we invoke it FILO style instead of FIFO
+        Collections.reverse(copy);
+        // and honor if any was ordered by sorting it accordingly
+        copy.sort(OrderedComparator.get());
 
-            // invoke synchronization callbacks
-            for (Synchronization synchronization : copy) {
-                if (synchronization instanceof SynchronizationRouteAware) {
-                    try {
-                        log.trace("Invoking synchronization.onAfterRoute: {} with {}", synchronization, exchange);
-                        ((SynchronizationRouteAware) synchronization).onAfterRoute(route, exchange);
-                    } catch (Throwable e) {
-                        // must catch exceptions to ensure all synchronizations have a chance to run
-                        log.warn("Exception occurred during onAfterRoute. This exception will be ignored.", e);
-                    }
+        // invoke synchronization callbacks
+        for (Synchronization synchronization : copy) {
+            if (synchronization instanceof SynchronizationRouteAware) {
+                try {
+                    log.trace("Invoking synchronization.onAfterRoute: {} with {}", synchronization, exchange);
+                    ((SynchronizationRouteAware) synchronization).onAfterRoute(route, exchange);
+                } catch (Throwable e) {
+                    // must catch exceptions to ensure all synchronizations have a chance to run
+                    log.warn("Exception occurred during onAfterRoute. This exception will be ignored.", e);
                 }
             }
         }

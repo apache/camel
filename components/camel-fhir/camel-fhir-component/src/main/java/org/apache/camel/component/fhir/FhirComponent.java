@@ -33,6 +33,9 @@ import org.apache.camel.support.component.AbstractApiComponent;
 public class FhirComponent extends AbstractApiComponent<FhirApiName, FhirConfiguration, FhirApiCollection> {
 
     @Metadata(label = "advanced")
+    FhirConfiguration configuration;
+
+    @Metadata(label = "advanced")
     private IGenericClient client;
 
     public FhirComponent() {

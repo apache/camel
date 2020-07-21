@@ -25,13 +25,19 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.example.Address;
 import org.apache.camel.example.Order;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
 public class JaxbMarshalNamespacePrefixMapperTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JaxbMarshalNamespacePrefixMapperTest.class);
 
     @BindToRegistry("myPrefix")
     public Map<String, String> addMap() throws Exception {
@@ -61,7 +67,7 @@ public class JaxbMarshalNamespacePrefixMapperTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         String xml = mock.getExchanges().get(0).getIn().getBody(String.class);
-        log.info(xml);
+        LOG.info(xml);
 
         assertTrue(xml.contains("xmlns:a=\"http://www.camel.apache.org/jaxb/example/address/1\""));
         assertTrue(xml.contains("xmlns:o=\"http://www.camel.apache.org/jaxb/example/order/1\""));

@@ -21,12 +21,15 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Message;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.DataType;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.Validator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class BeanValidatorOutputValidateTest extends ContextTestSupport {
 
@@ -60,8 +63,8 @@ public class BeanValidatorOutputValidateTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry registry = super.createRegistry();
 
         registry.bind("testValidator", new TestValidator());
 

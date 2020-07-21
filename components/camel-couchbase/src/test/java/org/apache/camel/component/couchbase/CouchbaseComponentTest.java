@@ -20,13 +20,18 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CouchbaseComponentTest extends CamelTestSupport {
 
     private CouchbaseComponent component;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();

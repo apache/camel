@@ -30,9 +30,12 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
@@ -42,6 +45,8 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import static org.springframework.jdbc.support.JdbcUtils.closeResultSet;
 
 public class SqlConsumer extends ScheduledBatchPollingConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SqlConsumer.class);
 
     private final String query;
     private String resolvedQuery;
@@ -97,11 +102,23 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
     }
 
     @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        if (ResourceHelper.isClasspathUri(query)) {
+            String placeholder = getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
+            resolvedQuery = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), query, placeholder);
+        }
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
 
-        String placeholder = getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
-        resolvedQuery = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), query, placeholder);
+        if (!ResourceHelper.isClasspathUri(query)) {
+            String placeholder = getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
+            resolvedQuery = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), query, placeholder);
+        }
     }
 
     @Override
@@ -113,7 +130,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         final Exchange dummy = getEndpoint().createExchange();
         final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(resolvedQuery, getEndpoint().isAllowNamedParameters(), dummy);
 
-        log.trace("poll: {}", preparedQuery);
+        LOG.trace("poll: {}", preparedQuery);
         final PreparedStatementCallback<Integer> callback = new PreparedStatementCallback<Integer>() {
             @Override
             public Integer doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
@@ -127,12 +144,12 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
                     sqlPrepareStatementStrategy.populateStatement(ps, i, expected);
                 }
 
-                log.debug("Executing query: {}", preparedQuery);
+                LOG.debug("Executing query: {}", preparedQuery);
                 ResultSet rs = ps.executeQuery();
                 SqlOutputType outputType = getEndpoint().getOutputType();
                 boolean closeEager = true;
                 try {
-                    log.trace("Got result list from query: {}, outputType={}", rs, outputType);
+                    LOG.trace("Got result list from query: {}, outputType={}", rs, outputType);
                     if (outputType == SqlOutputType.StreamList) {
                         ResultSetIterator data = getEndpoint().queryForStreamList(ps.getConnection(), ps, rs);
                         // only process if we have data
@@ -224,7 +241,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         int total = exchanges.size();
 
         if (maxMessagesPerPoll > 0 && total == maxMessagesPerPoll) {
-            log.debug("Maximum messages to poll is {} and there were exactly {} messages in this poll.", maxMessagesPerPoll, total);
+            LOG.debug("Maximum messages to poll is {} and there were exactly {} messages in this poll.", maxMessagesPerPoll, total);
         }
 
         for (int index = 0; index < total && isBatchAllowed(); index++) {
@@ -293,7 +310,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
                 } else {
                     updateCount = sqlProcessingStrategy.commitBatchComplete(getEndpoint(), jdbcTemplate, onConsumeBatchComplete);
                 }
-                log.debug("onConsumeBatchComplete update count {}", updateCount);
+                LOG.debug("onConsumeBatchComplete update count {}", updateCount);
             }
         } catch (Exception e) {
             if (breakBatchOnConsumeFail) {

@@ -23,7 +23,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.component.cxf.blueprint.BlueprintSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
@@ -54,8 +53,14 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected void doStart() throws Exception {
+        super.doStart();
 
+        // lookup
+    }
+
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         CxfRsEndpoint answer;
 
         Object value = parameters.remove("setDefaultBus");
@@ -66,7 +71,6 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
             }
         }
 
-
         if (remaining.startsWith(CxfConstants.SPRING_CONTEXT_ENDPOINT)) {
             // Get the bean from the Spring context
             String beanId = remaining.substring(CxfConstants.SPRING_CONTEXT_ENDPOINT.length());
@@ -76,11 +80,17 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
 
             AbstractJAXRSFactoryBean bean = CamelContextHelper.mandatoryLookup(getCamelContext(), beanId, 
                 AbstractJAXRSFactoryBean.class);
-            if (bean instanceof BlueprintSupport) {
-                answer = new CxfRsBlueprintEndpoint(this, remaining, bean);
+
+            CxfRsEndpointFactoryBean factory = null;
+            if (bean.getClass().getName().contains("blueprint")) {
+                // use blueprint
+                Class<CxfRsEndpointFactoryBean> clazz = getCamelContext().getClassResolver().resolveMandatoryClass("org.apache.camel.component.cxf.jaxrs.blueprint.CxfRsBlueprintEndpointFactoryBean", CxfRsEndpointFactoryBean.class);
+                factory = getCamelContext().getInjector().newInstance(clazz);
             } else {
-                answer = new CxfRsSpringEndpoint(this, remaining, bean);
+                factory = new DefaultCxfRsEndpointFactoryBean();
             }
+            answer = factory.createEndpoint(this, remaining, bean);
+
             // Apply Spring bean properties (including # notation referenced bean).  Note that the
             // Spring bean properties values can be overridden by property defined in URI query.
             // The super class (DefaultComponent) will invoke "setProperties" after this method 

@@ -19,14 +19,11 @@ package org.apache.camel.builder;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.FatalFallbackErrorHandler;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.spi.CamelLogger;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.StringHelper;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -51,24 +48,6 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
     }
 
     @Override
-    public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
-        validateDeadLetterUri(routeContext);
-
-        DeadLetterChannel answer = new DeadLetterChannel(routeContext.getCamelContext(), processor, getLogger(), getOnRedelivery(), getRedeliveryPolicy(),
-                                                         getExceptionPolicyStrategy(), getFailureProcessor(), getDeadLetterUri(), isDeadLetterHandleNewException(),
-                                                         isUseOriginalMessage(), isUseOriginalBody(), getRetryWhilePolicy(routeContext.getCamelContext()),
-                                                         getExecutorService(routeContext.getCamelContext()), getOnPrepareFailure(), getOnExceptionOccurred());
-        // configure error handler before we can use it
-        configure(routeContext, answer);
-        return answer;
-    }
-
-    @Override
-    public boolean supportTransacted() {
-        return false;
-    }
-
-    @Override
     public ErrorHandlerBuilder cloneBuilder() {
         DeadLetterChannelBuilder answer = new DeadLetterChannelBuilder();
         super.cloneBuilder(answer);
@@ -89,16 +68,6 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
             failureProcessor = new FatalFallbackErrorHandler(child, true);
         }
         return failureProcessor;
-    }
-
-    protected void validateDeadLetterUri(RouteContext routeContext) {
-        if (deadLetter == null) {
-            StringHelper.notEmpty(deadLetterUri, "deadLetterUri", this);
-            deadLetter = routeContext.getCamelContext().getEndpoint(deadLetterUri);
-            if (deadLetter == null) {
-                throw new NoSuchEndpointException(deadLetterUri);
-            }
-        }
     }
 
     @Override

@@ -19,7 +19,6 @@ package org.apache.camel.impl.engine;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,26 +28,42 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.spi.InflightRepository;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default {@link org.apache.camel.spi.InflightRepository}.
  */
 public class DefaultInflightRepository extends ServiceSupport implements InflightRepository {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultInflightRepository.class);
+
+    private final AtomicInteger size = new AtomicInteger();
     private final ConcurrentMap<String, Exchange> inflight = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, AtomicInteger> routeCount = new ConcurrentHashMap<>();
+    private boolean inflightExchangeEnabled;
 
     @Override
     public void add(Exchange exchange) {
-        inflight.put(exchange.getExchangeId(), exchange);
+        size.incrementAndGet();
+
+        if (inflightExchangeEnabled) {
+            inflight.put(exchange.getExchangeId(), exchange);
+        }
     }
 
     @Override
     public void remove(Exchange exchange) {
-        inflight.remove(exchange.getExchangeId());
+        size.decrementAndGet();
+
+        if (inflightExchangeEnabled) {
+            inflight.remove(exchange.getExchangeId());
+        }
     }
 
     @Override
@@ -69,12 +84,12 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     @Override
     public int size() {
-        return inflight.size();
+        return size.get();
     }
 
     @Override
     public void addRoute(String routeId) {
-        routeCount.putIfAbsent(routeId, new AtomicInteger(0));
+        routeCount.putIfAbsent(routeId, new AtomicInteger());
     }
 
     @Override
@@ -86,6 +101,16 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     public int size(String routeId) {
         AtomicInteger existing = routeCount.get(routeId);
         return existing != null ? existing.get() : 0;
+    }
+
+    @Override
+    public boolean isInflightBrowseEnabled() {
+        return inflightExchangeEnabled;
+    }
+
+    @Override
+    public void setInflightBrowseEnabled(boolean inflightBrowseEnabled) {
+        this.inflightExchangeEnabled = inflightBrowseEnabled;
     }
 
     @Override
@@ -105,6 +130,10 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     @Override
     public Collection<InflightExchange> browse(String fromRouteId, int limit, boolean sortByLongestDuration) {
+        if (!inflightExchangeEnabled) {
+            return Collections.emptyList();
+        }
+
         Stream<Exchange> values;
         if (fromRouteId == null) {
             // all values
@@ -138,6 +167,10 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     @Override
     public InflightExchange oldest(String fromRouteId) {
+        if (!inflightExchangeEnabled) {
+            return null;
+        }
+
         Stream<Exchange> values;
 
         if (fromRouteId == null) {
@@ -165,27 +198,18 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     }
 
     @Override
-    protected void doStart() throws Exception {
-    }
-
-    @Override
     protected void doStop() throws Exception {
         int count = size();
         if (count > 0) {
-            log.warn("Shutting down while there are still {} inflight exchanges.", count);
+            LOG.warn("Shutting down while there are still {} inflight exchanges.", count);
         } else {
-            log.debug("Shutting down with no inflight exchanges.");
+            LOG.debug("Shutting down with no inflight exchanges.");
         }
         routeCount.clear();
     }
 
     private static long getExchangeDuration(Exchange exchange) {
-        long duration = 0;
-        Date created = exchange.getCreated();
-        if (created != null) {
-            duration = System.currentTimeMillis() - created.getTime();
-        }
-        return duration;
+        return System.currentTimeMillis() - exchange.getCreated();
     }
 
     private static final class InflightExchangeEntry implements InflightExchange {
@@ -209,6 +233,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         @Override
         @SuppressWarnings("unchecked")
         public long getElapsed() {
+            // this can only be calculate if message history is enabled
             LinkedList<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, LinkedList.class);
             if (list == null || list.isEmpty()) {
                 return 0;
@@ -231,18 +256,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         @Override
         @SuppressWarnings("unchecked")
         public String getNodeId() {
-            LinkedList<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, LinkedList.class);
-            if (list == null || list.isEmpty()) {
-                return null;
-            }
-
-            // get latest entry
-            MessageHistory history = list.getLast();
-            if (history != null) {
-                return history.getNode().getId();
-            } else {
-                return null;
-            }
+            return exchange.adapt(ExtendedExchange.class).getHistoryNodeId();
         }
 
         @Override
@@ -253,18 +267,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         @Override
         @SuppressWarnings("unchecked")
         public String getAtRouteId() {
-            LinkedList<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, LinkedList.class);
-            if (list == null || list.isEmpty()) {
-                return null;
-            }
-
-            // get latest entry
-            MessageHistory history = list.getLast();
-            if (history != null) {
-                return history.getRouteId();
-            } else {
-                return null;
-            }
+            return ExchangeHelper.getAtRouteId(exchange);
         }
 
         @Override

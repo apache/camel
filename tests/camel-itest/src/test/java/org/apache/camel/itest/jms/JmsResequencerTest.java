@@ -30,13 +30,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class JmsResequencerTest extends CamelTestSupport  {
     
@@ -45,7 +46,6 @@ public class JmsResequencerTest extends CamelTestSupport  {
     private ReusableBean b2 = new ReusableBean("myBean2");
     private ReusableBean b3 = new ReusableBean("myBean3");
     
-        
     private MockEndpoint resultEndpoint;
 
     public void sendBodyAndHeader(String endpointUri, final Object body, final String headerName,
@@ -62,12 +62,12 @@ public class JmsResequencerTest extends CamelTestSupport  {
     }
     
     @Test
-    public void testSendMessagesInWrongOrderButReceiveThemInCorrectOrder() throws Exception {              
+    void testSendMessagesInWrongOrderButReceiveThemInCorrectOrder() throws Exception {
         sendAndVerifyMessages("activemq:queue:batch");
     }
     
     @Test
-    public void testSendMessageToStream() throws Exception {
+    void testSendMessageToStream() throws Exception {
         sendAndVerifyMessages("activemq:queue:stream");
     }
         
@@ -82,23 +82,23 @@ public class JmsResequencerTest extends CamelTestSupport  {
         resultEndpoint.assertIsSatisfied();
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
-            log.debug("Received: " + exchange);
+            LOG.debug("Received: " + exchange);
         }
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         
         resultEndpoint = getMockEndpoint("mock:result");
         
         Object lookedUpBean = context.getRegistry().lookupByName("myBean1");
-        assertSame("Lookup of 'myBean' should return same object!", b1, lookedUpBean);
+        assertSame(b1, lookedUpBean, "Lookup of 'myBean' should return same object!");
         lookedUpBean = context.getRegistry().lookupByName("myBean2");
-        assertSame("Lookup of 'myBean' should return same object!", b2, lookedUpBean);
+        assertSame(b2, lookedUpBean, "Lookup of 'myBean' should return same object!");
         lookedUpBean = context.getRegistry().lookupByName("myBean3");
-        assertSame("Lookup of 'myBean' should return same object!", b3, lookedUpBean);
+        assertSame(b3, lookedUpBean, "Lookup of 'myBean' should return same object!");
        
     }
 
@@ -135,7 +135,7 @@ public class JmsResequencerTest extends CamelTestSupport  {
     
     public class ReusableBean {
         public String body;
-        private String name;       
+        private String name;
 
         public ReusableBean(String name) {
             this.name = name;
@@ -162,7 +162,7 @@ public class JmsResequencerTest extends CamelTestSupport  {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         // add ActiveMQ with embedded broker
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);

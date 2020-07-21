@@ -22,8 +22,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BeanIOUnmarshalSingleObjectTest extends CamelTestSupport {
 
@@ -31,7 +33,7 @@ public class BeanIOUnmarshalSingleObjectTest extends CamelTestSupport {
     private static final String INPUT = "1234:Content starts from here" + NEW_LINE + "then continues" + NEW_LINE + "and ends here.";
 
     @Test
-    public void testMultiLineContentUnmarshal() throws Exception {
+    void testMultiLineContentUnmarshal() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
@@ -41,10 +43,10 @@ public class BeanIOUnmarshalSingleObjectTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 BeanIODataFormat format = new BeanIODataFormat("org/apache/camel/dataformat/beanio/single-object-mapping.xml", "keyValueStream");
                 // turn on single mode
                 format.setUnmarshalSingleObject(true);

@@ -16,15 +16,20 @@
  */
 package org.apache.camel.component.hystrix.processor;
 
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.Route;
+import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DirtiesContext
 public class SpringHystrixRouteHierarchicalConfigTest extends CamelSpringTestSupport {
@@ -36,16 +41,18 @@ public class SpringHystrixRouteHierarchicalConfigTest extends CamelSpringTestSup
     @Test
     public void testHystrix() throws Exception {
         RouteDefinition routeDefinition = context.getRouteDefinition("hystrix-route");
+        final Route route = new DefaultRoute(context, routeDefinition,
+                routeDefinition.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory()), null, null);
         CircuitBreakerDefinition hystrixDefinition = findCircuitBreakerDefinition(routeDefinition);
 
-        Assert.assertNotNull(hystrixDefinition);
+        assertNotNull(hystrixDefinition);
 
-        HystrixReifier reifier = new HystrixReifier(hystrixDefinition);
-        HystrixConfigurationDefinition config = reifier.buildHystrixConfiguration(context);
+        HystrixReifier reifier = new HystrixReifier(route, hystrixDefinition);
+        HystrixConfigurationDefinition config = reifier.buildHystrixConfiguration();
 
-        Assert.assertEquals("local-conf-group-key", config.getGroupKey());
-        Assert.assertEquals("global-thread-key", config.getThreadPoolKey());
-        Assert.assertEquals(Integer.toString(5), config.getCorePoolSize());
+        assertEquals("local-conf-group-key", config.getGroupKey());
+        assertEquals("global-thread-key", config.getThreadPoolKey());
+        assertEquals(Integer.toString(5), config.getCorePoolSize());
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 

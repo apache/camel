@@ -19,7 +19,9 @@ package org.apache.camel.component.mina;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MinaMaxLineLengthTest extends BaseMinaTest {
 
@@ -60,7 +62,7 @@ public class MinaMaxLineLengthTest extends BaseMinaTest {
             // get the input from the IN body
             String request = exchange.getIn().getBody(String.class);
             // echo back the response on the OUT body
-            exchange.getOut().setBody(request);
+            exchange.getMessage().setBody(request);
         }
     }
     // END SNIPPET: e2

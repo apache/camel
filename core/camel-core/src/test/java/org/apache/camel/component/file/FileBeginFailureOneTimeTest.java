@@ -22,24 +22,26 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileBeginFailureOneTimeTest extends ContextTestSupport {
 
     private MyStrategy myStrategy = new MyStrategy();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/begin");
         super.setUp();
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myStrategy", myStrategy);
         return jndi;
     }
@@ -53,7 +55,7 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Begin should have been invoked 2 times", 2, myStrategy.getInvoked());
+        assertEquals(2, myStrategy.getInvoked(), "Begin should have been invoked 2 times");
     }
 
     @Override

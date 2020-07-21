@@ -16,22 +16,21 @@
  */
 package org.apache.camel.reifier.dataformat;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.IcalDataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class IcalDataFormatReifier extends DataFormatReifier<IcalDataFormat> {
 
-    public IcalDataFormatReifier(DataFormatDefinition definition) {
-        super((IcalDataFormat)definition);
+    public IcalDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (IcalDataFormat)definition);
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (definition.getValidating() != null) {
-            setProperty(camelContext, dataFormat, "validating", definition.getValidating());
-        }
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("validating", definition.getValidating());
     }
 
 }

@@ -19,9 +19,11 @@ package org.apache.camel.component.directvm;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  *
@@ -30,7 +32,7 @@ public class DirectVmHeaderFilterStrategyTest extends ContextTestSupport {
 
     @Test
     public void testPropertiesPropagatedOrNot() throws Exception {
-        context.getRegistry(JndiRegistry.class).bind("headerFilterStrategy", new HeaderFilterStrategy() {
+        context.getRegistry().bind("headerFilterStrategy", new HeaderFilterStrategy() {
             @Override
             public boolean applyFilterToExternalHeaders(String headerName, Object headerValue, Exchange exchange) {
                 return headerName.equals("Header2");

@@ -28,12 +28,14 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.hamcrest.core.Is;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
 public class BindyConverterTest extends CamelTestSupport {
@@ -95,74 +97,74 @@ public class BindyConverterTest extends CamelTestSupport {
         Exchange  exc  = uresult.getReceivedExchanges().get(0);
         DataModel data = exc.getIn().getBody(DataModel.class);
 
-        Assert.assertEquals("0123456789", data.field1);
+        assertEquals("0123456789", data.field1);
     }
 
     @Test
     @DirtiesContext
     public void testRightAlignedNotTrimmed() throws Exception {
-        AllCombinations data = sendAndRecieveAllCombinations();
+        AllCombinations data = sendAndReceiveAllCombinations();
 
-        assertThat("Right aligned, padding not trimmed", data.field1, Is.is("!!!f1"));
+        assertThat("Right aligned, padding not trimmed", data.field1, is("!!!f1"));
     }
 
     @Test
     @DirtiesContext
     public void testLeftAlignedNotTrimmed() throws Exception {
-        AllCombinations data = sendAndRecieveAllCombinations();
+        AllCombinations data = sendAndReceiveAllCombinations();
 
-        assertThat("Left aligned, padding not trimmed", data.field2, Is.is("f2!!!"));
+        assertThat("Left aligned, padding not trimmed", data.field2, is("f2!!!"));
     }
 
     @Test
     @DirtiesContext
     public void testRightAlignedTrimmed() throws Exception {
-        AllCombinations data = sendAndRecieveAllCombinations();
+        AllCombinations data = sendAndReceiveAllCombinations();
 
-        assertThat("Right aligned, padding trimmed", data.field3, Is.is("f3"));
+        assertThat("Right aligned, padding trimmed", data.field3, is("f3"));
     }
 
     @Test
     @DirtiesContext
     public void testLeftAlignedTrimmed() throws Exception {
-        AllCombinations data = sendAndRecieveAllCombinations();
+        AllCombinations data = sendAndReceiveAllCombinations();
 
-        assertThat("Left aligned, padding trimmed", data.field4, Is.is("f4"));
+        assertThat("Left aligned, padding trimmed", data.field4, is("f4"));
     }
 
     @Test
     @DirtiesContext
     public void testRightAlignedRecordPaddingNotTrimmed() throws Exception {
-        AllCombinations data = sendAndRecieveAllCombinations();
+        AllCombinations data = sendAndReceiveAllCombinations();
 
-        assertThat("Right aligned, padding not trimmed", data.field5, Is.is("###f5"));
+        assertThat("Right aligned, padding not trimmed", data.field5, is("###f5"));
     }
 
     @Test
     @DirtiesContext
     public void testLeftAlignedRecordPaddingNotTrimmed() throws Exception {
-        AllCombinations data = sendAndRecieveAllCombinations();
+        AllCombinations data = sendAndReceiveAllCombinations();
 
-        assertThat("Left aligned, padding not trimmed", data.field6, Is.is("f6###"));
+        assertThat("Left aligned, padding not trimmed", data.field6, is("f6###"));
     }
 
     @Test
     @DirtiesContext
     public void testRightAlignedRecordPaddingTrimmed() throws Exception {
-        AllCombinations data = sendAndRecieveAllCombinations();
+        AllCombinations data = sendAndReceiveAllCombinations();
 
-        assertThat("Right aligned, padding trimmed", data.field7, Is.is("f7"));
+        assertThat("Right aligned, padding trimmed", data.field7, is("f7"));
     }
 
     @Test
     @DirtiesContext
     public void testLeftAlignedRecordPaddingTrimmed() throws Exception {
-        AllCombinations data = sendAndRecieveAllCombinations();
+        AllCombinations data = sendAndReceiveAllCombinations();
 
-        assertThat("Left aligned, padding trimmed", data.field8, Is.is("f8"));
+        assertThat("Left aligned, padding trimmed", data.field8, is("f8"));
     }
 
-    private AllCombinations sendAndRecieveAllCombinations() throws InterruptedException {
+    private AllCombinations sendAndReceiveAllCombinations() throws InterruptedException {
         AllCombinations all = new AllCombinations();
         all.field1 = "f1";
         all.field2 = "f2";
@@ -190,9 +192,9 @@ public class BindyConverterTest extends CamelTestSupport {
         RouteBuilder routeBuilder = new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                BindyDataFormat bindy = new BindyDataFormat();
-                bindy.setClassType(DataModel.class);
-                bindy.setType(BindyType.Fixed);
+                BindyDataFormat bindy = new BindyDataFormat()
+                        .classType(DataModel.class)
+                        .type(BindyType.Fixed);
 
                 from(URI_DIRECT_MARSHALL)
                     .marshal(bindy)
@@ -201,9 +203,9 @@ public class BindyConverterTest extends CamelTestSupport {
                     .unmarshal().bindy(BindyType.Fixed, DataModel.class)
                     .to(URI_MOCK_UNMARSHALL_RESULT);
 
-                BindyDataFormat bindy2 = new BindyDataFormat();
-                bindy2.setClassType(AllCombinations.class);
-                bindy2.setType(BindyType.Fixed);
+                BindyDataFormat bindy2 = new BindyDataFormat()
+                        .classType(AllCombinations.class)
+                        .type(BindyType.Fixed);
                 from(URI_DIRECT_THROUGH)
                         .marshal(bindy2)
                         .unmarshal().bindy(BindyType.Fixed, AllCombinations.class)

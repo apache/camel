@@ -17,11 +17,8 @@
 package org.apache.camel.component.crypto;
 
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.security.KeyStore;
 import java.security.PrivateKey;
-import java.security.Provider;
-import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.Map;
@@ -32,11 +29,17 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
 
 public class ECDSASignatureTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ECDSASignatureTest.class);
 
     private String payload = "Dear Alice, Rest assured it's me, signed Bob";
     private boolean ibmJDK;
@@ -44,18 +47,8 @@ public class ECDSASignatureTest extends CamelTestSupport {
     private X509Certificate x509;
     private boolean canRun = true;
 
-    public ECDSASignatureTest() throws Exception {
-        // BouncyCastle is required for ECDSA support for JDK 1.6
-        if (isJava16()
-            && Security.getProvider("BC") == null) {
-            Constructor<?> cons;
-            Class<?> c = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
-            cons = c.getConstructor(new Class[] {});
-            
-            Provider provider = (java.security.Provider)cons.newInstance();
-            Security.insertProviderAt(provider, 2);
-        }
-        
+    public ECDSASignatureTest() {
+
         // This test fails with the IBM JDK
         if (isJavaVendor("IBM")) {
             ibmJDK = true;
@@ -69,19 +62,19 @@ public class ECDSASignatureTest extends CamelTestSupport {
             privateKey = (PrivateKey) keyStore.getKey("ECDSA", "security".toCharArray());
             x509 = (X509Certificate)keyStore.getCertificate("ECDSA");
         } catch (Throwable e) {
-            log.warn("Cannot setup keystore for running this test due " + e.getMessage() + ". This test is skipped.", e);
+            LOG.warn("Cannot setup keystore for running this test due " + e.getMessage() + ". This test is skipped.", e);
             canRun = false;
         }
     }
-    
+
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
+    protected RouteBuilder[] createRouteBuilders() {
         if (ibmJDK || !canRun) {
             return new RouteBuilder[] {};
         }
 
         return new RouteBuilder[]{new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: ecdsa-sha1
 
                 // we can set the keys explicitly on the endpoint instances.
@@ -100,7 +93,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
     }
 
     @Test
-    public void testECDSASHA1() throws Exception {
+    void testECDSASHA1() throws Exception {
         if (ibmJDK || !canRun) {
             return;
         }
@@ -109,7 +102,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
         sendBody("direct:ecdsa-sha1", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     private MockEndpoint setupMock() {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived(payload);
@@ -121,8 +114,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
     }
 
     public Exchange doSignatureRouteTest(RouteBuilder builder, Exchange e, Map<String, Object> headers) throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        try {
+        try (CamelContext context = new DefaultCamelContext()) {
             context.addRoutes(builder);
             context.start();
 
@@ -143,7 +135,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         disableJMX();
         super.setUp();

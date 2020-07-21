@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.milo.server;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.milo.server.internal.CamelNamespace;
 import org.apache.camel.component.milo.server.internal.CamelServerItem;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -28,29 +28,31 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Make telemetry data available as an OPC UA server
+ * Make telemetry data available as an OPC UA server.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "milo-server", syntax = "milo-server:itemId", title = "OPC UA Server", label = "iot")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "milo-server", syntax = "milo-server:itemId", title = "OPC UA Server", category = {Category.IOT})
 public class MiloServerEndpoint extends DefaultEndpoint {
 
     @UriPath
     @Metadata(required = true)
     private String itemId;
 
-    private final CamelNamespace namespace;
-
     private CamelServerItem item;
 
-    public MiloServerEndpoint(final String uri, final String itemId, final CamelNamespace namespace, final Component component) {
+    public MiloServerEndpoint(final String uri, final String itemId, final Component component) {
         super(uri, component);
         this.itemId = itemId;
-        this.namespace = namespace;
+    }
+
+    @Override
+    public MiloServerComponent getComponent() {
+        return (MiloServerComponent) super.getComponent();
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        this.item = this.namespace.getOrAddItem(this.itemId);
+        this.item = this.getComponent().getNamespace().getOrAddItem(this.itemId);
     }
 
     @Override
@@ -76,8 +78,6 @@ public class MiloServerEndpoint extends DefaultEndpoint {
 
     /**
      * ID of the item
-     *
-     * @param itemId the new ID of the item
      */
     public void setItemId(final String itemId) {
         this.itemId = itemId;
@@ -85,8 +85,6 @@ public class MiloServerEndpoint extends DefaultEndpoint {
 
     /**
      * Get the ID of the item
-     *
-     * @return the ID of the item
      */
     public String getItemId() {
         return this.itemId;

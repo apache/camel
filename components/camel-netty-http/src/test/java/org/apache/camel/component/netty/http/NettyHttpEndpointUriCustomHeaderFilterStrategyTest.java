@@ -21,7 +21,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class NettyHttpEndpointUriCustomHeaderFilterStrategyTest extends BaseNettyTest {
 
@@ -38,7 +40,7 @@ public class NettyHttpEndpointUriCustomHeaderFilterStrategyTest extends BaseNett
 
         assertMockEndpointsSatisfied();
 
-        String date = out.getOut().getHeader("sub-date", String.class);
+        String date = out.getMessage().getHeader("sub-date", String.class);
         assertNull(date);
     }
 

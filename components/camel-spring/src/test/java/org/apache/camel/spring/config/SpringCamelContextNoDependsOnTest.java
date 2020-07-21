@@ -17,9 +17,11 @@
 package org.apache.camel.spring.config;
 
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpringCamelContextNoDependsOnTest extends SpringTestSupport {
 
@@ -40,7 +42,7 @@ public class SpringCamelContextNoDependsOnTest extends SpringTestSupport {
         long time1 = context.getRegistry().lookupByNameAndType("myDependsOnBean", MyDependsOnBean.class).getTime();
         long time2 = context.getRegistry().lookupByNameAndType("myRouteBuilder", MyDependsOnRouteBuilder.class).getTime();
 
-        assertTrue("myDependsOnBean should be created before myRouteBuilder", time2 > time1);
+        assertTrue(time2 > time1, "myDependsOnBean should be created before myRouteBuilder");
     }
 
 }

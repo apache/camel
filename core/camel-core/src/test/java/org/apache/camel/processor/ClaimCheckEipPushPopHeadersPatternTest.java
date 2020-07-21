@@ -22,7 +22,7 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ClaimCheckOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ClaimCheckEipPushPopHeadersPatternTest extends ContextTestSupport {
 

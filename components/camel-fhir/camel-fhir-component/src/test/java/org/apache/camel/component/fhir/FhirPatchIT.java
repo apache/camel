@@ -29,10 +29,13 @@ import org.apache.camel.component.fhir.internal.FhirPatchApiMethod;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirPatch} APIs.
@@ -55,7 +58,7 @@ public class FhirPatchIT extends AbstractFhirTestSupport {
         headers.put("CamelFhir.preferReturn", null);
 
         MethodOutcome result = requestBodyAndHeaders("direct://PATCH_BY_ID", null, headers);
-        assertNotNull("patchById result", result);
+        assertNotNull(result, "patchById result");
         assertActive(result);
     }
 
@@ -92,7 +95,7 @@ public class FhirPatchIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    @Ignore(value = "https://github.com/jamesagnew/hapi-fhir/issues/955")
+    @Disabled(value = "https://github.com/jamesagnew/hapi-fhir/issues/955")
     public void testPatchByUrl() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
@@ -104,7 +107,7 @@ public class FhirPatchIT extends AbstractFhirTestSupport {
 
         MethodOutcome result = requestBodyAndHeaders("direct://PATCH_BY_URL", null, headers);
 
-        assertNotNull("patchByUrl result", result);
+        assertNotNull(result, "patchByUrl result");
         LOG.debug("patchByUrl: " + result);
         assertActive(result);
     }

@@ -22,8 +22,9 @@
 
     <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>tooling</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <artifactId>tooling-parent</artifactId>
+        <version>3.5.0-SNAPSHOT</version>
+        <relativePath>../parent</relativePath>
     </parent>
 
     <artifactId>maven-plugins</artifactId>
@@ -33,8 +34,6 @@
     <description>Camel Maven Plugins</description>
 
     <modules>
-        <module>camel-main-parser</module>
-        <module>camel-main-package-maven-plugin</module>
         <module>camel-package-maven-plugin</module>
         <module>camel-maven-plugin</module>
         <module>camel-eip-documentation-enricher-maven-plugin</module>
@@ -43,6 +42,9 @@
         <module>camel-restdsl-swagger-plugin</module>
         <module>camel-restdsl-openapi-plugin</module>
         <module>camel-javadoc-plugin</module>
+        <module>camel-resources-plugin</module>
+        <module>sync-properties-maven-plugin</module>
+        <module>camel-component-maven-plugin</module>
     </modules>
 
     <!-- Apply to children. -->
@@ -67,26 +69,13 @@
                         </archive>
                     </configuration>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>maven-bundle-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>bundle-manifest</id>
-                            <phase>none</phase>
-                        </execution>
-                        <execution>
-                            <id>versions</id>
-                            <phase>none</phase>
-                        </execution>
-                    </executions>
-                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-bundle-plugin</artifactId>
+                <version>${project.version}</version>
                 <executions>
                     <execution>
                         <id>bundle-manifest</id>

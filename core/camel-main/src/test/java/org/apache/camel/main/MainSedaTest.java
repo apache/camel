@@ -19,15 +19,17 @@ package org.apache.camel.main;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.SedaComponent;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MainSedaTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+public class MainSedaTest {
 
     @Test
     public void testSedaMain() throws Exception {
         Main main = new Main();
-        main.addRoutesBuilder(new MyRouteBuilder());
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.addProperty("camel.component.seda.defaultQueueFactory", "#class:org.apache.camel.main.MySedaBlockingQueueFactory");
         main.addProperty("camel.component.seda.defaultQueueFactory.counter", "123");
         main.start();
@@ -35,6 +37,30 @@ public class MainSedaTest extends Assert {
         CamelContext camelContext = main.getCamelContext();
         assertNotNull(camelContext);
 
+        SedaComponent seda = camelContext.getComponent("seda", SedaComponent.class);
+        assertNotNull(seda);
+        assertTrue(seda.getDefaultQueueFactory() instanceof MySedaBlockingQueueFactory);
+        MySedaBlockingQueueFactory myBQF = (MySedaBlockingQueueFactory) seda.getDefaultQueueFactory();
+        assertEquals(123, myBQF.getCounter());
+
+        main.stop();
+    }
+
+    @Test
+    public void testSedaAutowireFromRegistryMain() throws Exception {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+        main.addProperty("camel.beans.myqf", "#class:org.apache.camel.main.MySedaBlockingQueueFactory");
+        main.addProperty("camel.beans.myqf.counter", "123");
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
+
+        // the keys will be lower-cased
+        assertNotNull(camelContext.getRegistry().lookupByName("myqf"));
+
+        // seda will autowire from registry and discover the custom qf and use it
         SedaComponent seda = camelContext.getComponent("seda", SedaComponent.class);
         assertNotNull(seda);
         assertTrue(seda.getDefaultQueueFactory() instanceof MySedaBlockingQueueFactory);

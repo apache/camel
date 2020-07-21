@@ -19,18 +19,21 @@ package org.apache.camel.component.bean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultRegistry;
+import org.apache.camel.support.jndi.JndiBeanRepository;
 import org.apache.camel.support.jndi.JndiContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class BeanLookupUsingJndiRegistryIssueTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class BeanLookupUsingJndiRegistryIssueTest {
 
     @Test
     public void testCamelWithJndi() throws Exception {
         JndiContext jndi = new JndiContext();
         jndi.bind("foo", new MyOtherDummyBean());
 
-        CamelContext camel = new DefaultCamelContext(jndi);
+        CamelContext camel = new DefaultCamelContext(new DefaultRegistry(new JndiBeanRepository(jndi)));
         camel.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

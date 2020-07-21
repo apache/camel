@@ -34,7 +34,7 @@ import org.apache.camel.support.component.ApiMethod;
 public class GoogleMailProducer extends AbstractApiProducer<GoogleMailApiName, GoogleMailConfiguration> {
 
     public GoogleMailProducer(GoogleMailEndpoint endpoint) {
-        super(endpoint, GoogleMailPropertiesHelper.getHelper());
+        super(endpoint, GoogleMailPropertiesHelper.getHelper(endpoint.getCamelContext()));
     }
 
     @Override

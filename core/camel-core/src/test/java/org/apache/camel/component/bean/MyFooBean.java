@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.bean;
 
-public class MyFooBean {
+public class MyFooBean implements FooService {
 
     public String hello(String s) {
         return "Hello " + s;

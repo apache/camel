@@ -44,7 +44,7 @@ public abstract class MainCommandLineSupport extends MainSupport {
                 "routerBuilderClasses") {
             @Override
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                setRouteBuilderClasses(parameter);
+                configure().setRoutesBuilderClasses(parameter);
             }
         });
         addOption(new ParameterOption("d", "duration",
@@ -159,9 +159,46 @@ public abstract class MainCommandLineSupport extends MainSupport {
         System.out.println();
     }
 
+    public abstract class Option {
+        private final String abbreviation;
+        private final String fullName;
+        private final String description;
+
+        protected Option(String abbreviation, String fullName, String description) {
+            this.abbreviation = "-" + abbreviation;
+            this.fullName = "-" + fullName;
+            this.description = description;
+        }
+
+        public boolean processOption(String arg, LinkedList<String> remainingArgs) {
+            if (arg.equalsIgnoreCase(abbreviation) || fullName.startsWith(arg)) {
+                doProcess(arg, remainingArgs);
+                return true;
+            }
+            return false;
+        }
+
+        public String getAbbreviation() {
+            return abbreviation;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public String getFullName() {
+            return fullName;
+        }
+
+        public String getInformation() {
+            return "  " + getAbbreviation() + " or " + getFullName() + " = " + getDescription();
+        }
+
+        protected abstract void doProcess(String arg, LinkedList<String> remainingArgs);
+    }
 
     public abstract class ParameterOption extends Option {
-        private String parameterName;
+        private final String parameterName;
 
         protected ParameterOption(String abbreviation, String fullName, String description, String parameterName) {
             super(abbreviation, fullName, description);

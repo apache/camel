@@ -17,8 +17,8 @@
 package org.apache.camel.component.rss;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 public class RssPollingConsumerWithBasicAuthTest extends RssPollingConsumerTest {
 
@@ -32,12 +32,12 @@ public class RssPollingConsumerWithBasicAuthTest extends RssPollingConsumerTest 
         };
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startServer() {
         JettyTestServer.getInstance().startServer();
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopServer() {
         JettyTestServer.getInstance().stopServer();
     }

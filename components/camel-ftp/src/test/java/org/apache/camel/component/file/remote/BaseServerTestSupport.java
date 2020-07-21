@@ -31,7 +31,8 @@ public class BaseServerTestSupport extends CamelTestSupport {
     @BeforeEach
     public void initPort() throws Exception {
         if (!portInitialized) {
-            // call only once per test method (Some tests can call this method manually in setUp method,
+            // call only once per test method (Some tests can call this method
+            // manually in setUp method,
             // which is called before this if setUp method is overridden)
             port = AvailablePortFinder.getNextAvailable();
             portInitialized = true;

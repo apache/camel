@@ -77,20 +77,20 @@ public class SagaProcessorBuilder {
         }
 
         switch (propagation) {
-        case REQUIRED:
-            return new RequiredSagaProcessor(camelContext, childProcessor, sagaService, completionMode, step);
-        case REQUIRES_NEW:
-            return new RequiresNewSagaProcessor(camelContext, childProcessor, sagaService, completionMode, step);
-        case SUPPORTS:
-            return new SupportsSagaProcessor(camelContext, childProcessor, sagaService, completionMode, step);
-        case NOT_SUPPORTED:
-            return new NotSupportedSagaProcessor(camelContext, childProcessor, sagaService, completionMode, step);
-        case NEVER:
-            return new NeverSagaProcessor(camelContext, childProcessor, sagaService, completionMode, step);
-        case MANDATORY:
-            return new MandatorySagaProcessor(camelContext, childProcessor, sagaService, completionMode, step);
-        default:
-            throw new IllegalStateException("Unsupported propagation mode: " + propagation);
+            case REQUIRED:
+                return new RequiredSagaProcessor(camelContext, childProcessor, sagaService, completionMode, step);
+            case REQUIRES_NEW:
+                return new RequiresNewSagaProcessor(camelContext, childProcessor, sagaService, completionMode, step);
+            case SUPPORTS:
+                return new SupportsSagaProcessor(camelContext, childProcessor, sagaService, completionMode, step);
+            case NOT_SUPPORTED:
+                return new NotSupportedSagaProcessor(camelContext, childProcessor, sagaService, completionMode, step);
+            case NEVER:
+                return new NeverSagaProcessor(camelContext, childProcessor, sagaService, completionMode, step);
+            case MANDATORY:
+                return new MandatorySagaProcessor(camelContext, childProcessor, sagaService, completionMode, step);
+            default:
+                throw new IllegalStateException("Unsupported propagation mode: " + propagation);
         }
     }
 

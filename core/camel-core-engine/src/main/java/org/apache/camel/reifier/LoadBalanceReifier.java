@@ -18,49 +18,41 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.Channel;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.reifier.loadbalancer.LoadBalancerReifier;
-import org.apache.camel.spi.RouteContext;
 
 public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> {
 
-    public LoadBalanceReifier(ProcessorDefinition<?> definition) {
-        super((LoadBalanceDefinition)definition);
+    public LoadBalanceReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (LoadBalanceDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        // the load balancer is stateful so we should only create it once in
-        // case its used from a context scoped error handler
+    public Processor createProcessor() throws Exception {
+        LoadBalancer loadBalancer = LoadBalancerReifier.reifier(route, definition.getLoadBalancerType()).createLoadBalancer();
 
-        LoadBalancer loadBalancer = definition.getLoadBalancerType().getLoadBalancer();
-        if (loadBalancer == null) {
-            // then create it and reuse it
-            loadBalancer = LoadBalancerReifier.reifier(definition.getLoadBalancerType()).createLoadBalancer(routeContext);
-            definition.getLoadBalancerType().setLoadBalancer(loadBalancer);
+        // some load balancer can only support a fixed number of outputs
+        int max = definition.getLoadBalancerType().getMaximumNumberOfOutputs();
+        int size = definition.getOutputs().size();
+        if (size > max) {
+            throw new IllegalArgumentException("To many outputs configured on " + definition.getLoadBalancerType() + ": " + size + " > " + max);
+        }
 
-            // some load balancer can only support a fixed number of outputs
-            int max = definition.getLoadBalancerType().getMaximumNumberOfOutputs();
-            int size = definition.getOutputs().size();
-            if (size > max) {
-                throw new IllegalArgumentException("To many outputs configured on " + definition.getLoadBalancerType() + ": " + size + " > " + max);
+        for (ProcessorDefinition<?> processorType : definition.getOutputs()) {
+            // output must not be another load balancer
+            // check for instanceof as the code below as there is
+            // compilation errors on earlier versions of JDK6
+            // on Windows boxes or with IBM JDKs etc.
+            if (LoadBalanceDefinition.class.isInstance(processorType)) {
+                throw new IllegalArgumentException("Loadbalancer already configured to: " + definition.getLoadBalancerType() + ". Cannot set it to: " + processorType);
             }
-
-            for (ProcessorDefinition<?> processorType : definition.getOutputs()) {
-                // output must not be another load balancer
-                // check for instanceof as the code below as there is
-                // compilation errors on earlier versions of JDK6
-                // on Windows boxes or with IBM JDKs etc.
-                if (LoadBalanceDefinition.class.isInstance(processorType)) {
-                    throw new IllegalArgumentException("Loadbalancer already configured to: " + definition.getLoadBalancerType() + ". Cannot set it to: " + processorType);
-                }
-                Processor processor = createProcessor(routeContext, processorType);
-                Channel channel = wrapChannel(routeContext, processor, processorType);
-                loadBalancer.addProcessor(channel);
-            }
+            Processor processor = createProcessor(processorType);
+            Channel channel = wrapChannel(processor, processorType);
+            loadBalancer.addProcessor(channel);
         }
 
         Boolean inherit = definition.isInheritErrorHandler();
@@ -71,7 +63,7 @@ public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> 
             // handler can react afterwards
             inherit = true;
         }
-        Processor target = wrapChannel(routeContext, loadBalancer, definition, inherit);
+        Processor target = wrapChannel(loadBalancer, definition, inherit);
         return target;
     }
 

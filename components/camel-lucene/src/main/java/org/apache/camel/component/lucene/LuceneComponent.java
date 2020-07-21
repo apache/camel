@@ -45,7 +45,7 @@ public class LuceneComponent extends DefaultComponent {
         throws Exception {
         config.parseURI(new URI(uri), parameters, this);
         LuceneEndpoint luceneEndpoint = new LuceneEndpoint(uri, this, config);
-        setProperties(luceneEndpoint.getConfig(), parameters);
+        setProperties(luceneEndpoint, parameters);
         return luceneEndpoint;
     }
 

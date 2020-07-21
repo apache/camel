@@ -28,7 +28,7 @@ import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.Response;
 import org.asynchttpclient.ws.WebSocket;
-import org.asynchttpclient.ws.WebSocketTextListener;
+import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,29 +52,43 @@ public class WebsocketStaticTest extends CamelTestSupport {
 
         WebSocket websocket = c.prepareGet("ws://127.0.0.1:" + port + "/echo").execute(
             new WebSocketUpgradeHandler.Builder()
-                .addWebSocketListener(new WebSocketTextListener() {
-                    @Override
-                    public void onMessage(String message) {
-                        received.add(message);
-                        log.info("received --> " + message);
-                        latch.countDown();
-                    }
-
+                .addWebSocketListener(new WebSocketListener() {
                     @Override
                     public void onOpen(WebSocket websocket) {
                     }
 
                     @Override
-                    public void onClose(WebSocket websocket) {
+                    public void onClose(WebSocket websocket, int code, String reason) {
                     }
 
                     @Override
                     public void onError(Throwable t) {
                         t.printStackTrace();
                     }
+
+                    @Override
+                    public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
+                    }
+
+                    @Override
+                    public void onTextFrame(String payload, boolean finalFragment, int rsv) {
+                        received.add(payload);
+                        log.info("received --> " + payload);
+                        latch.countDown();
+                    }
+
+                    @Override
+                    public void onPingFrame(byte[] payload) {
+
+                    }
+
+                    @Override
+                    public void onPongFrame(byte[] payload) {
+
+                    }
                 }).build()).get();
 
-        websocket.sendMessage("Beer");
+        websocket.sendTextFrame("Beer");
         assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertEquals(1, received.size());
@@ -90,7 +104,7 @@ public class WebsocketStaticTest extends CamelTestSupport {
         assertTrue(body.contains("Hello World"));
         c.close();
 
-        websocket.close();
+        websocket.sendCloseFrame();
         c.close();
     }
 

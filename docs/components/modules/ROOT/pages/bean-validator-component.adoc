@@ -1,12 +1,17 @@
 [[bean-validator-component]]
 = Bean Validator Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-bean-validator/src/main/docs/bean-validator-component.adoc
+:docTitle: Bean Validator
+:artifactId: camel-bean-validator
+:description: Validate the message body using the Java Bean Validation API.
+:since: 2.3
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.3*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Validator component performs bean validation of the message body
 using the Java Bean Validation API
@@ -50,7 +55,7 @@ Where *label* is an arbitrary text value describing the endpoint. +
 
 
 // component options: START
-The Bean Validator component supports 7 options, which are listed below.
+The Bean Validator component supports 8 options, which are listed below.
 
 
 
@@ -58,12 +63,13 @@ The Bean Validator component supports 7 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *ignoreXmlConfiguration* (producer) | Whether to ignore data from the META-INF/validation.xml file. | false | boolean
-| *validationProvider Resolver* (advanced) | To use a a custom ValidationProviderResolver |  | ValidationProviderResolver
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *constraintValidatorFactory* (advanced) | To use a custom ConstraintValidatorFactory |  | ConstraintValidatorFactory
 | *messageInterpolator* (advanced) | To use a custom MessageInterpolator |  | MessageInterpolator
 | *traversableResolver* (advanced) | To use a custom TraversableResolver |  | TraversableResolver
-| *constraintValidator Factory* (advanced) | To use a custom ConstraintValidatorFactory |  | ConstraintValidatorFactory
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *validationProviderResolver* (advanced) | To use a a custom ValidationProviderResolver |  | ValidationProviderResolver
+| *validatorFactory* (advanced) | To use a custom ValidatorFactory |  | ValidatorFactory
 |===
 // component options: END
 
@@ -106,40 +112,6 @@ with the following path and query parameters:
 | *validatorFactory* (advanced) | To use a custom ValidatorFactory |  | ValidatorFactory
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-bean-validator-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 9 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.bean-validator.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.bean-validator.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.bean-validator.constraint-validator-factory* | To use a custom ConstraintValidatorFactory. The option is a javax.validation.ConstraintValidatorFactory type. |  | String
-| *camel.component.bean-validator.enabled* | Whether to enable auto configuration of the bean-validator component. This is enabled by default. |  | Boolean
-| *camel.component.bean-validator.ignore-xml-configuration* | Whether to ignore data from the META-INF/validation.xml file. | false | Boolean
-| *camel.component.bean-validator.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-| *camel.component.bean-validator.message-interpolator* | To use a custom MessageInterpolator. The option is a javax.validation.MessageInterpolator type. |  | String
-| *camel.component.bean-validator.traversable-resolver* | To use a custom TraversableResolver. The option is a javax.validation.TraversableResolver type. |  | String
-| *camel.component.bean-validator.validation-provider-resolver* | To use a a custom ValidationProviderResolver. The option is a javax.validation.ValidationProviderResolver type. |  | String
-|===
-// spring-boot-auto-configure options: END
 
 
 
@@ -334,3 +306,5 @@ Note that the body should include an instance of a class to validate.
 
 
 
+
+include::camel-spring-boot::page$bean-validator-starter.adoc[]

@@ -23,25 +23,27 @@ import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BeanIOSplitterCustomBeanReaderErrorHandlerTest extends CamelTestSupport {
 
     // START SNIPPET: e2
     private static final String FIXED_DATA =
-            "Joe,Smith,Developer,75000,10012009" + LS
-            + "Jane,Doe,Architect,80000,01152008" + LS
-            + "Jon,Anderson,Manager,85000,03182007" + LS;
+            "Joe,Smith,Developer,75000,10012009" + Constants.LS
+            + "Jane,Doe,Architect,80000,01152008" + Constants.LS
+            + "Jon,Anderson,Manager,85000,03182007" + Constants.LS;
     // END SNIPPET: e2
 
     private static final String FIXED_FAIL_DATA =
-            "Joe,Smith,Developer,75000,10012009" + LS
-                    + "Jane,Doe,Architect,80000,01152008" + LS
-                    + "Jon,Anderson,Manager,XXX,03182007" + LS;
+            "Joe,Smith,Developer,75000,10012009" + Constants.LS
+                    + "Jane,Doe,Architect,80000,01152008" + Constants.LS
+                    + "Jon,Anderson,Manager,XXX,03182007" + Constants.LS;
 
     @Test
-    public void testSplit() throws Exception {
+    void testSplit() throws Exception {
         List<Employee> employees = getEmployees();
 
         MockEndpoint mock = getMockEndpoint("mock:beanio-unmarshal");
@@ -53,7 +55,7 @@ public class BeanIOSplitterCustomBeanReaderErrorHandlerTest extends CamelTestSup
     }
 
     @Test
-    public void testSplitFail() throws Exception {
+    void testSplitFail() throws Exception {
         // there should be 1 splitted that failed we get also
         MockEndpoint mock = getMockEndpoint("mock:beanio-unmarshal");
         mock.expectedMessageCount(3);
@@ -69,7 +71,7 @@ public class BeanIOSplitterCustomBeanReaderErrorHandlerTest extends CamelTestSup
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {

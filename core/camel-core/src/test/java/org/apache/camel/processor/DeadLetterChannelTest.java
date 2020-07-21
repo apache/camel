@@ -24,8 +24,10 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DeadLetterChannelTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
@@ -65,8 +67,9 @@ public class DeadLetterChannelTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         Throwable t = deadEndpoint.getExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
-        assertNotNull("Should have been a cause property", t);
-        assertTrue(t instanceof RuntimeException);
+        assertNotNull(t, "Should have been a cause property");
+        boolean b = t instanceof RuntimeException;
+        assertTrue(b);
         assertEquals("Failed to process due to attempt: 3 being less than: 5", t.getMessage());
 
         // must be InOnly
@@ -91,8 +94,9 @@ public class DeadLetterChannelTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         Throwable t = deadEndpoint.getExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
-        assertNotNull("Should have been a cause property", t);
-        assertTrue(t instanceof RuntimeException);
+        assertNotNull(t, "Should have been a cause property");
+        boolean b = t instanceof RuntimeException;
+        assertTrue(b);
         assertEquals("Failed to process due to attempt: 3 being less than: 5", t.getMessage());
 
         // must be InOnly
@@ -101,7 +105,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

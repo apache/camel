@@ -39,4 +39,9 @@ public interface RouteError {
      * @return the error.
      */
     Throwable getException();
+
+    /**
+     * Whether the route is regarded as unhealthy.
+     */
+    boolean isUnhealthy();
 }

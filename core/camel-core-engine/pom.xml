@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.5.0-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -44,22 +44,24 @@
             org.apache.camel.component.caffeine;${camel.osgi.import.strict.version},
             net.sf.saxon
         </camel.osgi.dynamic>
+        <camel.osgi.import>
+            javax.xml.bind*;version="[2.2,3.0)",
+            *
+        </camel.osgi.import>
     </properties>
 
     <dependencies>
 
-        <!-- camel annotations -->
+        <!-- JAXB annotations are used for the EIP models -->
+        <!-- but they are only used at runtime when using camel-xml-jaxb -->
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>meta-annotations</artifactId>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>${jakarta-jaxb-version}</version>
             <optional>true</optional>
         </dependency>
 
         <!-- required dependencies by camel-core -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>spi-annotations</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-api</artifactId>
@@ -67,10 +69,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-base</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jaxp</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -83,10 +81,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-util</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-util-json</artifactId>
         </dependency>
 
     </dependencies>
@@ -127,95 +121,31 @@
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-package-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <configuration>
-                    <!-- set to true to make build fail fast if missing documentation in docs files -->
-                    <failFast>false</failFast>
-                </configuration>
                 <executions>
                     <execution>
-                        <id>generate</id>
-                        <goals>
-                            <goal>generate-jaxb-list</goal>
-                            <goal>generate-eips-list</goal>
-                            <goal>generate-components-list</goal>
-                            <goal>generate-dataformats-list</goal>
-                            <goal>generate-languages-list</goal>
-                        </goals>
+                        <id>generate-configurer</id>
                         <phase>process-classes</phase>
-                    </execution>
-                    <execution>
-                        <id>validate</id>
                         <goals>
-                            <goal>validate-components</goal>
+                            <goal>generate-configurer</goal>
                         </goals>
-                        <phase>prepare-package</phase>
-                    </execution>
-                    <execution>
-                        <id>readme</id>
-                        <goals>
-                            <goal>update-readme</goal>
-                        </goals>
-                        <phase>package</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-generated-resources</id>
-                        <goals>
-                            <goal>resources</goal>
-                        </goals>
-                        <phase>process-classes</phase>
                         <configuration>
-                            <resources>
-                                <resource>
-                                    <directory>${basedir}/target/generated/camel/components</directory>
-                                </resource>
-                                <resource>
-                                    <directory>${basedir}/target/generated/camel/dataformats</directory>
-                                </resource>
-                                <resource>
-                                    <directory>${basedir}/target/generated/camel/languages</directory>
-                                </resource>
-                                <resource>
-                                    <directory>${basedir}/target/generated/camel/models</directory>
-                                </resource>
-                                <resource>
-                                    <directory>${basedir}/target/generated/camel/jaxb</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <!-- we need to copy the xtokenize.json schema file from camel-core to camel-jaxp because camel-jaxp is built before
-                         camel-core and we would have a chicken-and-egg situation where camel-jaxp needs xtokenize.json during its build phase
-                         but this file is not available, so we have copied the file to camel-jaxp and then we use this maven plugin
-                         to copy over the file so its kept up to date -->
-                    <execution>
-                        <id>copy-schema</id>
-                        <goals>
-                            <goal>resources</goal>
-                        </goals>
-                        <phase>prepare-package</phase>
-                        <configuration>
-                            <outputDirectory>${basedir}/src/main/schema</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${basedir}/target/classes/org/apache/camel/model/language</directory>
-                                    <includes>
-                                        <include>*.json</include>
-                                    </includes>
-                                </resource>
-                            </resources>
+                            <discoverClasses>false</discoverClasses>
+                            <classes>
+                                <!-- we want to have configurer for ExtendedCamelContext in camel-core-engine -->
+                                <class>org.apache.camel.ExtendedCamelContext=org.apache.camel.impl.ExtendedCamelContext</class>
+                                <!-- we want to have configurer for RestConfiguration in camel-core-engine -->
+                                <class>org.apache.camel.spi.RestConfiguration=org.apache.camel.impl.RestConfiguration</class>
+                                <class>org.apache.camel.model.FaultToleranceConfigurationDefinition</class>
+                                <class>org.apache.camel.model.Resilience4jConfigurationDefinition</class>
+                                <class>org.apache.camel.model.HystrixConfigurationDefinition</class>
+                            </classes>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
                         <_plugin>
@@ -226,13 +156,6 @@
                         </_plugin>
                     </instructions>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.camel</groupId>
-                        <artifactId>camel-bundle-plugin</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>
@@ -249,6 +172,7 @@
                     </links>
                     <linksource>true</linksource>
                     <maxmemory>256m</maxmemory>
+                    <isOffline>${camel.javadoc.offline}</isOffline>
                     <groups>
                         <group>
                             <title>Camel API</title>
@@ -330,6 +254,7 @@
                             </links>
                             <linksource>true</linksource>
                             <maxmemory>256m</maxmemory>
+                            <isOffline>${camel.javadoc.offline}</isOffline>
                             <groups>
                                 <group>
                                     <title>Camel API</title>
@@ -388,25 +313,6 @@
             </build>
         </profile>
 
-        <!-- enables the APT dependency so that it can be disabled in IDE builds -->
-        <profile>
-            <id>apt</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-
-            <dependencies>
-
-                <!-- enable the APT processor -->
-                <dependency>
-                    <groupId>org.apache.camel</groupId>
-                    <artifactId>apt</artifactId>
-                    <scope>provided</scope>
-                </dependency>
-
-            </dependencies>
-        </profile>
-
         <!-- skip management tests on AIX as it hangs CI servers -->
         <profile>
             <id>aix</id>
@@ -462,13 +368,6 @@
                 <jdk>[9,)</jdk>
             </activation>
             <dependencies>
-
-                <!-- enable the APT processor -->
-                <dependency>
-                    <groupId>org.apache.camel</groupId>
-                    <artifactId>apt</artifactId>
-                    <scope>provided</scope>
-                </dependency>
                 <!-- xmltokenizer using woodstox -->
                 <dependency>
                     <groupId>org.codehaus.woodstox</groupId>
@@ -495,18 +394,6 @@
                                 <FOO_SERVICE_PORT>8081</FOO_SERVICE_PORT>
                             </environmentVariables>
                         </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>jakarta.xml.bind</groupId>
-                                <artifactId>jakarta.xml.bind-api</artifactId>
-                                <version>${jakarta-jaxb-version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.glassfish.jaxb</groupId>
-                                <artifactId>jaxb-runtime</artifactId>
-                                <version>${glassfish-jaxb-runtime-version}</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>

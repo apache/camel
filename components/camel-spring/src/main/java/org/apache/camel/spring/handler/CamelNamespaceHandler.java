@@ -34,6 +34,7 @@ import org.w3c.dom.NodeList;
 
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
+import org.apache.camel.core.xml.CamelRouteControllerDefinition;
 import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
 import org.apache.camel.impl.engine.DefaultCamelContextNameStrategy;
 import org.apache.camel.spi.CamelContextNameStrategy;
@@ -47,6 +48,7 @@ import org.apache.camel.spring.CamelProducerTemplateFactoryBean;
 import org.apache.camel.spring.CamelRedeliveryPolicyFactoryBean;
 import org.apache.camel.spring.CamelRestContextFactoryBean;
 import org.apache.camel.spring.CamelRouteContextFactoryBean;
+import org.apache.camel.spring.CamelRouteTemplateContextFactoryBean;
 import org.apache.camel.spring.CamelThreadPoolFactoryBean;
 import org.apache.camel.spring.SpringModelJAXBContextFactory;
 import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
@@ -126,6 +128,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
     @Override
     public void init() {
+        // register routeTemplateContext parser
+        registerParser("routeTemplateContext", new RouteTemplateContextDefinitionParser());
         // register restContext parser
         registerParser("restContext", new RestContextDefinitionParser());
         // register routeContext parser
@@ -149,6 +153,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         addBeanDefinitionParser("jmxAgent", CamelJMXAgentDefinition.class, false, false);
         addBeanDefinitionParser("streamCaching", CamelStreamCachingStrategyDefinition.class, false, false);
         addBeanDefinitionParser("propertyPlaceholder", CamelPropertyPlaceholderDefinition.class, false, false);
+        addBeanDefinitionParser("routeController", CamelRouteControllerDefinition.class, false, false);
 
         // error handler could be the sub element of camelContext or defined outside camelContext
         BeanDefinitionParser errorHandlerParser = new ErrorHandlerDefinitionParser();
@@ -261,6 +266,36 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         }
     }
 
+    protected class RouteTemplateContextDefinitionParser extends BeanDefinitionParser {
+
+        public RouteTemplateContextDefinitionParser() {
+            super(CamelRouteTemplateContextFactoryBean.class, false);
+        }
+
+        @Override
+        protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+            doBeforeParse(element);
+            super.doParse(element, parserContext, builder);
+
+            // now lets parse the routes with JAXB
+            Binder<Node> binder;
+            try {
+                binder = getJaxbContext().createBinder();
+            } catch (JAXBException e) {
+                throw new BeanDefinitionStoreException("Failed to create the JAXB binder", e);
+            }
+            Object value = parseUsingJaxb(element, parserContext, binder);
+
+            if (value instanceof CamelRouteTemplateContextFactoryBean) {
+                CamelRouteTemplateContextFactoryBean factoryBean = (CamelRouteTemplateContextFactoryBean) value;
+                builder.addPropertyValue("routeTemplates", factoryBean.getRouteTemplates());
+            }
+
+            // lets inject the namespaces into any namespace aware POJOs
+            injectNamespaces(element, binder);
+        }
+    }
+
     protected class EndpointDefinitionParser extends BeanDefinitionParser {
 
         public EndpointDefinitionParser() {
@@ -357,6 +392,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("implicitId", implicitId);
                 builder.addPropertyValue("restConfiguration", factoryBean.getRestConfiguration());
                 builder.addPropertyValue("rests", factoryBean.getRests());
+                builder.addPropertyValue("routeTemplates", factoryBean.getRouteTemplates());
                 builder.addPropertyValue("routes", factoryBean.getRoutes());
                 builder.addPropertyValue("intercepts", factoryBean.getIntercepts());
                 builder.addPropertyValue("interceptFroms", factoryBean.getInterceptFroms());
@@ -366,6 +402,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("validators", factoryBean.getValidators());
                 builder.addPropertyValue("onCompletions", factoryBean.getOnCompletions());
                 builder.addPropertyValue("onExceptions", factoryBean.getOnExceptions());
+                builder.addPropertyValue("routeTemplateRefs", factoryBean.getRouteTemplateRefs());
                 builder.addPropertyValue("builderRefs", factoryBean.getBuilderRefs());
                 builder.addPropertyValue("routeRefs", factoryBean.getRouteRefs());
                 builder.addPropertyValue("restRefs", factoryBean.getRestRefs());
@@ -378,6 +415,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("camelPropertyPlaceholder", factoryBean.getCamelPropertyPlaceholder());
                 builder.addPropertyValue("camelJMXAgent", factoryBean.getCamelJMXAgent());
                 builder.addPropertyValue("camelStreamCachingStrategy", factoryBean.getCamelStreamCachingStrategy());
+                builder.addPropertyValue("camelRouteController", factoryBean.getCamelRouteController());
                 builder.addPropertyValue("threadPoolProfiles", factoryBean.getThreadPoolProfiles());
                 builder.addPropertyValue("beansFactory", factoryBean.getBeansFactory());
                 builder.addPropertyValue("beans", factoryBean.getBeans());

@@ -19,12 +19,15 @@ package org.apache.camel.coap;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.californium.core.network.config.NetworkConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CoAPMethodRestrictTest extends CoAPTestSupport {
 
     @Test
-    public void testDefaultCoAPMethodRestrict() {
+    void testDefaultCoAPMethodRestrict() {
         NetworkConfig.createStandardWithoutFile();
 
         // All request methods should be valid on this endpoint
@@ -32,7 +35,7 @@ public class CoAPMethodRestrictTest extends CoAPTestSupport {
     }
 
     @Test
-    public void testSpecifiedCoAPMethodRestrict() {
+    void testSpecifiedCoAPMethodRestrict() {
         NetworkConfig.createStandardWithoutFile();
 
         // Only GET is valid for /test/a
@@ -60,10 +63,10 @@ public class CoAPMethodRestrictTest extends CoAPTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 fromF("coap://localhost:%d/test", PORT).setBody(constant("GET: /test"));
 
                 fromF("coap://localhost:%d/test/a?coapMethodRestrict=GET", PORT).setBody(constant("GET: /test/a"));

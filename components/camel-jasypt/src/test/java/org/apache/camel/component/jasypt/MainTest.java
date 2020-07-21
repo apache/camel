@@ -16,10 +16,9 @@
  */
 package org.apache.camel.component.jasypt;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MainTest extends Assert {
+public class MainTest {
 
     @Test
     public void testMainShowOptions() throws Exception {

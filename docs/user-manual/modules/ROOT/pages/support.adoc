@@ -25,7 +25,7 @@ bullets advised there first.
 We prefer people to get in touch first using the
 xref:mailing-lists.adoc[mailing list], or
 https://gitter.im/apache/apache-camel[Gitter chat]. Or take time to read
-xref:faq.adoc[FAQs], or search in the mailing list archives to find answers.
+xref:faq:index.adoc[FAQs], or search in the mailing list archives to find answers.
 Unfortunately some people create a JIRA ticket as first thing. *Please
 don't do that!* Only if you are sure it really is a bug, etc. JIRA tickets
 create noise for the Camel team to react on issues that are not bugs
@@ -35,7 +35,7 @@ Also on the mailing lists there are more people active to help you better.
 ====
 
 * http://issues.apache.org/jira/browse/CAMEL[Issue Tracker]
-* xref:faq.adoc[FAQ]
+* xref:faq:index.adoc[FAQ]
 
 [[Support-Alternativediscussionforums]]
 == Alternative discussion forums
@@ -62,7 +62,7 @@ https://github.com/apache/camel/tree/master/components#components
 == How to get help
 
 Before you report a problem, you may wish to read the
-xref:faq.adoc[FAQ].
+xref:faq:index.adoc[FAQ].
 When you report an issue, please be sure to include as much information
 as possible. The more we know, the easier it is to reach an effective
 solution quickly.
@@ -85,7 +85,7 @@ other exceptions and the exception right near the bottom explains the
 actual error, not the first few lines at the top. It's very easy for us
 to skim-read past unnecessary parts of a stack trace.
 * log output can be useful too; sometimes
-xref:faq/how-do-i-change-the-logging.adoc[enabling DEBUG logging] can help
+xref:faq:how-do-i-change-the-logging.adoc[enabling DEBUG logging] can help
 * your code & configuration files are often useful
 * did it work before? what have you changed to break it?
 * try upgrading to the latest release and see if it's fixed there

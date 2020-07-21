@@ -32,10 +32,11 @@ public class EventBusHelper {
 
     final private Set<Consumer> subscribers = ConcurrentHashMap.newKeySet();
 
-    private EventBusHelper(){ }
+    private EventBusHelper() {
+    }
 
     public static EventBusHelper getInstance(){
-        if (INSTANCE == null){
+        if (INSTANCE == null) {
             INSTANCE = new EventBusHelper();
         }
 

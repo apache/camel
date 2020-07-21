@@ -21,22 +21,24 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FileBeanParameterBindingTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/foo");
         super.setUp();
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("foo", new MyFooBean());
         return jndi;
     }
@@ -68,12 +70,12 @@ public class FileBeanParameterBindingTest extends ContextTestSupport {
     public static class MyFooBean {
 
         public void before(@Header("bar") Integer bar, @Header(Exchange.FILE_NAME) String name) {
-            assertNull("There should be no bar", bar);
+            assertNull(bar, "There should be no bar");
             assertEquals("hello.txt", name);
         }
 
         public void after(@Header("bar") Integer bar, @Header(Exchange.FILE_NAME) String name) {
-            assertNotNull("There should be bar", bar);
+            assertNotNull(bar, "There should be bar");
             assertEquals(123, bar.intValue());
             assertEquals("hello.txt", name);
         }

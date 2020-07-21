@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.ResourceEndpoint;
@@ -29,9 +30,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.robotframework.RobotFramework;
 
 /**
- * Represents a RobotFramework endpoint.
+ * Pass camel exchanges to acceptence test written in Robot DSL.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "robotframework", title = "Robot Framework", syntax = "robotframework:resourceUri", label = "testing")
+@UriEndpoint(firstVersion = "3.0.0", scheme = "robotframework", title = "Robot Framework", syntax = "robotframework:resourceUri", category = {Category.TESTING})
 public class RobotFrameworkEndpoint extends ResourceEndpoint {
 
     @UriParam
@@ -54,6 +55,16 @@ public class RobotFrameworkEndpoint extends ResourceEndpoint {
 
     public RobotFrameworkCamelConfiguration getConfiguration() {
         return configuration;
+    }
+
+    @Override
+    public boolean isAllowContextMapAll() {
+        return configuration.isAllowContextMapAll();
+    }
+
+    @Override
+    public void setAllowContextMapAll(boolean allowContextMapAll) {
+        configuration.setAllowContextMapAll(allowContextMapAll);
     }
 
     @Override
@@ -102,7 +113,7 @@ public class RobotFrameworkEndpoint extends ResourceEndpoint {
         generatedArguments.addListToArguments(Arrays.asList((configuration.getNonCriticalTags() != null ? configuration.getNonCriticalTags() : "").split(",")), "-n");
 
         // create variables from camel exchange to pass into robot
-        List<String> variables = RobotFrameworkCamelUtils.createRobotVariablesFromCamelExchange(exchange);
+        List<String> variables = RobotFrameworkCamelUtils.createRobotVariablesFromCamelExchange(exchange, isAllowContextMapAll());
         exchange.getIn().setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_VARIABLES, variables);
         generatedArguments.addListToArguments(variables, "-v");
 
@@ -120,8 +131,11 @@ public class RobotFrameworkEndpoint extends ResourceEndpoint {
         String path = getResourceUri();
         ObjectHelper.notNull(path, "resourceUri");
         log.debug("RobotFrameworkEndpoint resourceUri:{}", path);
-        
-        String newResourceUri = exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI, String.class);
+
+        String newResourceUri = null;
+        if (getConfiguration().isAllowTemplateFromHeader()) {
+            newResourceUri = exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI, String.class);
+        }
         if (newResourceUri != null) {
             exchange.getIn().removeHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI);
             log.debug("{} set to {} setting resourceUri to pass robotframework", RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI, newResourceUri);
@@ -138,7 +152,7 @@ public class RobotFrameworkEndpoint extends ResourceEndpoint {
 
         // run robot framework
         int camelRobotReturnCode = RobotFramework.run(generatedArguments.toArray());
-        
+
         exchange.getIn().setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE, camelRobotReturnCode);
     }
 }

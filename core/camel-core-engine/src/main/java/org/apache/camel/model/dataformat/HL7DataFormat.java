@@ -26,16 +26,15 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The HL7 data format can be used to marshal or unmarshal HL7 (Health Care)
- * model objects.
+ * Marshal and unmarshal HL7 (Health Care) model objects using the HL7 MLLP codec.
  */
 @Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,hl7", title = "HL7")
 @XmlRootElement(name = "hl7")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HL7DataFormat extends DataFormatDefinition {
     @XmlAttribute
-    @Metadata(defaultValue = "true")
-    private Boolean validate;
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    private String validate;
     @XmlTransient
     private Object parser;
 
@@ -43,12 +42,7 @@ public class HL7DataFormat extends DataFormatDefinition {
         super("hl7");
     }
 
-    public boolean isValidate() {
-        // defaults to true if not configured
-        return validate != null ? validate : true;
-    }
-
-    public Boolean getValidate() {
+    public String getValidate() {
         return validate;
     }
 
@@ -57,7 +51,7 @@ public class HL7DataFormat extends DataFormatDefinition {
      * <p/>
      * Is by default true.
      */
-    public void setValidate(Boolean validate) {
+    public void setValidate(String validate) {
         this.validate = validate;
     }
 

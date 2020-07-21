@@ -22,8 +22,10 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ValidatorRouteTest extends CamelTestSupport {
     
@@ -107,9 +109,9 @@ public class ValidatorRouteTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
 
         Exception exception = out.getException();
-        assertTrue("Should be failed", out.isFailed());
-        assertTrue("Exception should be correct type", exception instanceof NoJsonHeaderValidationException);
-        assertTrue("Exception should mention missing header", exception.getMessage().contains("headerToValidate"));
+        assertTrue(out.isFailed(), "Should be failed");
+        assertTrue(exception instanceof NoJsonHeaderValidationException, "Exception should be correct type");
+        assertTrue(exception.getMessage().contains("headerToValidate"), "Exception should mention missing header");
     }
 
     @Test

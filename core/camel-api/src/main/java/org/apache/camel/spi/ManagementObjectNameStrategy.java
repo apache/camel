@@ -46,7 +46,7 @@ public interface ManagementObjectNameStrategy {
 
     ObjectName getObjectNameForCamelContext(CamelContext context) throws MalformedObjectNameException;
 
-    ObjectName getObjectNameForRouteController(CamelContext context) throws MalformedObjectNameException;
+    ObjectName getObjectNameForRouteController(CamelContext context, RouteController controller) throws MalformedObjectNameException;
 
     ObjectName getObjectNameForComponent(Component component, String name) throws MalformedObjectNameException;
 
@@ -54,7 +54,7 @@ public interface ManagementObjectNameStrategy {
 
     ObjectName getObjectNameForDataFormat(CamelContext context, DataFormat endpoint) throws MalformedObjectNameException;
 
-    ObjectName getObjectNameForErrorHandler(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory builder) throws MalformedObjectNameException;
+    ObjectName getObjectNameForErrorHandler(Route route, Processor errorHandler, ErrorHandlerFactory builder) throws MalformedObjectNameException;
 
     ObjectName getObjectNameForProcessor(CamelContext context, Processor processor, NamedNode definition) throws MalformedObjectNameException;
 

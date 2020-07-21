@@ -32,7 +32,7 @@ public class TwilioProducer extends AbstractApiProducer<TwilioApiName, TwilioCon
     protected final TwilioEndpoint endpoint;
 
     public TwilioProducer(TwilioEndpoint endpoint) {
-        super(endpoint, TwilioPropertiesHelper.getHelper());
+        super(endpoint, TwilioPropertiesHelper.getHelper(endpoint.getCamelContext()));
         this.endpoint = endpoint;
     }
 

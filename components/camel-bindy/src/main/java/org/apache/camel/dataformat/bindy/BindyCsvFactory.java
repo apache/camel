@@ -267,12 +267,12 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         if (value != null && !dataField.method().isEmpty()) {
             Class<?> clazz;
             if (dataField.method().contains(".")) {
-                clazz = camelContext.getClassResolver().resolveMandatoryClass(dataField.method().substring(0, dataField.method().lastIndexOf(".")));
+                clazz = camelContext.getClassResolver().resolveMandatoryClass(dataField.method().substring(0, dataField.method().lastIndexOf('.')));
             } else {
                 clazz = field.getType();
             }
 
-            String methodName = dataField.method().substring(dataField.method().lastIndexOf(".") + 1,
+            String methodName = dataField.method().substring(dataField.method().lastIndexOf('.') + 1,
                     dataField.method().length());
 
             Method m = ReflectionHelper.findMethod(clazz, methodName, field.getType());

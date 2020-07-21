@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.mongodb.gridfs;
 
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.MongoClient;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
-import com.mongodb.gridfs.GridFS;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.gridfs.GridFSBucket;
+import com.mongodb.client.gridfs.GridFSBuckets;
+import com.mongodb.client.gridfs.model.GridFSFile;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -31,17 +34,22 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Component for working with MongoDB GridFS.
+ * Interact with MongoDB GridFS.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "mongodb-gridfs", title = "MongoDB GridFS", syntax = "mongodb-gridfs:connectionBean", label = "database,nosql")
+@UriEndpoint(firstVersion = "2.18.0", scheme = "mongodb-gridfs", title = "MongoDB GridFS", syntax = "mongodb-gridfs:connectionBean", category = {Category.DATABASE, Category.NOSQL})
 public class GridFsEndpoint extends DefaultEndpoint {
 
     public static final String GRIDFS_OPERATION = "gridfs.operation";
     public static final String GRIDFS_METADATA = "gridfs.metadata";
     public static final String GRIDFS_CHUNKSIZE = "gridfs.chunksize";
     public static final String GRIDFS_FILE_ID_PRODUCED = "gridfs.fileid";
+    public static final String GRIDFS_OBJECT_ID = "gridfs.objectid";
+
+    private static final Logger LOG = LoggerFactory.getLogger(GridFsEndpoint.class);
 
     @UriPath
     @Metadata(required = true)
@@ -49,9 +57,9 @@ public class GridFsEndpoint extends DefaultEndpoint {
     @UriParam
     @Metadata(required = true)
     private String database;
-    @UriParam(defaultValue = GridFS.DEFAULT_BUCKET)
+    @UriParam(defaultValue = "fs")
     private String bucket;
-    @UriParam(enums = "ACKNOWLEDGED,W1,W2,W3,UNACKNOWLEDGED,JOURNALED,MAJORITY,SAFE")
+    @UriParam(enums = "ACKNOWLEDGED,W1,W2,W3,UNACKNOWLEDGED,JOURNALED,MAJORITY")
     private WriteConcern writeConcern;
     @UriParam
     private ReadPreference readPreference;
@@ -61,11 +69,10 @@ public class GridFsEndpoint extends DefaultEndpoint {
 
     @UriParam(label = "consumer")
     private String query;
-    @UriParam(label = "consumer", defaultValue = "1000")
+    @UriParam(label = "consumer", defaultValue = "1000", javaType = "java.time.Duration")
     private long initialDelay = 1000;
-    @UriParam(label = "consumer", defaultValue = "500")
+    @UriParam(label = "consumer", defaultValue = "500", javaType = "java.time.Duration")
     private long delay = 500;
-
     @UriParam(label = "consumer", defaultValue = "TimeStamp")
     private QueryStrategy queryStrategy = QueryStrategy.TimeStamp;
     @UriParam(label = "consumer", defaultValue = "camel-timestamps")
@@ -75,11 +82,10 @@ public class GridFsEndpoint extends DefaultEndpoint {
     @UriParam(label = "consumer", defaultValue = "camel-processed")
     private String fileAttributeName = "camel-processed";
 
-
     private MongoClient mongoConnection;
-    private DB db;
-    private GridFS gridFs;
-    private DBCollection filesCollection;
+    private MongoDatabase db;
+    private GridFSBucket gridFSBucket;
+    private MongoCollection<GridFSFile> filesCollection;
 
     public GridFsEndpoint(String uri, GridFsComponent component) {
         super(uri, component);
@@ -98,35 +104,37 @@ public class GridFsEndpoint extends DefaultEndpoint {
     }
 
     public void initializeConnection() throws Exception {
-        log.info("Initialize GridFS endpoint: {}", this);
+        LOG.info("Initialize GridFS endpoint: {}", this);
         if (database == null) {
             throw new IllegalStateException("Missing required endpoint configuration: database");
         }
-        db = mongoConnection.getDB(database);
+        db = mongoConnection.getDatabase(database);
         if (db == null) {
             throw new IllegalStateException("Could not initialize GridFsComponent. Database " + database + " does not exist.");
         }
-        gridFs = new GridFS(db, bucket == null ? GridFS.DEFAULT_BUCKET : bucket) {
-            {
-                filesCollection = getFilesCollection();
-            }
-        };
+
+        if (bucket != null) {
+            gridFSBucket = GridFSBuckets.create(db, bucket);
+        } else {
+            gridFSBucket = GridFSBuckets.create(db);
+        }
+
+        this.filesCollection = db.getCollection(gridFSBucket.getBucketName() + ".files", GridFSFile.class);
     }
 
-
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         mongoConnection = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, MongoClient.class);
-        log.debug("Resolved the connection with the name {} as {}", connectionBean, mongoConnection);
+        LOG.debug("Resolved the connection with the name {} as {}", connectionBean, mongoConnection);
         setWriteReadOptionsOnConnection();
-        super.doStart();
+        super.doInit();
     }
 
     @Override
-    protected void doStop() throws Exception {
-        super.doStop();
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
         if (mongoConnection != null) {
-            log.debug("Closing connection");
+            LOG.debug("Closing connection");
             mongoConnection.close();
         }
     }
@@ -134,22 +142,23 @@ public class GridFsEndpoint extends DefaultEndpoint {
     private void setWriteReadOptionsOnConnection() {
         // Set the WriteConcern
         if (writeConcern != null) {
-            mongoConnection.setWriteConcern(writeConcern);
+            db = db.withWriteConcern(writeConcern);
         }
 
         // Set the ReadPreference
         if (readPreference != null) {
-            mongoConnection.setReadPreference(readPreference);
+            db = db.withReadPreference(readPreference);
         }
     }
 
     // ======= Getters and setters ===============================================
+
     public String getConnectionBean() {
         return connectionBean;
     }
 
     /**
-     * Name of {@link com.mongodb.MongoClient} to use.
+     * Name of {@link com.mongodb.client.MongoClient} to use.
      */
     public void setConnectionBean(String connectionBean) {
         this.connectionBean = connectionBean;
@@ -168,7 +177,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
         this.mongoConnection = mongoConnection;
     }
 
-    public DB getDB() {
+    public MongoDatabase getDB() {
         return db;
     }
 
@@ -203,8 +212,6 @@ public class GridFsEndpoint extends DefaultEndpoint {
     /**
      * Additional query parameters (in JSON) that are used to configure the query used for finding
      * files in the GridFsConsumer
-     *
-     * @param query
      */
     public void setQuery(String query) {
         this.query = query;
@@ -215,9 +222,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sets the delay between polls within the Consumer.  Default is 500ms
-     *
-     * @param delay
+     * Sets the delay between polls within the Consumer. Default is 500ms
      */
     public void setDelay(long delay) {
         this.delay = delay;
@@ -228,9 +233,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sets the initialDelay before the consumer will start polling.  Default is 1000ms
-     *
-     * @param initialDelay
+     * Sets the initialDelay before the consumer will start polling. Default is 1000ms
      */
     public void setInitialDelay(long initialDelay) {
         this.initialDelay = delay;
@@ -244,7 +247,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sets the QueryStrategy that is used for polling for new files.  Default is Timestamp
+     * Sets the QueryStrategy that is used for polling for new files. Default is Timestamp
      */
     public void setQueryStrategy(QueryStrategy queryStrategy) {
         this.queryStrategy = queryStrategy;
@@ -346,7 +349,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sets the operation this endpoint will execute against GridRS.
+     * Sets the operation this endpoint will execute against GridFs.
      */
     public void setOperation(String operation) {
         this.operation = operation;
@@ -356,16 +359,15 @@ public class GridFsEndpoint extends DefaultEndpoint {
         return operation;
     }
 
-    public GridFS getGridFs() {
-        return gridFs;
+    public GridFSBucket getGridFsBucket() {
+        return gridFSBucket;
     }
 
-    public void setGridFs(GridFS gridFs) {
-        this.gridFs = gridFs;
+    public void setGridFsBucket(GridFSBucket gridFs) {
+        this.gridFSBucket = gridFs;
     }
 
-    public DBCollection getFilesCollection() {
+    public MongoCollection<GridFSFile> getFilesCollection() {
         return filesCollection;
     }
-
 }

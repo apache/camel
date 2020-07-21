@@ -28,15 +28,15 @@ import java.util.jar.JarFile;
 
 import org.apache.camel.core.xml.PatternBasedPackageScanFilter;
 import org.apache.camel.util.CollectionHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.scan.ScanTestSupport {
 
     private Set<Class<?>> allClasses;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // use classes that are pretty much constants
         allClasses = new HashSet<>();

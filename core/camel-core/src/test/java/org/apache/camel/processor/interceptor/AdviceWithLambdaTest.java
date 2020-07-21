@@ -21,7 +21,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AdviceWithLambdaTest extends ContextTestSupport {
 
@@ -50,6 +53,22 @@ public class AdviceWithLambdaTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     // END SNIPPET: e1
+
+    @Test
+    public void testAdvisedNoLog() throws Exception {
+        AdviceWithRouteBuilder.adviceWith(context, null, false, a -> {
+            a.weaveByToUri("mock:result").remove();
+            a.weaveAddLast().transform().constant("Bye World");
+        });
+
+        getMockEndpoint("mock:foo").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+
+        Object out = template.requestBody("direct:start", "Hello World");
+        assertEquals("Bye World", out);
+
+        assertMockEndpointsSatisfied();
+    }
 
     @Test
     public void testAdvisedNoNewRoutesAllowed() throws Exception {

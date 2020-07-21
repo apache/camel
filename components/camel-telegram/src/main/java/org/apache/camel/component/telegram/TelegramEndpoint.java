@@ -19,6 +19,7 @@ package org.apache.camel.component.telegram;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -38,15 +39,16 @@ import org.asynchttpclient.AsyncHttpClientConfig;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.proxy.ProxyServer;
+import org.asynchttpclient.proxy.ProxyType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.telegram.util.TelegramMessageHelper.populateExchange;
 
 /**
- * The telegram component provides access to the <a href="https://core.telegram.org/bots/api">Telegram Bot API</a>.
+ * Send and receive messages acting as a Telegram Bot <a href="https://core.telegram.org/bots/api">Telegram Bot API</a>.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "telegram", title = "Telegram", syntax = "telegram:type", label = "chat")
+@UriEndpoint(firstVersion = "2.18.0", scheme = "telegram", title = "Telegram", syntax = "telegram:type", category = {Category.CLOUD, Category.API, Category.CHAT})
 public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCapableEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(TelegramEndpoint.class);
 
@@ -84,10 +86,13 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
 
             if (configuration != null && ObjectHelper.isNotEmpty(configuration.getProxyHost())
                     && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-                LOG.debug("Setup http proxy host:{} port:{} for TelegramService", configuration.getProxyHost(),
+                LOG.debug("Setup {} proxy host:{} port:{} for TelegramService",
+                        configuration.getProxyType(),
+                        configuration.getProxyHost(),
                         configuration.getProxyPort());
                 builder.setProxyServer(
-                        new ProxyServer.Builder(configuration.getProxyHost(), configuration.getProxyPort()).build());
+                        new ProxyServer.Builder(configuration.getProxyHost(), configuration.getProxyPort())
+                                .setProxyType(getProxyType(configuration.getProxyType())).build());
             }
             final AsyncHttpClientConfig config = builder.build();
             client = new DefaultAsyncHttpClient(config);
@@ -207,4 +212,20 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
         this.bufferSize = bufferSize;
     }
 
+    private ProxyType getProxyType(TelegramProxyType type) {
+        if (type == null) {
+            return ProxyType.HTTP;
+        }
+
+        switch (type) {
+            case HTTP:
+                return ProxyType.HTTP;
+            case SOCKS4:
+                return ProxyType.SOCKS_V4;
+            case SOCKS5:
+                return ProxyType.SOCKS_V5;
+            default:
+                throw new IllegalArgumentException("Unknown proxy type: " + type);
+        }
+    }
 }

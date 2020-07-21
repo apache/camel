@@ -26,8 +26,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.processor.validation.NoXmlBodyValidationException;
 import org.apache.camel.support.processor.validation.SchemaValidationException;
 import org.apache.camel.support.processor.validation.ValidatingProcessor;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test of ValidatingProcessor.
@@ -37,7 +39,7 @@ public class ValidatingProcessorNotUseSharedSchemaTest extends ContextTestSuppor
     protected ValidatingProcessor validating;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         validating = new ValidatingProcessor();
         validating.setSchemaFile(new File("src/test/resources/org/apache/camel/processor/ValidatingProcessor.xsd"));
@@ -82,7 +84,8 @@ public class ValidatingProcessorNotUseSharedSchemaTest extends ContextTestSuppor
             template.sendBody("direct:start", xml);
             fail("Should have thrown a RuntimeCamelException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof SchemaValidationException);
+            boolean b = e.getCause() instanceof SchemaValidationException;
+            assertTrue(b);
             // expected
         }
 

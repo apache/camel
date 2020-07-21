@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.github;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -37,7 +38,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.StringHelper;
 
 /**
- * The github component is used for integrating Camel with github.
+ * Interact with the GitHub API.
  *
  * The endpoint encapsulates portions of the GitHub API, relying on the org.eclipse.egit.github.core Java SDK.
  * Available endpoint URIs include:
@@ -59,7 +60,7 @@ import org.apache.camel.util.StringHelper;
  * - the types of payloads we're polling aren't typically large (plus, paging is available in the API)
  * - need to support apps running somewhere not publicly accessible where a webhook would fail
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "github", title = "GitHub", syntax = "github:type/branchName", label = "api,file")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "github", title = "GitHub", syntax = "github:type/branchName", category = {Category.FILE, Category.CLOUD, Category.API})
 public class GitHubEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = true)

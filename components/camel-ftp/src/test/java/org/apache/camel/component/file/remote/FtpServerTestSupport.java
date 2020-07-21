@@ -17,7 +17,10 @@
 package org.apache.camel.component.file.remote;
 
 import java.io.File;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
@@ -26,6 +29,9 @@ import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.filesystem.nativefs.NativeFileSystemFactory;
 import org.apache.ftpserver.ftplet.UserManager;
+import org.apache.ftpserver.impl.DefaultFtpServer;
+import org.apache.ftpserver.impl.FtpIoSession;
+import org.apache.ftpserver.listener.Listener;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
 import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
@@ -96,9 +102,12 @@ public abstract class FtpServerTestSupport extends BaseServerTestSupport {
                 ftpServer.stop();
                 ftpServer = null;
             } catch (Exception e) {
-                // ignore while shutting down as we could be polling during shutdown
-                // and get errors when the ftp server is stopping. This is only an issue
-                // since we host the ftp server embedded in the same jvm for unit testing
+                // ignore while shutting down as we could be polling during
+                // shutdown
+                // and get errors when the ftp server is stopping. This is only
+                // an issue
+                // since we host the ftp server embedded in the same jvm for
+                // unit testing
             }
         }
     }
@@ -131,9 +140,20 @@ public abstract class FtpServerTestSupport extends BaseServerTestSupport {
 
         return serverFactory;
     }
-    
+
     public void sendFile(String url, Object body, String fileName) {
         template.sendBodyAndHeader(url, body, Exchange.FILE_NAME, simple(fileName));
     }
     
+    protected void disconnectAllSessions() throws IOException {
+        // stop all listeners
+        Map<String, Listener> listeners = ((DefaultFtpServer) ftpServer).getListeners();
+        for (Listener listener : listeners.values()) {
+            Set<FtpIoSession> sessions = listener.getActiveSessions();
+            for (FtpIoSession session : sessions) {
+                session.closeNow();
+            }
+        }
+    }
+
 }

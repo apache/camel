@@ -29,6 +29,7 @@ import java.util.Optional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
+import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.NoSuchSObjectException;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.SalesforceMultipleChoicesException;
@@ -60,8 +61,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     private ObjectMapper objectMapper;
     private XStream xStream;
 
-    public DefaultRestClient(final SalesforceHttpClient httpClient, final String version, final PayloadFormat format, final SalesforceSession session) throws SalesforceException {
-        super(version, session, httpClient);
+    public DefaultRestClient(final SalesforceHttpClient httpClient, final String version, final PayloadFormat format, final SalesforceSession session, final SalesforceLoginConfig loginConfig) throws SalesforceException {
+        super(version, session, httpClient, loginConfig);
 
         this.format = format;
 
@@ -373,14 +374,14 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
             if (requestDto != null) {
                 // guard against requests that do not support bodies
                 switch (request.getMethod()) {
-                case "PUT":
-                case "PATCH":
-                case "POST":
-                    request.content(new InputStreamContentProvider(requestDto));
-                    request.header(HttpHeader.CONTENT_TYPE, PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
-                    break;
-                default:
-                    // ignore body for other methods
+                    case "PUT":
+                    case "PATCH":
+                    case "POST":
+                        request.content(new InputStreamContentProvider(requestDto));
+                        request.header(HttpHeader.CONTENT_TYPE, PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
+                        break;
+                    default:
+                        // ignore body for other methods
                 }
             }
 

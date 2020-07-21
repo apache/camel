@@ -56,7 +56,7 @@ public class JSR356ConsumerTest extends CamelTestSupport {
         final String message = ExistingServerEndpoint.class.getName() + "#" + testName.getMethodName();
         final MockEndpoint mockEndpoint = getMockEndpoint("mock:" + testName.getMethodName());
         mockEndpoint.expectedBodiesReceived(message);
-        ExistingServerEndpoint.self.doSend(); // to avoid lifecycle issue suring
+        ExistingServerEndpoint.doSend(); // to avoid lifecycle issue during
                                               // startup we send the message
                                               // only here
         mockEndpoint.assertIsSatisfied();
@@ -86,9 +86,9 @@ public class JSR356ConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("websocket-jsr356:///test").id("camel_consumer_acts_as_server").convertBodyTo(String.class).to("mock:ensureServerModeReceiveProperlyExchanges");
+                from("websocket-jsr356:///test?sessionCount=5").id("camel_consumer_acts_as_server").convertBodyTo(String.class).to("mock:ensureServerModeReceiveProperlyExchanges");
 
-                from("websocket-jsr356://ws://localhost:" + servlet.getConfiguration().getHttpPort() + "/existingserver").id("camel_consumer_acts_as_client")
+                from("websocket-jsr356://ws://localhost:" + servlet.getConfiguration().getHttpPort() + "/existingserver?sessionCount=5").id("camel_consumer_acts_as_client")
                     .convertBodyTo(String.class).to("mock:ensureClientModeReceiveProperlyExchanges");
             }
         };
@@ -97,18 +97,15 @@ public class JSR356ConsumerTest extends CamelTestSupport {
     @Dependent
     @ServerEndpoint("/existingserver")
     public static class ExistingServerEndpoint {
-        private static ExistingServerEndpoint self;
-
-        private Session session;
+        private static Session session;
 
         @OnOpen
         public void onOpen(final Session session) {
             this.session = session;
-            self = this;
         }
 
-        void doSend() throws IOException {
-            session.getBasicRemote().sendText(getClass().getName() + "#ensureClientModeReceiveProperlyExchanges");
+        static void doSend() throws IOException {
+            session.getBasicRemote().sendText(ExistingServerEndpoint.class.getName() + "#ensureClientModeReceiveProperlyExchanges");
         }
     }
 }

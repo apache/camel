@@ -17,18 +17,18 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinition;
-import org.apache.camel.spi.RouteContext;
 
 public class ServiceCallReifier extends ProcessorReifier<ServiceCallDefinition> {
 
-    public ServiceCallReifier(ProcessorDefinition<?> definition) {
-        super(ServiceCallDefinition.class.cast(definition));
+    public ServiceCallReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, ServiceCallDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         throw new IllegalStateException("Cannot find camel-cloud on the classpath.");
     }
 

@@ -27,6 +27,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
  * A unit test for testing reading SOAP body with address override in PAYLOAD mode.
  */
@@ -46,10 +49,10 @@ public class CxfPayLoadMessageRouterAddressOverrideTest extends CxfPayLoadMessag
                         
                         CxfPayload<?> payload = exchange.getIn().getBody(CxfPayload.class);
                         List<Source> elements = payload.getBodySources();
-                        assertNotNull("We should get the elements here", elements);
-                        assertEquals("Get the wrong elements size", elements.size(), 1);
+                        assertNotNull(elements, "We should get the elements here");
+                        assertEquals(elements.size(), 1, "Get the wrong elements size");
                         Element el = new XmlConverter().toDOMElement(elements.get(0));
-                        assertEquals("Get the wrong namespace URI", el.getNamespaceURI(), "http://cxf.component.camel.apache.org/");
+                        assertEquals(el.getNamespaceURI(), "http://cxf.component.camel.apache.org/", "Get the wrong namespace URI");
                     }
                 })
                 .to(serviceEndpointURI);

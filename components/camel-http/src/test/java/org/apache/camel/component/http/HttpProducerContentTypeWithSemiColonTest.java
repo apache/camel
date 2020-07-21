@@ -21,9 +21,14 @@ import org.apache.http.HttpStatus;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class HttpProducerContentTypeWithSemiColonTest extends BaseHttpTest {
 
@@ -33,7 +38,7 @@ public class HttpProducerContentTypeWithSemiColonTest extends BaseHttpTest {
 
     private String endpointUrl;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -57,7 +62,7 @@ public class HttpProducerContentTypeWithSemiColonTest extends BaseHttpTest {
         endpointUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -75,8 +80,8 @@ public class HttpProducerContentTypeWithSemiColonTest extends BaseHttpTest {
         });
 
         assertNotNull(out);
-        assertFalse("Should not fail", out.isFailed());
-        assertEquals(CONTENT_TYPE.replace(";", "; "), out.getOut().getBody(String.class));
+        assertFalse(out.isFailed(), "Should not fail");
+        assertEquals(CONTENT_TYPE.replace(";", "; "), out.getMessage().getBody(String.class));
 
     }
 
@@ -88,8 +93,8 @@ public class HttpProducerContentTypeWithSemiColonTest extends BaseHttpTest {
         });
 
         assertNotNull(out);
-        assertFalse("Should not fail", out.isFailed());
-        assertNull(out.getOut().getBody());
+        assertFalse(out.isFailed(), "Should not fail");
+        assertNull(out.getMessage().getBody());
 
     }
 }

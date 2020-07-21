@@ -24,9 +24,12 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.engine.EventDrivenConsumerRoute;
+import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Default error handler test
@@ -36,16 +39,16 @@ public class DefaultErrorHandlerTest extends ContextTestSupport {
     @Test
     public void testRoute() {
         Route route = context.getRoutes().get(0);
-        EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+        DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
 
         Processor processor = unwrap(consumerRoute.getProcessor());
         Pipeline pipeline = assertIsInstanceOf(Pipeline.class, processor);
 
         // there should be a default error handler in front of each processor in
         // this pipeline
-        for (Processor child : pipeline.getProcessors()) {
+        for (Processor child : pipeline.next()) {
             Channel channel = assertIsInstanceOf(Channel.class, child);
-            assertNotNull("There should be an error handler", channel.getErrorHandler());
+            assertNotNull(channel.getErrorHandler(), "There should be an error handler");
             assertIsInstanceOf(DefaultErrorHandler.class, channel.getErrorHandler());
         }
     }

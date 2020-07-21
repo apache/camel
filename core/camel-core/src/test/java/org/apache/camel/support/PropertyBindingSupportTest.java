@@ -24,7 +24,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.spi.Injector;
-import org.junit.Test;
+import org.apache.camel.spi.PropertiesComponent;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for PropertyBindingSupport
@@ -69,7 +76,43 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         assertEquals(123, foo.getBar().getWork().getId());
         assertEquals("Acme", foo.getBar().getWork().getName());
 
-        assertTrue("Should bind all properties", prop.isEmpty());
+        assertTrue(prop.isEmpty(), "Should bind all properties");
+    }
+
+    @Test
+    public void testProperty() throws Exception {
+        PropertiesComponent pc = context.getPropertiesComponent();
+        Properties prop = new Properties();
+        prop.setProperty("customerName", "James");
+        prop.setProperty("customerAge", "33");
+        prop.setProperty("workKey", "customerWork");
+        prop.setProperty("customerWork", "Acme");
+        pc.setInitialProperties(prop);
+
+        Foo foo = new Foo();
+
+        PropertyBindingSupport.build().bind(context, foo, "name", "#property:customerName");
+        PropertyBindingSupport.build().bind(context, foo, "bar.age", "#property:customerAge");
+        PropertyBindingSupport.build().bind(context, foo, "bar.gold-customer", "true");
+        PropertyBindingSupport.build().bind(context, foo, "bar.rider", "true");
+        PropertyBindingSupport.build().bind(context, foo, "bar.work.id", "456");
+        PropertyBindingSupport.build().bind(context, foo, "bar.work.name", "#property:{{workKey}}");
+
+        assertEquals("James", foo.getName());
+        assertEquals(33, foo.getBar().getAge());
+        assertTrue(foo.getBar().isRider());
+        assertTrue(foo.getBar().isGoldCustomer());
+        assertEquals(456, foo.getBar().getWork().getId());
+        assertEquals("Acme", foo.getBar().getWork().getName());
+
+        try {
+            PropertyBindingSupport.build().bind(context, foo, "name", "#property:unknown");
+            fail("Should have thrown exception");
+        } catch (PropertyBindingException e) {
+            assertEquals("name", e.getPropertyName());
+            assertEquals("#property:unknown", e.getValue());
+            assertEquals("Property with key unknown not found by properties component", e.getCause().getMessage());
+        }
     }
 
     @Test
@@ -93,7 +136,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         assertEquals(123, foo.getBar().getWork().getId());
         assertEquals("Acme", foo.getBar().getWork().getName());
 
-        assertTrue("Should bind all properties", prop.isEmpty());
+        assertTrue(prop.isEmpty(), "Should bind all properties");
     }
 
     @Test
@@ -117,7 +160,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         assertEquals(123, foo.getBar().getWork().getId());
         assertEquals("Acme", foo.getBar().getWork().getName());
 
-        assertTrue("Should bind all properties", prop.isEmpty());
+        assertTrue(prop.isEmpty(), "Should bind all properties");
     }
 
     @Test
@@ -381,6 +424,118 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         assertEquals("James", foo.getName());
         assertEquals("Donald Duck", foo.getAnimal().getName());
         assertEquals(false, foo.getAnimal().isDangerous());
+    }
+
+    @Test
+    public void testNestedClassFactoryParameterOneParameter() throws Exception {
+        Foo foo = new Foo();
+
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.AnimalFactory#createAnimal('Tiger')");
+
+        assertEquals("James", foo.getName());
+        assertEquals("Tiger", foo.getAnimal().getName());
+        assertEquals(true, foo.getAnimal().isDangerous());
+    }
+
+    @Test
+    public void testNestedClassFactoryParameterTwoParameter() throws Exception {
+        Foo foo = new Foo();
+
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.AnimalFactory#createAnimal('Donald Duck', false)");
+
+        assertEquals("James", foo.getName());
+        assertEquals("Donald Duck", foo.getAnimal().getName());
+        assertEquals(false, foo.getAnimal().isDangerous());
+    }
+
+    @Test
+    public void testNestedClassFactoryParameterPlaceholder() throws Exception {
+        Foo foo = new Foo();
+
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.AnimalFactory#createAnimal('{{companyName}}', false)");
+
+        assertEquals("James", foo.getName());
+        assertEquals("Acme", foo.getAnimal().getName());
+        assertEquals(false, foo.getAnimal().isDangerous());
+    }
+
+    @Test
+    public void testPropertiesOptionalKey() throws Exception {
+        Foo foo = new Foo();
+
+        Map<String, Object> prop = new HashMap<>();
+        prop.put("name", "James");
+        prop.put("?bar.AGE", "33");
+        prop.put("BAR.{{committer}}", "true");
+        prop.put("bar.gOLd-Customer", "true");
+        prop.put("?bar.silver-Customer", "true");
+        prop.put("?bAr.work.ID", "123");
+        prop.put("?bar.WORk.naME", "{{companyName}}");
+        prop.put("?bar.work.addresss", "Some street");
+        prop.put("?bar.work.addresss.zip", "1234");
+
+        PropertyBindingSupport.build().withIgnoreCase(true).bind(context, foo, prop);
+
+        assertEquals("James", foo.getName());
+        assertEquals(33, foo.getBar().getAge());
+        assertTrue(foo.getBar().isRider());
+        assertTrue(foo.getBar().isGoldCustomer());
+        assertEquals(123, foo.getBar().getWork().getId());
+        assertEquals("Acme", foo.getBar().getWork().getName());
+
+        assertFalse(prop.isEmpty(), "Should NOT bind all properties");
+        assertEquals(3, prop.size());
+        assertTrue(prop.containsKey("?bar.silver-Customer"));
+        assertTrue(prop.containsKey("?bar.work.addresss"));
+        assertTrue(prop.containsKey("?bar.work.addresss.zip"));
+    }
+
+    @Test
+    public void testPropertiesOptionalKeyMandatory() throws Exception {
+        Foo foo = new Foo();
+
+        Map<String, Object> prop = new HashMap<>();
+        prop.put("name", "James");
+        prop.put("bar.AGE", "33");
+        prop.put("BAR.{{committer}}", "true");
+        prop.put("bar.gOLd-Customer", "true");
+        prop.put("?bar.silver-Customer", "true");
+        prop.put("?bAr.work.ID", "123");
+        prop.put("?bar.WORk.naME", "{{companyName}}");
+        prop.put("?bar.work.addresss", "Some street");
+        prop.put("?bar.work.addresss.zip", "1234");
+
+        PropertyBindingSupport.build().withIgnoreCase(true).withMandatory(true).bind(context, foo, prop);
+
+        assertEquals("James", foo.getName());
+        assertEquals(33, foo.getBar().getAge());
+        assertTrue(foo.getBar().isRider());
+        assertTrue(foo.getBar().isGoldCustomer());
+        assertEquals(123, foo.getBar().getWork().getId());
+        assertEquals("Acme", foo.getBar().getWork().getName());
+
+        assertFalse(prop.isEmpty(), "Should NOT bind all properties");
+        assertEquals(3, prop.size());
+        assertTrue(prop.containsKey("?bar.silver-Customer"));
+        assertTrue(prop.containsKey("?bar.work.addresss"));
+        assertTrue(prop.containsKey("?bar.work.addresss.zip"));
+
+        // should not fail as we marked the option as optional
+        prop.put("?bar.unknown", "123");
+        PropertyBindingSupport.build().withIgnoreCase(true).withMandatory(true).bind(context, foo, prop);
+        prop.remove("?bar.unknown");
+
+        // should fail as its mandatory
+        prop.put("bar.unknown", "123");
+        try {
+            PropertyBindingSupport.build().withIgnoreCase(true).withMandatory(true).bind(context, foo, prop);
+            fail("Should fail");
+        } catch (PropertyBindingException e) {
+            assertEquals("bar.unknown", e.getPropertyName());
+        }
     }
 
     public static class Foo {

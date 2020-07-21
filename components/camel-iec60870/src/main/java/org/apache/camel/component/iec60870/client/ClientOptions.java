@@ -47,6 +47,12 @@ public class ClientOptions extends BaseOptions<ClientOptions> {
     @UriParam(label = "data")
     private byte causeSourceAddress;
 
+    /**
+     * Timeout in millis to wait for client to establish a connected connection.
+     */
+    @UriParam(label = "data", defaultValue = "10000")
+    private int connectionTimeout = 10000;
+
     public ClientOptions() {
         this.dataModuleOptions = new DataModuleOptions.Builder();
     }
@@ -95,5 +101,13 @@ public class ClientOptions extends BaseOptions<ClientOptions> {
 
     public boolean isIgnoreBackgroundScan() {
         return this.dataModuleOptions.isIgnoreBackgroundScan();
+    }
+
+    public int getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    public void setConnectionTimeout(int connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
     }
 }

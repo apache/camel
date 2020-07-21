@@ -43,7 +43,7 @@ import static org.mockito.Mockito.when;
 public class KeypairProducerTest extends NovaProducerTestSupport {
     private static final String KEYPAIR_NAME = "keypairName";
 
-    @Mock
+    @Mock(lenient = true)
     private Keypair osTestKeypair;
 
     private Keypair dummyKeypair;

@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-debezium-parent</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.5.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.apache.camel.maven</groupId>
@@ -32,6 +32,10 @@
     <packaging>maven-plugin</packaging>
     <name>Camel :: Debezium :: Maven plugin</name>
     <description>Camel Debezium Maven plugin</description>
+
+    <properties>
+        <firstVersion>3.0.0</firstVersion>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
@@ -67,7 +71,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>
+            <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>
         </dependency>
         <!-- only mysql connector used for testing -->
@@ -95,8 +99,8 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-bundle-plugin</artifactId>
                 <executions>
                     <execution>
                         <phase>none</phase>

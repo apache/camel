@@ -128,6 +128,8 @@ public final class RouteDefinitionHelper {
      * @throws Exception is thrown if error force assign ids to the routes
      */
     public static void forceAssignIds(CamelContext context, List<RouteDefinition> routes) throws Exception {
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+
         // handle custom assigned id's first, and then afterwards assign auto
         // generated ids
         Set<String> customIds = new HashSet<>();
@@ -142,12 +144,6 @@ public final class RouteDefinitionHelper {
                 // placeholder
                 if (!originalId.equals(id)) {
                     route.setId(id);
-                    ProcessorDefinitionHelper.addPropertyPlaceholdersChangeRevertAction(new Runnable() {
-                        @Override
-                        public void run() {
-                            route.setId(originalId);
-                        }
-                    });
                 }
                 customIds.add(id);
             } else {
@@ -165,6 +161,13 @@ public final class RouteDefinitionHelper {
             }
         }
 
+        // also include already existing on camel context
+        for (final RouteDefinition def : context.adapt(ModelCamelContext.class).getRouteDefinitions()) {
+            if (def.getId() != null) {
+                customIds.add(def.getId());
+            }
+        }
+
         // auto assign route ids
         for (final RouteDefinition route : routes) {
             if (route.getId() == null) {
@@ -175,7 +178,7 @@ public final class RouteDefinitionHelper {
                 int attempts = 0;
                 while (!done && attempts < 1000) {
                     attempts++;
-                    id = route.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
+                    id = route.idOrCreate(ecc.getNodeIdFactory());
                     if (customIds.contains(id)) {
                         // reset id and try again
                         route.setId(null);
@@ -187,13 +190,6 @@ public final class RouteDefinitionHelper {
                     throw new IllegalArgumentException("Cannot auto assign id to route: " + route);
                 }
                 route.setId(id);
-                ProcessorDefinitionHelper.addPropertyPlaceholdersChangeRevertAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        route.setId(null);
-                        route.setCustomId(false);
-                    }
-                });
                 route.setCustomId(false);
                 customIds.add(route.getId());
             }
@@ -201,7 +197,7 @@ public final class RouteDefinitionHelper {
             if (rest != null && route.isRest()) {
                 VerbDefinition verb = findVerbDefinition(rest, route.getInput().getEndpointUri());
                 if (verb != null) {
-                    String id = verb.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
+                    String id = verb.idOrCreate(ecc.getNodeIdFactory());
                     if (!verb.getUsedForGeneratingNodeId()) {
                         id = route.getId();
                     }
@@ -342,13 +338,7 @@ public final class RouteDefinitionHelper {
                                     List<InterceptFromDefinition> interceptFromDefinitions, List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions,
                                     List<OnCompletionDefinition> onCompletions) {
 
-        Runnable propertyPlaceholdersChangeReverter = ProcessorDefinitionHelper.createPropertyPlaceholdersChangeReverter();
-        try {
-            prepareRouteImp(context, route, onExceptions, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions, onCompletions);
-        } finally {
-            // Lets restore
-            propertyPlaceholdersChangeReverter.run();
-        }
+        prepareRouteImp(context, route, onExceptions, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions, onCompletions);
     }
 
     /**
@@ -440,7 +430,7 @@ public final class RouteDefinitionHelper {
         for (ProcessorDefinition child : children) {
             // validate that top-level is only added on the route (eg top level)
             RouteDefinition route = ProcessorDefinitionHelper.getRoute(child);
-            boolean parentIsRoute = route != null && child.getParent() == route;
+            boolean parentIsRoute = child.getParent() == route;
             if (child.isTopLevelOnly() && !parentIsRoute) {
                 throw new IllegalArgumentException("The output must be added as top-level on the route. Try moving " + child + " to the top of route.");
             }
@@ -451,15 +441,7 @@ public final class RouteDefinitionHelper {
     }
 
     private static void initRouteInput(CamelContext camelContext, FromDefinition input) {
-        // resolve property placeholders on route input which hasn't been done
-        // yet
-        if (input != null) {
-            try {
-                ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, input);
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
+        // noop
     }
 
     private static void initParentAndErrorHandlerBuilder(CamelContext context, RouteDefinition route, List<ProcessorDefinition<?>> abstracts,
@@ -733,12 +715,6 @@ public final class RouteDefinitionHelper {
                 // placeholder
                 if (!originalId.equals(id)) {
                     processor.setId(id);
-                    ProcessorDefinitionHelper.addPropertyPlaceholdersChangeRevertAction(new Runnable() {
-                        @Override
-                        public void run() {
-                            processor.setId(originalId);
-                        }
-                    });
                 }
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);

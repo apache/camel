@@ -23,8 +23,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SqsDoesNotExtendMessageVisibilityTest extends CamelTestSupport {
 
@@ -56,7 +58,7 @@ public class SqsDoesNotExtendMessageVisibilityTest extends CamelTestSupport {
         this.client.messages.add(message);
 
         assertMockEndpointsSatisfied(); // Wait for message to arrive.
-        assertTrue("Expected no changeMessageVisibility requests.", this.client.changeMessageVisibilityRequests.size() == 0);
+        assertTrue(this.client.changeMessageVisibilityRequests.size() == 0, "Expected no changeMessageVisibility requests.");
     }
 
     @Override

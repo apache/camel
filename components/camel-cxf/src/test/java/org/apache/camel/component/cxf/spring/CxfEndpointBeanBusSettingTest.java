@@ -20,7 +20,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.cxf.Bus;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfEndpointBeanBusSettingTest extends AbstractSpringBeanTestSupport {
 
@@ -36,7 +38,7 @@ public class CxfEndpointBeanBusSettingTest extends AbstractSpringBeanTestSupport
         CamelContext camelContext = (CamelContext) ctx.getBean("camel");
         
         CxfEndpoint endpoint = camelContext.getEndpoint("cxf:bean:routerEndpoint", CxfEndpoint.class);
-        assertEquals("Get a wrong endpoint uri", "cxf://bean:routerEndpoint", endpoint.getEndpointUri());       
+        assertEquals("cxf://bean:routerEndpoint", endpoint.getEndpointUri(), "Get a wrong endpoint uri");
         Bus cxf1 = endpoint.getBus();
         
         assertEquals(cxf1, ctx.getBean("cxf1"));
@@ -44,7 +46,7 @@ public class CxfEndpointBeanBusSettingTest extends AbstractSpringBeanTestSupport
         assertEquals("barf", endpoint.getBus().getProperty("foo"));
         
         endpoint = camelContext.getEndpoint("cxf:bean:serviceEndpoint", CxfEndpoint.class);
-        assertEquals("Get a wrong endpoint uri", "cxf://bean:serviceEndpoint", endpoint.getEndpointUri());
+        assertEquals("cxf://bean:serviceEndpoint", endpoint.getEndpointUri(), "Get a wrong endpoint uri");
         Bus cxf2 = endpoint.getBus();
         
         assertEquals(cxf2, ctx.getBean("cxf2"));

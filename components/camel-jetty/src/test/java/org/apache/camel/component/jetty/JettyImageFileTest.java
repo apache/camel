@@ -23,7 +23,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.MessageHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit test for exposing a http server that returns images
@@ -39,7 +42,7 @@ public class JettyImageFileTest extends BaseJettyTest {
         template.send(endpoint, exchange);
 
         assertNotNull(exchange.getOut().getBody());
-        assertEquals("Get a wrong content-type ", MessageHelper.getContentType(exchange.getOut()), "image/jpeg");
+        assertEquals(MessageHelper.getContentType(exchange.getOut()), "image/jpeg", "Get a wrong content-type");
     }
 
     @Test

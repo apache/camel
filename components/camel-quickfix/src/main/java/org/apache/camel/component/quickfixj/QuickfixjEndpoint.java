@@ -19,6 +19,7 @@ package org.apache.camel.component.quickfixj;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -32,18 +33,22 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import quickfix.Message;
 import quickfix.SessionID;
 
 /**
- * The quickfix component allows to send Financial Interchange (FIX) messages to the QuickFix engine.
+ * Open a Financial Interchange (FIX) session using an embedded QuickFix/J engine.
  */
-@UriEndpoint(firstVersion = "2.1.0", scheme = "quickfix", title = "QuickFix", syntax = "quickfix:configurationName", label = "messaging")
+@UriEndpoint(firstVersion = "2.1.0", scheme = "quickfix", title = "QuickFix", syntax = "quickfix:configurationName", category = {Category.MESSAGING})
 public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEventListener, MultipleConsumersSupport {
     public static final String EVENT_CATEGORY_KEY = "EventCategory";
     public static final String SESSION_ID_KEY = "SessionID";
     public static final String MESSAGE_TYPE_KEY = "MessageType";
     public static final String DATA_DICTIONARY_KEY = "DataDictionary";
+
+    private static final Logger LOG = LoggerFactory.getLogger(QuickfixjEndpoint.class);
 
     private final QuickfixjEngine engine;
     private final List<QuickfixjConsumer> consumers = new CopyOnWriteArrayList<>();
@@ -99,7 +104,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        log.info("Creating QuickFIX/J consumer: {}, ExchangePattern={}", sessionID != null ? sessionID : "No Session", getExchangePattern());
+        LOG.info("Creating QuickFIX/J consumer: {}, ExchangePattern={}", sessionID != null ? sessionID : "No Session", getExchangePattern());
         QuickfixjConsumer consumer = new QuickfixjConsumer(this, processor);
         configureConsumer(consumer);
         consumers.add(consumer);
@@ -108,7 +113,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
 
     @Override
     public Producer createProducer() throws Exception {
-        log.info("Creating QuickFIX/J producer: {}", sessionID != null ? sessionID : "No Session");
+        LOG.info("Creating QuickFIX/J producer: {}", sessionID != null ? sessionID : "No Session");
         if (isWildcarded()) {
             throw new ResolveEndpointFailedException("Cannot create consumer on wildcarded session identifier: " + sessionID);
         }
@@ -137,7 +142,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
             && isMatching(this.sessionID.getSenderSubID(), sessionID.getSenderSubID())
             && isMatching(this.sessionID.getSenderLocationID(), sessionID.getSenderLocationID())
             && isMatching(this.sessionID.getTargetCompID(), sessionID.getTargetCompID())
-            && isMatching(this.sessionID.getTargetSubID(), sessionID.getTargetSubID()) 
+            && isMatching(this.sessionID.getTargetSubID(), sessionID.getTargetSubID())
             && isMatching(this.sessionID.getTargetLocationID(), sessionID.getTargetLocationID());
     }
 
@@ -180,7 +185,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     public QuickfixjEngine getEngine() {
         return engine;
     }
-    
+
     @Override
     protected void doStop() throws Exception {
         // clear list of consumers

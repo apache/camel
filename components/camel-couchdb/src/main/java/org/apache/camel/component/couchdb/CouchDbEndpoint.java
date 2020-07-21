@@ -19,6 +19,7 @@ package org.apache.camel.component.couchdb;
 import java.net.URI;
 
 import com.google.gson.JsonObject;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -31,9 +32,10 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.lightcouch.CouchDbClient;
 
 /**
- * The couchdb component is used for integrate with CouchDB databases.
+ * Consume changesets for inserts, updates and deletes in a CouchDB database, as well as get, save, update and delete
+ * documents from a CouchDB database.
  */
-@UriEndpoint(firstVersion = "2.11.0", scheme = "couchdb", title = "CouchDB", syntax = "couchdb:protocol:hostname:port/database", label = "database,nosql")
+@UriEndpoint(firstVersion = "2.11.0", scheme = "couchdb", title = "CouchDB", syntax = "couchdb:protocol:hostname:port/database", category = {Category.DATABASE, Category.NOSQL})
 public class CouchDbEndpoint extends DefaultEndpoint {
 
     public static final String DEFAULT_STYLE = "main_only";
@@ -56,7 +58,7 @@ public class CouchDbEndpoint extends DefaultEndpoint {
     private String username;
     @UriParam(label = "security", secret = true)
     private String password;
-    @UriParam(label = "consumer", defaultValue = "" + DEFAULT_HEARTBEAT)
+    @UriParam(label = "consumer", defaultValue = "" + DEFAULT_HEARTBEAT, javaType = "java.time.Duration")
     private long heartbeat = DEFAULT_HEARTBEAT;
     @UriParam
     private boolean createDatabase;

@@ -21,7 +21,10 @@ import javax.management.ObjectName;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedStickyLoadBalancerTest extends ManagementTestSupport {
 
@@ -65,7 +68,7 @@ public class ManagedStickyLoadBalancerTest extends ManagementTestSupport {
         template.sendBodyAndHeader("direct:start", "Bye World", "num", "123");
 
         String last2 = (String) mbeanServer.getAttribute(on, "LastChosenProcessorId");
-        assertEquals("Should be sticky", last, last2);
+        assertEquals(last, last2, "Should be sticky");
     }
 
     @Override

@@ -20,9 +20,9 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 
-@Ignore
+@Disabled
 public class IrcsWithSslContextParamsRouteTest extends IrcRouteTest {
 
     // TODO This test is disabled until we can find a public SSL enabled IRC 

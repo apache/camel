@@ -22,10 +22,13 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jbpm.JBPMProducer.Operation;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.kie.server.api.model.instance.TaskSummary;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * To run this example you need jBPM to run locally, easiest is to use single
@@ -33,7 +36,7 @@ import org.kie.server.api.model.instance.TaskSummary;
  * Evaluation sample project, build and deploy. Once done this test can be ran
  * out of the box.
  */
-@Ignore("This is an integration test that needs jBPM running on the local machine")
+@Disabled("This is an integration test that needs jBPM running on the local machine")
 public class JBPMComponentIntegrationTest extends CamelTestSupport {
 
     @SuppressWarnings("unchecked")

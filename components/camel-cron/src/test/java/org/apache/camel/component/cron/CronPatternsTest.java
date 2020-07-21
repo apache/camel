@@ -18,40 +18,46 @@ package org.apache.camel.component.cron;
 
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CronPatternsTest extends CamelTestSupport {
 
-    @Test(expected = FailedToCreateRouteException.class)
-    public void testTooManyParts() throws Exception {
+    @Test
+    void testTooManyParts() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("cron:tab?schedule=0/1 * * * * ? 1 2")
                         .to("mock:result");
             }
         });
-        context.start();
+        assertThrows(FailedToCreateRouteException.class, () -> {
+            context.start();
+        });
     }
 
-    @Test(expected = FailedToCreateRouteException.class)
-    public void testTooLittleParts() throws Exception {
+    @Test
+    void testTooLittleParts() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("cron:tab?schedule=wrong pattern")
                         .to("mock:result");
             }
         });
-        context.start();
+        assertThrows(FailedToCreateRouteException.class, () -> {
+            context.start();
+        });
     }
 
     @Test
-    public void testPlusInURI() throws Exception {
+    void testPlusInURI() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("cron://name?schedule=0+0/5+12-18+?+*+MON-FRI")
                         .to("mock:result");
             }
@@ -59,16 +65,18 @@ public class CronPatternsTest extends CamelTestSupport {
         context.start();
     }
 
-    @Test(expected = FailedToCreateRouteException.class)
-    public void testPlusInURINok() throws Exception {
+    @Test
+    void testPlusInURINok() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("cron://name?schedule=0+0/5+12-18+?+*+MON-FRI+2019+1")
                         .to("mock:result");
             }
         });
-        context.start();
+        assertThrows(FailedToCreateRouteException.class, () -> {
+            context.start();
+        });
     }
 
     @Override

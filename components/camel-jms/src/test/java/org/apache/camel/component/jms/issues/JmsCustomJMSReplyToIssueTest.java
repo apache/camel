@@ -21,17 +21,16 @@ import javax.jms.Destination;
 import javax.jms.TextMessage;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.jms.core.JmsTemplate;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsCustomJMSReplyToIssueTest extends CamelTestSupport {
 
@@ -76,13 +75,11 @@ public class JmsCustomJMSReplyToIssueTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody("Hello World");
-                        // set the JMSReplyTo to force sending the reply here
-                        exchange.getOut().setHeader("JMSReplyTo", "myReplyQueue");
-                    }
                 // must preserve QoS so Camel will send JMSReplyTo even if message is inOnly
+                from("direct:start").process(exchange -> {
+                    exchange.getMessage().setBody("Hello World");
+                    // set the JMSReplyTo to force sending the reply here
+                    exchange.getMessage().setHeader("JMSReplyTo", "myReplyQueue");
                 }).to("activemq:queue:in?preserveMessageQos=true");
 
                 from("activemq:queue:myReplyQueue").to("mock:result");

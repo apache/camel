@@ -67,8 +67,8 @@ public class SmppComponentSpringIntegrationTest extends CamelSpringTestSupport {
         assertNotNull(resultExchange.getIn().getHeader(SmppConstants.SUBMIT_DATE));
         assertNull(resultExchange.getIn().getHeader(SmppConstants.ERROR));
         
-        assertNotNull(exchange.getOut().getHeader(SmppConstants.ID));
-        assertEquals(1, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
+        assertNotNull(exchange.getMessage().getHeader(SmppConstants.ID));
+        assertEquals(1, exchange.getMessage().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
     }
     
     @Test
@@ -122,7 +122,7 @@ public class SmppComponentSpringIntegrationTest extends CamelSpringTestSupport {
 
         template.send(start, exchange);
         
-        assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
+        assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
     }
     
     @Test
@@ -133,10 +133,10 @@ public class SmppComponentSpringIntegrationTest extends CamelSpringTestSupport {
 
         template.send(start, exchange);
         
-        assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
-        assertEquals((byte) 0, exchange.getOut().getHeader(SmppConstants.ERROR));
-        assertNotNull(exchange.getOut().getHeader(SmppConstants.FINAL_DATE));
-        assertEquals("DELIVERED", exchange.getOut().getHeader(SmppConstants.MESSAGE_STATE));
+        assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
+        assertEquals((byte) 0, exchange.getMessage().getHeader(SmppConstants.ERROR));
+        assertNotNull(exchange.getMessage().getHeader(SmppConstants.FINAL_DATE));
+        assertEquals("DELIVERED", exchange.getMessage().getHeader(SmppConstants.MESSAGE_STATE));
     }
     
     @Test
@@ -148,7 +148,7 @@ public class SmppComponentSpringIntegrationTest extends CamelSpringTestSupport {
 
         template.send(start, exchange);
         
-        assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
+        assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
     }
 
     @Test
@@ -158,7 +158,7 @@ public class SmppComponentSpringIntegrationTest extends CamelSpringTestSupport {
 
         template.send(start, exchange);
         
-        assertNotNull(exchange.getOut().getHeader(SmppConstants.ID));
+        assertNotNull(exchange.getMessage().getHeader(SmppConstants.ID));
     }
     
     @Test
@@ -171,8 +171,8 @@ public class SmppComponentSpringIntegrationTest extends CamelSpringTestSupport {
 
         template.send(start, exchange);
         
-        assertNotNull(exchange.getOut().getHeader(SmppConstants.ID));
-        assertEquals(2, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
+        assertNotNull(exchange.getMessage().getHeader(SmppConstants.ID));
+        assertEquals(2, exchange.getMessage().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
     }
 
     @Override

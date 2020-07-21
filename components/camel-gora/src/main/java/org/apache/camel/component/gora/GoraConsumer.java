@@ -88,8 +88,6 @@ public class GoraConsumer extends ScheduledPollConsumer {
         //proceed with query
         final Result result = query.execute();
 
-        log.trace("Processing exchange [{}]...", exchange);
-
         try {
             getProcessor().process(exchange);
         } finally {

@@ -19,6 +19,7 @@ package org.apache.camel.component.bean;
 import java.util.Map;
 
 import org.apache.camel.BeanScope;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
@@ -31,9 +32,9 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The bean component is for invoking Java beans from Camel.
+ * Invoke methods of Java beans stored in Camel registry.
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "bean", title = "Bean", syntax = "bean:beanName", producerOnly = true, label = "core,java")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "bean", title = "Bean", syntax = "bean:beanName", producerOnly = true, category = {Category.CORE, Category.JAVA})
 public class BeanEndpoint extends DefaultEndpoint {
     private transient BeanHolder beanHolder;
     private transient BeanProcessor processor;
@@ -87,8 +88,8 @@ public class BeanEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         if (processor == null) {
             BeanHolder holder = getBeanHolder();
@@ -111,7 +112,7 @@ public class BeanEndpoint extends DefaultEndpoint {
             }
             processor.setScope(scope);
             if (parameters != null) {
-                setProperties(processor, parameters);
+                holder.setOptions(parameters);
             }
         }
     }

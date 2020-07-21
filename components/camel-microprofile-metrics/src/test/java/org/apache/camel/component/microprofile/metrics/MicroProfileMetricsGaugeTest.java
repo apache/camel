@@ -19,9 +19,10 @@ package org.apache.camel.component.microprofile.metrics;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.microprofile.metrics.gauge.SimpleGauge;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_GAUGE_VALUE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MicroProfileMetricsGaugeTest extends MicroProfileMetricsTestSupport {
 

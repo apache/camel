@@ -30,6 +30,11 @@ import org.apache.camel.StaticService;
 public interface PropertiesComponent extends StaticService {
 
     /**
+     * Service factory key.
+     */
+    String FACTORY = "properties-component-factory";
+
+    /**
      * The prefix token.
      */
     String PREFIX_TOKEN = "{{";
@@ -100,6 +105,11 @@ public interface PropertiesComponent extends StaticService {
     void addPropertiesSource(PropertiesSource propertiesSource);
 
     /**
+     * Registers the {@link PropertiesFunction} as a function to this component.
+     */
+    void addPropertiesFunction(PropertiesFunction function);
+
+    /**
      * Whether to silently ignore if a location cannot be located, such as a properties file not found.
      */
     void setIgnoreMissingLocation(boolean ignoreMissingLocation);
@@ -114,6 +124,17 @@ public interface PropertiesComponent extends StaticService {
      * and will use first, if a property exist.
      */
     void setOverrideProperties(Properties overrideProperties);
+
+    /**
+     * Sets a special list of local properties (ie thread local) that take precedence
+     * and will use first, if a property exist.
+     */
+    void setLocalProperties(Properties localProperties);
+
+    /**
+     * Gets a list of properties that are local for the current thread only (ie thread local)
+     */
+    Properties getLocalProperties();
 
     /**
      * Encoding to use when loading properties file from the file system or classpath.

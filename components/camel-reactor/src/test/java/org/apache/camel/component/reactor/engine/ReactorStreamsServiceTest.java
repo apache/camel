@@ -291,7 +291,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
 
         Flux.just(1, 2, 3)
             .flatMap(e -> crs.to("bean:hello", e, String.class))
-            .doOnNext(res -> values.add(res))
+            .doOnNext(values::add)
             .doOnNext(res -> latch.countDown())
             .subscribe();
 
@@ -308,9 +308,9 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
 
         Flux.just(1, 2, 3)
             .flatMap(e -> crs.to("bean:hello", e))
-            .map(e -> e.getOut())
+            .map(Exchange::getMessage)
             .map(e -> e.getBody(String.class))
-            .doOnNext(res -> values.add(res))
+            .doOnNext(values::add)
             .doOnNext(res -> latch.countDown())
             .subscribe();
 
@@ -328,7 +328,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
 
         Flux.just(1, 2, 3)
             .flatMap(fun)
-            .doOnNext(res -> values.add(res))
+            .doOnNext(values::add)
             .doOnNext(res -> latch.countDown())
             .subscribe();
 
@@ -346,9 +346,9 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
 
         Flux.just(1, 2, 3)
             .flatMap(fun)
-            .map(e -> e.getOut())
+            .map(Exchange::getMessage)
             .map(e -> e.getBody(String.class))
-            .doOnNext(res -> values.add(res))
+            .doOnNext(values::add)
             .doOnNext(res -> latch.countDown())
             .subscribe();
 
@@ -380,7 +380,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
 
         int idx = 1;
         for (Exchange ex : mock.getExchanges()) {
-            Assert.assertEquals(new Integer(idx++), ex.getIn().getBody(Integer.class));
+            Assert.assertEquals(Integer.valueOf(idx++), ex.getIn().getBody(Integer.class));
         }
     }
 

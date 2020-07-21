@@ -24,13 +24,13 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.graphql.server.GraphqlServer;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.json.JsonObject;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class GraphqlComponentTest extends CamelTestSupport {
 
@@ -42,7 +42,7 @@ public class GraphqlComponentTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpBeforeClass() throws Exception {
         booksQueryResult = readJsonFile("booksQueryResult.json");
         bookByIdQueryResult = readJsonFile("bookByIdQueryResult.json");
@@ -58,7 +58,7 @@ public class GraphqlComponentTest extends CamelTestSupport {
             IOHelper.loadText(ObjectHelper.loadResourceAsStream(name)), Object.class));
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownAfterClass() throws Exception {
         server.shutdown();
     }

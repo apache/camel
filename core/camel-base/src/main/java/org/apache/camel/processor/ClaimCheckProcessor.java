@@ -31,6 +31,8 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ClaimCheck EIP implementation.
@@ -41,6 +43,8 @@ import org.apache.camel.util.ObjectHelper;
  * any of the many Camel components that support persistent storage, and do not use this Claim Check EIP implementation.
  */
 public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ClaimCheckProcessor.class);
 
     private CamelContext camelContext;
     private String id;
@@ -130,13 +134,13 @@ public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAwar
                 Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
                 boolean addedNew = repo.add(claimKey, copy);
                 if (addedNew) {
-                    log.debug("Add: {} -> {}", claimKey, copy);
+                    LOG.debug("Add: {} -> {}", claimKey, copy);
                 } else {
-                    log.debug("Override: {} -> {}", claimKey, copy);
+                    LOG.debug("Override: {} -> {}", claimKey, copy);
                 }
             } else if ("Get".equals(operation)) {
                 Exchange copy = repo.get(claimKey);
-                log.debug("Get: {} -> {}", claimKey, exchange);
+                LOG.debug("Get: {} -> {}", claimKey, exchange);
                 if (copy != null) {
                     Exchange result = aggregationStrategy.aggregate(exchange, copy);
                     if (result != null) {
@@ -145,7 +149,7 @@ public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAwar
                 }
             } else if ("GetAndRemove".equals(operation)) {
                 Exchange copy = repo.getAndRemove(claimKey);
-                log.debug("GetAndRemove: {} -> {}", claimKey, exchange);
+                LOG.debug("GetAndRemove: {} -> {}", claimKey, exchange);
                 if (copy != null) {
                     // prepare the exchanges for aggregation
                     ExchangeHelper.prepareAggregation(exchange, copy);
@@ -157,11 +161,11 @@ public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAwar
             } else if ("Push".equals(operation)) {
                 // copy exchange, and do not share the unit of work
                 Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
-                log.debug("Push: {} -> {}", claimKey, copy);
+                LOG.debug("Push: {} -> {}", claimKey, copy);
                 repo.push(copy);
             } else if ("Pop".equals(operation)) {
                 Exchange copy = repo.pop();
-                log.debug("Pop: {} -> {}", claimKey, exchange);
+                LOG.debug("Pop: {} -> {}", claimKey, exchange);
                 if (copy != null) {
                     // prepare the exchanges for aggregation
                     ExchangeHelper.prepareAggregation(exchange, copy);

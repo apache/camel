@@ -21,8 +21,10 @@ import java.util.HashMap;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class RestProducerPathTest {
     private final RestComponent restComponent;
@@ -55,7 +57,7 @@ public class RestProducerPathTest {
         producer.process(exchange);
 
         String actual = (String) message.getHeader(Exchange.REST_HTTP_URI);
-        Assert.assertEquals("http://localhost/list//1", actual);
+        assertEquals("http://localhost/list//1", actual);
     }
 
     @Test
@@ -67,7 +69,7 @@ public class RestProducerPathTest {
         producer.process(exchange);
 
         String actual = (String) message.getHeader(Exchange.REST_HTTP_URI);
-        Assert.assertNull(actual);
+        assertNull(actual);
     }
 
     @Test
@@ -81,7 +83,7 @@ public class RestProducerPathTest {
 
         String actual = (String) message.getHeader(Exchange.REST_HTTP_URI);
         // Backward compatibility: if one of the params is resolved
-        Assert.assertEquals("http://localhost/list/1/{val}", actual);
+        assertEquals("http://localhost/list/1/{val}", actual);
     }
 
     @Test
@@ -94,7 +96,7 @@ public class RestProducerPathTest {
         producer.process(exchange);
 
         String actual = (String) message.getHeader(Exchange.REST_HTTP_URI);
-        Assert.assertNull(actual);
+        assertNull(actual);
     }
 
     @Test
@@ -108,7 +110,7 @@ public class RestProducerPathTest {
         producer.process(exchange);
 
         String actual = (String) message.getHeader(Exchange.REST_HTTP_URI);
-        Assert.assertNull(actual);
+        assertNull(actual);
     }
 
     @Test
@@ -121,7 +123,7 @@ public class RestProducerPathTest {
         producer.process(exchange);
 
         String actual = (String) message.getHeader(Exchange.REST_HTTP_URI);
-        Assert.assertNull(actual);
+        assertNull(actual);
     }
 
     @Test
@@ -134,7 +136,7 @@ public class RestProducerPathTest {
         producer.process(exchange);
 
         String actual = (String) message.getHeader(Exchange.REST_HTTP_URI);
-        Assert.assertNull(actual);
+        assertNull(actual);
     }
 
     @Test
@@ -148,7 +150,7 @@ public class RestProducerPathTest {
         producer.process(exchange);
 
         String actual = (String) message.getHeader(Exchange.REST_HTTP_URI);
-        Assert.assertNull(actual);
+        assertNull(actual);
     }
 
     @Test
@@ -161,7 +163,7 @@ public class RestProducerPathTest {
         producer.process(exchange);
 
         String actual = (String) message.getHeader(Exchange.REST_HTTP_URI);
-        Assert.assertEquals("http://localhost/list/1", actual);
+        assertEquals("http://localhost/list/1", actual);
     }
 
     @Test
@@ -175,7 +177,7 @@ public class RestProducerPathTest {
         producer.process(exchange);
 
         String actual = (String) message.getHeader(Exchange.REST_HTTP_URI);
-        Assert.assertEquals("http://localhost/list/1_test", actual);
+        assertEquals("http://localhost/list/1_test", actual);
     }
 
     @Test
@@ -188,6 +190,6 @@ public class RestProducerPathTest {
         producer.process(exchange);
 
         String actual = (String) message.getHeader(Exchange.REST_HTTP_URI);
-        Assert.assertEquals("http://localhost/items/item.xml", actual);
+        assertEquals("http://localhost/items/item.xml", actual);
     }
 }

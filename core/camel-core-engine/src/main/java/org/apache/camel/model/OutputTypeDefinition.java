@@ -44,7 +44,7 @@ public class OutputTypeDefinition extends OptionalIdentifiedDefinition<OutputTyp
     @Metadata(required = true)
     private String urn;
     @XmlAttribute
-    @Metadata(defaultValue = "false")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
     private String validate = "false";
 
     public OutputTypeDefinition() {

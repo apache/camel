@@ -19,7 +19,10 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JettyHttpBridgeEncodedPathTest extends BaseJettyTest {
 
@@ -29,7 +32,7 @@ public class JettyHttpBridgeEncodedPathTest extends BaseJettyTest {
     @Test
     public void testJettyHttpClient() throws Exception {
         String response = template.requestBody("http://localhost:" + port2 + "/jettyTestRouteA?param1=%2B447777111222", null, String.class);
-        assertEquals("Get a wrong response", "param1=+447777111222", response);
+        assertEquals("param1=+447777111222", response, "Get a wrong response");
     }
 
     @Override

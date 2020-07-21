@@ -21,11 +21,15 @@ import javax.sql.DataSource;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test to demonstrate the transactional client pattern.
@@ -41,7 +45,7 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -54,7 +58,7 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
         template.sendBody("direct:okay", "Hello World");
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals("Number of books", 3, count);
+        assertEquals(3, count, "Number of books");
     }
 
     @Test
@@ -70,7 +74,7 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
         }
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals("Number of books", 1, count);
+        assertEquals(1, count, "Number of books");
     }
 
     @Test
@@ -78,7 +82,7 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
         template.sendBody("direct:mixed", "Hello World");
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals("Number of books", 3, count);
+        assertEquals(3, count, "Number of books");
 
         // assert correct books in database
         assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = 'Camel in Action'", Integer.class));
@@ -93,7 +97,7 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
         template.sendBody("direct:mixed3", "Hello World");
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals("Number of books", 5, count);
+        assertEquals(5, count, "Number of books");
 
         // assert correct books in database
         assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = 'Camel in Action'", Integer.class));

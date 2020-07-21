@@ -19,7 +19,6 @@ package org.apache.camel.component.irc;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +31,6 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.schwering.irc.lib.ssl.SSLDefaultTrustManager;
 import org.schwering.irc.lib.ssl.SSLTrustManager;
@@ -162,7 +160,7 @@ public class IrcConfiguration implements Cloneable {
         String username = null;
         String password = null;
         if (userInfo != null) {
-            int colonIndex = userInfo.indexOf(":");
+            int colonIndex = userInfo.indexOf(':');
             if (colonIndex != -1) {
                 username = userInfo.substring(0, colonIndex);
                 password = userInfo.substring(colonIndex + 1);
@@ -542,7 +540,7 @@ public class IrcConfiguration implements Cloneable {
 
     public static String sanitize(String uri) {
         //symbol # has to be encoded. otherwise value after '#' won't be propagated into parameters
-        return uri.replaceAll("#", "%23");
+        return uri.replace("#", "%23");
     }
 
     private static String formatQuery(Map<String, Object> params) {

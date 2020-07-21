@@ -19,7 +19,9 @@ package org.apache.camel.component.bean;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanExcludedMethodTest extends ContextTestSupport {
 
@@ -30,7 +32,7 @@ public class BeanExcludedMethodTest extends ContextTestSupport {
         Exchange exchange = new DefaultExchange(context);
         MyDummyBean pojo = new MyDummyBean();
         MethodInvocation mi = info.createInvocation(pojo, exchange);
-        assertNull("Should not be possible to find a suitable method", mi);
+        assertNull(mi, "Should not be possible to find a suitable method");
     }
 
     @Test

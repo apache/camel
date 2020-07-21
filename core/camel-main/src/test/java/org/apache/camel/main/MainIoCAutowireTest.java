@@ -35,17 +35,20 @@ import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MainIoCAutowireTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class MainIoCAutowireTest {
     @Test
     public void autowireNonNullOnlyDisabledTest() {
         Main main = new Main();
 
         try {
             main.bind("seda", createSedaComponent());
-            main.addConfigurationClass(MyConfiguration.class);
+            main.configure().addConfigurationClass(MyConfiguration.class);
             main.configure().setAutowireComponentPropertiesNonNullOnly(false);
             main.setPropertyPlaceholderLocations("empty.properties");
             main.start();
@@ -63,7 +66,7 @@ public class MainIoCAutowireTest extends Assert {
 
         try {
             main.bind("seda", createSedaComponent());
-            main.addConfigurationClass(MyConfiguration.class);
+            main.configure().addConfigurationClass(MyConfiguration.class);
             main.configure().setAutowireComponentPropertiesNonNullOnly(true);
             main.setPropertyPlaceholderLocations("empty.properties");
             main.start();
@@ -85,7 +88,7 @@ public class MainIoCAutowireTest extends Assert {
 
             main.bind("dummy", new MyDummyComponent());
             main.bind("context", otherContext);
-            main.addConfigurationClass(MyConfiguration.class);
+            main.configure().addConfigurationClass(MyConfiguration.class);
             main.configure().setName("main");
             main.configure().setAutowireComponentPropertiesNonNullOnly(true);
             main.setPropertyPlaceholderLocations("empty.properties");
@@ -105,7 +108,7 @@ public class MainIoCAutowireTest extends Assert {
         @BindToRegistry
         public BlockingQueueFactory queueFactory(CamelContext myCamel) {
             // we can optionally include camel context as parameter
-            Assert.assertNotNull(myCamel);
+            assertNotNull(myCamel);
             return new PriorityBlockingQueueFactory();
         }
     }

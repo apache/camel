@@ -18,8 +18,7 @@ package org.apache.camel.processor.aggregate;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-
-import static org.apache.camel.support.ExchangeHelper.hasExceptionBeenHandledByErrorHandler;
+import org.apache.camel.ExtendedExchange;
 
 /**
  * An {@link AggregationStrategy} which just uses the latest exchange which is useful
@@ -71,8 +70,8 @@ public class UseLatestAggregationStrategy implements AggregationStrategy {
         }
 
         // propagate exception from old exchange if there isn't already an exception
-        boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(oldExchange);
-        if (oldExchange.isFailed() || oldExchange.isRollbackOnly() || exceptionHandled) {
+        ExtendedExchange oee = (ExtendedExchange) oldExchange;
+        if (oee.isFailed() || oee.isRollbackOnly() || oee.isRollbackOnlyLast() || oee.isErrorHandlerHandled()) {
             // propagate failure by using old exchange as the answer
             return oldExchange;
         }

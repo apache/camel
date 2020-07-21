@@ -136,7 +136,7 @@ public class TradeExecutorComponent extends DefaultComponent {
                             try {
                                 tradeExecutor.execute(exchange.getIn().getMandatoryBody(Message.class));
                             } catch (Exception e) {
-                                log.error("Error during trade execution", e);
+                                LOG.error("Error during trade execution", e);
                             }
                         }
                     });

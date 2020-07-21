@@ -22,8 +22,10 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExposedServletEndpointURIToJMXTest extends CamelTestSupport {
 
@@ -43,7 +45,7 @@ public class ExposedServletEndpointURIToJMXTest extends CamelTestSupport {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
         ObjectName name = new ObjectName("org.apache.camel:context=camel-1,type=endpoints,name=" + servletEndpointURI);
         Set<ObjectName> objectNamesSet = mbeanServer.queryNames(name, null);
-        assertEquals("Expect one MBean for the servlet endpoint", 1, objectNamesSet.size());
+        assertEquals(1, objectNamesSet.size(), "Expect one MBean for the servlet endpoint");
 
     }
 

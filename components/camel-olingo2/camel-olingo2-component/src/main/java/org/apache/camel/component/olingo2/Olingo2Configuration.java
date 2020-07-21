@@ -19,6 +19,7 @@ package org.apache.camel.component.olingo2;
 import java.util.Map;
 
 import org.apache.camel.component.olingo2.internal.Olingo2ApiName;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -34,6 +35,7 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
  * Component configuration for Olingo2 component.
  */
 @UriParams
+@Configurer
 public class Olingo2Configuration {
 
     private static final String DEFAULT_CONTENT_TYPE = ContentType.APPLICATION_JSON.toString();
@@ -57,11 +59,11 @@ public class Olingo2Configuration {
     private int socketTimeout = DEFAULT_TIMEOUT;
     @UriParam
     private HttpHost proxy;
-    @UriParam
+    @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
-    @UriParam
+    @UriParam(label = "advanced")
     private HttpAsyncClientBuilder httpAsyncClientBuilder;
-    @UriParam
+    @UriParam(label = "advanced")
     private HttpClientBuilder httpClientBuilder;
     @UriParam
     private boolean filterAlreadySeen;

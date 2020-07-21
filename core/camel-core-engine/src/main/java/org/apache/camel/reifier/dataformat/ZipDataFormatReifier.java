@@ -16,23 +16,21 @@
  */
 package org.apache.camel.reifier.dataformat;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class ZipDataFormatReifier extends DataFormatReifier<ZipDeflaterDataFormat> {
 
-    public ZipDataFormatReifier(DataFormatDefinition definition) {
-        super((ZipDeflaterDataFormat)definition);
+    public ZipDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (ZipDeflaterDataFormat)definition);
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (definition.getCompressionLevel() != null) {
-            setProperty(camelContext, dataFormat, "compressionLevel", definition.getCompressionLevel());
-        }
-        super.configureDataFormat(dataFormat, camelContext);
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("compressionLevel", definition.getCompressionLevel());
     }
 
 }

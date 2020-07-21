@@ -28,16 +28,19 @@ import io.debezium.connector.mysql.MySqlConnector;
 import io.debezium.connector.mysql.MySqlConnectorConfig;
 import io.debezium.relational.RelationalDatabaseConnectorConfig;
 import io.debezium.relational.history.FileDatabaseHistory;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.connect.source.SourceConnector;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConnectorConfigGeneratorTest {
 
     @Test
-    public void testIfCorrectlyGeneratedMySQLFile() {
+    void testIfCorrectlyGeneratedMySQLFile() {
         final Set<String> requiredFields = new HashSet<>(Arrays.asList(MySqlConnectorConfig.PASSWORD.name(), RelationalDatabaseConnectorConfig.SERVER_NAME.name()));
         final Map<String, Object> overrideFields = new HashMap<>();
         overrideFields.put(MySqlConnectorConfig.DATABASE_HISTORY.name(), FileDatabaseHistory.class);
@@ -47,9 +50,18 @@ public class ConnectorConfigGeneratorTest {
         testIfCorrectlyGeneratedFile(new MySqlConnector(), MySqlConnectorConfig.class, requiredFields, overrideFields);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testIfItHandlesWrongClassInput() {
-        final ConnectorConfigGenerator connectorConfigGenerator = ConnectorConfigGenerator.create(new MySqlConnector(), getClass(), Collections.emptySet(), Collections.emptyMap());
+    @Test
+    void testIfIgnoreUnWantedFieldsWithIllegal() {
+        final Map<String, ConnectorConfigField> fields = ConnectorConfigFieldsFactory.createConnectorFieldsAsMap(new MySqlConnector().config(), MySqlConnectorConfig.class, Collections.EMPTY_SET, Collections.EMPTY_MAP);
+
+        fields.forEach((name, connectorConfigField) -> assertFalse(StringUtils.containsAny(name, "%", "+", "[", "]", "*", "(", ")", "ˆ", "@", "%", "~"), "Illegal char found in the field name"));
+    }
+
+    @Test
+    void testIfItHandlesWrongClassInput() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            ConnectorConfigGenerator.create(new MySqlConnector(), getClass(), Collections.emptySet(), Collections.emptyMap());
+        });
     }
 
     private void testIfCorrectlyGeneratedFile(final SourceConnector connector, final Class<?> configClass, final Set<String> requiredFields, final Map<String, Object> overrideFields) {
@@ -64,13 +76,13 @@ public class ConnectorConfigGeneratorTest {
         connectorConfigFields.forEach((name, field) -> {
             if (!field.isDeprecated() && !field.isInternal()) {
                 // check fields names
-                assertTrue(field.getFieldName(), connectorFieldsAsString.contains(field.getFieldName()));
+                assertTrue(connectorFieldsAsString.contains(field.getFieldName()), field.getFieldName());
 
                 // check setters
-                assertTrue(field.getFieldSetterMethodName(), connectorFieldsAsString.contains(field.getFieldSetterMethodName()));
+                assertTrue(connectorFieldsAsString.contains(field.getFieldSetterMethodName()), field.getFieldSetterMethodName());
 
                 // check getters
-                assertTrue(field.getFieldGetterMethodName(), connectorFieldsAsString.contains(field.getFieldGetterMethodName()));
+                assertTrue(connectorFieldsAsString.contains(field.getFieldGetterMethodName()), field.getFieldGetterMethodName());
             }
         });
     }

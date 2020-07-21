@@ -29,10 +29,13 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.component.cxf.CxfPayload;
-import org.apache.camel.test.junit4.ExchangeTestSupport;
+import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.apache.cxf.staxutils.StaxSource;
 import org.apache.cxf.staxutils.StaxUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CachedCxfPayloadTest extends ExchangeTestSupport {
     private static final String PAYLOAD = "<foo>bar<![CDATA[ & a cdata section ]]></foo>";

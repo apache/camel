@@ -1,19 +1,25 @@
 [[mock-component]]
 = Mock Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-mock/src/main/docs/mock-component.adoc
+:docTitle: Mock
+:artifactId: camel-mock
+:description: Test routes and mediation rules using mocks.
+:since: 1.0
+:supportLevel: Stable
+:component-header: Only producer is supported
+:core:
 
-*Since Camel 1.0*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 Testing of distributed and asynchronous processing is
 notoriously difficult. The xref:mock-component.adoc[Mock], xref:mock-component.adoc[Test]
 and xref:dataset-component.adoc[DataSet] endpoints work great with the
 Camel Testing Framework to simplify your unit and
 integration testing using
-xref:manual::enterprise-integration-patterns.adoc[Enterprise Integration
+xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] and Camel's large range of Components
 together with the powerful Bean Integration.
 
@@ -33,12 +39,12 @@ Expression to create an order testing function,
 * Messages arrive match some kind of Predicate such
 as that specific headers have certain values, or that parts of the
 messages match some predicate, such as by evaluating an
-xref:xpath-language.adoc[XPath] or xref:xpath-language.adoc[XQuery]
+xref:languages:xpath-language.adoc[XPath] or xref:languages:xpath-language.adoc[XQuery]
 Expression.
 
 [NOTE]
 ====
-There is also the xref:test.adoc[Test endpoint] which is a
+There is also the xref:others:test.adoc[Test endpoint] which is a
 Mock endpoint, but which uses a second endpoint to provide the list of
 expected message bodies and automatically sets up the Mock endpoint
 assertions. In other words, it's a Mock endpoint that automatically sets
@@ -91,8 +97,8 @@ The Mock component supports 2 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 
@@ -142,35 +148,6 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-mock-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 4 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.mock.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.mock.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.mock.enabled* | Whether to enable auto configuration of the mock component. This is enabled by default. |  | Boolean
-| *camel.component.mock.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-|===
-// spring-boot-auto-configure options: END
 
 == Simple Example
 
@@ -180,7 +157,7 @@ test has run, we assert that our expectations have been met:
 
 [source,java]
 ----
-MockEndpoint resultEndpoint = context.resolveEndpoint("mock:foo", MockEndpoint.class);
+MockEndpoint resultEndpoint = context.getEndpoint("mock:foo", MockEndpoint.class);
 
 // set expectations
 resultEndpoint.expectedMessageCount(2);
@@ -192,7 +169,7 @@ resultEndpoint.assertIsSatisfied();
 ----
 
 You typically always call the
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#assertIsSatisfied()[`assertIsSatisfied()`]
+https://www.javadoc.io/doc/org.apache.camel/camel-mock/latest/org/apache/camel/component/mock/MockEndpoint.html#assertIsSatisfied--[`assertIsSatisfied()`]
 method to test that the expectations were met after running a test.
 
 Camel will by default wait 10 seconds when the `assertIsSatisfied()` is
@@ -210,7 +187,7 @@ can do that by setting the `setAssertPeriod` method, for example:
 
 [source,java]
 ----
-MockEndpoint resultEndpoint = context.resolveEndpoint("mock:foo", MockEndpoint.class);
+MockEndpoint resultEndpoint = context.getEndpoint("mock:foo", MockEndpoint.class);
 resultEndpoint.setAssertPeriod(5000);
 resultEndpoint.expectedMessageCount(2);
 
@@ -223,34 +200,34 @@ resultEndpoint.assertIsSatisfied();
 == Setting expectations
 
 You can see from the Javadoc of
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html[MockEndpoint]
+https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html[MockEndpoint]
 the various helper methods you can use to set expectations. The main
 methods are as follows:
 
 [width="100%",cols="1m,1",options="header",]
 |===
 |Method |Description
-|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#expectedMessageCount(int)[expectedMessageCount(int)]
+|https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html#expectedMessageCount-int-[expectedMessageCount(int)]
 |To define the expected message count on the endpoint.
 
-|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#expectedMinimumMessageCount(int)[expectedMinimumMessageCount(int)]
+|https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html#expectedMinimumMessageCount-int-[expectedMinimumMessageCount(int)]
 |To define the minimum number of expected messages on the endpoint.
 
-|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#expectedBodiesReceived(java.lang.Object...)[expectedBodiesReceived(...)]
+|https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html#expectedBodiesReceived-java.lang.Object...-[expectedBodiesReceived(...)]
 |To define the expected bodies that should be received (in order).
 
-|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#expectedHeaderReceived(java.lang.String,%20java.lang.String)[expectedHeaderReceived(...)]
+|https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html#expectedHeaderReceived-java.lang.String-java.lang.Object-[expectedHeaderReceived(...)]
 |To define the expected header that should be received
 
-|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#expectsAscending(org.apache.camel.Expression)[expectsAscending(Expression)]
+|https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html#expectsAscending-org.apache.camel.Expression-[expectsAscending(Expression)]
 |To add an expectation that messages are received in order, using the
 given Expression to compare messages.
 
-|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#expectsDescending(org.apache.camel.Expression)[expectsDescending(Expression)]
+|https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html#expectsDescending-org.apache.camel.Expression-[expectsDescending(Expression)]
 |To add an expectation that messages are received in order, using the
 given Expression to compare messages.
 
-|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#expectsNoDuplicates(org.apache.camel.Expression)[expectsNoDuplicates(Expression)]
+|https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html#expectsNoDuplicates-org.apache.camel.Expression-[expectsNoDuplicates(Expression)]
 |To add an expectation that no duplicate messages are received; using an
 Expression to calculate a unique identifier for
 each message. This could be something like the `JMSMessageID` if using
@@ -520,3 +497,5 @@ In the example above we use `seconds` as the time unit, but Camel offers
 ====
 
 
+
+include::camel-spring-boot::page$mock-starter.adoc[]

@@ -59,25 +59,25 @@ public class CoAPProducer extends DefaultProducer {
         CoapResponse response = null;
         boolean pingResponse = false;
         switch (method) {
-        case CoAPConstants.METHOD_GET:
-            response = client.get();
-            break;
-        case CoAPConstants.METHOD_DELETE:
-            response = client.delete();
-            break;
-        case CoAPConstants.METHOD_POST:
-            byte[] bodyPost = exchange.getIn().getBody(byte[].class);
-            response = client.post(bodyPost, mediaType);
-            break;
-        case CoAPConstants.METHOD_PUT:
-            byte[] bodyPut = exchange.getIn().getBody(byte[].class);
-            response = client.put(bodyPut, mediaType);
-            break;
-        case CoAPConstants.METHOD_PING:
-            pingResponse = client.ping();
-            break;
-        default:
-            break;
+            case CoAPConstants.METHOD_GET:
+                response = client.get();
+                break;
+            case CoAPConstants.METHOD_DELETE:
+                response = client.delete();
+                break;
+            case CoAPConstants.METHOD_POST:
+                byte[] bodyPost = exchange.getIn().getBody(byte[].class);
+                response = client.post(bodyPost, mediaType);
+                break;
+            case CoAPConstants.METHOD_PUT:
+                byte[] bodyPut = exchange.getIn().getBody(byte[].class);
+                response = client.put(bodyPut, mediaType);
+                break;
+            case CoAPConstants.METHOD_PING:
+                pingResponse = client.ping();
+                break;
+            default:
+                break;
         }
 
         if (response != null) {

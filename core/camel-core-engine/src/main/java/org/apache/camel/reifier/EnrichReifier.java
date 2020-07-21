@@ -20,49 +20,52 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.Enricher;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
-import org.apache.camel.spi.RouteContext;
 
 public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
 
-    public EnrichReifier(ProcessorDefinition<?> definition) {
-        super(EnrichDefinition.class.cast(definition));
+    public EnrichReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, EnrichDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-
-        Expression exp = definition.getExpression().createExpression(routeContext);
-        boolean isShareUnitOfWork = definition.getShareUnitOfWork() != null && Boolean.parseBoolean(definition.getShareUnitOfWork());
-        boolean isIgnoreInvalidEndpoint = definition.getIgnoreInvalidEndpoint() != null && Boolean.parseBoolean(definition.getIgnoreInvalidEndpoint());
+    public Processor createProcessor() throws Exception {
+        Expression exp = createExpression(definition.getExpression());
+        boolean isShareUnitOfWork = parseBoolean(definition.getShareUnitOfWork(), false);
+        boolean isIgnoreInvalidEndpoint = parseBoolean(definition.getIgnoreInvalidEndpoint(), false);
 
         Enricher enricher = new Enricher(exp);
         enricher.setShareUnitOfWork(isShareUnitOfWork);
         enricher.setIgnoreInvalidEndpoint(isIgnoreInvalidEndpoint);
-        AggregationStrategy strategy = createAggregationStrategy(routeContext);
+        if (definition.getCacheSize() != null) {
+            enricher.setCacheSize(parseInt(definition.getCacheSize()));
+        }
+        AggregationStrategy strategy = createAggregationStrategy();
         if (strategy != null) {
             enricher.setAggregationStrategy(strategy);
         }
         if (definition.getAggregateOnException() != null) {
-            enricher.setAggregateOnException(Boolean.parseBoolean(definition.getAggregateOnException()));
+            enricher.setAggregateOnException(parseBoolean(definition.getAggregateOnException(), false));
         }
+
         return enricher;
     }
 
-    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
+    private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategy();
         if (strategy == null && definition.getAggregationStrategyRef() != null) {
-            Object aggStrategy = routeContext.lookup(definition.getAggregationStrategyRef(), Object.class);
+            Object aggStrategy = lookup(definition.getAggregationStrategyRef(), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy)aggStrategy;
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
                 if (definition.getAggregationStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(Boolean.parseBoolean(definition.getAggregationStrategyMethodAllowNull()));
-                    adapter.setAllowNullOldExchange(Boolean.parseBoolean(definition.getAggregationStrategyMethodAllowNull()));
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {
@@ -71,7 +74,7 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
         }
 
         if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware)strategy).setCamelContext(routeContext.getCamelContext());
+            ((CamelContextAware)strategy).setCamelContext(camelContext);
         }
 
         return strategy;

@@ -1,0 +1,16 @@
+= AWS Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-aws-cw/src/main/docs/aws-summary.adoc
+:docTitle: AWS
+
+The *aws-* component allows you to work with the
+https://aws.amazon.com/[AWS].
+AWS offers a great palette of different components like elastic, email and queue services. It also 
+provides streaming for Apache Kafka and more. The main reason to use AWS is its cloud computing platform.
+
+
+== {docTitle} components
+
+See the following for usage of each component:
+
+indexDescriptionList::[attributes='group={docTitle}',descAttribute=description]

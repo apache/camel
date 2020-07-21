@@ -17,17 +17,20 @@
 package org.apache.camel.component.bean;
 
 import java.lang.reflect.Method;
+import java.util.Set;
 
 import org.apache.camel.BeanScope;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.BeanProcessorFactory;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@JdkService(BeanProcessorFactory.FACTORY)
 public final class DefaultBeanProcessorFactory implements BeanProcessorFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultBeanProcessorFactory.class);
@@ -81,8 +84,21 @@ public final class DefaultBeanProcessorFactory implements BeanProcessorFactory {
                     clazz = beanClass;
                 }
 
+                if (scope == BeanScope.Singleton && clazz != null) {
+                    // attempt to lookup in registry by type to favour using it (like bean ref would do to lookup in registry)
+                    Set<?> beans = camelContext.getRegistry().findByType(clazz);
+                    if (beans.size() > 0) {
+                        if (beans.size() == 1) {
+                            LOG.debug("Exactly one instance of type: {} in registry found.", clazz);
+                            bean = beans.iterator().next();
+                        } else {
+                            LOG.debug("Found {} bean instances of type: {} in the registry.", beans.size(), clazz);
+                        }
+                    }
+                }
+
                 // attempt to create bean using injector which supports auto-wiring
-                if (scope == BeanScope.Singleton && camelContext.getInjector().supportsAutoWiring()) {
+                if (bean == null && scope == BeanScope.Singleton && camelContext.getInjector().supportsAutoWiring()) {
                     try {
                         LOG.debug("Attempting to create new bean instance from class: {} via auto-wiring enabled", clazz);
                         bean = CamelContextHelper.newInstance(camelContext, clazz);
@@ -116,6 +132,10 @@ public final class DefaultBeanProcessorFactory implements BeanProcessorFactory {
                 } else {
                     if (ObjectHelper.hasDefaultPublicNoArgConstructor(clazz)) {
                         beanHolder = new ConstantTypeBeanHolder(clazz, camelContext);
+                    } else if (clazz.isInterface()) {
+                        throw new IllegalArgumentException("The bean is an interface type: " + clazz
+                                + ". Interfaces are only supported to lookup in the Camel registry for a single instance of such type."
+                                + " Otherwise the bean must be a class type.");
                     } else {
                         // this is only for invoking static methods on the bean
                         beanHolder = new ConstantStaticTypeBeanHolder(clazz, camelContext);

@@ -25,8 +25,8 @@ tracer is storing +
 xref:tracer.adoc[Tracer] is event based and logs the messages as they
 happen (or route to another Camel destination). Also the
 xref:tracer.adoc[Tracer] has more fine grained events where it dives
-into xref:enterprise-integration-patterns.adoc[EIP]s such as the
-xref:content-based-router-eip.adoc[Content Based Router] and traces the
+into xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[EIP]s such as the
+xref:{eip-vc}:eips:content-based-router-eip.adoc[Content Based Router] and traces the
 when/otherwise(s). Though the xref:tracer.adoc[Tracer] has much more
 complicated logic to handle this (there is some edge-cases where this
 may not work). The BacklogTracer allows you to pull the messages from
@@ -56,9 +56,9 @@ do "to*" to match any to. Or use "route-foo*" to match any foo routes.
 
 |traceFilter |`null` |Allow to configure a filter as a xref:predicate.adoc[Predicate] using
 any of the Camel xref:languages.adoc[languages]. But default the
-xref:simple-language.adoc[Simple] language is used. For example to filter on
+xref:components:languages:simple-language.adoc[Simple] language is used. For example to filter on
 messages with a given header, use `${header.foo} != null`. To use
-xref:components::groovy-language.adoc[Groovy] then prefix the value with "groovy:". And
+xref:components:languages:groovy-language.adoc[Groovy] then prefix the value with "groovy:". And
 similar for the other languages.
 
 |removeOnDump |`true` |Whether to remove the traced messages that was returned when invoking

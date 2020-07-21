@@ -19,44 +19,45 @@ package org.apache.camel.reifier;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ClaimCheckDefinition;
 import org.apache.camel.model.ClaimCheckOperation;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.ClaimCheckProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ObjectHelper;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
 
-    public ClaimCheckReifier(ProcessorDefinition<?> definition) {
-        super(ClaimCheckDefinition.class.cast(definition));
+    public ClaimCheckReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, ClaimCheckDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         notNull(definition.getOperation(), "operation", this);
 
         ClaimCheckProcessor claim = new ClaimCheckProcessor();
-        claim.setOperation(parse(routeContext, ClaimCheckOperation.class, definition.getOperation()).name());
-        claim.setKey(definition.getKey());
-        claim.setFilter(definition.getFilter());
+        claim.setOperation(parse(ClaimCheckOperation.class, definition.getOperation()).name());
+        claim.setKey(parseString(definition.getKey()));
+        claim.setFilter(parseString(definition.getFilter()));
 
-        AggregationStrategy strategy = createAggregationStrategy(routeContext);
+        AggregationStrategy strategy = createAggregationStrategy();
         if (strategy != null) {
             claim.setAggregationStrategy(strategy);
         }
 
         // only filter or aggregation strategy can be configured not both
-        if (definition.getFilter() != null && strategy != null) {
+        String filter = parseString(definition.getFilter());
+        if (filter != null && strategy != null) {
             throw new IllegalArgumentException("Cannot use both filter and custom aggregation strategy on ClaimCheck EIP");
         }
 
         // validate filter, we cannot have both +/- at the same time
-        if (definition.getFilter() != null) {
-            Iterable it = ObjectHelper.createIterable(definition.getFilter(), ",");
+        if (filter != null) {
+            Iterable it = ObjectHelper.createIterable(filter, ",");
             boolean includeBody = false;
             boolean excludeBody = false;
             for (Object o : it) {
@@ -101,10 +102,10 @@ public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
         return claim;
     }
 
-    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
+    private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategy();
         if (strategy == null && definition.getAggregationStrategyRef() != null) {
-            Object aggStrategy = routeContext.lookup(definition.getAggregationStrategyRef(), Object.class);
+            Object aggStrategy = lookup(parseString(definition.getAggregationStrategyRef()), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy)aggStrategy;
             } else if (aggStrategy != null) {
@@ -115,7 +116,7 @@ public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
         }
 
         if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware)strategy).setCamelContext(routeContext.getCamelContext());
+            ((CamelContextAware)strategy).setCamelContext(camelContext);
         }
 
         return strategy;

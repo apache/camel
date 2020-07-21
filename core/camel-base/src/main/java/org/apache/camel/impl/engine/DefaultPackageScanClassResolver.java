@@ -450,11 +450,6 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver imp
     }
 
     @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
     protected void doStop() throws Exception {
         clearCache();
     }

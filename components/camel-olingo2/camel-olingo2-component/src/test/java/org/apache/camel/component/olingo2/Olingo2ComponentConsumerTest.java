@@ -18,14 +18,24 @@ package org.apache.camel.component.olingo2;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test class for {@link org.apache.camel.component.olingo2.api.Olingo2App}
@@ -46,13 +56,21 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
         setDefaultTestProperty("serviceUri", "http://localhost:" + PORT + "/MyFormula.svc");
     }
 
-    @BeforeClass
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setLoggingLevel(LoggingLevel.INFO);
+        context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setExtendedStatistics(true);
+        return context;
+    }
+
+    @BeforeAll
     public static void beforeClass() throws Exception {
         startServers(PORT);
         Olingo2SampleServer.generateSampleData(TEST_SERVICE_URL);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() throws Exception {
         if (server != null) {
             server.stop();
@@ -115,6 +133,10 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
                 assertNull(body);
             }
         }
+
+        // should be reflection free
+        long counter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
+        assertEquals(0, counter);
     }
 
     /**
@@ -251,6 +273,10 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
         Object nameValue = entry.getProperties().get("Name");
         assertNotNull(nameValue);
         assertEquals("Star Powered Racing", nameValue.toString());
+
+        // should be reflection free
+        long counter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
+        assertEquals(0, counter);
     }
 
     /**

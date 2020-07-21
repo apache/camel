@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-cdi</artifactId>
@@ -40,12 +40,10 @@
         <camel.osgi.import>
             !org.apache.camel.cdi.*,
             !org.apache.deltaspike.cdise.api.*,
+            javax.xml.bind*;version="[2.2,3.0)",
             ${camel.osgi.import.defaults},
             *
         </camel.osgi.import>
-        <camel.osgi.provide.capability>
-            org.ops4j.pax.cdi.extension; extension=camel-cdi-extension
-        </camel.osgi.provide.capability>
     </properties>
 
     <dependencyManagement>
@@ -91,6 +89,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-bean</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jta</artifactId>
+        </dependency>
 
         <!-- DeltaSpike is only used to provide Main support thus optional -->
         <dependency>
@@ -105,23 +107,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-xml</artifactId>
-            <version>${project.version}</version>
             <optional>true</optional>
         </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-osgi</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>osgi.core</artifactId>
-            <version>${osgi-version}</version>
-            <scope>provided</scope>
+            <artifactId>camel-xml-jaxb</artifactId>
             <optional>true</optional>
         </dependency>
 
@@ -134,7 +124,6 @@
         </dependency>
 
         <!-- test dependencies -->
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-cloud</artifactId>
@@ -188,16 +177,6 @@
 
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
         </dependency>
@@ -223,7 +202,6 @@
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-package-maven-plugin</artifactId>
-                <version>${project.version}</version>
                 <executions>
                     <execution>
                         <id>jaxb-list</id>
@@ -492,27 +470,6 @@
                         <artifactId>maven-dependency-plugin</artifactId>
                         <version>2.10</version>
                         <executions>
-                            <execution>
-                                <id>copy</id>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>copy</goal>
-                                </goals>
-                                <configuration>
-                                    <artifactItems>
-                                        <artifactItem>
-                                            <groupId>javax.annotation</groupId>
-                                            <artifactId>javax.annotation-api</artifactId>
-                                            <version>1.2</version>
-                                            <type>jar</type>
-                                            <overWrite>false</overWrite>
-                                            <outputDirectory>${project.basedir}/target/java9</outputDirectory>
-                                        </artifactItem>
-                                    </artifactItems>
-                                    <overWriteReleases>false</overWriteReleases>
-                                    <overWriteSnapshots>true</overWriteSnapshots>
-                                </configuration>
-                            </execution>
                             <execution>
                                 <id>copy-jaxb</id>
                                 <phase>validate</phase>

@@ -24,6 +24,7 @@ import org.apache.camel.parser.ParserResult;
 import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.roaster.AnonymousMethodSource;
 import org.apache.camel.parser.roaster.StatementFieldSource;
+import org.apache.camel.tooling.util.Strings;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Block;
@@ -55,7 +56,6 @@ import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
-import org.jboss.forge.roaster.model.util.Strings;
 
 /**
  * A Camel Java parser that only depends on the Roaster API.
@@ -233,7 +233,7 @@ public final class CamelJavaParserHelper {
                     for (Object arg : args) {
                         if (isValidArgument(name, arg)) {
                             String routeId = getLiteralValue(clazz, block, (Expression) arg);
-                            if (!Strings.isBlank(routeId)) {
+                            if (!Strings.isNullOrEmpty(routeId)) {
                                 int position = ((Expression) arg).getStartPosition();
                                 int len = ((Expression) arg).getLength();
                                 uris.add(new ParserResult(name, position, len, routeId));
@@ -343,15 +343,15 @@ public final class CamelJavaParserHelper {
     private static void extractEndpointUriFromArgument(String node, JavaClassSource clazz, Block block, List<ParserResult> uris, Object arg, boolean strings, boolean fields) {
         if (strings) {
             String uri = getLiteralValue(clazz, block, (Expression) arg);
-            if (!Strings.isBlank(uri)) {
+            if (!Strings.isNullOrEmpty(uri)) {
                 int position = ((Expression) arg).getStartPosition();
                 int len = ((Expression) arg).getLength();
 
                 // if the node is fromF or toF, then replace all %X with {{%X}} as we cannot parse that value
                 if ("fromF".equals(node) || "toF".equals(node)) {
-                    uri = uri.replaceAll("\\%s", "\\{\\{\\%s\\}\\}");
-                    uri = uri.replaceAll("\\%d", "\\{\\{\\%d\\}\\}");
-                    uri = uri.replaceAll("\\%b", "\\{\\{\\%b\\}\\}");
+                    uri = uri.replace("%s", "{{%s}}");
+                    uri = uri.replace("%d", "{{%d}}");
+                    uri = uri.replace("%b", "{{%b}}");
                 }
 
                 uris.add(new ParserResult(node, position, len, uri));
@@ -381,7 +381,7 @@ public final class CamelJavaParserHelper {
                         }
                     }
                     String uri = CamelJavaParserHelper.getLiteralValue(clazz, block, exp);
-                    if (!Strings.isBlank(uri)) {
+                    if (!Strings.isNullOrEmpty(uri)) {
                         int position = ((SimpleName) arg).getStartPosition();
                         int len = ((SimpleName) arg).getLength();
                         uris.add(new ParserResult(node, position, len, uri));
@@ -392,7 +392,7 @@ public final class CamelJavaParserHelper {
                     if (fi instanceof VariableDeclaration) {
                         Expression exp = ((VariableDeclaration) fi).getInitializer();
                         String uri = CamelJavaParserHelper.getLiteralValue(clazz, block, exp);
-                        if (!Strings.isBlank(uri)) {
+                        if (!Strings.isNullOrEmpty(uri)) {
                             // we want the position of the field, and not in the route
                             int position = ((VariableDeclaration) fi).getStartPosition();
                             int len = ((VariableDeclaration) fi).getLength();
@@ -456,7 +456,7 @@ public final class CamelJavaParserHelper {
                 // it is a String type
                 Object arg = args.get(0);
                 String simple = getLiteralValue(clazz, block, (Expression) arg);
-                if (!Strings.isBlank(simple)) {
+                if (!Strings.isNullOrEmpty(simple)) {
                     // is this a simple expression that is called as a predicate or expression
                     boolean predicate = false;
                     Expression parent = mi.getExpression();
@@ -681,9 +681,9 @@ public final class CamelJavaParserHelper {
                 // if numeric then we plus the values, otherwise we string concat
                 boolean numeric = isNumericOperator(clazz, block, ie.getLeftOperand()) && isNumericOperator(clazz, block, ie.getRightOperand());
                 if (numeric) {
-                    Long num1 = val1 != null ? Long.valueOf(val1) : 0;
-                    Long num2 = val2 != null ? Long.valueOf(val2) : 0;
-                    answer = "" + (num1 + num2);
+                    long num1 = val1 != null ? Long.parseLong(val1) : 0;
+                    long num2 = val2 != null ? Long.parseLong(val2) : 0;
+                    answer = Long.toString(num1 + num2);
                 } else {
                     answer = (val1 != null ? val1 : "") + (val2 != null ? val2 : "");
                 }
@@ -695,9 +695,9 @@ public final class CamelJavaParserHelper {
                         for (Object ext : extended) {
                             String val3 = getLiteralValue(clazz, block, (Expression) ext);
                             if (numeric) {
-                                Long num3 = val3 != null ? Long.valueOf(val3) : 0;
-                                Long num = Long.valueOf(answer);
-                                answer = "" + (num + num3);
+                                long num3 = val3 != null ? Long.parseLong(val3) : 0;
+                                long num = Long.parseLong(answer);
+                                answer = Long.toString(num + num3);
                             } else {
                                 answer += val3 != null ? val3 : "";
                             }

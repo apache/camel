@@ -24,8 +24,12 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertMessageBodyEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FreemarkerTemplateInHeaderTest extends CamelTestSupport {
 
@@ -57,10 +61,10 @@ public class FreemarkerTemplateInHeaderTest extends CamelTestSupport {
                 in.setHeader(headerName, headerValue);
             }
         });
-        assertOutMessageBodyEquals(response, expectedBody);
+        assertMessageBodyEquals(response, expectedBody);
 
         Object template = response.getMessage().getHeader(FreemarkerConstants.FREEMARKER_TEMPLATE);
-        assertNull("Template header should have been removed", template);
+        assertNull(template, "Template header should have been removed");
 
         Set<Entry<String, Object>> entrySet = response.getMessage().getHeaders().entrySet();
         boolean keyFound = false;
@@ -69,15 +73,14 @@ public class FreemarkerTemplateInHeaderTest extends CamelTestSupport {
                 keyFound = true;
             }
         }
-        assertTrue("Header should been found", keyFound);
-
+        assertTrue(keyFound, "Header should been found");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").to("freemarker://dummy");
+                from("direct:a").to("freemarker://dummy?allowTemplateFromHeader=true");
             }
         };
     }
