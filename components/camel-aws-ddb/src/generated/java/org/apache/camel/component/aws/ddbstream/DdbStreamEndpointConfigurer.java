@@ -23,6 +23,8 @@ public class DdbStreamEndpointConfigurer extends PropertyConfigurerSupport imple
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazondynamodbstreamsclient":
         case "amazonDynamoDbStreamsClient": target.getConfiguration().setAmazonDynamoDbStreamsClient(property(camelContext, com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams.class, value)); return true;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
         case "backoffidlethreshold":
@@ -85,6 +87,7 @@ public class DdbStreamEndpointConfigurer extends PropertyConfigurerSupport imple
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("accessKey", java.lang.String.class);
         answer.put("amazonDynamoDbStreamsClient", com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams.class);
+        answer.put("autoDiscoverClient", boolean.class);
         answer.put("backoffErrorThreshold", int.class);
         answer.put("backoffIdleThreshold", int.class);
         answer.put("backoffMultiplier", int.class);
@@ -125,6 +128,8 @@ public class DdbStreamEndpointConfigurer extends PropertyConfigurerSupport imple
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazondynamodbstreamsclient":
         case "amazonDynamoDbStreamsClient": return target.getConfiguration().getAmazonDynamoDbStreamsClient();
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":
