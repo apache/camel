@@ -521,17 +521,19 @@ public class S3Configuration implements Cloneable {
     }
 
     public boolean isAutoDiscoverClient() {
-		return autoDiscoverClient;
-	}
+        return autoDiscoverClient;
+    }
 
     /**
-     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking.
+     * Setting the autoDiscoverClient mechanism, if true, the component will
+     * look for a client instance in the registry automatically otherwise it
+     * will skip that checking.
      */
-	public void setAutoDiscoverClient(boolean autoDiscoverClient) {
-		this.autoDiscoverClient = autoDiscoverClient;
-	}
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
+    }
 
-	public boolean hasProxyConfiguration() {
+    public boolean hasProxyConfiguration() {
         return ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort());
     }
 
