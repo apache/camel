@@ -18,7 +18,6 @@ package org.apache.camel.component.aws2.s3;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
 import software.amazon.awssdk.services.s3.S3Client;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,7 +38,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithCredentialsAndClientExistInRegistry() throws Exception {
-    	S3Client client = S3Client.builder().build();
+        S3Client client = S3Client.builder().build();
         context.getRegistry().bind("amazonS3Client", client);
         AWS2S3Component component = context.getComponent("aws2-s3", AWS2S3Component.class);
         AWS2S3Endpoint endpoint = (AWS2S3Endpoint)component.createEndpoint("aws2-s3://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)&autoDiscoverClient=false");
@@ -50,7 +49,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithCredentialsAndClientExistInRegistryWithAutodiscover() throws Exception {
-    	S3Client client = S3Client.builder().build();
+        S3Client client = S3Client.builder().build();
         context.getRegistry().bind("amazonS3Client", client);
         AWS2S3Component component = context.getComponent("aws2-s3", AWS2S3Component.class);
         AWS2S3Endpoint endpoint = (AWS2S3Endpoint)component.createEndpoint("aws2-s3://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)");
