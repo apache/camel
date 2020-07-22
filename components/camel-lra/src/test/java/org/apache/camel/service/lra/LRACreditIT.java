@@ -26,10 +26,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.SagaPropagation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class LRACreditIT extends AbstractLRATestSupport {
 
