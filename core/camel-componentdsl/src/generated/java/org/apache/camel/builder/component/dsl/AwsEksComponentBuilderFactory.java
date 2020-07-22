@@ -47,6 +47,21 @@ public interface AwsEksComponentBuilderFactory {
      */
     interface AwsEksComponentBuilder extends ComponentBuilder<EKSComponent> {
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default AwsEksComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -216,6 +231,7 @@ public interface AwsEksComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "autoDiscoverClient": getOrCreateConfiguration((EKSComponent) component).setAutoDiscoverClient((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((EKSComponent) component).setAccessKey((java.lang.String) value); return true;
             case "configuration": ((EKSComponent) component).setConfiguration((org.apache.camel.component.aws.eks.EKSConfiguration) value); return true;
             case "eksClient": getOrCreateConfiguration((EKSComponent) component).setEksClient((com.amazonaws.services.eks.AmazonEKS) value); return true;

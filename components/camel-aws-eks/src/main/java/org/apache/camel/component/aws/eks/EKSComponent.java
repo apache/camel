@@ -50,7 +50,9 @@ public class EKSComponent extends DefaultComponent {
         EKSConfiguration configuration =  this.configuration != null ? this.configuration.copy() : new EKSConfiguration();
         EKSEndpoint endpoint = new EKSEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration);
+        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration);
+        }
         if (configuration.getEksClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon eks client or accessKey and secretKey must be specified");
         }
