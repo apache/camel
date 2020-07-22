@@ -32,8 +32,8 @@ import org.apache.camel.dataformat.soap.SoapJaxbDataFormat;
 import org.apache.camel.dataformat.soap.TestUtil;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class Soap12MarshalTest extends CamelTestSupport {
     @EndpointInject("mock:result")
