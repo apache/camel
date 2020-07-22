@@ -24,7 +24,7 @@ import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.apache.camel.component.soroushbot.utils.CongestionException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ConsumerExceptionHandledWithErrorHandlerTest extends SoroushBotTestSupport {
     @Override

@@ -26,8 +26,9 @@ import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ConsumerCamelConcurrentTest extends SoroushBotTestSupport {
     final List<String> fromOrder = new ArrayList<>();
@@ -59,9 +60,9 @@ public class ConsumerCamelConcurrentTest extends SoroushBotTestSupport {
         mockEndpoint.expectedMessageCount(10);
         mockEndpoint.assertIsSatisfied();
         LogManager.getLogger().info(fromOrder.toString());
-        Assert.assertEquals(fromOrder.size(), 10);
-        Assert.assertEquals(fromOrder.get(7), "u0");
-        Assert.assertEquals(fromOrder.get(8), "u0");
-        Assert.assertEquals(fromOrder.get(9), "u0");
+        assertEquals(fromOrder.size(), 10);
+        assertEquals(fromOrder.get(7), "u0");
+        assertEquals(fromOrder.get(8), "u0");
+        assertEquals(fromOrder.get(9), "u0");
     }
 }
