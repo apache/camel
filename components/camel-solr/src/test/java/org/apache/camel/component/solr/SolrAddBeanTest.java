@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.solr;
 
+import org.apache.camel.test.junit5.params.Test;
 import org.apache.solr.client.solrj.beans.Field;
-import org.junit.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SolrAddBeanTest extends SolrComponentTestSupport {
-
-    public SolrAddBeanTest(SolrFixtures.TestServerType serverToTest) {
-        super(serverToTest);
-    }
 
     @Test
     public void testAddBean() throws Exception {
@@ -37,7 +35,7 @@ public class SolrAddBeanTest extends SolrComponentTestSupport {
         template.sendBodyAndHeader("direct:start", null, SolrConstants.OPERATION, SolrConstants.OPERATION_COMMIT);
 
         //verify
-        assertEquals("wrong number of entries found", 1, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound());
+        assertEquals(1, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound(), "wrong number of entries found");
     }
 
     public class Item {
