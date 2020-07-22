@@ -35,16 +35,16 @@ import org.jsmpp.bean.OptionalParameter.Tag;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.SMPPSession;
 import org.jsmpp.util.DeliveryReceiptState;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppBinding</code>
@@ -54,7 +54,7 @@ public class SmppBindingTest {
     private SmppBinding binding;
     private CamelContext camelContext;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         binding = new SmppBinding() {
             Date getCurrentDate() {
@@ -161,7 +161,7 @@ public class SmppBindingTest {
         assertEquals(Byte.valueOf((byte) 0x01), optionalParameters.get("DEST_ADDR_SUBUNIT"));
         assertEquals(Short.valueOf((short) 1), optionalParameters.get("DEST_TELEMATICS_ID"));
         assertEquals(Integer.valueOf(1), optionalParameters.get("QOS_TIME_TO_LIVE"));
-        assertNull("0x00", optionalParameters.get("ALERT_ON_MESSAGE_DELIVERY"));
+        assertNull(optionalParameters.get("ALERT_ON_MESSAGE_DELIVERY"), "0x00");
 
         Map<Short, Object> optionalParameter = smppMessage.getHeader(SmppConstants.OPTIONAL_PARAMETER, Map.class);
         assertEquals(6, optionalParameter.size());
@@ -170,7 +170,7 @@ public class SmppBindingTest {
         assertEquals(Byte.valueOf((byte) 0x01), optionalParameter.get(Short.valueOf((short) 0x0005)));
         assertEquals(Short.valueOf((short) 1), optionalParameter.get(Short.valueOf((short) 0x0008)));
         assertEquals(Integer.valueOf(1), optionalParameter.get(Short.valueOf((short) 0x0017)));
-        assertNull("0x00", optionalParameter.get(Short.valueOf((short) 0x130C)));
+        assertNull(optionalParameter.get(Short.valueOf((short) 0x130C)), "0x00");
     }
 
     @Test
@@ -336,11 +336,11 @@ public class SmppBindingTest {
                 binding.getConfiguration().setEncoding(encoding);
                 SmppMessage smppMessage = binding.createSmppMessage(camelContext, deliverSm);
                 assertArrayEquals(
-                    String.format("data coding=0x%02X; encoding=%s",
-                                  dataCoding,
-                                  encoding),
                     body,
-                    smppMessage.getBody(byte[].class));
+                    smppMessage.getBody(byte[].class),
+                    String.format("data coding=0x%02X; encoding=%s",
+                            dataCoding,
+                            encoding));
             }
         }
     }
