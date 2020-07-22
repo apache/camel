@@ -24,11 +24,13 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class LevelDBAggregateLoadConcurrentTest extends CamelTestSupport {
 
@@ -36,7 +38,7 @@ public class LevelDBAggregateLoadConcurrentTest extends CamelTestSupport {
     private static final char[] KEYS = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
     private static final int SIZE = 500;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         deleteDirectory("target/data");
