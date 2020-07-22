@@ -20,24 +20,24 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SmppUtilsTest {
     
     private static TimeZone defaultTimeZone;
     
-    @BeforeClass
+    @BeforeAll
     public static void setUpBeforeClass() {
         defaultTimeZone = TimeZone.getDefault();
         
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
     }
     
-    @AfterClass
+    @AfterAll
     public static void tearDownAfterClass() {
         if (defaultTimeZone != null) {
             TimeZone.setDefault(defaultTimeZone);            

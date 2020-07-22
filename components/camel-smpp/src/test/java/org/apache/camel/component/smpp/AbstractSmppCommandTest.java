@@ -23,10 +23,10 @@ import org.apache.camel.support.DefaultExchange;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.OptionalParameter.Tag;
 import org.jsmpp.session.SMPPSession;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class AbstractSmppCommandTest {
     
@@ -34,7 +34,7 @@ public class AbstractSmppCommandTest {
     private SmppConfiguration config = new SmppConfiguration();
     private AbstractSmppCommand command;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         session = new SMPPSession();
         config = new SmppConfiguration();

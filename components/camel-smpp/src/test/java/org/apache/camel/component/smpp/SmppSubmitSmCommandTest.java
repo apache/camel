@@ -38,14 +38,15 @@ import org.jsmpp.bean.ReplaceIfPresentFlag;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.SMPPSession;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
@@ -60,21 +61,21 @@ public class SmppSubmitSmCommandTest {
     private SmppConfiguration config;
     private SmppSubmitSmCommand command;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpBeforeClass() {
         defaultTimeZone = TimeZone.getDefault();
 
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownAfterClass() {
         if (defaultTimeZone != null) {
             TimeZone.setDefault(defaultTimeZone);
         }
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         session = mock(SMPPSession.class);
         config = new SmppConfiguration();
@@ -103,7 +104,7 @@ public class SmppSubmitSmCommandTest {
     }
 
     @Test
-    @Ignore()
+    @Disabled()
     public void executeLongBody() throws Exception {
         byte[] firstSM = new byte[]{5, 0, 3, 1, 2, 1, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54,
             55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50,
@@ -132,7 +133,7 @@ public class SmppSubmitSmCommandTest {
         assertEquals(2, exchange.getMessage().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
     }
 
-    @Test(expected = SmppException.class)
+    @Test
     public void executeLongBodyRejection() throws Exception {
         byte[] firstSM = new byte[]{5, 0, 3, 1, 2, 1, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54,
             55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50,
@@ -156,10 +157,7 @@ public class SmppSubmitSmCommandTest {
                 eq(DataCodings.newInstance((byte) 0)), eq((byte) 0), eq(secondSM)))
                 .thenReturn("2");
 
-        command.execute(exchange);
-
-        assertEquals(Arrays.asList("1", "2"), exchange.getMessage().getHeader(SmppConstants.ID));
-        assertEquals(2, exchange.getMessage().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
+        assertThrows(SmppException.class, () -> command.execute(exchange));
     }
 
     @Test

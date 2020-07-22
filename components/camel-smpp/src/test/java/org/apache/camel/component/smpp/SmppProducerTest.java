@@ -23,10 +23,10 @@ import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.BindParameter;
 import org.jsmpp.session.SMPPSession;
 import org.jsmpp.session.SessionStateListener;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -42,7 +42,7 @@ public class SmppProducerTest {
     private SmppEndpoint endpoint;
     private SMPPSession session;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         configuration = new SmppConfiguration();
         configuration.setServiceType("CMT");

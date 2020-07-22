@@ -24,13 +24,13 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppMessage</code>
@@ -127,10 +127,10 @@ public class SmppMessageTest {
                 message = new SmppMessage(camelContext, command, config);
                 
                 assertArrayEquals(
+                    body, (byte[])message.createBody(),
                     String.format("data coding=0x%02X; encoding=%s",
-                                  dataCoding,
-                                  encoding),
-                    body, (byte[])message.createBody());
+                                dataCoding,
+                                encoding));
             }
         }
     }

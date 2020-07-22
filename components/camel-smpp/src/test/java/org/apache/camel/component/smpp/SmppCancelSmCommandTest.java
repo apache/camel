@@ -23,10 +23,10 @@ import org.apache.camel.support.DefaultExchange;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.SMPPSession;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -36,7 +36,7 @@ public class SmppCancelSmCommandTest {
     private SmppConfiguration config;
     private SmppCancelSmCommand command;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         session = mock(SMPPSession.class);
         config = new SmppConfiguration();

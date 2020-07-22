@@ -23,13 +23,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppComponent</code>
@@ -39,7 +39,7 @@ public class SmppComponentTest {
     private SmppComponent component;
     private DefaultCamelContext context;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         context = new DefaultCamelContext();
         context.start();

@@ -28,11 +28,11 @@ import org.jsmpp.session.DataSmResult;
 import org.jsmpp.session.SMPPSession;
 import org.jsmpp.util.MessageIDGenerator;
 import org.jsmpp.util.MessageId;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -44,7 +44,7 @@ public class MessageReceiverListenerImplTest {
     private Processor processor;
     private ExceptionHandler exceptionHandler;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         endpoint = mock(SmppEndpoint.class);
         processor = mock(Processor.class);

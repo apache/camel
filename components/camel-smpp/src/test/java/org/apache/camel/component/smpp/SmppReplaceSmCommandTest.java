@@ -29,12 +29,12 @@ import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.SMPPSession;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
@@ -48,21 +48,21 @@ public class SmppReplaceSmCommandTest {
     private SmppConfiguration config;
     private SmppReplaceSmCommand command;
     
-    @BeforeClass
+    @BeforeAll
     public static void setUpBeforeClass() {
         defaultTimeZone = TimeZone.getDefault();
         
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
     }
     
-    @AfterClass
+    @AfterAll
     public static void tearDownAfterClass() {
         if (defaultTimeZone != null) {
             TimeZone.setDefault(defaultTimeZone);            
         }
     }
     
-    @Before
+    @BeforeEach
     public void setUp() {
         session = mock(SMPPSession.class);
         config = new SmppConfiguration();
