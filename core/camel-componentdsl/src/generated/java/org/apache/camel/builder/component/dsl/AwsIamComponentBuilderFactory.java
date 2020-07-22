@@ -47,6 +47,21 @@ public interface AwsIamComponentBuilderFactory {
      */
     interface AwsIamComponentBuilder extends ComponentBuilder<IAMComponent> {
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default AwsIamComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -216,6 +231,7 @@ public interface AwsIamComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "autoDiscoverClient": getOrCreateConfiguration((IAMComponent) component).setAutoDiscoverClient((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((IAMComponent) component).setAccessKey((java.lang.String) value); return true;
             case "configuration": ((IAMComponent) component).setConfiguration((org.apache.camel.component.aws.iam.IAMConfiguration) value); return true;
             case "iamClient": getOrCreateConfiguration((IAMComponent) component).setIamClient((com.amazonaws.services.identitymanagement.AmazonIdentityManagement) value); return true;
