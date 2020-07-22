@@ -5271,7 +5271,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path endpointType
      */
-    static org.apache.camel.builder.endpoint.dsl.FlinkEndpointBuilderFactory.FlinkEndpointBuilder flink(
+    public static org.apache.camel.builder.endpoint.dsl.FlinkEndpointBuilderFactory.FlinkEndpointBuilder flink(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.FlinkEndpointBuilderFactory.endpointBuilder("flink", path);
     }
@@ -5293,7 +5293,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path endpointType
      */
-    static org.apache.camel.builder.endpoint.dsl.FlinkEndpointBuilderFactory.FlinkEndpointBuilder flink(
+    public static org.apache.camel.builder.endpoint.dsl.FlinkEndpointBuilderFactory.FlinkEndpointBuilder flink(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.FlinkEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -11869,7 +11869,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path httpUri
      */
-    public static org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.ResteasyEndpointBuilder resteasy(
+    static org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.ResteasyEndpointBuilder resteasy(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.endpointBuilder("resteasy", path);
     }
@@ -11890,7 +11890,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path httpUri
      */
-    public static org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.ResteasyEndpointBuilder resteasy(
+    static org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.ResteasyEndpointBuilder resteasy(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.endpointBuilder(componentName, path);
