@@ -20,8 +20,10 @@ import javax.xml.namespace.QName;
 
 import com.example.customerservice.GetCustomersByName;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class TypeNameStrategyTest {
 
@@ -29,8 +31,8 @@ public class TypeNameStrategyTest {
     public void testTypeNameStrategy() {
         TypeNameStrategy strategy = new TypeNameStrategy();
         QName name = strategy.findQNameForSoapActionOrType("", GetCustomersByName.class);
-        Assert.assertEquals("http://customerservice.example.com/", name.getNamespaceURI());
-        Assert.assertEquals("getCustomersByName", name.getLocalPart());
+        assertEquals("http://customerservice.example.com/", name.getNamespaceURI());
+        assertEquals("getCustomersByName", name.getLocalPart());
     }
 
     @Test
@@ -38,7 +40,7 @@ public class TypeNameStrategyTest {
         TypeNameStrategy strategy = new TypeNameStrategy();
         try {
             strategy.findQNameForSoapActionOrType("", String.class);
-            Assert.fail();
+            fail();
         } catch (RuntimeException e) {
             // Expected here
         }
@@ -48,11 +50,11 @@ public class TypeNameStrategyTest {
     public void testNoPackageInfo() {
         TypeNameStrategy strategy = new TypeNameStrategy();
         QName name = strategy.findQNameForSoapActionOrType("", AnnotatedClassWithoutNamespace.class);
-        Assert.assertEquals("test", name.getLocalPart());
-        Assert.assertEquals("##default", name.getNamespaceURI());
+        assertEquals("test", name.getLocalPart());
+        assertEquals("##default", name.getNamespaceURI());
 
         QName name2 = strategy.findQNameForSoapActionOrType("", AnnotatedClassWithNamespace.class);
-        Assert.assertEquals("test", name2.getLocalPart());
-        Assert.assertEquals("http://mynamespace", name2.getNamespaceURI());
+        assertEquals("test", name2.getLocalPart());
+        assertEquals("http://mynamespace", name2.getNamespaceURI());
     }
 }
