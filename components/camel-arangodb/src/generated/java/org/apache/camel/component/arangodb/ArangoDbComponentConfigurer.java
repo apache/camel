@@ -15,14 +15,28 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ArangoDbComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private org.apache.camel.component.arangodb.ArangoDbConfiguration getOrCreateConfiguration(ArangoDbComponent target) {
+        if (target.getConfiguration() == null) {
+            target.setConfiguration(new org.apache.camel.component.arangodb.ArangoDbConfiguration());
+        }
+        return target.getConfiguration();
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ArangoDbComponent target = (ArangoDbComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "collection": getOrCreateConfiguration(target).setCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.arangodb.ArangoDbConfiguration.class, value)); return true;
+        case "host": getOrCreateConfiguration(target).setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.arangodb.ArangoDbOperation.class, value)); return true;
+        case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "port": getOrCreateConfiguration(target).setPort(property(camelContext, int.class, value)); return true;
+        case "user": getOrCreateConfiguration(target).setUser(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -31,7 +45,14 @@ public class ArangoDbComponentConfigurer extends PropertyConfigurerSupport imple
     public Map<String, Object> getAllOptions(Object target) {
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("basicPropertyBinding", boolean.class);
+        answer.put("collection", java.lang.String.class);
+        answer.put("configuration", org.apache.camel.component.arangodb.ArangoDbConfiguration.class);
+        answer.put("host", java.lang.String.class);
         answer.put("lazyStartProducer", boolean.class);
+        answer.put("operation", org.apache.camel.component.arangodb.ArangoDbOperation.class);
+        answer.put("password", java.lang.String.class);
+        answer.put("port", int.class);
+        answer.put("user", java.lang.String.class);
         return answer;
     }
 
@@ -41,8 +62,15 @@ public class ArangoDbComponentConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "collection": return getOrCreateConfiguration(target).getCollection();
+        case "configuration": return target.getConfiguration();
+        case "host": return getOrCreateConfiguration(target).getHost();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "operation": return getOrCreateConfiguration(target).getOperation();
+        case "password": return getOrCreateConfiguration(target).getPassword();
+        case "port": return getOrCreateConfiguration(target).getPort();
+        case "user": return getOrCreateConfiguration(target).getUser();
         default: return null;
         }
     }

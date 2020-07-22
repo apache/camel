@@ -60,7 +60,7 @@ public class ArangoCollectionFindByKeyTest extends AbstractArangoDbTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:findDocByKey")
-                        .to("arangodb:mydb?database={{arangodb.testDb}}&collection={{arangodb.testCollection}}&operation=FIND_DOCUMENT_BY_KEY");
+                        .to("arangodb://dbTest?collection={{arangodb.testCollection}}&operation=FIND_DOCUMENT_BY_KEY");
             }
         };
     }

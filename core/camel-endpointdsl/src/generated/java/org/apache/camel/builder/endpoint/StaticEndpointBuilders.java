@@ -267,7 +267,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path database
      */
-    public static org.apache.camel.builder.endpoint.dsl.ArangoDbEndpointBuilderFactory.ArangoDbEndpointBuilder arangodb(
+    static org.apache.camel.builder.endpoint.dsl.ArangoDbEndpointBuilderFactory.ArangoDbEndpointBuilder arangodb(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ArangoDbEndpointBuilderFactory.endpointBuilder("arangodb", path);
     }
@@ -288,7 +288,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path database
      */
-    public static org.apache.camel.builder.endpoint.dsl.ArangoDbEndpointBuilderFactory.ArangoDbEndpointBuilder arangodb(
+    static org.apache.camel.builder.endpoint.dsl.ArangoDbEndpointBuilderFactory.ArangoDbEndpointBuilder arangodb(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ArangoDbEndpointBuilderFactory.endpointBuilder(componentName, path);

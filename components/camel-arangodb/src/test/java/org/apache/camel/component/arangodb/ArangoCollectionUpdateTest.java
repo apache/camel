@@ -52,7 +52,7 @@ public class ArangoCollectionUpdateTest extends AbstractArangoDbTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:update")
-                        .to("arangodb:mydb?database={{arangodb.testDb}}&collection={{arangodb.testCollection}}&operation=UPDATE_DOCUMENT");
+                        .to("arangodb:{{arangodb.testDb}}?collection={{arangodb.testCollection}}&operation=UPDATE_DOCUMENT");
             }
         };
     }
