@@ -1,0 +1,13 @@
+/** DataSonnet
+version=1.0
+output.application/java.OutputClass=org.apache.camel.language.datasonnet.Gizmo
+output.application/java.DateFormat=yyyy-MM-dd
+*/
+{
+    "name": payload.pojoName,
+    "quantity": payload.pojoQuantity,
+    "inStock": payload.pojoInStock,
+    "colors": payload.pojoColors,
+    "manufacturer": payload.pojoManufacturer,
+    "date": payload.pojoDate
+}

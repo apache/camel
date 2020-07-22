@@ -404,6 +404,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-datasonnet</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-debezium-mongodb</artifactId>
 		</dependency>
 		<dependency>

@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.JoorExpression;
@@ -128,6 +129,31 @@ public abstract class BuilderSupport {
     public ValueBuilder jsonpath(String value, Class<?> resultType) {
         JsonPathExpression exp = new JsonPathExpression(value);
         exp.setResultType(resultType);
+        return new ValueBuilder(exp);
+    }
+
+    /**
+     * Returns a Datasonnet expression value builder
+     */
+    public ValueBuilder datasonnet(String value) {
+        return datasonnet(value, "application/json", "application/json");
+    }
+
+    public ValueBuilder datasonnet(Expression expression) {
+        return datasonnet(expression, "application/json", "application/json");
+    }
+
+    public ValueBuilder datasonnet(String value, String inputMimeType, String outputMimeType) {
+        DatasonnetExpression exp = new DatasonnetExpression(value);
+        exp.setInputMimeType(inputMimeType);
+        exp.setOutputMimeType(outputMimeType);
+        return new ValueBuilder(exp);
+    }
+
+    public ValueBuilder datasonnet(Expression expression, String inputMimeType, String outputMimeType) {
+        DatasonnetExpression exp = new DatasonnetExpression(expression);
+        exp.setInputMimeType(inputMimeType);
+        exp.setOutputMimeType(outputMimeType);
         return new ValueBuilder(exp);
     }
 

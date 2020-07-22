@@ -28,6 +28,7 @@ import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.language.ConstantExpression;
+import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.GroovyExpression;
@@ -105,6 +106,8 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
             CamelContext camelContext, ExpressionDefinition definition) {
         if (definition instanceof ConstantExpression) {
             return new ExpressionReifier<>(camelContext, definition);
+        } else if (definition instanceof DatasonnetExpression) {
+            return new DatasonnetExpressionReifier(camelContext, definition);
         } else if (definition instanceof ExchangePropertyExpression) {
             return new ExpressionReifier<>(camelContext, definition);
         } else if (definition instanceof GroovyExpression) {

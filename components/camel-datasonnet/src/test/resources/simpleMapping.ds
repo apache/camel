@@ -1,0 +1,8 @@
+{
+    "uid": payload.userId,
+    "uname": payload.name,
+    "testVar": exchangeProperty.test,
+    "isActive": exchangeProperty.isActive,
+    "count": exchangeProperty.count,
+    "fullName": exchangeProperty["1. Full Name"]
+}

@@ -1,0 +1,7 @@
+local testlib3 = import 'testlib3.libsonnet';
+local testlib4 = import 'libraries/testlib4.libsonnet';
+
+{
+    "Lib3FS": testlib3.sayHello("World"),
+    "Lib4FS": testlib4.sayBye("World")
+}

@@ -1,0 +1,11 @@
+local testlib1 = import 'testlib.libsonnet';
+local testlib2 = import 'libraries/testlib2.libsonnet';
+local testlib3 = import 'testlib3.libsonnet';
+local testlib4 = import 'libraries/testlib4.libsonnet';
+
+{
+    "Lib1JAR": testlib1.sayHello("World"),
+    "Lib2JAR": testlib2.sayBye("World"),
+    "Lib3FS": testlib3.sayHello("World"),
+    "Lib4FS": testlib4.sayBye("World")
+}

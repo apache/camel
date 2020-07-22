@@ -1,0 +1,12 @@
+/** DataSonnet
+version=1.0
+input.payload.application/java.DateFormat=yyyy-MM-dd
+*/
+{
+    "pojoName": payload.name,
+    "pojoQuantity": payload.quantity,
+    "pojoInStock": payload.inStock,
+    "pojoColors": payload.colors,
+    "pojoManufacturer": payload.manufacturer,
+    "pojoDate": payload.date
+}

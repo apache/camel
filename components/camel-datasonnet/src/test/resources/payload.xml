@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<test:root xmlns:test="http://www.modusbox.com">
+    <test:datasonnet version="1.0">Hello World</test:datasonnet>
+</test:root>

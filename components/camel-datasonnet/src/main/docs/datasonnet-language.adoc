@@ -1,0 +1,9 @@
+[[datasonnet-language]]
+= Datasonnet Language
+:docTitle: Datasonnet
+:artifactId: camel-datasonnet
+:description: To use Datasonnet scripts in Camel expressions or predicates.
+:since: 3.5
+:supportLevel: Preview
+
+*Since Camel {since}*

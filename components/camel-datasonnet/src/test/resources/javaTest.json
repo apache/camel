@@ -1,0 +1,15 @@
+{
+  "pojoColors": [
+    "red",
+    "white",
+    "blue"
+  ],
+  "pojoInStock": true,
+  "pojoManufacturer": {
+    "manufacturerCode": "ACME123",
+    "manufacturerName": "ACME Corp."
+  },
+  "pojoName": "gizmo",
+  "pojoQuantity": 123,
+  "pojoDate": "2020-01-06"
+}
