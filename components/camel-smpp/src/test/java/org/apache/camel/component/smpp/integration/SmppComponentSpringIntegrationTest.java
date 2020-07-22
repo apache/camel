@@ -23,10 +23,14 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.smpp.SmppConstants;
 import org.apache.camel.component.smpp.SmppMessageType;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Spring based integration test for the smpp component. To run this test, ensure that
@@ -38,7 +42,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * <br/>
  * A SMSC for test is available here: http://www.seleniumsoftware.com/downloads.html
  */
-@Ignore("Must be manually tested")
+@Disabled("Must be manually tested")
 public class SmppComponentSpringIntegrationTest extends CamelSpringTestSupport {
 
     @EndpointInject("mock:result")

@@ -19,16 +19,16 @@ package org.apache.camel.component.smpp;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class SmppCommandTypeTest {
     
     private Exchange exchange;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         exchange = new DefaultExchange(new DefaultCamelContext());
     }

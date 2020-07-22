@@ -17,9 +17,9 @@
 package org.apache.camel.component.smpp.integration;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Spring based integration test for the smpp component. To run this test, ensure that
@@ -31,7 +31,7 @@ import org.junit.Test;
  * <br/>
  * A SMSC for test is available here: http://www.seleniumsoftware.com/downloads.html
  */
-@Ignore("Must be manually tested")
+@Disabled("Must be manually tested")
 public class SmppConsumerReconnectIntegrationTest extends CamelTestSupport {
 
     @Test
