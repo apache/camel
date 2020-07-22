@@ -29,8 +29,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.servicenow.model.ImportSetResult;
 import org.apache.camel.component.servicenow.model.Incident;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * To set-up ServiceNow for this tests:
@@ -38,7 +41,7 @@ import org.junit.Test;
  * 1. Create a new web service named u_test_imp_incident targeting incident table
  * 2. Create a mapping (automatic)
  */
-@Ignore
+@Disabled
 public class ServiceNowImportSetTest extends ServiceNowTestSupport {
 
     @Test
