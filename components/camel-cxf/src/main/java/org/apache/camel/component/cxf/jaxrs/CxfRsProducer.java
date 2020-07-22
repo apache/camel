@@ -508,7 +508,7 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
                         continue;
                     }
                     for (int i = 0; i < parameterTypes.length; i++) {
-                        if (!params[i].isAssignableFrom(parameterTypes[i])) {
+                        if (parameterTypes[i] != null && !params[i].isAssignableFrom(parameterTypes[i])) {
                             continue iterate_on_methods;
                         }
                     }
@@ -531,7 +531,11 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
         Class<?>[] answer = new Class[objects.length];
         int i = 0;
         for (Object obj : objects) {
-            answer[i] = obj.getClass();
+            if (obj == null) {
+                answer[i] = null;
+            } else {
+                answer[i] = obj.getClass();
+            }
             i++;
         }
         return answer;
