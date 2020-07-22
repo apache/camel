@@ -88,8 +88,10 @@ public class VertxHttpEndpoint extends DefaultEndpoint {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        webClient.close();
-        webClient = null;
+        if (webClient != null) {
+            webClient.close();
+            webClient = null;
+        }
     }
 
     @Override
