@@ -24,12 +24,12 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Test manually as CI server cannot run this test")
+@Disabled("Test manually as CI server cannot run this test")
 public class PublishSubscribeTest extends CamelTestSupport {
 
     private int port1;
@@ -46,7 +46,7 @@ public class PublishSubscribeTest extends CamelTestSupport {
     private ProducerTemplate producerTemplate;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         port1 = AvailablePortFinder.getNextAvailable();
         port2 = AvailablePortFinder.getNextAvailable();
