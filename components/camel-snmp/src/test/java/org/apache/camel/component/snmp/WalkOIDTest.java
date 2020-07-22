@@ -21,9 +21,9 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ public class WalkOIDTest extends CamelTestSupport {
 
     // a disabled test... before enabling you must fill in a working IP, Port
     // and maybe oids in the route below
-    @Ignore
+    @Disabled
     @Test
     public void testOIDWalk() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
