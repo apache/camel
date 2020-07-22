@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ConsumerQueueCapacityPerThreadTest extends SoroushBotTestSupport {
     @Override
