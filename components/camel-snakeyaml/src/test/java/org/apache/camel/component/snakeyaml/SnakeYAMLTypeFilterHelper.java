@@ -23,9 +23,9 @@ import org.apache.camel.component.snakeyaml.model.TestPojo;
 import org.apache.camel.component.snakeyaml.model.UnsafePojo;
 import org.yaml.snakeyaml.constructor.ConstructorException;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public final class SnakeYAMLTypeFilterHelper {
     private SnakeYAMLTypeFilterHelper() {
