@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.storage.blob;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,10 +47,14 @@ public final class BlobStreamAndLength {
         }
 
         if (body instanceof InputStream) {
+            // Note: InputStream has to support mark/reset operations
+            if (!((InputStream) body).markSupported()) {
+                throw new IllegalArgumentException("InputStream of body exchange does not support mark/rest operations.");
+            }
             return new BlobStreamAndLength((InputStream) body, BlobUtils.getInputStreamLength((InputStream) body));
         }
         if (body instanceof File) {
-            return new BlobStreamAndLength(new FileInputStream((File) body), ((File) body).length());
+            return new BlobStreamAndLength(new BufferedInputStream(new FileInputStream((File) body)), ((File) body).length());
         }
         if (body instanceof byte[]) {
             return new BlobStreamAndLength(new ByteArrayInputStream((byte[]) body), ((byte[]) body).length);
