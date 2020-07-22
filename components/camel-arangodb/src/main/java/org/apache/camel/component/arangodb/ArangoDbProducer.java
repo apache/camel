@@ -63,7 +63,7 @@ public class ArangoDbProducer extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
         System.out.println(exchange.getIn().getBody());
-        ArangoDbOperation operation = endpoint.getOperation();
+        ArangoDbOperation operation = endpoint.getConfiguration().getOperation();
         invokeOperation(operation, exchange);
     }
 
@@ -184,7 +184,7 @@ public class ArangoDbProducer extends DefaultProducer {
     private Function<Exchange, Object> aqlQuery() {
         return exchange -> {
             try {
-                ArangoDatabase database = endpoint.getArango().db(endpoint.getDatabase());
+                ArangoDatabase database = endpoint.getArango().db(endpoint.getConfiguration().getDatabase());
 
                 // AQL query
                 String query = (String) exchange.getMessage().getHeader(AQL_QUERY);
@@ -214,8 +214,8 @@ public class ArangoDbProducer extends DefaultProducer {
      * retrieve collection from endpoints params
      */
     private ArangoCollection calculateCollection() {
-        String database = endpoint.getDatabase();
-        String collection = endpoint.getCollection();
+        String database = endpoint.getConfiguration().getDatabase();
+        String collection = endpoint.getConfiguration().getCollection();
 
         // return collection
         return endpoint.getArango().db(database).collection(collection);

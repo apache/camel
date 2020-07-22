@@ -49,6 +49,41 @@ public interface ArangodbComponentBuilderFactory {
             extends
                 ComponentBuilder<ArangoDbComponent> {
         /**
+         * collection in the database.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default ArangodbComponentBuilder collection(java.lang.String collection) {
+            doSetProperty("collection", collection);
+            return this;
+        }
+        /**
+         * Component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.arangodb.ArangoDbConfiguration</code> type.
+         * 
+         * Group: producer
+         */
+        default ArangodbComponentBuilder configuration(
+                org.apache.camel.component.arangodb.ArangoDbConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * host if host and/or port different from default.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default ArangodbComponentBuilder host(java.lang.String host) {
+            doSetProperty("host", host);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -70,6 +105,31 @@ public interface ArangodbComponentBuilderFactory {
             return this;
         }
         /**
+         * operation to perform.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.arangodb.ArangoDbOperation</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default ArangodbComponentBuilder operation(
+                org.apache.camel.component.arangodb.ArangoDbOperation operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * port if host and/or port different from default.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default ArangodbComponentBuilder port(int port) {
+            doSetProperty("port", port);
+            return this;
+        }
+        /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
          * 
@@ -83,6 +143,28 @@ public interface ArangodbComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
+        /**
+         * password if user and/or password different from default.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ArangodbComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * user if user and/or password different from default.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ArangodbComponentBuilder user(java.lang.String user) {
+            doSetProperty("user", user);
+            return this;
+        }
     }
 
     class ArangodbComponentBuilderImpl
@@ -94,14 +176,28 @@ public interface ArangodbComponentBuilderFactory {
         protected ArangoDbComponent buildConcreteComponent() {
             return new ArangoDbComponent();
         }
+        private org.apache.camel.component.arangodb.ArangoDbConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.arangodb.ArangoDbComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.arangodb.ArangoDbConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
+            case "collection": getOrCreateConfiguration((ArangoDbComponent) component).setCollection((java.lang.String) value); return true;
+            case "configuration": ((ArangoDbComponent) component).setConfiguration((org.apache.camel.component.arangodb.ArangoDbConfiguration) value); return true;
+            case "host": getOrCreateConfiguration((ArangoDbComponent) component).setHost((java.lang.String) value); return true;
             case "lazyStartProducer": ((ArangoDbComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((ArangoDbComponent) component).setOperation((org.apache.camel.component.arangodb.ArangoDbOperation) value); return true;
+            case "port": getOrCreateConfiguration((ArangoDbComponent) component).setPort((int) value); return true;
             case "basicPropertyBinding": ((ArangoDbComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "password": getOrCreateConfiguration((ArangoDbComponent) component).setPassword((java.lang.String) value); return true;
+            case "user": getOrCreateConfiguration((ArangoDbComponent) component).setUser((java.lang.String) value); return true;
             default: return false;
             }
         }

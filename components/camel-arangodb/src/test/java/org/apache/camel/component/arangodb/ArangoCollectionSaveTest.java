@@ -59,7 +59,7 @@ public class ArangoCollectionSaveTest extends AbstractArangoDbTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:insert")
-                        .to("arangodb:mydb?database={{arangodb.testDb}}&collection={{arangodb.testCollection}}&operation=SAVE_DOCUMENT");
+                        .to("arangodb:{{arangodb.testDb}}?collection={{arangodb.testCollection}}&operation=SAVE_DOCUMENT");
             }
         };
     }

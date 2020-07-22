@@ -50,7 +50,7 @@ public class ArangoCollectionQueryTest extends AbstractArangoDbTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:query")
-                        .to("arangodb:mydb?database={{arangodb.testDb}}&operation=AQL_QUERY");
+                        .to("arangodb:{{arangodb.testDb}}?operation=AQL_QUERY");
             }
         };
     }

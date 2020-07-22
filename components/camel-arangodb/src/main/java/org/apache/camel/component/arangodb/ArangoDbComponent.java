@@ -18,15 +18,49 @@ package org.apache.camel.component.arangodb;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
 
-@org.apache.camel.spi.annotations.Component("arangodb")
+@Component("arangodb")
 public class ArangoDbComponent extends DefaultComponent {
 
+    @Metadata
+    private ArangoDbConfiguration configuration = new ArangoDbConfiguration();
+
+    public ArangoDbComponent() {
+        this(null);
+    }
+
+    public ArangoDbComponent(CamelContext context) {
+        super(context);
+    }
+
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Endpoint endpoint = new ArangoDbEndpoint(uri, this);
+        if (ObjectHelper.isEmpty(remaining)) {
+            throw new IllegalArgumentException("Database name must be specified.");
+        }
+
+        final ArangoDbConfiguration configuration = this.configuration != null ? this.configuration.copy() : new ArangoDbConfiguration();
+        configuration.setDatabase(remaining);
+        Endpoint endpoint = new ArangoDbEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    public ArangoDbConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * Component configuration
+     *
+     * @param configuration
+     */
+    public void setConfiguration(ArangoDbConfiguration configuration) {
+        this.configuration = configuration;
     }
 }

@@ -21,15 +21,15 @@ public class ArangoDbEndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "collection": target.setCollection(property(camelContext, java.lang.String.class, value)); return true;
-        case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "collection": target.getConfiguration().setCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "host": target.getConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": target.setOperation(property(camelContext, org.apache.camel.component.arangodb.ArangoDbOperation.class, value)); return true;
-        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "port": target.setPort(property(camelContext, int.class, value)); return true;
+        case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.arangodb.ArangoDbOperation.class, value)); return true;
+        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "port": target.getConfiguration().setPort(property(camelContext, int.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "user": target.setUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "user": target.getConfiguration().setUser(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -55,15 +55,15 @@ public class ArangoDbEndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
-        case "collection": return target.getCollection();
-        case "host": return target.getHost();
+        case "collection": return target.getConfiguration().getCollection();
+        case "host": return target.getConfiguration().getHost();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "operation": return target.getOperation();
-        case "password": return target.getPassword();
-        case "port": return target.getPort();
+        case "operation": return target.getConfiguration().getOperation();
+        case "password": return target.getConfiguration().getPassword();
+        case "port": return target.getConfiguration().getPort();
         case "synchronous": return target.isSynchronous();
-        case "user": return target.getUser();
+        case "user": return target.getConfiguration().getUser();
         default: return null;
         }
     }
