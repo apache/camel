@@ -155,6 +155,7 @@ http\://camel.apache.org/schema/cxf/camel-cxf-3.2.0.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-3.3.0.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-3.4.0.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-3.4.1.xsd=schema/cxfEndpoint.xsd
+http\://camel.apache.org/schema/cxf/camel-cxf-3.4.2.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-${project.version}.xsd=schema/cxfEndpoint.xsd
 
 
@@ -296,4 +297,5 @@ http\://camel.apache.org/schema/cxf/camel-cxf-3.2.0-spring.xsd=schema/cxfEndpoin
 http\://camel.apache.org/schema/cxf/camel-cxf-3.3.0-spring.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-3.4.0-spring.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-3.4.1-spring.xsd=schema/cxfEndpoint.xsd
+http\://camel.apache.org/schema/cxf/camel-cxf-3.4.2-spring.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-${project.version}-spring.xsd=schema/cxfEndpoint.xsd
