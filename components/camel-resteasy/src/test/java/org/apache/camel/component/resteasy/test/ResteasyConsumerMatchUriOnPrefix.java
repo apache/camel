@@ -21,26 +21,22 @@ import java.net.URI;
 
 import javax.ws.rs.core.Response;
 
+import org.apache.camel.component.resteasy.test.WebTest.Deployment;
+import org.apache.camel.component.resteasy.test.WebTest.Resource;
 import org.apache.camel.component.resteasy.test.beans.SimpleService;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.container.test.api.RunAsClient;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(Arquillian.class)
-@RunAsClient
+@WebTest
 public class ResteasyConsumerMatchUriOnPrefix {
-    @ArquillianResource
+
+    @Resource
     URI baseUri;
     
     @Deployment
@@ -69,6 +65,6 @@ public class ResteasyConsumerMatchUriOnPrefix {
                 .request().get();
         String entity = response.readEntity(String.class);
         assertEquals(200, response.getStatus());
-        Assert.assertEquals("Body set from camel route", entity);
+        assertEquals("Body set from camel route", entity);
     }
 }

@@ -24,22 +24,22 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
+import org.apache.camel.component.resteasy.test.WebTest.Deployment;
+import org.apache.camel.component.resteasy.test.WebTest.Resource;
 import org.apache.camel.component.resteasy.test.beans.SimpleService;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
-@RunWith(Arquillian.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
+@WebTest
 public class ResteasyRestDSLTest {
     
-    @ArquillianResource
+    @Resource
     URI baseUri;
     
     @Deployment
@@ -63,8 +63,8 @@ public class ResteasyRestDSLTest {
         WebTarget target = client.target(baseUri.toString() + "simpleService/getMsg");
         Response response = target.request().get();
 
-        Assert.assertEquals(200, response.getStatus());
-        Assert.assertEquals("Text from camel. Response from REST : Message1 from Rest service", response.readEntity(String.class));
+        assertEquals(200, response.getStatus());
+        assertEquals("Text from camel. Response from REST : Message1 from Rest service", response.readEntity(String.class));
 
     }
 }

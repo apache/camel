@@ -26,27 +26,25 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.camel.component.resteasy.test.WebTest.Deployment;
+import org.apache.camel.component.resteasy.test.WebTest.Resource;
 import org.apache.camel.component.resteasy.test.beans.Customer;
 import org.apache.camel.component.resteasy.test.beans.ProxyBean;
 import org.apache.camel.component.resteasy.test.beans.ProxyServiceInterface;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.container.test.api.RunAsClient;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
-@RunWith(Arquillian.class)
-@RunAsClient
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
+@WebTest
 public class ResteasyConsumerProxyTest {
     
-    @ArquillianResource
+    @Resource
     URI baseUri;
     
     @Deployment
@@ -71,16 +69,16 @@ public class ResteasyConsumerProxyTest {
         WebTarget target = client.target(baseUri.toString() + "camel/address");
         Response response = target.request().get();
 
-        Assert.assertEquals(200, response.getStatus());
-        Assert.assertEquals("Proxy address only from Camel", response.readEntity(String.class));
+        assertEquals(200, response.getStatus());
+        assertEquals("Proxy address only from Camel", response.readEntity(String.class));
     }
 
     @Test
     public void testProxyFromInterface() throws Exception {
         Response response = ResteasyClientBuilder.newClient().target(baseUri.toString() + "proxy/get").request().get();
 
-        Assert.assertEquals(200, response.getStatus());
-        Assert.assertEquals("Address from ProxyInterface", response.readEntity(String.class));
+        assertEquals(200, response.getStatus());
+        assertEquals("Address from ProxyInterface", response.readEntity(String.class));
 
     }
 
@@ -94,8 +92,8 @@ public class ResteasyConsumerProxyTest {
         WebTarget target = client.target(baseUri.toString() + "proxy/createCustomer");
         Response response = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(customer, MediaType.APPLICATION_JSON_TYPE));
 
-        Assert.assertEquals(200, response.getStatus());
-        Assert.assertEquals("Customer added : {\"name\":\"Camel\",\"surname\":\"Rider\",\"id\":1}", response.readEntity(String.class));
+        assertEquals(200, response.getStatus());
+        assertEquals("Customer added : {\"name\":\"Camel\",\"surname\":\"Rider\",\"id\":1}", response.readEntity(String.class));
 
     }
 
@@ -105,7 +103,7 @@ public class ResteasyConsumerProxyTest {
         WebTarget target = client.target(baseUri.toString() + "proxy/createCustomer");
         Response response = target.request().get();
 
-        Assert.assertEquals(405, response.getStatus());
+        assertEquals(405, response.getStatus());
 
     }
 }
