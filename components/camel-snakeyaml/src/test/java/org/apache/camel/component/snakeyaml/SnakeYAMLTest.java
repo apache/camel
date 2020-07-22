@@ -21,10 +21,11 @@ import java.util.Collection;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.snakeyaml.model.TestPojo;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.params.Parameter;
+import org.apache.camel.test.junit5.params.Parameterized;
+import org.apache.camel.test.junit5.params.Parameters;
+import org.apache.camel.test.junit5.params.Test;
 import org.yaml.snakeyaml.nodes.Tag;
 
 import static org.apache.camel.component.snakeyaml.SnakeYAMLTestHelper.createClassTagDataFormat;
@@ -33,20 +34,17 @@ import static org.apache.camel.component.snakeyaml.SnakeYAMLTestHelper.createPre
 import static org.apache.camel.component.snakeyaml.SnakeYAMLTestHelper.createTestMap;
 import static org.apache.camel.component.snakeyaml.SnakeYAMLTestHelper.createTestPojo;
 
-@RunWith(Parameterized.class)
+@Parameterized
 public class SnakeYAMLTest extends CamelTestSupport {
 
-    private final SnakeYAMLDataFormat format;
-    private final Object body;
-    private final String expected;
+    @Parameter
+    private SnakeYAMLDataFormat format;
+    @Parameter(1)
+    private Object body;
+    @Parameter(2)
+    private String expected;
 
-    public SnakeYAMLTest(SnakeYAMLDataFormat format, Object body, String expected) {
-        this.format = format;
-        this.body = body;
-        this.expected = expected;
-    }
-
-    @Parameterized.Parameters
+    @Parameters
     public static Collection yamlCases() {
         return Arrays.asList(new Object[][] {
             {
