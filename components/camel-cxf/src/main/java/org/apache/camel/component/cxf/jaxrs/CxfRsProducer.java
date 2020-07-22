@@ -512,7 +512,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
                         continue;
                     }
                     for (int i = 0; i < parameterTypes.length; i++) {
-                        if (parameterTypes[i] != null && !params[i].isAssignableFrom(parameterTypes[i])) {
+                        if (!params[i].isAssignableFrom(parameterTypes[i])) {
                             continue iterate_on_methods;
                         }
                     }
@@ -535,11 +535,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         Class<?>[] answer = new Class[objects.length];
         int i = 0;
         for (Object obj : objects) {
-            if (obj == null) {
-                answer[i] = null;
-            } else {
-                answer[i] = obj.getClass();
-            }
+            answer[i] = obj.getClass();
             i++;
         }
         return answer;
