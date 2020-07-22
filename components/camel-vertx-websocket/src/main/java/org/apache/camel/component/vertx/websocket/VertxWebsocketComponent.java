@@ -49,6 +49,7 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
     private VertxOptions vertxOptions;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
+    private boolean managedVertx;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -65,6 +66,16 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         }
 
         return endpoint;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        if (managedVertx && vertx != null) {
+            vertx.close();
+        }
+        vertx = null;
     }
 
     public void connectConsumer(VertxWebsocketConsumer consumer) {
@@ -126,6 +137,7 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
             } else {
                 vertx = Vertx.vertx();
             }
+            managedVertx = true;
         }
 
         return vertx;
