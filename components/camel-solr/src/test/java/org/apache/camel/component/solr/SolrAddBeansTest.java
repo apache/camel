@@ -19,14 +19,12 @@ package org.apache.camel.component.solr;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.test.junit5.params.Test;
 import org.apache.solr.client.solrj.beans.Field;
-import org.junit.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SolrAddBeansTest extends SolrComponentTestSupport {
-
-    public SolrAddBeansTest(SolrFixtures.TestServerType serverToTest) {
-        super(serverToTest);
-    }
 
     @Test
     public void testAddBeans() throws Exception {
@@ -49,9 +47,9 @@ public class SolrAddBeansTest extends SolrComponentTestSupport {
         template.sendBodyAndHeader("direct:start", null, SolrConstants.OPERATION, SolrConstants.OPERATION_COMMIT);
 
         //verify
-        assertEquals("wrong number of entries found", 1, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound());
-        assertEquals("wrong number of entries found", 1, executeSolrQuery("id:" + TEST_ID2).getResults().getNumFound());
-        assertEquals("wrong number of entries found", 2, executeSolrQuery("*:*").getResults().getNumFound());
+        assertEquals(1, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound(), "wrong number of entries found");
+        assertEquals(1, executeSolrQuery("id:" + TEST_ID2).getResults().getNumFound(), "wrong number of entries found");
+        assertEquals(2, executeSolrQuery("*:*").getResults().getNumFound(), "wrong number of entries found");
     }
 
     public class Item {

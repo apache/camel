@@ -21,7 +21,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.extension.Extension;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -50,10 +52,7 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
     public java.util.stream.Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(ExtensionContext extensionContext) {
         Class<?> testClass = extensionContext.getRequiredTestClass();
         try {
-            java.util.List<Method> parameters = java.util.stream.Stream.of(testClass.getDeclaredMethods())
-                    .filter(m -> Modifier.isStatic(m.getModifiers()))
-                    .filter(m -> m.getAnnotation(Parameters.class) != null)
-                    .collect(Collectors.toList());
+            List<Method> parameters = getParametersMethods(testClass);
             if (parameters.size() != 1) {
                 throw new IllegalStateException("Class " + testClass.getName() + " should provide a single method annotated with @" + Parameters.class.getSimpleName());
             }
@@ -63,7 +62,19 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
                     .map(Arguments::get)
                     .map(ParameterizedTemplate::new);
         } catch (Exception e) {
-            throw new IllegalStateException("Unable to generate test templates for class " + testClass.getName());
+            throw new IllegalStateException("Unable to generate test templates for class " + testClass.getName(), e);
+        }
+    }
+
+    private List<Method> getParametersMethods(Class<?> testClass) {
+        List<Method> parameters = java.util.stream.Stream.of(testClass.getDeclaredMethods())
+                .filter(m -> Modifier.isStatic(m.getModifiers()))
+                .filter(m -> m.getAnnotation(Parameters.class) != null)
+                .collect(Collectors.toList());
+        if (parameters.isEmpty() && testClass != null) {
+            return getParametersMethods(testClass.getSuperclass());
+        } else {
+            return parameters;
         }
     }
 
@@ -108,7 +119,9 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
 
         protected void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
             Class<?> clazz = testInstance.getClass();
-            java.util.List<Field> fields = java.util.stream.Stream.of(clazz.getDeclaredFields())
+            java.util.List<Field> fields = hierarchy(clazz)
+                    .map(Class::getDeclaredFields)
+                    .flatMap(Stream::of)
                     .filter(f -> isAnnotated(f, Parameter.class))
                     .sorted(Comparator.comparing(f -> (Integer) f.getAnnotation(Parameter.class).value()))
                     .collect(Collectors.toList());
@@ -120,6 +133,11 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
                 f.setAccessible(true);
                 f.set(testInstance, DefaultArgumentConverter.INSTANCE.convert(params[i], f.getType()));
             }
+        }
+
+        protected Stream<Class<?>> hierarchy(Class<?> clazz) {
+            Class<?> superclass = clazz.getSuperclass();
+            return Stream.concat(Stream.of(clazz), superclass != null ? hierarchy(superclass) : Stream.empty());
         }
 
     }
