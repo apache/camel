@@ -28,8 +28,13 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.servicenow.model.Incident;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ServiceNowTest extends ServiceNowTestSupport {
 
@@ -210,9 +215,9 @@ public class ServiceNowTest extends ServiceNowTestSupport {
 
         DateTimeBean deserialized = mapper.readValue(serialized, DateTimeBean.class);
 
-        Assert.assertEquals(bean.dateTime, deserialized.dateTime);
-        Assert.assertEquals(bean.date, deserialized.date);
-        Assert.assertEquals(bean.time, deserialized.time);
+        assertEquals(bean.dateTime, deserialized.dateTime);
+        assertEquals(bean.date, deserialized.date);
+        assertEquals(bean.time, deserialized.time);
     }
 
     @Test
@@ -229,9 +234,9 @@ public class ServiceNowTest extends ServiceNowTestSupport {
 
         DateTimeBean deserialized = mapper.readValue(serialized, DateTimeBean.class);
 
-        Assert.assertEquals(bean.dateTime, deserialized.dateTime);
-        Assert.assertEquals(bean.date, deserialized.date);
-        Assert.assertEquals(bean.time, deserialized.time);
+        assertEquals(bean.dateTime, deserialized.dateTime);
+        assertEquals(bean.date, deserialized.date);
+        assertEquals(bean.time, deserialized.time);
     }
 
     public static class DateTimeBean {
