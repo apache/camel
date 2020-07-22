@@ -25,8 +25,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.snakeyaml.model.TestPojo;
 import org.yaml.snakeyaml.nodes.Tag;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public final class SnakeYAMLTestHelper {
 
