@@ -22,7 +22,9 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.servicenow.model.Scorecard;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ServiceNowScorecardTest extends ServiceNowTestSupport {
     @Produce("direct:servicenow")

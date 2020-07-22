@@ -23,7 +23,10 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ServiceNowServiceCatalogTest extends ServiceNowTestSupport {
     @Produce("direct:servicenow")
@@ -58,9 +61,10 @@ public class ServiceNowServiceCatalogTest extends ServiceNowTestSupport {
         assertFalse(result2.isEmpty());
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void testWrongSubject() throws Exception {
-        List<Map<?, ?>> result = template.requestBodyAndHeaders(
+        assertThrows(CamelExecutionException.class,
+            () -> template.requestBodyAndHeaders(
             "direct:servicenow",
             null,
             kvBuilder()
@@ -69,9 +73,7 @@ public class ServiceNowServiceCatalogTest extends ServiceNowTestSupport {
                 .put(ServiceNowConstants.ACTION_SUBJECT, "Invalid")
                 .build(),
             List.class
-        );
-
-        assertFalse(result.isEmpty());
+        ));
     }
 
     // *************************************************************************

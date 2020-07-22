@@ -26,9 +26,13 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.servicenow.model.AttachmentMeta;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.support.ResourceHelper.resolveResourceAsInputStream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ServiceNowAttachmentTest extends ServiceNowTestSupport {
     @Produce("direct:servicenow")
