@@ -1127,7 +1127,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path label
      */
-    public static org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.IAM2EndpointBuilder aws2Iam(
+    static org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.IAM2EndpointBuilder aws2Iam(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.endpointBuilder("aws2-iam", path);
     }
@@ -1148,7 +1148,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path label
      */
-    public static org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.IAM2EndpointBuilder aws2Iam(
+    static org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.IAM2EndpointBuilder aws2Iam(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -1873,7 +1873,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path label
      */
-    static org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.IAMEndpointBuilder awsIam(
+    public static org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.IAMEndpointBuilder awsIam(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.endpointBuilder("aws-iam", path);
     }
@@ -1894,7 +1894,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path label
      */
-    static org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.IAMEndpointBuilder awsIam(
+    public static org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.IAMEndpointBuilder awsIam(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.endpointBuilder(componentName, path);
