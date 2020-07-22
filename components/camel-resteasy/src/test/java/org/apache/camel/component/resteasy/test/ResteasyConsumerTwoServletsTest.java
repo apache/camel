@@ -24,25 +24,23 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
+import org.apache.camel.component.resteasy.test.WebTest.Deployment;
+import org.apache.camel.component.resteasy.test.WebTest.Resource;
 import org.apache.camel.component.resteasy.test.beans.ServletOneService;
 import org.apache.camel.component.resteasy.test.beans.ServletTwoService;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.container.test.api.RunAsClient;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
-@RunWith(Arquillian.class)
-@RunAsClient
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
+@WebTest
 public class ResteasyConsumerTwoServletsTest {
     
-    @ArquillianResource
+    @Resource
     URI baseUri;
 
     @Deployment
@@ -64,14 +62,14 @@ public class ResteasyConsumerTwoServletsTest {
         WebTarget target = client.target(baseUri.toString() + "numberOne/simpleServiceSecure/getMsg");
         Response response = target.request().get();
 
-        Assert.assertEquals(200, response.getStatus());
-        Assert.assertEquals("Message from camel-servlet-1", response.readEntity(String.class));
+        assertEquals(200, response.getStatus());
+        assertEquals("Message from camel-servlet-1", response.readEntity(String.class));
 
         Client client2 = ClientBuilder.newBuilder().build();
         WebTarget target2 = client2.target(baseUri.toString() + "numberTwo/simpleServiceSecure/getMsg");
         Response response2 = target2.request().get();
 
-        Assert.assertEquals(200, response2.getStatus());
-        Assert.assertEquals("Message from camel-servlet-2", response2.readEntity(String.class));
+        assertEquals(200, response2.getStatus());
+        assertEquals("Message from camel-servlet-2", response2.readEntity(String.class));
     }
 }

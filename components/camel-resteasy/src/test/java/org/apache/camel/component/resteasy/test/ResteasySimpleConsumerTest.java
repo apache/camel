@@ -25,23 +25,23 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
+import org.apache.camel.component.resteasy.test.WebTest.Deployment;
+import org.apache.camel.component.resteasy.test.WebTest.Resource;
 import org.apache.camel.component.resteasy.test.beans.SimpleService;
 import org.apache.camel.component.resteasy.test.beans.TestBean;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
-@RunWith(Arquillian.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
+@WebTest
 public class ResteasySimpleConsumerTest {
     
-    @ArquillianResource
+    @Resource
     URI baseUri;
     
     @Deployment
@@ -63,8 +63,8 @@ public class ResteasySimpleConsumerTest {
         WebTarget target = client.target(baseUri.toString() + "simpleService/getMsg");
         Response response = target.request().get();
 
-        Assert.assertEquals(200, response.getStatus());
-        Assert.assertEquals("Added this message from bean to original message from Rest Service -> Message1 from Rest service", response.readEntity(String.class));
+        assertEquals(200, response.getStatus());
+        assertEquals("Added this message from bean to original message from Rest Service -> Message1 from Rest service", response.readEntity(String.class));
     }
 
     @Test
@@ -73,8 +73,8 @@ public class ResteasySimpleConsumerTest {
         WebTarget target = client.target(baseUri.toString() + "simpleService/getMsg2");
         Response response = target.request().get();
 
-        Assert.assertEquals(200, response.getStatus());
-        Assert.assertEquals("Overriding output from Rest service", response.readEntity(String.class));
+        assertEquals(200, response.getStatus());
+        assertEquals("Overriding output from Rest service", response.readEntity(String.class));
     }
 
     @Test
@@ -85,14 +85,14 @@ public class ResteasySimpleConsumerTest {
         WebTarget target = client.target(baseUri.toString() + "simpleService/getMsg3");
         Response response = target.request().get();
 
-        Assert.assertEquals(200, response.getStatus());
-        Assert.assertEquals(expectedResponse, response.readEntity(String.class));
+        assertEquals(200, response.getStatus());
+        assertEquals(expectedResponse, response.readEntity(String.class));
 
         File file = new File("target/messageTest/response.txt");
         byte[] encoded = Files.readAllBytes(file.toPath());
         String responseBody = new String(encoded);
 
-        Assert.assertEquals(expectedResponse, responseBody);
+        assertEquals(expectedResponse, responseBody);
     }
 
 }
