@@ -22,12 +22,20 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTestSupport {
+
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
