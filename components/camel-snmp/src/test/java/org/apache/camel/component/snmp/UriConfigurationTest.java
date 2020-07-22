@@ -19,10 +19,12 @@ package org.apache.camel.component.snmp;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class UriConfigurationTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class UriConfigurationTest {
     protected CamelContext context = new DefaultCamelContext();
 
     @Test
@@ -30,7 +32,7 @@ public class UriConfigurationTest extends Assert {
         context.start();
 
         Endpoint endpoint = context.getEndpoint("snmp:0.0.0.0:1662?protocol=udp&type=TRAP&oids=1.3.6.1.2.1.7.5.1");
-        assertTrue("Endpoint not an SnmpEndpoint: " + endpoint, endpoint instanceof SnmpEndpoint);
+        assertTrue(endpoint instanceof SnmpEndpoint, "Endpoint not an SnmpEndpoint: " + endpoint);
         SnmpEndpoint snmpEndpoint = (SnmpEndpoint) endpoint;
 
         assertEquals(SnmpActionType.TRAP, snmpEndpoint.getType());
@@ -43,7 +45,7 @@ public class UriConfigurationTest extends Assert {
         context.start();
 
         Endpoint endpoint = context.getEndpoint("snmp:0.0.0.0?protocol=udp&type=TRAP&oids=1.3.6.1.2.1.7.5.1");
-        assertTrue("Endpoint not an SnmpEndpoint: " + endpoint, endpoint instanceof SnmpEndpoint);
+        assertTrue(endpoint instanceof SnmpEndpoint, "Endpoint not an SnmpEndpoint: " + endpoint);
         SnmpEndpoint snmpEndpoint = (SnmpEndpoint) endpoint;
 
         assertEquals(SnmpActionType.TRAP, snmpEndpoint.getType());
@@ -56,7 +58,7 @@ public class UriConfigurationTest extends Assert {
         context.start();
 
         Endpoint endpoint = context.getEndpoint("snmp:127.0.0.1:1662?protocol=udp&type=POLL&oids=1.3.6.1.2.1.7.5.1");
-        assertTrue("Endpoint not an SnmpEndpoint: " + endpoint, endpoint instanceof SnmpEndpoint);
+        assertTrue(endpoint instanceof SnmpEndpoint, "Endpoint not an SnmpEndpoint: " + endpoint);
         SnmpEndpoint snmpEndpoint = (SnmpEndpoint) endpoint;
 
         assertEquals(SnmpActionType.POLL, snmpEndpoint.getType());

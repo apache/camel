@@ -20,11 +20,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("CAMEL-10319: Set host, port and oids to test snmp producer.")
+@Disabled("CAMEL-10319: Set host, port and oids to test snmp producer.")
 public class ProducerTest extends CamelTestSupport {
 
     private String host = "192.168.0.254";
