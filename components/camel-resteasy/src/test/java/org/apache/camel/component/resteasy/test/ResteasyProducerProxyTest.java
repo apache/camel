@@ -29,28 +29,30 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.apache.camel.component.resteasy.ResteasyComponent;
 import org.apache.camel.component.resteasy.ResteasyConstants;
+import org.apache.camel.component.resteasy.test.WebTest.Deployment;
+import org.apache.camel.component.resteasy.test.WebTest.Resource;
 import org.apache.camel.component.resteasy.test.beans.Customer;
 import org.apache.camel.component.resteasy.test.beans.CustomerList;
 import org.apache.camel.component.resteasy.test.beans.CustomerService;
 import org.apache.camel.component.resteasy.test.beans.ProxyProducerInterface;
 import org.apache.camel.component.resteasy.test.beans.ResteasyProducerProxyTestApp;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.junit.InSequence;
-import org.jboss.arquillian.test.api.ArquillianResource;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
 
-@RunWith(Arquillian.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+
+@WebTest
 public class ResteasyProducerProxyTest extends CamelTestSupport {   
-    @ArquillianResource
+
+    @Resource
     URI baseUri;
 
     @Deployment
@@ -117,19 +119,19 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
         headers.put(ResteasyConstants.RESTEASY_PROXY_METHOD_PARAMS, params);
 
         String response = template.requestBodyAndHeaders("direct:delete", null, headers, String.class);
-        Assert.assertTrue(response.contains(String.valueOf(id)));
-        Assert.assertTrue(response.contains("Customer deleted :"));
+        assertTrue(response.contains(String.valueOf(id)));
+        assertTrue(response.contains("Customer deleted :"));
     }
 
     @Test
-    @InSequence(1)
+    @Order(1)
     public void testProxyGetAll() throws Exception {
         String expectedUser1 = "{\"name\":\"Roman\",\"surname\":\"Jakubco\",\"id\":1}";
         String expectedUser2 = "{\"name\":\"Camel\",\"surname\":\"Rider\",\"id\":2}";
 
         String response = template.requestBody("direct:getAll", null, String.class);
-        Assert.assertTrue(response.contains(expectedUser1));
-        Assert.assertTrue(response.contains(expectedUser2));
+        assertTrue(response.contains(expectedUser1));
+        assertTrue(response.contains(expectedUser2));
     }
 
     @Test
@@ -144,7 +146,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
                 exchange.getIn().getHeaders().put(ResteasyConstants.RESTEASY_PROXY_METHOD_PARAMS, params);
             }
         });
-        Assert.assertEquals(expectedBody, response.getMessage().getBody(String.class));
+        assertEquals(expectedBody, response.getMessage().getBody(String.class));
     }
 
 
@@ -161,7 +163,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
                 exchange.getIn().getHeaders().put(ResteasyConstants.RESTEASY_PROXY_METHOD_PARAMS, params);
             }
         });
-        Assert.assertEquals(expectedCustomer, response.getMessage().getBody(Customer.class));
+        assertEquals(expectedCustomer, response.getMessage().getBody(Customer.class));
 
     }
 
@@ -176,7 +178,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
         headers.put(ResteasyConstants.RESTEASY_PROXY_METHOD_PARAMS, params);
 
         String response = template.requestBodyAndHeaders("direct:post", null, headers, String.class);
-        Assert.assertEquals("Customer added : " + expectedCustomer, response);
+        assertEquals("Customer added : " + expectedCustomer, response);
 
         deleteCustomer(customerId);
     }
@@ -192,7 +194,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
         headers.put(ResteasyConstants.RESTEASY_PROXY_METHOD_PARAMS, params);
 
         String response = template.requestBodyAndHeaders("direct:post", null, headers, String.class);
-        Assert.assertEquals("Customer added : " + expectedCustomer, response);
+        assertEquals("Customer added : " + expectedCustomer, response);
 
 
 
@@ -204,7 +206,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
         headers.put(ResteasyConstants.RESTEASY_PROXY_METHOD_PARAMS, params);
 
         response = template.requestBodyAndHeaders("direct:put", null, headers, String.class);
-        Assert.assertEquals("Customer updated : " + expectedCustomer, response);
+        assertEquals("Customer updated : " + expectedCustomer, response);
 
         deleteCustomer(customerId);
     }
@@ -220,7 +222,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
         headers.put(ResteasyConstants.RESTEASY_PROXY_METHOD_PARAMS, params);
 
         String response = template.requestBodyAndHeaders("direct:post", null, headers, String.class);
-        Assert.assertEquals("Customer added : " + expectedCustomer, response);
+        assertEquals("Customer added : " + expectedCustomer, response);
 
         params.clear();
         headers.clear();
@@ -228,7 +230,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
         headers.put(ResteasyConstants.RESTEASY_PROXY_METHOD_PARAMS, params);
 
         response = template.requestBodyAndHeaders("direct:delete", null, headers, String.class);
-        Assert.assertEquals("Customer deleted : " + expectedCustomer, response);
+        assertEquals("Customer deleted : " + expectedCustomer, response);
 
     }
 
@@ -243,7 +245,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
         headers.put(ResteasyConstants.RESTEASY_PROXY_METHOD_PARAMS, params);
 
         String response = template.requestBodyAndHeaders("direct:post", null, headers, String.class);
-        Assert.assertEquals("Customer added : " + expectedCustomer, response);
+        assertEquals("Customer added : " + expectedCustomer, response);
 
 
         String expectedCustomers = "[{\"name\":\"Test\",\"surname\":\"Test\",\"id\":6},{\"name\":\"Camel\",\"surname\":\"Rider\",\"id\":2},{\"name\":\"Roman\",\"surname\":\"Jakubco\",\"id\":1}]";
@@ -254,7 +256,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
         params.add(1);
         headers.put(ResteasyConstants.RESTEASY_PROXY_METHOD_PARAMS, params);
         response = template.requestBodyAndHeaders("direct:moreAttributes", null, headers, String.class);
-        Assert.assertEquals(expectedCustomers, response);
+        assertEquals(expectedCustomers, response);
 
         deleteCustomer(customerId);
     }
@@ -271,7 +273,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
         headers.put(ResteasyConstants.RESTEASY_PROXY_METHOD_PARAMS, params);
 
         String response = template.requestBodyAndHeaders("direct:post", null, headers, String.class);
-        Assert.assertEquals("Customer added : " + expectedCustomer, response);
+        assertEquals("Customer added : " + expectedCustomer, response);
 
 
         headers.clear();
@@ -280,7 +282,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
         params.add(expectedCustomer);
         headers.put(ResteasyConstants.RESTEASY_PROXY_METHOD_PARAMS, params);
         response = template.requestBodyAndHeaders("direct:differentType", null, headers, String.class);
-        Assert.assertEquals("Customers are equal", response);
+        assertEquals("Customers are equal", response);
 
         headers.clear();
         params.clear();
@@ -288,7 +290,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
         params.add(expectedCustomer);
         headers.put(ResteasyConstants.RESTEASY_PROXY_METHOD_PARAMS, params);
         response = template.requestBodyAndHeaders("direct:differentType", null, headers, String.class);
-        Assert.assertEquals("Customers are not equal", response);
+        assertEquals("Customers are not equal", response);
 
         Customer testCustomer = new Customer("Camel", "Rider", 2);
         headers.clear();
@@ -297,7 +299,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
         params.add(testCustomer);
         headers.put(ResteasyConstants.RESTEASY_PROXY_METHOD_PARAMS, params);
         response = template.requestBodyAndHeaders("direct:differentType", null, headers, String.class);
-        Assert.assertEquals("Customers are equal", response);
+        assertEquals("Customers are equal", response);
 
         deleteCustomer(customerId);
 
@@ -315,7 +317,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
         headers.put(ResteasyConstants.RESTEASY_PROXY_METHOD_PARAMS, params);
 
         String response = template.requestBodyAndHeaders("direct:post", null, headers, String.class);
-        Assert.assertEquals("Customer added : " + expectedCustomer, response);
+        assertEquals("Customer added : " + expectedCustomer, response);
 
 
 
@@ -330,8 +332,8 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
             }
         });
 
-        Assert.assertTrue(exchange.getMessage().getBody() instanceof NoSuchMethodException);
-        Assert.assertTrue(exchange.getMessage().getHeaders().containsKey(ResteasyConstants.RESTEASY_PROXY_PRODUCER_EXCEPTION));
+        assertTrue(exchange.getMessage().getBody() instanceof NoSuchMethodException);
+        assertTrue(exchange.getMessage().getHeaders().containsKey(ResteasyConstants.RESTEASY_PROXY_PRODUCER_EXCEPTION));
 
         deleteCustomer(customerId);
     }
@@ -347,7 +349,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
         headers.put(ResteasyConstants.RESTEASY_PROXY_METHOD_PARAMS, params);
 
         String response = template.requestBodyAndHeaders("direct:post", null, headers, String.class);
-        Assert.assertEquals("Customer added : " + expectedCustomer, response);
+        assertEquals("Customer added : " + expectedCustomer, response);
 
 
         headers.clear();
@@ -356,7 +358,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
         headers.put(ResteasyConstants.RESTEASY_PROXY_METHOD_PARAMS, params);
         response = template.requestBodyAndHeaders("direct:notResponseType", null, headers, String.class);
 
-        Assert.assertEquals(expectedCustomer.toString(), response);
+        assertEquals(expectedCustomer.toString(), response);
 
         deleteCustomer(customerId);
 

@@ -21,20 +21,17 @@ import java.net.URI;
 
 import javax.ws.rs.core.Response;
 
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.container.test.api.RunAsClient;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.test.api.ArquillianResource;
+import org.apache.camel.component.resteasy.test.WebTest.Deployment;
+import org.apache.camel.component.resteasy.test.WebTest.Resource;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 /**
    See the Servlet 3.0 spec, section 8.2.4 for implementation and processing the details
@@ -50,11 +47,10 @@ import static org.junit.Assert.assertEquals;
    resource and provider classes as well as no web.xml file.
  */
 
-@RunWith(Arquillian.class)
-@RunAsClient
+@WebTest
 public class ServletInitializerTest {
 
-    @ArquillianResource
+    @Resource
     URI baseUri;
 
     @Deployment
@@ -80,6 +76,6 @@ public class ServletInitializerTest {
            .target(baseUri.toString() + "test/17").request().get();
         String entity = response.readEntity(String.class);
         assertEquals(200, response.getStatus());
-        Assert.assertEquals("17", entity);
+        assertEquals("17", entity);
     }
 }

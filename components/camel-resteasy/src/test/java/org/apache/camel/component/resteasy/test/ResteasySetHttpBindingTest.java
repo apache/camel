@@ -22,22 +22,22 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.resteasy.ResteasyComponent;
 import org.apache.camel.component.resteasy.ResteasyHttpBinding;
+import org.apache.camel.component.resteasy.test.WebTest.Deployment;
 import org.apache.camel.component.resteasy.test.beans.TestHttpBinding;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
-@RunWith(Arquillian.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
+@WebTest
 public class ResteasySetHttpBindingTest extends CamelTestSupport {
 
     @Deployment
@@ -78,7 +78,7 @@ public class ResteasySetHttpBindingTest extends CamelTestSupport {
     @Test
     public void testSettingResteasyHttpBinding() throws Exception {
         String response = template.requestBody("direct:start", null, String.class);
-        Assert.assertEquals("Test from custom HttpBinding", response);
+        assertEquals("Test from custom HttpBinding", response);
 
     }
 }

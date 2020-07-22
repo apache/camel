@@ -27,27 +27,26 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.camel.component.resteasy.test.WebTest.Deployment;
+import org.apache.camel.component.resteasy.test.WebTest.Resource;
 import org.apache.camel.component.resteasy.test.beans.Customer;
 import org.apache.camel.component.resteasy.test.beans.CustomerList;
 import org.apache.camel.component.resteasy.test.beans.CustomerService;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.container.test.api.RunAsClient;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.junit.InSequence;
-import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
 
-@RunWith(Arquillian.class)
-@RunAsClient
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+
+@WebTest
 public class ResteasyConsumerTest {
 
-    @ArquillianResource
+    @Resource
     URI baseUri;
 
     @Deployment
@@ -70,7 +69,7 @@ public class ResteasyConsumerTest {
         Response response = target.request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity(customer, MediaType.APPLICATION_JSON_TYPE));
 
-        Assert.assertEquals(200, response.getStatus());
+        assertEquals(200, response.getStatus());
         return response;
     }
 
@@ -79,7 +78,7 @@ public class ResteasyConsumerTest {
         WebTarget target = client.target(baseUri.toString() + "customer/deleteCustomer?id=" + id);
         Response response = target.request().delete();
 
-        Assert.assertEquals(200, response.getStatus());
+        assertEquals(200, response.getStatus());
 
         return response;
     }
@@ -89,13 +88,13 @@ public class ResteasyConsumerTest {
         WebTarget target = client.target(baseUri.toString() + "customer/getCustomer?id=" + id);
         Response response = target.request().get();
 
-        Assert.assertEquals(200, response.getStatus());
+        assertEquals(200, response.getStatus());
 
         return response.readEntity(Customer.class);
     }
 
     @Test
-    @InSequence(1)
+    @Order(1)
     public void testGetAll() throws Exception {
         String expectedUser1 = "{\"name\":\"Roman\",\"surname\":\"Jakubco\",\"id\":1}";
         String expectedUser2 = "{\"name\":\"Camel\",\"surname\":\"Rider\",\"id\":2}";
@@ -104,31 +103,31 @@ public class ResteasyConsumerTest {
         WebTarget target = client.target(baseUri.toString() + "customer/getAll");
         Response response = target.request().get();
 
-        Assert.assertEquals(200, response.getStatus());
+        assertEquals(200, response.getStatus());
 
         String users = response.readEntity(String.class);
-        Assert.assertTrue(users.contains(expectedUser1));
-        Assert.assertTrue(users.contains(expectedUser2));
+        assertTrue(users.contains(expectedUser1));
+        assertTrue(users.contains(expectedUser2));
 
         File file = new File("target/test/consumerTest/all.txt");
         byte[] encoded = Files.readAllBytes(file.toPath());
         String responseBody = new String(encoded);
 
-        Assert.assertTrue(responseBody.contains(expectedUser1));
-        Assert.assertTrue(responseBody.contains(expectedUser2));
+        assertTrue(responseBody.contains(expectedUser1));
+        assertTrue(responseBody.contains(expectedUser2));
     }
 
     @Test
     public void testGet() throws Exception {
         Customer customer = getCustomer(2);
 
-        Assert.assertEquals(new Customer("Camel", "Rider", 2), customer);
+        assertEquals(new Customer("Camel", "Rider", 2), customer);
 
         File file = new File("target/test/consumerTest/get.txt");
         byte[] encoded = Files.readAllBytes(file.toPath());
         String responseBody = new String(encoded);
 
-        Assert.assertEquals("{\"name\":\"Camel\",\"surname\":\"Rider\",\"id\":2}", responseBody);
+        assertEquals("{\"name\":\"Camel\",\"surname\":\"Rider\",\"id\":2}", responseBody);
     }
 
     @Test
@@ -139,15 +138,15 @@ public class ResteasyConsumerTest {
 
         Customer customer = new Customer("TestCreate", "TestCreate", customerId);
         Response response = createCustomer(customer);
-        // Assert.assertEquals(expectedResponse,
+        // assertEquals(expectedResponse,
         // response.readEntity(String.class));
 
         File file = new File("target/test/consumerTest/create.txt");
         byte[] encoded = Files.readAllBytes(file.toPath());
         String responseBody = new String(encoded);
-        Assert.assertEquals(expectedResponse, responseBody);
+        assertEquals(expectedResponse, responseBody);
 
-        Assert.assertEquals(customer, getCustomer(customerId));
+        assertEquals(customer, getCustomer(customerId));
 
         deleteCustomer(customerId);
     }
@@ -162,20 +161,20 @@ public class ResteasyConsumerTest {
         createCustomer(customer);
         Response responseDelete = deleteCustomer(customerId);
 
-        Assert.assertEquals(200, responseDelete.getStatus());
-        Assert.assertEquals(expectedResponse, responseDelete.readEntity(String.class));
+        assertEquals(200, responseDelete.getStatus());
+        assertEquals(expectedResponse, responseDelete.readEntity(String.class));
 
         File file = new File("target/test/consumerTest/delete.txt");
         byte[] encoded = Files.readAllBytes(file.toPath());
         String responseBody = new String(encoded);
-        Assert.assertEquals(expectedResponse, responseBody);
+        assertEquals(expectedResponse, responseBody);
 
         Client client = ClientBuilder.newBuilder().build();
         WebTarget target = client.target(baseUri.toString() + "customer/getCustomer?id=" + customerId);
         Response response = target.request().get();
 
-        Assert.assertEquals(404, response.getStatus());
-        Assert.assertEquals("Customer with given id doesn't exist", response.readEntity(String.class));
+        assertEquals(404, response.getStatus());
+        assertEquals("Customer with given id doesn't exist", response.readEntity(String.class));
     }
 
     @Test
@@ -195,16 +194,16 @@ public class ResteasyConsumerTest {
         Response response = target.request(MediaType.APPLICATION_JSON_TYPE)
                 .put(Entity.entity(customer, MediaType.APPLICATION_JSON_TYPE));
 
-        Assert.assertEquals(200, response.getStatus());
-        Assert.assertEquals(expectedResponse, response.readEntity(String.class));
+        assertEquals(200, response.getStatus());
+        assertEquals(expectedResponse, response.readEntity(String.class));
 
         File file = new File("target/test/consumerTest/update.txt");
         byte[] encoded = Files.readAllBytes(file.toPath());
         String responseBody = new String(encoded);
-        Assert.assertEquals(expectedResponse, responseBody);
+        assertEquals(expectedResponse, responseBody);
 
         Customer updatedCustomer = getCustomer(customerId);
-        Assert.assertEquals(customer, updatedCustomer);
+        assertEquals(customer, updatedCustomer);
 
         deleteCustomer(customerId);
     }
@@ -215,7 +214,7 @@ public class ResteasyConsumerTest {
         WebTarget target = client.target(baseUri.toString() + "customer/createCustomer");
         Response response = target.request().get();
 
-        Assert.assertEquals(405, response.getStatus());
+        assertEquals(405, response.getStatus());
     }
 
 }
