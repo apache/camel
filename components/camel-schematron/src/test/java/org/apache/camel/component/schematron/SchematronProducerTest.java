@@ -34,9 +34,11 @@ import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.camel.component.schematron.processor.ClassPathURIResolver;
 import org.apache.camel.component.schematron.processor.TemplatesFactory;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Schematron Producer Unit Test.
@@ -45,7 +47,7 @@ public class SchematronProducerTest extends CamelTestSupport {
 
     private static SchematronProducer producer;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUP() {
         SchematronEndpoint endpoint = new SchematronEndpoint();
         TransformerFactory fac = new TransformerFactoryImpl();

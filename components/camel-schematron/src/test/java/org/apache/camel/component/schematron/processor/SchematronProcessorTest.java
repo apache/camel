@@ -27,11 +27,11 @@ import net.sf.saxon.TransformerFactoryImpl;
 import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.camel.component.schematron.util.Utils;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * SchematronEngine Unit Test.
