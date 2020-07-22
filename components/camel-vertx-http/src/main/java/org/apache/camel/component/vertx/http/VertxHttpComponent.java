@@ -53,6 +53,7 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent implements
     private boolean useGlobalSslContextParameters;
     @Metadata(label = "advanced")
     private boolean allowJavaSerializedObject;
+    private boolean managedVertx;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -147,6 +148,16 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent implements
         return endpoint.createProducer();
     }
 
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        if (managedVertx && vertx != null) {
+            vertx.close();
+        }
+        vertx = null;
+    }
+
     public Vertx getVertx() {
         if (vertx == null) {
             Set<Vertx> vertxes = getCamelContext().getRegistry().findByType(Vertx.class);
@@ -161,6 +172,7 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent implements
             } else {
                 vertx = Vertx.vertx();
             }
+            managedVertx = true;
         }
 
         return vertx;
