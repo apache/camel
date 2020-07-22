@@ -21,16 +21,18 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class LevelDBAggregateRecoverDeadLetterChannelTest extends CamelTestSupport {
 
     private LevelDBAggregationRepository repo;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data");
         repo = new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
