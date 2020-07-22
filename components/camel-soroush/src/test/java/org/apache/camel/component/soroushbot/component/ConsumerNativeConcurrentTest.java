@@ -27,8 +27,10 @@ import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConsumerNativeConcurrentTest extends SoroushBotTestSupport {
     ConcurrentHashMap<String, Thread> userToThread;
@@ -62,7 +64,7 @@ public class ConsumerNativeConcurrentTest extends SoroushBotTestSupport {
         mockEndpoint.assertIsSatisfied();
         LogManager.getLogger().info(userToThread.size());
         LogManager.getLogger().info(userToThread.values());
-        Assert.assertEquals("previous and current thread must be equal", badThread.get(), 0);
-        Assert.assertTrue("there must be more than 1 thread in $userToThread unless this test is not useful", new HashSet(userToThread.values()).size() > 1);
+        assertEquals(badThread.get(), 0, "previous and current thread must be equal");
+        assertTrue(new HashSet<>(userToThread.values()).size() > 1, "there must be more than 1 thread in $userToThread unless this test is not useful");
     }
 }
