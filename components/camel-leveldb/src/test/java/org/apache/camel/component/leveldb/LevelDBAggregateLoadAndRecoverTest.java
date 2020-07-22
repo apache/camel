@@ -25,11 +25,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LevelDBAggregateLoadAndRecoverTest extends CamelTestSupport {
 
@@ -37,7 +41,7 @@ public class LevelDBAggregateLoadAndRecoverTest extends CamelTestSupport {
     private static final int SIZE = 200;
     private static AtomicInteger counter = new AtomicInteger();
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         deleteDirectory("target/data");
@@ -77,9 +81,9 @@ public class LevelDBAggregateLoadAndRecoverTest extends CamelTestSupport {
         int expected = SIZE / 10 / 10;
         int delta = Math.abs(expected - recovered);
         if (delta == 0) {
-            assertEquals("There should be " + expected + " recovered", expected, recovered);
+            assertEquals(expected, recovered, "There should be " + expected + " recovered");
         } else {
-            assertTrue("We expected " + expected + " recovered but the delta is within accepted range " + delta, delta < 3);
+            assertTrue(delta < 3, "We expected " + expected + " recovered but the delta is within accepted range " + delta);
         }
     }
 
