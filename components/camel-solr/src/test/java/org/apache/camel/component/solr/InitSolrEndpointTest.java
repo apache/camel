@@ -17,7 +17,11 @@
 package org.apache.camel.component.solr;
 
 import org.apache.camel.ResolveEndpointFailedException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class InitSolrEndpointTest extends SolrTestSupport {
 
@@ -26,8 +30,8 @@ public class InitSolrEndpointTest extends SolrTestSupport {
     @Test
     public void endpointCreatedCorrectlyWithAllOptions() throws Exception {
         SolrEndpoint solrEndpoint = context.getEndpoint(solrUrl + getFullOptions(), SolrEndpoint.class);
-        assertEquals("queue size incorrect", 5, solrEndpoint.getStreamingQueueSize());
-        assertEquals("thread count incorrect", 1, solrEndpoint.getStreamingThreadCount());
+        assertEquals(5, solrEndpoint.getStreamingQueueSize(), "queue size incorrect");
+        assertEquals(1, solrEndpoint.getStreamingThreadCount(), "thread count incorrect");
         assertNotNull(solrEndpoint);
     }
 
@@ -35,13 +39,14 @@ public class InitSolrEndpointTest extends SolrTestSupport {
     public void streamingEndpointCreatedCorrectly() throws Exception {
         SolrEndpoint solrEndpoint = context.getEndpoint(solrUrl, SolrEndpoint.class);
         assertNotNull(solrEndpoint);
-        assertEquals("queue size incorrect", SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE, solrEndpoint.getStreamingQueueSize());
-        assertEquals("thread count incorrect", SolrConstants.DEFAULT_STREAMING_THREAD_COUNT, solrEndpoint.getStreamingThreadCount());
+        assertEquals(SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE, solrEndpoint.getStreamingQueueSize(), "queue size incorrect");
+        assertEquals(SolrConstants.DEFAULT_STREAMING_THREAD_COUNT, solrEndpoint.getStreamingThreadCount(), "thread count incorrect");
     }
 
-    @Test(expected = ResolveEndpointFailedException.class)
+    @Test
     public void wrongURLFormatFailsEndpointCreation() throws Exception {
-        context.getEndpoint("solr://localhost:x99/solr");
+        assertThrows(ResolveEndpointFailedException.class,
+            () -> context.getEndpoint("solr://localhost:x99/solr"));
     }
 
     private String getFullOptions() {
