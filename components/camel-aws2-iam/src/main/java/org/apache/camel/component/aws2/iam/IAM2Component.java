@@ -55,7 +55,9 @@ public class IAM2Component extends DefaultComponent {
         IAM2Configuration configuration = this.configuration != null ? this.configuration.copy() : new IAM2Configuration();
         IAM2Endpoint endpoint = new IAM2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration, endpoint);
+        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration, endpoint);
+        }
         if (configuration.getIamClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon IAM client or accessKey and secretKey must be specified");
         }

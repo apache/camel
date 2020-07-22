@@ -47,6 +47,21 @@ public interface Aws2IamComponentBuilderFactory {
      */
     interface Aws2IamComponentBuilder extends ComponentBuilder<IAM2Component> {
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default Aws2IamComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * Component configuration.
          * 
          * The option is a:
@@ -244,6 +259,7 @@ public interface Aws2IamComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "autoDiscoverClient": getOrCreateConfiguration((IAM2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((IAM2Component) component).setConfiguration((org.apache.camel.component.aws2.iam.IAM2Configuration) value); return true;
             case "iamClient": getOrCreateConfiguration((IAM2Component) component).setIamClient((software.amazon.awssdk.services.iam.IamClient) value); return true;
             case "lazyStartProducer": ((IAM2Component) component).setLazyStartProducer((boolean) value); return true;
