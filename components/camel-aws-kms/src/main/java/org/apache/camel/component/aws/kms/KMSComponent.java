@@ -51,7 +51,9 @@ public class KMSComponent extends DefaultComponent {
         
         KMSEndpoint endpoint = new KMSEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration);
+        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration);
+        }
         if (configuration.getKmsClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon kms client or accessKey and secretKey must be specified");
         }
