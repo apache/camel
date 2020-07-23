@@ -19,8 +19,8 @@ package org.apache.camel.component.cassandra;
 import java.util.Collections;
 import java.util.List;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertEquals;

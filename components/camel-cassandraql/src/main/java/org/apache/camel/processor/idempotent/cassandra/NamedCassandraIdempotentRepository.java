@@ -16,8 +16,8 @@
  */
 package org.apache.camel.processor.idempotent.cassandra;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
+
+import com.datastax.oss.driver.api.core.CqlSession;
 
 /**
  * Concrete implementation of {@link CassandraIdempotentRepository} using 2
@@ -29,14 +29,8 @@ public class NamedCassandraIdempotentRepository extends CassandraIdempotentRepos
         setName("DEFAULT");
     }
 
-    public NamedCassandraIdempotentRepository(Session session, String name) {
+    public NamedCassandraIdempotentRepository(CqlSession session, String name) {
         super(session);
-        setPKColumns("NAME", "KEY");
-        setName(name);
-    }
-
-    public NamedCassandraIdempotentRepository(Cluster cluster, String keyspace, String name) {
-        super(cluster, keyspace);
         setPKColumns("NAME", "KEY");
         setName(name);
     }

@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.cassandra;
 
-import com.datastax.driver.core.ResultSet;
+
+import com.datastax.oss.driver.api.core.cql.ResultSet;
 
 /**
  * Strategy to convert {@link ResultSet} into message body

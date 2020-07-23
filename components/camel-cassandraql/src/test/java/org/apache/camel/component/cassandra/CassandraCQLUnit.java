@@ -16,21 +16,23 @@
  */
 package org.apache.camel.component.cassandra;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
+import com.datastax.oss.driver.api.core.CqlIdentifier;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.internal.core.session.DefaultSession;
 import org.cassandraunit.CQLDataLoader;
 import org.cassandraunit.dataset.CQLDataSet;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class CassandraCQLUnit implements BeforeAllCallback, BeforeEachCallback {
+public class CassandraCQLUnit implements BeforeAllCallback, BeforeEachCallback, AfterEachCallback {
 
-    public Session session;
-    public Cluster cluster;
+    public CqlSession session;
     protected CQLDataSet dataSet;
     protected String configurationFileName;
     protected long startupTimeoutMillis = EmbeddedCassandraServerHelper.DEFAULT_STARTUP_TIMEOUT;
@@ -51,16 +53,22 @@ public class CassandraCQLUnit implements BeforeAllCallback, BeforeEachCallback {
         } else {
             EmbeddedCassandraServerHelper.startEmbeddedCassandra(startupTimeoutMillis);
         }
-
-        /* create structure and load data */
-        cluster = EmbeddedCassandraServerHelper.getCluster();
-        session = EmbeddedCassandraServerHelper.getSession();
     }
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
+        /* create structure and load data */
+        session = CqlSession.builder().build();
         CQLDataLoader dataLoader = new CQLDataLoader(session);
         dataLoader.load(dataSet);
     }
 
+    @Override
+    public void afterEach(ExtensionContext extensionContext) throws Exception {
+        try {
+            session.close();
+        } catch (Throwable e) {
+            // ignore close errors
+        }
+    }
 }
