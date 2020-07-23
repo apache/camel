@@ -1169,7 +1169,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path streamName
      */
-    public static org.apache.camel.builder.endpoint.dsl.Kinesis2EndpointBuilderFactory.Kinesis2EndpointBuilder aws2Kinesis(
+    static org.apache.camel.builder.endpoint.dsl.Kinesis2EndpointBuilderFactory.Kinesis2EndpointBuilder aws2Kinesis(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Kinesis2EndpointBuilderFactory.endpointBuilder("aws2-kinesis", path);
     }
@@ -1191,7 +1191,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path streamName
      */
-    public static org.apache.camel.builder.endpoint.dsl.Kinesis2EndpointBuilderFactory.Kinesis2EndpointBuilder aws2Kinesis(
+    static org.apache.camel.builder.endpoint.dsl.Kinesis2EndpointBuilderFactory.Kinesis2EndpointBuilder aws2Kinesis(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Kinesis2EndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -1955,7 +1955,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path streamName
      */
-    static org.apache.camel.builder.endpoint.dsl.KinesisFirehoseEndpointBuilderFactory.KinesisFirehoseEndpointBuilder awsKinesisFirehose(
+    public static org.apache.camel.builder.endpoint.dsl.KinesisFirehoseEndpointBuilderFactory.KinesisFirehoseEndpointBuilder awsKinesisFirehose(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.KinesisFirehoseEndpointBuilderFactory.endpointBuilder("aws-kinesis-firehose", path);
     }
@@ -1976,7 +1976,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path streamName
      */
-    static org.apache.camel.builder.endpoint.dsl.KinesisFirehoseEndpointBuilderFactory.KinesisFirehoseEndpointBuilder awsKinesisFirehose(
+    public static org.apache.camel.builder.endpoint.dsl.KinesisFirehoseEndpointBuilderFactory.KinesisFirehoseEndpointBuilder awsKinesisFirehose(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.KinesisFirehoseEndpointBuilderFactory.endpointBuilder(componentName, path);

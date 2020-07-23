@@ -23,6 +23,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonkinesisclient":
         case "amazonKinesisClient": target.getConfiguration().setAmazonKinesisClient(property(camelContext, software.amazon.awssdk.services.kinesis.KinesisClient.class, value)); return true;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
         case "backoffidlethreshold":
@@ -93,6 +95,7 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("accessKey", java.lang.String.class);
         answer.put("amazonKinesisClient", software.amazon.awssdk.services.kinesis.KinesisClient.class);
+        answer.put("autoDiscoverClient", boolean.class);
         answer.put("backoffErrorThreshold", int.class);
         answer.put("backoffIdleThreshold", int.class);
         answer.put("backoffMultiplier", int.class);
@@ -137,6 +140,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazonkinesisclient":
         case "amazonKinesisClient": return target.getConfiguration().getAmazonKinesisClient();
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":
