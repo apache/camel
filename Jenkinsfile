@@ -70,11 +70,6 @@ pipeline {
                 sh "./mvnw $MAVEN_PARAMS -pl :camel-buildtools install"
                 sh "./mvnw $MAVEN_PARAMS -Psourcecheck -Dcheckstyle.failOnViolation=false checkstyle:check"
             }
-            post {
-                always {
-                    checkstyle pattern: '**/checkstyle-result.xml', canRunOnFailed: true
-                }
-            }
         }
 
         stage('Test') {
