@@ -76,4 +76,15 @@ public class KinesisFirehoseComponentConfigurationTest extends CamelTestSupport 
         assertEquals("localhost", endpoint.getConfiguration().getProxyHost());
         assertEquals(Integer.valueOf(9000), endpoint.getConfiguration().getProxyPort());
     }
+    
+    @Test
+    public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
+        KinesisFirehoseComponent component = context.getComponent("aws-kinesis-firehose", KinesisFirehoseComponent.class);
+        KinesisFirehoseEndpoint endpoint = (KinesisFirehoseEndpoint)component.createEndpoint("aws-kinesis-firehose://some_stream_name?accessKey=xxxxx&secretKey=yyyyy&autoDiscoverClient=false");
+        
+        assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
+        assertEquals("xxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals(false, endpoint.getConfiguration().isAutoDiscoverClient());
+    }
 }
