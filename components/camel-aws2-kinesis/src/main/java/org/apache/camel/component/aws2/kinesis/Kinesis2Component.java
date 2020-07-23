@@ -48,7 +48,9 @@ public class Kinesis2Component extends DefaultComponent {
         configuration.setStreamName(remaining);
         Kinesis2Endpoint endpoint = new Kinesis2Endpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration);
+        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration);
+        }
         if (configuration.getAmazonKinesisClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonKinesisClient or accessKey and secretKey must be specified");
         }
