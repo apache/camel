@@ -33,6 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 public class BlobProducer extends DefaultProducer {
 
     private final BlobConfiguration configuration;
+    private final BlobConfigurationProxy configurationProxy;
     private final BlobServiceOperations blobServiceOperations;
     private final BlobServiceClientWrapper blobServiceClientWrapper;
 
@@ -41,6 +42,7 @@ public class BlobProducer extends DefaultProducer {
         this.configuration = getEndpoint().getConfiguration();
         this.blobServiceClientWrapper = new BlobServiceClientWrapper(getEndpoint().getBlobServiceClient());
         this.blobServiceOperations = new BlobServiceOperations(blobServiceClientWrapper);
+        this.configurationProxy = new BlobConfigurationProxy(configuration);
     }
 
     @Override
@@ -131,11 +133,7 @@ public class BlobProducer extends DefaultProducer {
     }
 
     private BlobOperationsDefinition determineOperation(final Exchange exchange) {
-        final BlobOperationsDefinition operation = BlobExchangeHeaders.getBlobOperationsDefinitionFromHeaders(exchange);
-        if (operation != null) {
-            return operation;
-        }
-        return configuration.getOperation();
+       return configurationProxy.getOperation(exchange);
     }
 
     private BlobContainerOperations getContainerOperations(final Exchange exchange) {
@@ -150,7 +148,8 @@ public class BlobProducer extends DefaultProducer {
     }
 
     private String determineContainerName(final Exchange exchange) {
-        final String containerName = BlobUtils.getContainerName(configuration, exchange);
+        final String containerName = configurationProxy.getContainerName(exchange);
+
         if (ObjectHelper.isEmpty(containerName)) {
             throw new IllegalArgumentException("Container name must be specified");
         }
@@ -158,7 +157,7 @@ public class BlobProducer extends DefaultProducer {
     }
 
     public String determineBlobName(final Exchange exchange) {
-        final String blobName = BlobUtils.getBlobName(configuration, exchange);
+        final String blobName = configurationProxy.getBlobName(exchange);
 
         if (ObjectHelper.isEmpty(blobName)) {
             throw new IllegalArgumentException("Blob name must be specified");

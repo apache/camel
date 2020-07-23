@@ -48,17 +48,6 @@ public final class BlobUtils {
         return length;
     }
 
-    public static BlobCommonRequestOptions getCommonRequestOptions(final Exchange exchange) {
-        final BlobHttpHeaders blobHttpHeaders = BlobExchangeHeaders.getBlobHttpHeadersFromHeaders(exchange);
-        final Map<String, String> metadata = BlobExchangeHeaders.getMetadataFromHeaders(exchange);
-        final AccessTier accessTier = BlobExchangeHeaders.getAccessTierFromHeaders(exchange);
-        final BlobRequestConditions blobRequestConditions = BlobExchangeHeaders.getBlobRequestConditionsFromHeaders(exchange);
-        final Duration timeout = BlobExchangeHeaders.getTimeoutFromHeaders(exchange);
-        final byte[] contentMD5 = BlobExchangeHeaders.getContentMd5FromHeaders(exchange);
-
-        return new BlobCommonRequestOptions(blobHttpHeaders, metadata, accessTier, blobRequestConditions, contentMD5, timeout);
-    }
-
     public static String getContainerName(final BlobConfiguration configuration, final Exchange exchange) {
         return ObjectHelper.isEmpty(BlobExchangeHeaders.getBlobContainerNameFromHeaders(exchange)) ? configuration.getContainerName()
                 : BlobExchangeHeaders.getBlobContainerNameFromHeaders(exchange);

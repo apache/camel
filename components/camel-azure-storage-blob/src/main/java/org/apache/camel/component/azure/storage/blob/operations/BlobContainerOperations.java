@@ -24,6 +24,7 @@ import com.azure.storage.blob.models.BlobRequestConditions;
 import com.azure.storage.blob.models.ListBlobsOptions;
 import com.azure.storage.blob.models.PublicAccessType;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.azure.storage.blob.BlobConfigurationProxy;
 import org.apache.camel.component.azure.storage.blob.BlobExchangeHeaders;
 import org.apache.camel.component.azure.storage.blob.client.BlobContainerClientWrapper;
 import org.apache.camel.util.ObjectHelper;
@@ -34,6 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 public class BlobContainerOperations {
 
     private final BlobContainerClientWrapper client;
+    private final BlobConfigurationProxy configurationProxy = new BlobConfigurationProxy();
 
     public BlobContainerOperations(final BlobContainerClientWrapper client) {
         ObjectHelper.notNull(client, "client cannot be null");
@@ -46,8 +48,8 @@ public class BlobContainerOperations {
             return new BlobOperationResponse(client.listBlobs(new ListBlobsOptions(), null));
         }
 
-        final ListBlobsOptions listBlobOptions = getListBlobOptions(exchange);
-        final Duration timeout = BlobExchangeHeaders.getTimeoutFromHeaders(exchange);
+        final ListBlobsOptions listBlobOptions = configurationProxy.getListBlobOptions(exchange);
+        final Duration timeout = configurationProxy.getTimeout(exchange);
 
         return new BlobOperationResponse(client.listBlobs(listBlobOptions, timeout));
     }
@@ -58,9 +60,9 @@ public class BlobContainerOperations {
             return new BlobOperationResponse(true, blobExchangeHeaders.toMap());
         }
 
-        final Map<String, String> metadata = BlobExchangeHeaders.getMetadataFromHeaders(exchange);
-        final PublicAccessType publicAccessType = BlobExchangeHeaders.getPublicAccessTypeFromHeaders(exchange);
-        final Duration timeout = BlobExchangeHeaders.getTimeoutFromHeaders(exchange);
+        final Map<String, String> metadata = configurationProxy.getMetadata(exchange);
+        final PublicAccessType publicAccessType = configurationProxy.getPublicAccessType(exchange);
+        final Duration timeout = configurationProxy.getTimeout(exchange);
 
         final BlobExchangeHeaders blobExchangeHeaders = new BlobExchangeHeaders().httpHeaders(client.createContainer(metadata, publicAccessType, timeout));
 
@@ -73,31 +75,11 @@ public class BlobContainerOperations {
             return new BlobOperationResponse(true, blobExchangeHeaders.toMap());
         }
 
-        final BlobRequestConditions blobRequestConditions = BlobExchangeHeaders.getBlobRequestConditionsFromHeaders(exchange);
-        final Duration timeout = BlobExchangeHeaders.getTimeoutFromHeaders(exchange);
+        final BlobRequestConditions blobRequestConditions = configurationProxy.getBlobRequestConditions(exchange);
+        final Duration timeout = configurationProxy.getTimeout(exchange);
 
         final BlobExchangeHeaders blobExchangeHeaders = new BlobExchangeHeaders().httpHeaders(client.deleteContainer(blobRequestConditions, timeout));
 
         return new BlobOperationResponse(true, blobExchangeHeaders.toMap());
-    }
-
-    private ListBlobsOptions getListBlobOptions(final Exchange exchange) {
-        ListBlobsOptions blobsOptions = BlobExchangeHeaders.getListBlobsOptionsFromHeaders(exchange);
-
-        if (!ObjectHelper.isEmpty(blobsOptions)) {
-            return blobsOptions;
-        } else {
-            blobsOptions = new ListBlobsOptions();
-        }
-
-        final BlobListDetails blobListDetails = BlobExchangeHeaders.getBlobListDetailsFromHeaders(exchange);
-        final String prefix = BlobExchangeHeaders.getPrefixFromHeaders(exchange);
-        final Integer maxResultsPerPage = BlobExchangeHeaders.getMaxResultsPerPageFromHeaders(exchange);
-
-        blobsOptions.setDetails(blobListDetails);
-        blobsOptions.setMaxResultsPerPage(maxResultsPerPage);
-        blobsOptions.setPrefix(prefix);
-
-        return blobsOptions;
     }
 }
