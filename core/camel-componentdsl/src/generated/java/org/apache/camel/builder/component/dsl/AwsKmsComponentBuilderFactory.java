@@ -47,6 +47,21 @@ public interface AwsKmsComponentBuilderFactory {
      */
     interface AwsKmsComponentBuilder extends ComponentBuilder<KMSComponent> {
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default AwsKmsComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -215,6 +230,7 @@ public interface AwsKmsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "autoDiscoverClient": getOrCreateConfiguration((KMSComponent) component).setAutoDiscoverClient((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((KMSComponent) component).setAccessKey((java.lang.String) value); return true;
             case "configuration": ((KMSComponent) component).setConfiguration((org.apache.camel.component.aws.kms.KMSConfiguration) value); return true;
             case "kmsClient": getOrCreateConfiguration((KMSComponent) component).setKmsClient((com.amazonaws.services.kms.AWSKMS) value); return true;
