@@ -39,7 +39,7 @@ The stream needs to be created prior to it being used. +
 
 
 // component options: START
-The AWS Kinesis component supports 16 options, which are listed below.
+The AWS Kinesis component supports 17 options, which are listed below.
 
 
 
@@ -47,6 +47,7 @@ The AWS Kinesis component supports 16 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *amazonKinesisClient* (common) | Amazon Kinesis client to use for all requests for this endpoint |  | AmazonKinesis
+| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking | true | boolean
 | *configuration* (common) | The component configuration |  | KinesisConfiguration
 | *proxyHost* (common) | To define a proxy host when instantiating the Kinesis client |  | String
 | *proxyPort* (common) | To define a proxy port when instantiating the Kinesis client |  | Integer
@@ -90,13 +91,14 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (34 parameters):
+=== Query Parameters (35 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *amazonKinesisClient* (common) | Amazon Kinesis client to use for all requests for this endpoint |  | AmazonKinesis
+| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking | true | boolean
 | *proxyHost* (common) | To define a proxy host when instantiating the Kinesis client |  | String
 | *proxyPort* (common) | To define a proxy port when instantiating the Kinesis client |  | Integer
 | *proxyProtocol* (common) | To define a proxy protocol when instantiating the Kinesis client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
