@@ -47,6 +47,21 @@ public interface Aws2KmsComponentBuilderFactory {
      */
     interface Aws2KmsComponentBuilder extends ComponentBuilder<KMS2Component> {
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default Aws2KmsComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * Component configuration.
          * 
          * The option is a:
@@ -243,6 +258,7 @@ public interface Aws2KmsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "autoDiscoverClient": getOrCreateConfiguration((KMS2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((KMS2Component) component).setConfiguration((org.apache.camel.component.aws2.kms.KMS2Configuration) value); return true;
             case "kmsClient": getOrCreateConfiguration((KMS2Component) component).setKmsClient((software.amazon.awssdk.services.kms.KmsClient) value); return true;
             case "lazyStartProducer": ((KMS2Component) component).setLazyStartProducer((boolean) value); return true;

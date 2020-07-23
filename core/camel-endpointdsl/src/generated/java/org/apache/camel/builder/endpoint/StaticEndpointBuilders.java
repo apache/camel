@@ -1252,7 +1252,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path label
      */
-    public static org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory.KMS2EndpointBuilder aws2Kms(
+    static org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory.KMS2EndpointBuilder aws2Kms(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory.endpointBuilder("aws2-kms", path);
     }
@@ -1273,7 +1273,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path label
      */
-    public static org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory.KMS2EndpointBuilder aws2Kms(
+    static org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory.KMS2EndpointBuilder aws2Kms(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -1996,7 +1996,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path label
      */
-    static org.apache.camel.builder.endpoint.dsl.KMSEndpointBuilderFactory.KMSEndpointBuilder awsKms(
+    public static org.apache.camel.builder.endpoint.dsl.KMSEndpointBuilderFactory.KMSEndpointBuilder awsKms(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.KMSEndpointBuilderFactory.endpointBuilder("aws-kms", path);
     }
@@ -2017,7 +2017,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path label
      */
-    static org.apache.camel.builder.endpoint.dsl.KMSEndpointBuilderFactory.KMSEndpointBuilder awsKms(
+    public static org.apache.camel.builder.endpoint.dsl.KMSEndpointBuilderFactory.KMSEndpointBuilder awsKms(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.KMSEndpointBuilderFactory.endpointBuilder(componentName, path);
