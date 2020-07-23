@@ -48,7 +48,9 @@ public class KinesisFirehose2Component extends DefaultComponent {
         configuration.setStreamName(remaining);
         KinesisFirehose2Endpoint endpoint = new KinesisFirehose2Endpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration);
+        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration);
+        }
         if (configuration.getAmazonKinesisFirehoseClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonKinesisFirehoseClient or accessKey and secretKey must be specified");
         }
