@@ -25,16 +25,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CassandraComponentConsumerTest extends BaseCassandraTest {
 
     static final String CQL = "select login, first_name, last_name from camel_user";
-
-    @RegisterExtension
-    static CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit();
 
     @Test
     public void testConsumeAll() throws Exception {
@@ -86,9 +82,9 @@ public class CassandraComponentConsumerTest extends BaseCassandraTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("cql://localhost/camel_ks?cql=" + CQL).to("mock:resultAll");
-                from("cql://localhost/camel_ks?cql=" + CQL + "&prepareStatements=false").to("mock:resultUnprepared");
-                from("cql://localhost/camel_ks?cql=" + CQL + "&resultSetConversionStrategy=ONE").to("mock:resultOne");
+                from(String.format("cql://%s/%s?cql=%s", getUrl(), KEYSPACE_NAME, CQL)).to("mock:resultAll");
+                from(String.format("cql://%s/%s?cql=%s&prepareStatements=false", getUrl(), KEYSPACE_NAME, CQL)).to("mock:resultUnprepared");
+                from(String.format("cql://%s/%s?cql=%s&resultSetConversionStrategy=ONE", getUrl(), KEYSPACE_NAME, CQL)).to("mock:resultOne");
             }
         };
     }

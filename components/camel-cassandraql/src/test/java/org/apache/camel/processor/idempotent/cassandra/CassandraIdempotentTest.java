@@ -18,26 +18,20 @@ package org.apache.camel.processor.idempotent.cassandra;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cassandra.BaseCassandraTest;
-import org.apache.camel.component.cassandra.CassandraCQLUnit;
-import org.apache.camel.component.cassandra.CassandraUnitUtils;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Unite test for {@link CassandraIdempotentRepository}
  */
 public class CassandraIdempotentTest extends BaseCassandraTest {
 
-    @RegisterExtension
-    static CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit("NamedIdempotentDataSet.cql");
-
     private CassandraIdempotentRepository idempotentRepository;
 
     @Override
     protected void doPreSetup() throws Exception {
-        idempotentRepository = new NamedCassandraIdempotentRepository(cassandra.session, "ID");
+        idempotentRepository = new NamedCassandraIdempotentRepository(getSession(), "ID");
         idempotentRepository.setTable("NAMED_CAMEL_IDEMPOTENT");
         idempotentRepository.start();
         super.doPreSetup();

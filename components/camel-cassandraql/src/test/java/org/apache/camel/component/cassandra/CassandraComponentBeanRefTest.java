@@ -20,7 +20,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -29,13 +28,10 @@ public class CassandraComponentBeanRefTest extends BaseCassandraTest {
     public static final String CQL = "insert into camel_user(login, first_name, last_name) values (?, ?, ?)";
     public static final String SESSION_URI = "cql:bean:cassandraSession?cql=" + CQL;
 
-    @RegisterExtension
-    static CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit();
-
     @Override
     protected Registry createCamelRegistry() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
-        registry.bind("cassandraSession", cassandra.session);
+        registry.bind("cassandraSession", getSession());
         return registry;
     }
 
@@ -52,7 +48,7 @@ public class CassandraComponentBeanRefTest extends BaseCassandraTest {
     public void testSession() throws Exception {
         CassandraEndpoint endpoint = getMandatoryEndpoint(SESSION_URI, CassandraEndpoint.class);
 
-        assertEquals(CassandraUnitUtils.KEYSPACE, endpoint.getKeyspace());
+        assertEquals(KEYSPACE_NAME, endpoint.getKeyspace());
         assertEquals(CQL, endpoint.getCql());
     }
 }

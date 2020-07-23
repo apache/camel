@@ -20,26 +20,20 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cassandra.BaseCassandraTest;
-import org.apache.camel.component.cassandra.CassandraCQLUnit;
-import org.apache.camel.component.cassandra.CassandraUnitUtils;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Unite test for {@link CassandraAggregationRepository}
  */
 public class CassandraAggregationTest extends BaseCassandraTest {
 
-    @RegisterExtension
-    static CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit("NamedAggregationDataSet.cql");
-
     private CassandraAggregationRepository aggregationRepository;
 
     @Override
     protected void doPreSetup() throws Exception {
-        aggregationRepository = new NamedCassandraAggregationRepository(cassandra.session, "ID");
+        aggregationRepository = new NamedCassandraAggregationRepository(getSession(), "ID");
         aggregationRepository.setTable("NAMED_CAMEL_AGGREGATION");
         aggregationRepository.start();
         super.doPreSetup();
