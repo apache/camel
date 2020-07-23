@@ -41,7 +41,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         S3Client client = S3Client.builder().build();
         context.getRegistry().bind("amazonS3Client", client);
         AWS2S3Component component = context.getComponent("aws2-s3", AWS2S3Component.class);
-        AWS2S3Endpoint endpoint = (AWS2S3Endpoint)component.createEndpoint("aws2-s3://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)&autoDiscoverClient=false");
+        AWS2S3Endpoint endpoint = (AWS2S3Endpoint)component.createEndpoint("aws2-s3://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)&region=eu-west-1&autoDiscoverClient=false");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
         assertNotSame(client, endpoint.getConfiguration().getAmazonS3Client());
@@ -52,7 +52,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         S3Client client = S3Client.builder().build();
         context.getRegistry().bind("amazonS3Client", client);
         AWS2S3Component component = context.getComponent("aws2-s3", AWS2S3Component.class);
-        AWS2S3Endpoint endpoint = (AWS2S3Endpoint)component.createEndpoint("aws2-s3://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)");
+        AWS2S3Endpoint endpoint = (AWS2S3Endpoint)component.createEndpoint("aws2-s3://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)&region=eu-west-1");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
         assertSame(client, endpoint.getConfiguration().getAmazonS3Client());
