@@ -41,7 +41,7 @@ The stream needs to be created prior to it being used. +
 
 
 // component options: START
-The AWS 2 Kinesis Firehose component supports 12 options, which are listed below.
+The AWS 2 Kinesis Firehose component supports 13 options, which are listed below.
 
 
 
@@ -49,6 +49,7 @@ The AWS 2 Kinesis Firehose component supports 12 options, which are listed below
 |===
 | Name | Description | Default | Type
 | *amazonKinesisFirehoseClient* (producer) | Amazon Kinesis Firehose client to use for all requests for this endpoint |  | FirehoseClient
+| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking | true | boolean
 | *configuration* (producer) | Component configuration |  | KinesisFirehose2Configuration
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *operation* (producer) | The operation to do in case the user don't want to send only a record. The value can be one of: sendBatchRecord, createDeliveryStream, deleteDeliveryStream, updateDestination |  | KinesisFirehose2Operations
@@ -88,13 +89,14 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (12 parameters):
+=== Query Parameters (13 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *amazonKinesisFirehoseClient* (producer) | Amazon Kinesis Firehose client to use for all requests for this endpoint |  | FirehoseClient
+| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking | true | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *operation* (producer) | The operation to do in case the user don't want to send only a record. The value can be one of: sendBatchRecord, createDeliveryStream, deleteDeliveryStream, updateDestination |  | KinesisFirehose2Operations
 | *proxyHost* (producer) | To define a proxy host when instantiating the Kinesis Firehose client |  | String
