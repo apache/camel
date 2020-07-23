@@ -2805,7 +2805,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path apiName/methodName
      */
-    public static org.apache.camel.builder.endpoint.dsl.BoxEndpointBuilderFactory.BoxEndpointBuilder box(
+    static org.apache.camel.builder.endpoint.dsl.BoxEndpointBuilderFactory.BoxEndpointBuilder box(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.BoxEndpointBuilderFactory.endpointBuilder("box", path);
     }
@@ -2832,7 +2832,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path apiName/methodName
      */
-    public static org.apache.camel.builder.endpoint.dsl.BoxEndpointBuilderFactory.BoxEndpointBuilder box(
+    static org.apache.camel.builder.endpoint.dsl.BoxEndpointBuilderFactory.BoxEndpointBuilder box(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.BoxEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -3634,7 +3634,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path beanRef:hosts:port/keyspace
      */
-    static org.apache.camel.builder.endpoint.dsl.CassandraEndpointBuilderFactory.CassandraEndpointBuilder cql(
+    public static org.apache.camel.builder.endpoint.dsl.CassandraEndpointBuilderFactory.CassandraEndpointBuilder cql(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.CassandraEndpointBuilderFactory.endpointBuilder("cql", path);
     }
@@ -3665,7 +3665,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path beanRef:hosts:port/keyspace
      */
-    static org.apache.camel.builder.endpoint.dsl.CassandraEndpointBuilderFactory.CassandraEndpointBuilder cql(
+    public static org.apache.camel.builder.endpoint.dsl.CassandraEndpointBuilderFactory.CassandraEndpointBuilder cql(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.CassandraEndpointBuilderFactory.endpointBuilder(componentName, path);
