@@ -62,6 +62,21 @@ public interface AwsKinesisComponentBuilderFactory {
             return this;
         }
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default AwsKinesisComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * The component configuration.
          * 
          * The option is a:
@@ -295,6 +310,7 @@ public interface AwsKinesisComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "amazonKinesisClient": getOrCreateConfiguration((KinesisComponent) component).setAmazonKinesisClient((com.amazonaws.services.kinesis.AmazonKinesis) value); return true;
+            case "autoDiscoverClient": getOrCreateConfiguration((KinesisComponent) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((KinesisComponent) component).setConfiguration((org.apache.camel.component.aws.kinesis.KinesisConfiguration) value); return true;
             case "proxyHost": getOrCreateConfiguration((KinesisComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((KinesisComponent) component).setProxyPort((java.lang.Integer) value); return true;
