@@ -19,7 +19,7 @@ package org.apache.camel.component.cassandra;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.datastax.driver.core.Row;
+import com.datastax.oss.driver.api.core.cql.Row;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;

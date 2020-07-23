@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.cassandra;
 
-import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Session;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.PreparedStatement;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -46,7 +46,7 @@ public class CassandraConsumer extends ScheduledPollConsumer {
     @Override
     protected int poll() throws Exception {
         // Execute CQL Query
-        Session session = getEndpoint().getSessionHolder().getSession();
+        CqlSession session = getEndpoint().getSessionHolder().getSession();
         ResultSet resultSet;
         if (isPrepareStatements()) {
             resultSet = session.execute(preparedStatement.bind());

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.cassandra;
 
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
@@ -30,18 +28,13 @@ public class CassandraComponentBeanRefTest extends BaseCassandraTest {
 
     public static final String CQL = "insert into camel_user(login, first_name, last_name) values (?, ?, ?)";
     public static final String SESSION_URI = "cql:bean:cassandraSession?cql=" + CQL;
-    public static final String CLUSTER_URI = "cql:bean:cassandraCluster/camel_ks?cql=" + CQL;
 
     @RegisterExtension
     static CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit();
 
-    @Produce("direct:input")
-    ProducerTemplate producerTemplate;
-
     @Override
     protected Registry createCamelRegistry() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
-        registry.bind("cassandraCluster", cassandra.cluster);
         registry.bind("cassandraSession", cassandra.session);
         return registry;
     }
@@ -51,7 +44,6 @@ public class CassandraComponentBeanRefTest extends BaseCassandraTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:inputSession").to(SESSION_URI);
-                from("direct:inputCluster").to(CLUSTER_URI);
             }
         };
     }
@@ -63,13 +55,4 @@ public class CassandraComponentBeanRefTest extends BaseCassandraTest {
         assertEquals(CassandraUnitUtils.KEYSPACE, endpoint.getKeyspace());
         assertEquals(CQL, endpoint.getCql());
     }
-
-    @Test
-    public void testCluster() throws Exception {
-        CassandraEndpoint endpoint = getMandatoryEndpoint(CLUSTER_URI, CassandraEndpoint.class);
-
-        assertEquals(CassandraUnitUtils.KEYSPACE, endpoint.getKeyspace());
-        assertEquals(CQL, endpoint.getCql());
-    }
-
 }

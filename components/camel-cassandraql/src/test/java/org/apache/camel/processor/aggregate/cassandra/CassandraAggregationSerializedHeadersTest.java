@@ -40,7 +40,7 @@ public class CassandraAggregationSerializedHeadersTest extends BaseCassandraTest
 
     @Override
     protected void doPreSetup() throws Exception {
-        aggregationRepository = new NamedCassandraAggregationRepository(cassandra.cluster, CassandraUnitUtils.KEYSPACE, "ID");
+        aggregationRepository = new NamedCassandraAggregationRepository(cassandra.session, "ID");
         aggregationRepository.setTable("NAMED_CAMEL_AGGREGATION");
         aggregationRepository.setAllowSerializedHeaders(true);
         aggregationRepository.start();

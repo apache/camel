@@ -15,21 +15,22 @@
  * limitations under the License.
  */
 package org.apache.camel.utils.cassandra;
+//
+import com.datastax.oss.driver.api.core.ConsistencyLevel;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
+import com.datastax.oss.driver.api.querybuilder.delete.Delete;
+import com.datastax.oss.driver.api.querybuilder.delete.DeleteSelection;
+import com.datastax.oss.driver.api.querybuilder.insert.Insert;
+import com.datastax.oss.driver.api.querybuilder.insert.InsertInto;
+import com.datastax.oss.driver.api.querybuilder.insert.RegularInsert;
+import com.datastax.oss.driver.api.querybuilder.select.Select;
+import com.datastax.oss.driver.api.querybuilder.select.SelectFrom;
+import com.datastax.oss.driver.api.querybuilder.truncate.Truncate;
 
-import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.RegularStatement;
-import com.datastax.driver.core.querybuilder.Delete;
-import com.datastax.driver.core.querybuilder.Insert;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.core.querybuilder.Select;
-import com.datastax.driver.core.querybuilder.Truncate;
-
-import static com.datastax.driver.core.querybuilder.QueryBuilder.bindMarker;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.delete;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.insertInto;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.ttl;
+import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
+import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.insertInto;
+import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.selectFrom;
 
 public final class CassandraUtils {
 
@@ -101,17 +102,19 @@ public final class CassandraUtils {
      * Generate Insert CQL.
      */
     public static Insert generateInsert(String table, String[] columns, boolean ifNotExists, Integer ttl) {
-        Insert insert = insertInto(table);
+        InsertInto into = insertInto(table);
+        RegularInsert regularInsert = null;
+        Insert insert = null;
         for (String column : columns) {
-            insert = insert.value(column, bindMarker());
+            regularInsert = (regularInsert != null ? regularInsert : into).value(column, bindMarker());
         }
         if (ifNotExists) {
-            insert = insert.ifNotExists();
+            insert = regularInsert.ifNotExists();
         }
         if (ttl != null) {
-            insert.using(ttl(ttl));
+            insert = (insert != null ? insert : regularInsert).usingTtl(ttl);
         }
-        return insert;
+        return insert != null ? insert : regularInsert;
     }
 
     /**
@@ -125,34 +128,47 @@ public final class CassandraUtils {
      * Generate select where columns = ? CQL.
      */
     public static Select generateSelect(String table, String[] selectColumns, String[] whereColumns, int whereColumnsMaxIndex) {
-        Select select = select(selectColumns).from(table);
+        SelectFrom from = selectFrom(table);
+        Select select = null;
+        for (String column: selectColumns) {
+            select = (select != null ? select : from).column(column);
+        }
+        if (select == null) {
+            select = from.all();
+        }
         if (isWhereClause(whereColumns, whereColumnsMaxIndex)) {
-            Select.Where where = select.where();
             for (int i = 0; i < whereColumns.length && i < whereColumnsMaxIndex; i++) {
-                where.and(eq(whereColumns[i], bindMarker()));
+                select = select.whereColumn(whereColumns[i]).isEqualTo(bindMarker());
             }
         }
         return select;
     }
 
-    /**
+   /**
      * Generate delete where columns = ? CQL.
      */
     public static Delete generateDelete(String table, String[] whereColumns, boolean ifExists) {
         return generateDelete(table, whereColumns, size(whereColumns), ifExists);
     }
 
-    /**
+   /**
      * Generate delete where columns = ? CQL.
      */
     public static Delete generateDelete(String table, String[] whereColumns, int whereColumnsMaxIndex, boolean ifExists) {
-        Delete delete = delete().from(table);
+        DeleteSelection deleteSelection = QueryBuilder.deleteFrom(table);
+        Delete delete = null;
+
         if (isWhereClause(whereColumns, whereColumnsMaxIndex)) {
-            Delete.Where where = delete.where();
             for (int i = 0; i < whereColumns.length && i < whereColumnsMaxIndex; i++) {
-                where.and(eq(whereColumns[i], bindMarker()));
+                delete = (delete != null ? delete : deleteSelection).whereColumn(whereColumns[i]).isEqualTo(bindMarker());
             }
+        } else {
+            // Once there is at least one relation, the statement can be built
+            //(see https://docs.datastax.com/en/developer/java-driver/4.6/manual/query_builder/delete/#relations)
+            throw new IllegalArgumentException("Invalid delete statement. There has to be at least one relation. "
+                    + "To delete all records, use Truncate");
         }
+
         if (ifExists) {
             delete = delete.ifExists();
         }
@@ -174,7 +190,7 @@ public final class CassandraUtils {
     /**
      * Apply consistency level if provided, else leave default.
      */
-    public static <T extends RegularStatement> T applyConsistencyLevel(T statement, ConsistencyLevel consistencyLevel) {
+    public static <T extends SimpleStatement> T applyConsistencyLevel(T statement, ConsistencyLevel consistencyLevel) {
         if (consistencyLevel != null) {
             statement.setConsistencyLevel(consistencyLevel);
         }

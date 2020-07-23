@@ -47,29 +47,6 @@ public interface CassandraEndpointBuilderFactory {
             return (AdvancedCassandraEndpointConsumerBuilder) this;
         }
         /**
-         * To use the Cluster instance (you would normally not use this option).
-         * 
-         * The option is a: <code>com.datastax.driver.core.Cluster</code> type.
-         * 
-         * Group: common
-         */
-        default CassandraEndpointConsumerBuilder cluster(Object cluster) {
-            doSetProperty("cluster", cluster);
-            return this;
-        }
-        /**
-         * To use the Cluster instance (you would normally not use this option).
-         * 
-         * The option will be converted to a
-         * <code>com.datastax.driver.core.Cluster</code> type.
-         * 
-         * Group: common
-         */
-        default CassandraEndpointConsumerBuilder cluster(String cluster) {
-            doSetProperty("cluster", cluster);
-            return this;
-        }
-        /**
          * Cluster name.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -84,12 +61,13 @@ public interface CassandraEndpointBuilderFactory {
          * Consistency level to use.
          * 
          * The option is a:
-         * <code>com.datastax.driver.core.ConsistencyLevel</code> type.
+         * <code>com.datastax.oss.driver.api.core.DefaultConsistencyLevel</code>
+         * type.
          * 
          * Group: common
          */
         default CassandraEndpointConsumerBuilder consistencyLevel(
-                ConsistencyLevel consistencyLevel) {
+                DefaultConsistencyLevel consistencyLevel) {
             doSetProperty("consistencyLevel", consistencyLevel);
             return this;
         }
@@ -97,7 +75,8 @@ public interface CassandraEndpointBuilderFactory {
          * Consistency level to use.
          * 
          * The option will be converted to a
-         * <code>com.datastax.driver.core.ConsistencyLevel</code> type.
+         * <code>com.datastax.oss.driver.api.core.DefaultConsistencyLevel</code>
+         * type.
          * 
          * Group: common
          */
@@ -119,15 +98,27 @@ public interface CassandraEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a specific LoadBalancingPolicy.
+         * Datacenter to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: datacenter1
+         * Group: common
+         */
+        default CassandraEndpointConsumerBuilder datacenter(String datacenter) {
+            doSetProperty("datacenter", datacenter);
+            return this;
+        }
+        /**
+         * To use a specific LoadBalancingPolicyClass.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
-        default CassandraEndpointConsumerBuilder loadBalancingPolicy(
-                String loadBalancingPolicy) {
-            doSetProperty("loadBalancingPolicy", loadBalancingPolicy);
+        default CassandraEndpointConsumerBuilder loadBalancingPolicyClass(
+                String loadBalancingPolicyClass) {
+            doSetProperty("loadBalancingPolicyClass", loadBalancingPolicyClass);
             return this;
         }
         /**
@@ -198,7 +189,8 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * To use the Session instance (you would normally not use this option).
          * 
-         * The option is a: <code>com.datastax.driver.core.Session</code> type.
+         * The option is a:
+         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
          * 
          * Group: common
          */
@@ -210,7 +202,7 @@ public interface CassandraEndpointBuilderFactory {
          * To use the Session instance (you would normally not use this option).
          * 
          * The option will be converted to a
-         * <code>com.datastax.driver.core.Session</code> type.
+         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
          * 
          * Group: common
          */
@@ -837,29 +829,6 @@ public interface CassandraEndpointBuilderFactory {
             return (AdvancedCassandraEndpointProducerBuilder) this;
         }
         /**
-         * To use the Cluster instance (you would normally not use this option).
-         * 
-         * The option is a: <code>com.datastax.driver.core.Cluster</code> type.
-         * 
-         * Group: common
-         */
-        default CassandraEndpointProducerBuilder cluster(Object cluster) {
-            doSetProperty("cluster", cluster);
-            return this;
-        }
-        /**
-         * To use the Cluster instance (you would normally not use this option).
-         * 
-         * The option will be converted to a
-         * <code>com.datastax.driver.core.Cluster</code> type.
-         * 
-         * Group: common
-         */
-        default CassandraEndpointProducerBuilder cluster(String cluster) {
-            doSetProperty("cluster", cluster);
-            return this;
-        }
-        /**
          * Cluster name.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -874,12 +843,13 @@ public interface CassandraEndpointBuilderFactory {
          * Consistency level to use.
          * 
          * The option is a:
-         * <code>com.datastax.driver.core.ConsistencyLevel</code> type.
+         * <code>com.datastax.oss.driver.api.core.DefaultConsistencyLevel</code>
+         * type.
          * 
          * Group: common
          */
         default CassandraEndpointProducerBuilder consistencyLevel(
-                ConsistencyLevel consistencyLevel) {
+                DefaultConsistencyLevel consistencyLevel) {
             doSetProperty("consistencyLevel", consistencyLevel);
             return this;
         }
@@ -887,7 +857,8 @@ public interface CassandraEndpointBuilderFactory {
          * Consistency level to use.
          * 
          * The option will be converted to a
-         * <code>com.datastax.driver.core.ConsistencyLevel</code> type.
+         * <code>com.datastax.oss.driver.api.core.DefaultConsistencyLevel</code>
+         * type.
          * 
          * Group: common
          */
@@ -909,15 +880,27 @@ public interface CassandraEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a specific LoadBalancingPolicy.
+         * Datacenter to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: datacenter1
+         * Group: common
+         */
+        default CassandraEndpointProducerBuilder datacenter(String datacenter) {
+            doSetProperty("datacenter", datacenter);
+            return this;
+        }
+        /**
+         * To use a specific LoadBalancingPolicyClass.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
-        default CassandraEndpointProducerBuilder loadBalancingPolicy(
-                String loadBalancingPolicy) {
-            doSetProperty("loadBalancingPolicy", loadBalancingPolicy);
+        default CassandraEndpointProducerBuilder loadBalancingPolicyClass(
+                String loadBalancingPolicyClass) {
+            doSetProperty("loadBalancingPolicyClass", loadBalancingPolicyClass);
             return this;
         }
         /**
@@ -988,7 +971,8 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * To use the Session instance (you would normally not use this option).
          * 
-         * The option is a: <code>com.datastax.driver.core.Session</code> type.
+         * The option is a:
+         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
          * 
          * Group: common
          */
@@ -1000,7 +984,7 @@ public interface CassandraEndpointBuilderFactory {
          * To use the Session instance (you would normally not use this option).
          * 
          * The option will be converted to a
-         * <code>com.datastax.driver.core.Session</code> type.
+         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
          * 
          * Group: common
          */
@@ -1141,29 +1125,6 @@ public interface CassandraEndpointBuilderFactory {
             return (AdvancedCassandraEndpointBuilder) this;
         }
         /**
-         * To use the Cluster instance (you would normally not use this option).
-         * 
-         * The option is a: <code>com.datastax.driver.core.Cluster</code> type.
-         * 
-         * Group: common
-         */
-        default CassandraEndpointBuilder cluster(Object cluster) {
-            doSetProperty("cluster", cluster);
-            return this;
-        }
-        /**
-         * To use the Cluster instance (you would normally not use this option).
-         * 
-         * The option will be converted to a
-         * <code>com.datastax.driver.core.Cluster</code> type.
-         * 
-         * Group: common
-         */
-        default CassandraEndpointBuilder cluster(String cluster) {
-            doSetProperty("cluster", cluster);
-            return this;
-        }
-        /**
          * Cluster name.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1178,12 +1139,13 @@ public interface CassandraEndpointBuilderFactory {
          * Consistency level to use.
          * 
          * The option is a:
-         * <code>com.datastax.driver.core.ConsistencyLevel</code> type.
+         * <code>com.datastax.oss.driver.api.core.DefaultConsistencyLevel</code>
+         * type.
          * 
          * Group: common
          */
         default CassandraEndpointBuilder consistencyLevel(
-                ConsistencyLevel consistencyLevel) {
+                DefaultConsistencyLevel consistencyLevel) {
             doSetProperty("consistencyLevel", consistencyLevel);
             return this;
         }
@@ -1191,7 +1153,8 @@ public interface CassandraEndpointBuilderFactory {
          * Consistency level to use.
          * 
          * The option will be converted to a
-         * <code>com.datastax.driver.core.ConsistencyLevel</code> type.
+         * <code>com.datastax.oss.driver.api.core.DefaultConsistencyLevel</code>
+         * type.
          * 
          * Group: common
          */
@@ -1213,15 +1176,27 @@ public interface CassandraEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a specific LoadBalancingPolicy.
+         * Datacenter to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: datacenter1
+         * Group: common
+         */
+        default CassandraEndpointBuilder datacenter(String datacenter) {
+            doSetProperty("datacenter", datacenter);
+            return this;
+        }
+        /**
+         * To use a specific LoadBalancingPolicyClass.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
-        default CassandraEndpointBuilder loadBalancingPolicy(
-                String loadBalancingPolicy) {
-            doSetProperty("loadBalancingPolicy", loadBalancingPolicy);
+        default CassandraEndpointBuilder loadBalancingPolicyClass(
+                String loadBalancingPolicyClass) {
+            doSetProperty("loadBalancingPolicyClass", loadBalancingPolicyClass);
             return this;
         }
         /**
@@ -1292,7 +1267,8 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * To use the Session instance (you would normally not use this option).
          * 
-         * The option is a: <code>com.datastax.driver.core.Session</code> type.
+         * The option is a:
+         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
          * 
          * Group: common
          */
@@ -1304,7 +1280,7 @@ public interface CassandraEndpointBuilderFactory {
          * To use the Session instance (you would normally not use this option).
          * 
          * The option will be converted to a
-         * <code>com.datastax.driver.core.Session</code> type.
+         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
          * 
          * Group: common
          */
@@ -1392,21 +1368,22 @@ public interface CassandraEndpointBuilderFactory {
     }
 
     /**
-     * Proxy enum for <code>com.datastax.driver.core.ConsistencyLevel</code>
+     * Proxy enum for
+     * <code>com.datastax.oss.driver.api.core.DefaultConsistencyLevel</code>
      * enum.
      */
-    enum ConsistencyLevel {
+    enum DefaultConsistencyLevel {
         ANY,
         ONE,
         TWO,
         THREE,
         QUORUM,
         ALL,
+        LOCAL_ONE,
         LOCAL_QUORUM,
         EACH_QUORUM,
         SERIAL,
-        LOCAL_SERIAL,
-        LOCAL_ONE;
+        LOCAL_SERIAL;
     }
 
     public interface CassandraBuilders {
