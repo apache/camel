@@ -290,9 +290,9 @@
     <isorelax-version>20090621</isorelax-version>
     <ivy-version>2.5.0</ivy-version>
     <jackrabbit-version>2.21.2</jackrabbit-version>
-    <jackson-spark-version>2.10.4</jackson-spark-version>
+    <jackson-spark-version>2.10.5</jackson-spark-version>
     <jackson-version>1.9.12</jackson-version>
-    <jackson2-version>2.10.4</jackson2-version>
+    <jackson2-version>2.10.5</jackson2-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jakarta-api-version>2.1.5</jakarta-api-version>
     <jakarta-jaxb-version>2.3.2</jakarta-jaxb-version>
