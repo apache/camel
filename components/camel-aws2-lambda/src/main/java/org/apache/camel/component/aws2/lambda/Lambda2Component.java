@@ -56,7 +56,9 @@ public class Lambda2Component extends DefaultComponent {
         Lambda2Endpoint endpoint = new Lambda2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         endpoint.setFunction(remaining);
-        checkAndSetRegistryClient(configuration, endpoint);
+        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration, endpoint);
+        }
         if (configuration.getAwsLambdaClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("accessKey/secretKey or awsLambdaClient must be specified");
         }

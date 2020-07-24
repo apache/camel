@@ -1293,7 +1293,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path function
      */
-    public static org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.Lambda2EndpointBuilder aws2Lambda(
+    static org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.Lambda2EndpointBuilder aws2Lambda(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.endpointBuilder("aws2-lambda", path);
     }
@@ -1314,7 +1314,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path function
      */
-    public static org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.Lambda2EndpointBuilder aws2Lambda(
+    static org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.Lambda2EndpointBuilder aws2Lambda(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -2037,7 +2037,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path function
      */
-    static org.apache.camel.builder.endpoint.dsl.LambdaEndpointBuilderFactory.LambdaEndpointBuilder awsLambda(
+    public static org.apache.camel.builder.endpoint.dsl.LambdaEndpointBuilderFactory.LambdaEndpointBuilder awsLambda(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.LambdaEndpointBuilderFactory.endpointBuilder("aws-lambda", path);
     }
@@ -2058,7 +2058,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path function
      */
-    static org.apache.camel.builder.endpoint.dsl.LambdaEndpointBuilderFactory.LambdaEndpointBuilder awsLambda(
+    public static org.apache.camel.builder.endpoint.dsl.LambdaEndpointBuilderFactory.LambdaEndpointBuilder awsLambda(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.LambdaEndpointBuilderFactory.endpointBuilder(componentName, path);
