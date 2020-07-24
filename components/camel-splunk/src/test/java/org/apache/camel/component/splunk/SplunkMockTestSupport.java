@@ -20,12 +20,12 @@ import java.net.Socket;
 
 import com.splunk.Service;
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public abstract class SplunkMockTestSupport extends CamelTestSupport {
 
     @Mock

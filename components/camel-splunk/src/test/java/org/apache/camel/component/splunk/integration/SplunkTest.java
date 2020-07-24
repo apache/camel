@@ -17,8 +17,8 @@
 package org.apache.camel.component.splunk.integration;
 
 import org.apache.camel.component.splunk.event.SplunkEvent;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class SplunkTest extends CamelTestSupport {
     // TEST WILL RUN ON SPLUNK DEFAULT LOCALHOST+PORT
@@ -30,7 +30,7 @@ public abstract class SplunkTest extends CamelTestSupport {
     // should be created in splunk before test run;
     protected static final String INDEX = "junit";
 
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         SplunkEvent splunkEvent = new SplunkEvent();
         splunkEvent.addPair("key1", "value1");
