@@ -23,10 +23,12 @@ import org.apache.camel.component.twitter.directmessage.TwitterDirectMessageEndp
 import org.apache.camel.component.twitter.search.TwitterSearchEndpoint;
 import org.apache.camel.component.twitter.timeline.TwitterTimelineEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class UriConfigurationTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class UriConfigurationTest {
 
     private CamelContext context = new DefaultCamelContext();
     private CamelTwitterTestSupport support = new CamelTwitterTestSupport();
@@ -34,7 +36,7 @@ public class UriConfigurationTest extends Assert {
     @Test
     public void testBasicAuthentication() throws Exception {
         Endpoint endpoint = context.getEndpoint("twitter-search:foo?" + support.getUriTokens());
-        assertTrue("Endpoint not a TwitterSearchEndpoint: " + endpoint, endpoint instanceof TwitterSearchEndpoint);
+        assertTrue(endpoint instanceof TwitterSearchEndpoint, "Endpoint not a TwitterSearchEndpoint: " + endpoint);
         TwitterSearchEndpoint twitterEndpoint = (TwitterSearchEndpoint) endpoint;
 
         assertTrue(!twitterEndpoint.getProperties().getConsumerKey().isEmpty());
@@ -46,7 +48,7 @@ public class UriConfigurationTest extends Assert {
     @Test
     public void testPageSetting() throws Exception {
         Endpoint endpoint = context.getEndpoint("twitter-search:foo?count=50&numberOfPages=2");
-        assertTrue("Endpoint not a TwitterSearchEndpoint: " + endpoint, endpoint instanceof TwitterSearchEndpoint);
+        assertTrue(endpoint instanceof TwitterSearchEndpoint, "Endpoint not a TwitterSearchEndpoint: " + endpoint);
         TwitterSearchEndpoint twitterEndpoint = (TwitterSearchEndpoint) endpoint;
 
         assertEquals(new Integer(50), twitterEndpoint.getProperties().getCount());
@@ -56,7 +58,7 @@ public class UriConfigurationTest extends Assert {
     @Test
     public void testHttpProxySetting() throws Exception {
         Endpoint endpoint = context.getEndpoint("twitter-search:foo?httpProxyHost=example.com&httpProxyPort=3338&httpProxyUser=test&httpProxyPassword=pwd");
-        assertTrue("Endpoint not a TwitterSearchEndpoint: " + endpoint, endpoint instanceof TwitterSearchEndpoint);
+        assertTrue(endpoint instanceof TwitterSearchEndpoint, "Endpoint not a TwitterSearchEndpoint: " + endpoint);
         TwitterSearchEndpoint twitterEndpoint = (TwitterSearchEndpoint) endpoint;
         
         assertEquals("example.com", twitterEndpoint.getProperties().getHttpProxyHost());
@@ -68,31 +70,31 @@ public class UriConfigurationTest extends Assert {
     @Test
     public void testDirectMessageEndpoint() throws Exception {
         Endpoint endpoint = context.getEndpoint("twitter-directmessage:foo");
-        assertTrue("Endpoint not a TwitterDirectMessageEndpoint: " + endpoint, endpoint instanceof TwitterDirectMessageEndpoint);
+        assertTrue(endpoint instanceof TwitterDirectMessageEndpoint, "Endpoint not a TwitterDirectMessageEndpoint: " + endpoint);
     }
 
     @Test
     public void testSearchEndpoint() throws Exception {
         Endpoint endpoint = context.getEndpoint("twitter-search:foo");
-        assertTrue("Endpoint not a TwitterSearchEndpoint: " + endpoint, endpoint instanceof TwitterSearchEndpoint);
+        assertTrue(endpoint instanceof TwitterSearchEndpoint, "Endpoint not a TwitterSearchEndpoint: " + endpoint);
     }
 
     @Test
     public void testTimelineEndpoint() throws Exception {
         Endpoint endpoint = context.getEndpoint("twitter-timeline:home");
-        assertTrue("Endpoint not a TwitterTimelineEndpoint: " + endpoint, endpoint instanceof TwitterTimelineEndpoint);
+        assertTrue(endpoint instanceof TwitterTimelineEndpoint, "Endpoint not a TwitterTimelineEndpoint: " + endpoint);
         TwitterTimelineEndpoint timelineEndpoint = (TwitterTimelineEndpoint)endpoint;
         assertEquals(TimelineType.HOME, timelineEndpoint.getTimelineType());
         endpoint = context.getEndpoint("twitter-timeline:mentions");
-        assertTrue("Endpoint not a TwitterTimelineEndpoint: " + endpoint, endpoint instanceof TwitterTimelineEndpoint);
+        assertTrue(endpoint instanceof TwitterTimelineEndpoint, "Endpoint not a TwitterTimelineEndpoint: " + endpoint);
         timelineEndpoint = (TwitterTimelineEndpoint)endpoint;
         assertEquals(TimelineType.MENTIONS, timelineEndpoint.getTimelineType());
         endpoint = context.getEndpoint("twitter-timeline:retweetsofme");
-        assertTrue("Endpoint not a TwitterTimelineEndpoint: " + endpoint, endpoint instanceof TwitterTimelineEndpoint);
+        assertTrue(endpoint instanceof TwitterTimelineEndpoint, "Endpoint not a TwitterTimelineEndpoint: " + endpoint);
         timelineEndpoint = (TwitterTimelineEndpoint)endpoint;
         assertEquals(TimelineType.RETWEETSOFME, timelineEndpoint.getTimelineType());
         endpoint = context.getEndpoint("twitter-timeline:user");
-        assertTrue("Endpoint not a TwitterTimelineEndpoint: " + endpoint, endpoint instanceof TwitterTimelineEndpoint);
+        assertTrue(endpoint instanceof TwitterTimelineEndpoint, "Endpoint not a TwitterTimelineEndpoint: " + endpoint);
         timelineEndpoint = (TwitterTimelineEndpoint)endpoint;
         assertEquals(TimelineType.USER, timelineEndpoint.getTimelineType());
     }
