@@ -36,21 +36,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.meecrowave.Meecrowave;
-import org.apache.meecrowave.junit.MeecrowaveRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.apache.meecrowave.junit5.MeecrowaveConfig;
+import org.apache.meecrowave.testing.ConfigurationInject;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@MeecrowaveConfig(scanningPackageIncludes = "org.apache.camel.websocket.jsr356.ServerEndpointDeploymentStrategyTest$")
 public class ServerEndpointDeploymentStrategyTest extends CamelTestSupport {
 
-    @Rule
-    public final MeecrowaveRule servlet = new MeecrowaveRule(new Meecrowave.Builder() {
-        {
-            randomHttpPort();
-            setScanningPackageIncludes("org.apache.camel.websocket.jsr356.ServerEndpointDeploymentStrategyTest$");
-        }
-    }, "");
+    @ConfigurationInject
+    Meecrowave.Builder configuration;
 
     @Test
     public void customDeploymentStrategyTest() throws Exception {
@@ -111,7 +109,6 @@ public class ServerEndpointDeploymentStrategyTest extends CamelTestSupport {
     }
 
     private URI getEndpointURI(String path) throws URISyntaxException {
-        Meecrowave.Builder configuration = servlet.getConfiguration();
         return new URI(String.format("ws://%s:%d/%s", configuration.getHost(), configuration.getHttpPort(), path));
     }
 
