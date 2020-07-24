@@ -30,23 +30,30 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
 
+import static org.apache.camel.test.junit5.TestSupport.header;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.eq;
+import static org.mockito.BDDMockito.mock;
+import static org.mockito.BDDMockito.verify;
+import static org.mockito.BDDMockito.when;
 
-import static org.mockito.BDDMockito.*;
-
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class SpringBatchEndpointTest extends CamelTestSupport {
 
     // Fixtures
@@ -191,15 +198,16 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         mockEndpoint.expectedBodiesReceived(jobExecution);
     }
 
-    @Test(expected = FailedToStartRouteException.class)
+    @Test
     public void shouldThrowExceptionIfUsedAsConsumer() throws Exception {
         // When
-        context().addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("spring-batch:mockJob").to("direct:emptyEndpoint");
-            }
-        });
+        assertThrows(FailedToStartRouteException.class,
+            () -> context().addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                        from("spring-batch:mockJob").to("direct:emptyEndpoint");
+                    }
+            }));
     }
 
     @Test
@@ -301,7 +309,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         assertSame(alternativeJobLauncher, batchEndpointJobLauncher);
     }
 
-    @Test(expected = FailedToCreateRouteException.class)
+    @Test
     public void shouldFailWhenThereIsNoJobLauncher() throws Exception {
         // Given
         SimpleRegistry registry = new SimpleRegistry();
@@ -315,10 +323,11 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         });
 
         // When
-        camelContext.start();
+        assertThrows(FailedToCreateRouteException.class,
+            () -> camelContext.start());
     }
 
-    @Test(expected = FailedToCreateRouteException.class)
+    @Test
     public void shouldFailWhenThereIsMoreThanOneJobLauncher() throws Exception {
         // Given
         SimpleRegistry registry = new SimpleRegistry();
@@ -334,7 +343,8 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         });
 
         // When
-        camelContext.start();
+        assertThrows(FailedToCreateRouteException.class,
+            () -> camelContext.start());
     }
 
     @Test
