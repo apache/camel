@@ -24,18 +24,22 @@ import org.apache.camel.component.thrift.generated.Calculator;
 import org.apache.camel.component.thrift.generated.Operation;
 import org.apache.camel.component.thrift.generated.Work;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 import org.apache.thrift.transport.TZlibTransport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ThriftConsumerZlibCompressionTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftConsumerZlibCompressionTest.class);
@@ -49,7 +53,7 @@ public class ThriftConsumerZlibCompressionTest extends CamelTestSupport {
     private TProtocol protocol;
     private TTransport transport;
     
-    @Before
+    @BeforeEach
     public void startThriftZlibClient() throws IOException, TTransportException {
         if (transport == null) {
             LOG.info("Connecting to the Thrift server with zlib compression on port: {}", THRIFT_TEST_PORT);
@@ -62,7 +66,7 @@ public class ThriftConsumerZlibCompressionTest extends CamelTestSupport {
         }
     }
 
-    @After
+    @AfterEach
     public void stopThriftClient() throws Exception {
         if (transport != null) {
             transport.close();

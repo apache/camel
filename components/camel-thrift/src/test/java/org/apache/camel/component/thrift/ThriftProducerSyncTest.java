@@ -27,9 +27,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.thrift.generated.InvalidOperation;
 import org.apache.camel.component.thrift.generated.Operation;
 import org.apache.camel.component.thrift.generated.Work;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftProducerSyncTest.class);
@@ -82,8 +88,8 @@ public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
             template.requestBody("direct:thrift-calculate", requestBody);
             fail("Expect the exception here");
         } catch (Exception ex) {
-            assertTrue("Expect CamelExecutionException", ex instanceof CamelExecutionException);
-            assertTrue("Get an InvalidOperation exception", ex.getCause() instanceof InvalidOperation);
+            assertTrue(ex instanceof CamelExecutionException, "Expect CamelExecutionException");
+            assertTrue(ex.getCause() instanceof InvalidOperation, "Get an InvalidOperation exception");
         }
     }
     

@@ -21,13 +21,13 @@ import java.io.IOException;
 import org.apache.camel.component.thrift.generated.Calculator;
 import org.apache.camel.component.thrift.impl.CalculatorSyncServerImpl;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.thrift.server.THsHaServer;
 import org.apache.thrift.server.THsHaServer.Args;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.transport.TNonblockingServerSocket;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,7 @@ public class ThriftProducerBaseTest extends CamelTestSupport {
     private static TNonblockingServerSocket serverTransport;
     private static TServer server;
 
-    @BeforeClass
+    @BeforeAll
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static void startThriftServer() throws Exception {
         processor = new Calculator.Processor(new CalculatorSyncServerImpl());
@@ -57,7 +57,7 @@ public class ThriftProducerBaseTest extends CamelTestSupport {
         new Thread(simple).start();
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopThriftServer() throws IOException {
         if (server != null) {
             server.stop();

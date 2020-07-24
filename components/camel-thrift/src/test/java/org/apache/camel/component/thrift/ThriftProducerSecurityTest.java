@@ -37,16 +37,22 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TSSLTransportFactory;
 import org.apache.thrift.transport.TServerSocket;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ThriftProducerSecurityTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftProducerSecurityTest.class);
@@ -65,7 +71,7 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
     private static final String SECURITY_STORE_PASSWORD = "camelinaction";
     private static final int THRIFT_CLIENT_TIMEOUT = 2000;
     
-    @BeforeClass
+    @BeforeAll
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static void startThriftServer() throws Exception {
         processor = new Calculator.Processor(new CalculatorSyncServerImpl());
@@ -87,7 +93,7 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
         new Thread(simple).start();
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopThriftServer() throws IOException {
         if (server != null) {
             server.stop();
@@ -145,8 +151,8 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
             template.requestBody("direct:thrift-secured-calculate", requestBody);
             fail("Expect the exception here");
         } catch (Exception ex) {
-            assertTrue("Expect CamelExecutionException", ex instanceof CamelExecutionException);
-            assertTrue("Get an InvalidOperation exception", ex.getCause() instanceof InvalidOperation);
+            assertTrue(ex instanceof CamelExecutionException, "Expect CamelExecutionException");
+            assertTrue(ex.getCause() instanceof InvalidOperation, "Get an InvalidOperation exception");
         }
     }
     
