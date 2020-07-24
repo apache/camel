@@ -13,8 +13,8 @@ The following components supports xref:batch-consumer.adoc[Batch
 Consumer] by its consumer:
 
 * xref:components::atom-component.adoc[Atom]
-* File
-* FTP
+* xref:components::file-component.adoc[File]
+* xref:components::ftp-component.adoc[FTP]
 * xref:components::hbase-component.adoc[hbase]
 * xref:components::jpa-component.adoc[JPA]
 * xref:components::jclouds-component.adoc[JCLOUDS]
