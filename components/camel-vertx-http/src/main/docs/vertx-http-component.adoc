@@ -236,3 +236,4 @@ It is also possible to configure SSL options by providing a custom `WebClientOpt
 Session management can be enabled via the `sessionManagement` URI option. When enabled, an in-memory cookie store is used to track cookies.
 This can be overridden by providing a custom `CookieStore` via the `cookieStore` URI option.
 
+include::camel-spring-boot::page$vertx-http-starter.adoc[]
