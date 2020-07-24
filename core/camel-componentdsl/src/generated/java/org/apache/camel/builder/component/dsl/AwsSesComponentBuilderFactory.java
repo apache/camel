@@ -60,6 +60,21 @@ public interface AwsSesComponentBuilderFactory {
             return this;
         }
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default AwsSesComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * The component configuration.
          * 
          * The option is a:
@@ -253,6 +268,7 @@ public interface AwsSesComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "amazonSESClient": getOrCreateConfiguration((SesComponent) component).setAmazonSESClient((com.amazonaws.services.simpleemail.AmazonSimpleEmailService) value); return true;
+            case "autoDiscoverClient": getOrCreateConfiguration((SesComponent) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((SesComponent) component).setConfiguration((org.apache.camel.component.aws.ses.SesConfiguration) value); return true;
             case "lazyStartProducer": ((SesComponent) component).setLazyStartProducer((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((SesComponent) component).setProxyHost((java.lang.String) value); return true;

@@ -52,7 +52,9 @@ public class SesComponent extends DefaultComponent {
         configuration.setFrom(remaining);
         SesEndpoint endpoint = new SesEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration);
+        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration);
+        }
         if (configuration.getAmazonSESClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSESClient or accessKey and secretKey must be specified");
         }
