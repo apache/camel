@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Iterator;
@@ -33,19 +34,24 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.Exchange.FILE_NAME;
 import static org.apache.camel.dataformat.tarfile.TarUtils.TEXT;
 import static org.apache.camel.dataformat.tarfile.TarUtils.getBytes;
 import static org.apache.camel.dataformat.tarfile.TarUtils.getTaredText;
 import static org.apache.camel.dataformat.tarfile.TarUtils.getTaredTextInFolder;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for {@link TarFileDataFormat}.
@@ -123,9 +129,10 @@ public class TarFileDataFormatTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void testUntarWithCorruptedTarFile() throws Exception {
-        template.sendBody("direct:corruptUntar", new File("src/test/resources/data/corrupt.tar"));
+        assertThrows(CamelExecutionException.class,
+            () -> template.sendBody("direct:corruptUntar", new File("src/test/resources/data/corrupt.tar")));
     }
 
     @Test
@@ -139,7 +146,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId(), exchange.getIn().getHeader(FILE_NAME));
-        assertEquals(TEXT, new String((byte[]) exchange.getIn().getBody(), "UTF-8"));
+        assertEquals(TEXT, new String((byte[]) exchange.getIn().getBody(), StandardCharsets.UTF_8));
     }
 
     @Test
@@ -189,7 +196,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testDslTar() throws Exception {
-        getMockEndpoint("mock:dslTar").expectedBodiesReceived(getTaredText("poem.txt"));
+        getMockEndpoint("mock:dslTar").expectedBodiesReceived((Object) getTaredText("poem.txt"));
         getMockEndpoint("mock:dslTar").expectedHeaderReceived(FILE_NAME, "poem.txt.tar");
 
         template.sendBodyAndHeader("direct:dslTar", TEXT, FILE_NAME, "poem.txt");
@@ -223,12 +230,12 @@ public class TarFileDataFormatTest extends CamelTestSupport {
         tar.setUsingIterator(true);
         tar.setAllowEmptyDirectory(false);
         template.sendBody("direct:untarWithEmptyDirectory", new File("src/test/resources/data/hello.tar"));
-        assertTrue(!Files.exists(Paths.get("hello_out/Configurations2")));
+        assertFalse(Files.exists(Paths.get("hello_out/Configurations2")));
         deleteDirectory(new File("hello_out"));
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory(TEST_DIR);
         super.setUp();
@@ -283,12 +290,9 @@ public class TarFileDataFormatTest extends CamelTestSupport {
                                                      outputFile.mkdirs();
                                                  } else {
                                                      outputFile.getParentFile().mkdirs();
-                                                     TarArchiveInputStream debInputStream = (TarArchiveInputStream) 
-                                                             new ArchiveStreamFactory().createArchiveInputStream("tar", is);
-                                                     try {
+                                                     try (TarArchiveInputStream debInputStream = (TarArchiveInputStream)
+                                                             new ArchiveStreamFactory().createArchiveInputStream("tar", is)) {
                                                          copy(debInputStream, outputFile);
-                                                     } finally {
-                                                         debInputStream.close();
                                                      }
                                                  }
                                              }

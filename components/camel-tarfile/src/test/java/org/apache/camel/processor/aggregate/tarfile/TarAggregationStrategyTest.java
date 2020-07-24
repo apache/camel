@@ -21,12 +21,16 @@ import java.io.FileInputStream;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TarAggregationStrategyTest extends CamelTestSupport {
 
@@ -35,7 +39,7 @@ public class TarAggregationStrategyTest extends CamelTestSupport {
     private TarAggregationStrategy tar = new TarAggregationStrategy();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         tar.setParentDir("target/temp");
         deleteDirectory("target/temp");
@@ -55,7 +59,7 @@ public class TarAggregationStrategyTest extends CamelTestSupport {
 
         File[] files = new File("target/out").listFiles();
         assertTrue(files != null);
-        assertTrue("Should be a file in target/out directory", files.length > 0);
+        assertTrue(files.length > 0, "Should be a file in target/out directory");
 
         File resultFile = files[0];
 
@@ -65,7 +69,8 @@ public class TarAggregationStrategyTest extends CamelTestSupport {
             for (TarArchiveEntry te = tin.getNextTarEntry(); te != null; te = tin.getNextTarEntry()) {
                 fileCount = fileCount + 1;
             }
-            assertEquals("Tar file should contains " + TarAggregationStrategyTest.EXPECTED_NO_FILES + " files", TarAggregationStrategyTest.EXPECTED_NO_FILES, fileCount);
+            assertEquals(TarAggregationStrategyTest.EXPECTED_NO_FILES, fileCount,
+                    "Tar file should contains " + TarAggregationStrategyTest.EXPECTED_NO_FILES + " files");
         } finally {
             IOHelper.close(tin);
         }
