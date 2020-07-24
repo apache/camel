@@ -32,17 +32,19 @@ import org.apache.camel.component.splunk.event.SplunkEvent;
 import org.apache.camel.component.splunk.support.StreamDataWriter;
 import org.apache.camel.component.splunk.support.SubmitDataWriter;
 import org.apache.camel.component.splunk.support.TcpDataWriter;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ProducerTest extends SplunkMockTestSupport {
 
     @EndpointInject("splunk://stream")
@@ -66,7 +68,7 @@ public class ProducerTest extends SplunkMockTestSupport {
     @Mock
     private InputCollection inputCollection;
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         when(service.getIndexes()).thenReturn(indexColl);
         when(service.getInputs()).thenReturn(inputCollection);
@@ -119,9 +121,10 @@ public class ProducerTest extends SplunkMockTestSupport {
         assertIsInstanceOf(TcpDataWriter.class, ((SplunkProducer)tcpProducer).getDataWriter());
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void testBodyWithoutRawOption() throws Exception {
-        template.sendBody("direct:tcp", "foobar");
+        assertThrows(CamelExecutionException.class,
+            () -> template.sendBody("direct:tcp", "foobar"));
     }
 
     @Override
