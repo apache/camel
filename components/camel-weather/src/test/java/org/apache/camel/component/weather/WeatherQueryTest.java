@@ -18,17 +18,17 @@ package org.apache.camel.component.weather;
 
 import org.apache.camel.component.weather.geolocation.GeoLocation;
 import org.apache.camel.component.weather.geolocation.GeoLocationProvider;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class WeatherQueryTest {
 
     private static final String LONGITUDE = "4.13";
@@ -41,7 +41,7 @@ public class WeatherQueryTest {
     @Mock
     private GeoLocationProvider exceptionThrowingGeoLocationProvider;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         GeoLocation location = new GeoLocation(LONGITUDE, LATITUDE);
         when(geoLocationProvider.getCurrentGeoLocation()).thenReturn(location);
