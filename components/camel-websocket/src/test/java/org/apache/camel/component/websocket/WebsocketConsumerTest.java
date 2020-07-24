@@ -22,12 +22,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExceptionHandler;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -36,7 +35,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings
 public class WebsocketConsumerTest {
 
     private static final String CONNECTION_KEY = "random-connection-key";
@@ -57,7 +56,7 @@ public class WebsocketConsumerTest {
     private Exception exception = new Exception("BAD NEWS EVERYONE!");
     private WebsocketConsumer websocketConsumer;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         websocketConsumer = new WebsocketConsumer(endpoint, processor);
         websocketConsumer.setExceptionHandler(exceptionHandler);
