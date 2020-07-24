@@ -21,24 +21,21 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.component.spring.ws.SpringWebserviceConstants;
-import org.apache.camel.test.junit4.ExchangeTestSupport;
+import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.fest.assertions.Assertions;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.ws.pox.dom.DomPoxMessage;
 import org.springframework.ws.pox.dom.DomPoxMessageFactory;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
 
-@RunWith(value = JUnit4.class)
 public class BasicMessageFilterTest extends ExchangeTestSupport {
 
     private BasicMessageFilter filter;
     private SoapMessage message;
 
-    @Before
+    @BeforeEach
     public void before() {
         filter = new BasicMessageFilter();
         SaajSoapMessageFactory saajSoapMessageFactory = new SaajSoapMessageFactory();

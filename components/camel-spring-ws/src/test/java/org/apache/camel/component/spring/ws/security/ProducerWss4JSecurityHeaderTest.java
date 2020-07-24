@@ -20,17 +20,21 @@ import net.javacrumbs.calc.model.PlusRequest;
 import net.javacrumbs.calc.model.PlusResponse;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.client.support.interceptor.ClientInterceptor;
 import org.springframework.ws.soap.security.wss4j2.Wss4jSecurityInterceptor;
 
-@Ignore("run manually since it requires running sample"
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@Disabled("run manually since it requires running sample"
         + " secured ws on j2ee-compliant application server")
 public class ProducerWss4JSecurityHeaderTest extends CamelSpringTestSupport {
 
@@ -40,7 +44,7 @@ public class ProducerWss4JSecurityHeaderTest extends CamelSpringTestSupport {
     private WebServiceTemplate webServiceTemplate;
     
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         webServiceTemplate = applicationContext.getBean("webServiceTemplate", WebServiceTemplate.class);

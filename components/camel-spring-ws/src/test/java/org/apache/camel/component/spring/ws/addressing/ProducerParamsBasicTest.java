@@ -22,15 +22,17 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.spring.ws.utils.OutputChannelReceiver;
 import org.apache.camel.component.spring.ws.utils.TestUtil;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.fest.assertions.Assertions;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.addressing.core.MessageAddressingProperties;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ProducerParamsBasicTest extends CamelSpringTestSupport {
 
@@ -44,14 +46,14 @@ public class ProducerParamsBasicTest extends CamelSpringTestSupport {
     private ProducerTemplate template;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         sender = getMandatoryBean(OutputChannelReceiver.class, "senderReceiver");
         sender.clear();
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpConstants() throws Exception {
         anonymousUri = new URI("http://www.w3.org/2005/08/addressing/anonymous");
     }
