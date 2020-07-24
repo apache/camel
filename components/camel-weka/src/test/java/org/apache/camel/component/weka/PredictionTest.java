@@ -28,9 +28,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import weka.core.Instances;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PredictionTest extends AbstractWekaTest {
     
@@ -93,7 +94,7 @@ public class PredictionTest extends AbstractWekaTest {
             logInfo(String.format("Correctly Classified Instances   %d %.4f %%", correct, accuracy));
             logInfo(String.format("Incorrectly Classified Instances %d %.4f %%", incorrect, 100 - accuracy));
             
-            Assert.assertEquals("88.8889", String.format(Locale.ENGLISH, "%.4f", accuracy));
+            assertEquals("88.8889", String.format(Locale.ENGLISH, "%.4f", accuracy));
         }
     }
 
