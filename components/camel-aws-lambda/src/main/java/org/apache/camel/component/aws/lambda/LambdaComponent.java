@@ -48,7 +48,9 @@ public class LambdaComponent extends DefaultComponent {
         LambdaEndpoint endpoint = new LambdaEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         endpoint.setFunction(remaining);
-        checkAndSetRegistryClient(configuration);
+        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration);
+        }
         if (configuration.getAwsLambdaClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("accessKey/secretKey or awsLambdaClient must be specified");
         }
