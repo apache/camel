@@ -22,9 +22,10 @@ import org.apache.camel.component.wordpress.api.WordpressConstants;
 import org.apache.camel.component.wordpress.api.model.Content;
 import org.apache.camel.component.wordpress.api.model.Post;
 import org.apache.camel.component.wordpress.api.model.PublishableStatus;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class WordpressPostOperationTest extends WordpressComponentTestSupport {
 

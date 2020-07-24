@@ -19,9 +19,10 @@ package org.apache.camel.component.wordpress;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.wordpress.api.model.User;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class WordpressUserOperationTest extends WordpressComponentTestSupport {
 
