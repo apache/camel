@@ -60,7 +60,7 @@ public class BlobContainerOperationsIT extends CamelTestSupport {
     @Test
     public void testCreateAndDeleteContainer() {
         final BlobContainerClientWrapper containerClientWrapper = blobServiceClientWrapper.getBlobContainerClientWrapper("testcontainer1");
-        final BlobContainerOperations blobContainerOperations = new BlobContainerOperations(containerClientWrapper);
+        final BlobContainerOperations blobContainerOperations = new BlobContainerOperations(configuration, containerClientWrapper);
 
         final BlobOperationResponse response = blobContainerOperations.createContainer(null);
 

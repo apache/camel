@@ -54,11 +54,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.blob.BlobBlock;
 import org.apache.camel.component.azure.storage.blob.BlobCommonRequestOptions;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
-import org.apache.camel.component.azure.storage.blob.BlobConfigurationProxy;
+import org.apache.camel.component.azure.storage.blob.BlobConfigurationOptionsProxy;
 import org.apache.camel.component.azure.storage.blob.BlobConstants;
 import org.apache.camel.component.azure.storage.blob.BlobExchangeHeaders;
 import org.apache.camel.component.azure.storage.blob.BlobStreamAndLength;
-import org.apache.camel.component.azure.storage.blob.BlobType;
 import org.apache.camel.component.azure.storage.blob.BlobUtils;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientWrapper;
 import org.apache.camel.util.ObjectHelper;
@@ -72,16 +71,14 @@ public class BlobOperations {
 
     private static final Logger LOG = LoggerFactory.getLogger(BlobOperations.class);
 
-    private final BlobConfiguration configuration;
     private final BlobClientWrapper client;
-    private final BlobConfigurationProxy configurationProxy;
+    private final BlobConfigurationOptionsProxy configurationProxy;
 
     public BlobOperations(final BlobConfiguration configuration, final BlobClientWrapper client) {
         ObjectHelper.notNull(client, "client can not be null.");
 
-        this.configuration = configuration;
         this.client = client;
-        this.configurationProxy = new BlobConfigurationProxy(configuration);
+        this.configurationProxy = new BlobConfigurationOptionsProxy(configuration);
     }
 
     public BlobOperationResponse getBlob(final Exchange exchange) throws IOException {
@@ -106,7 +103,7 @@ public class BlobOperations {
             return new BlobOperationResponse(blobInputStream.get("inputStream"), blobExchangeHeaders.toMap());
         }
         // we have an outputStream set, so we use it
-        final DownloadRetryOptions downloadRetryOptions = getDownloadRetryOptions(configuration);
+        final DownloadRetryOptions downloadRetryOptions = getDownloadRetryOptions(configurationProxy);
 
         try {
             final ResponseBase<BlobDownloadHeaders, Void> response = client.downloadWithResponse(outputStream, blobRange, downloadRetryOptions, blobCommonRequestOptions.getBlobRequestConditions(),
@@ -117,7 +114,7 @@ public class BlobOperations {
 
             return new BlobOperationResponse(outputStream, blobExchangeHeaders.toMap());
         } finally {
-            if (configuration.isCloseStreamAfterRead()) {
+            if (configurationProxy.getConfiguration().isCloseStreamAfterRead()) {
                 outputStream.close();
             }
         }
@@ -144,7 +141,7 @@ public class BlobOperations {
         final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
         final BlobRange blobRange = configurationProxy.getBlobRange(exchange);
         final ParallelTransferOptions parallelTransferOptions = configurationProxy.getParallelTransferOptions(exchange);
-        final DownloadRetryOptions downloadRetryOptions = getDownloadRetryOptions(configuration);
+        final DownloadRetryOptions downloadRetryOptions = getDownloadRetryOptions(configurationProxy);
 
         final Response<BlobProperties> response = client.downloadToFileWithResponse(fileToDownload.toString(), blobRange, parallelTransferOptions, downloadRetryOptions,
                 commonRequestOptions.getBlobRequestConditions(), commonRequestOptions.getContentMD5() != null, commonRequestOptions.getTimeout());
@@ -431,8 +428,8 @@ public class BlobOperations {
         return buildResponse(response, false);
     }
 
-    private DownloadRetryOptions getDownloadRetryOptions(final BlobConfiguration configuration) {
-        return new DownloadRetryOptions().setMaxRetryRequests(configuration.getMaxRetryRequests());
+    private DownloadRetryOptions getDownloadRetryOptions(final BlobConfigurationOptionsProxy configurationProxy) {
+        return new DownloadRetryOptions().setMaxRetryRequests(configurationProxy.getMaxRetryRequests());
     }
 
     private BlobCommonRequestOptions getCommonRequestOptions(final Exchange exchange) {
@@ -486,7 +483,7 @@ public class BlobOperations {
     }
 
     private void closeInputStreamIfNeeded(InputStream inputStream) throws IOException {
-        if (configuration.isCloseStreamAfterWrite()) {
+        if (configurationProxy.getConfiguration().isCloseStreamAfterWrite()) {
             inputStream.close();
         }
     }

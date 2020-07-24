@@ -19,12 +19,12 @@ package org.apache.camel.component.azure.storage.blob.operations;
 import java.time.Duration;
 import java.util.Map;
 
-import com.azure.storage.blob.models.BlobListDetails;
 import com.azure.storage.blob.models.BlobRequestConditions;
 import com.azure.storage.blob.models.ListBlobsOptions;
 import com.azure.storage.blob.models.PublicAccessType;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.azure.storage.blob.BlobConfigurationProxy;
+import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
+import org.apache.camel.component.azure.storage.blob.BlobConfigurationOptionsProxy;
 import org.apache.camel.component.azure.storage.blob.BlobExchangeHeaders;
 import org.apache.camel.component.azure.storage.blob.client.BlobContainerClientWrapper;
 import org.apache.camel.util.ObjectHelper;
@@ -35,12 +35,13 @@ import org.apache.camel.util.ObjectHelper;
 public class BlobContainerOperations {
 
     private final BlobContainerClientWrapper client;
-    private final BlobConfigurationProxy configurationProxy = new BlobConfigurationProxy();
+    private final BlobConfigurationOptionsProxy configurationProxy;
 
-    public BlobContainerOperations(final BlobContainerClientWrapper client) {
+    public BlobContainerOperations(final BlobConfiguration configuration, final BlobContainerClientWrapper client) {
         ObjectHelper.notNull(client, "client cannot be null");
 
         this.client = client;
+        this.configurationProxy = new BlobConfigurationOptionsProxy(configuration);
     }
 
     public BlobOperationResponse listBlobs(final Exchange exchange) {

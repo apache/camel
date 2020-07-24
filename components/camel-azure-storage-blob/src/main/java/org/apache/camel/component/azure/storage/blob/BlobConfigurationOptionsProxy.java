@@ -18,6 +18,8 @@ package org.apache.camel.component.azure.storage.blob;
 
 import java.time.Duration;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import com.azure.storage.blob.models.AccessTier;
 import com.azure.storage.blob.models.BlobHttpHeaders;
@@ -35,19 +37,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A proxy class for {@link BlobConfigurationProxy} and {@link BlobExchangeHeaders}. Ideally this
- * is responsible to obtain the correct configurations either from configs or exchange headers
+ * A proxy class for {@link BlobConfigurationOptionsProxy} and {@link BlobExchangeHeaders}. Ideally this
+ * is responsible to obtain the correct configurations options either from configs or exchange headers
  */
-public class BlobConfigurationProxy {
+public class BlobConfigurationOptionsProxy {
 
     private final BlobConfiguration configuration;
 
-    public BlobConfigurationProxy(final BlobConfiguration configuration) {
+    public BlobConfigurationOptionsProxy(final BlobConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    public BlobConfigurationProxy() {
-        this.configuration = null;
     }
 
     public ListBlobContainersOptions getListBlobContainersOptions(final Exchange exchange) {
@@ -55,7 +53,7 @@ public class BlobConfigurationProxy {
     }
 
     public Duration getTimeout(final Exchange exchange) {
-        return BlobExchangeHeaders.getTimeoutFromHeaders(exchange);
+        return getOption(BlobExchangeHeaders::getTimeoutFromHeaders, configuration::getTimeout, exchange);
     }
 
     public ListBlobsOptions getListBlobsOptions(final Exchange exchange) {
@@ -67,11 +65,11 @@ public class BlobConfigurationProxy {
     }
 
     public String getPrefix(final Exchange exchange) {
-        return BlobExchangeHeaders.getPrefixFromHeaders(exchange);
+        return getOption(BlobExchangeHeaders::getPrefixFromHeaders, configuration::getPrefix, exchange);
     }
 
     public Integer getMaxResultsPerPage(final Exchange exchange) {
-        return BlobExchangeHeaders.getMaxResultsPerPageFromHeaders(exchange);
+        return getOption(BlobExchangeHeaders::getMaxResultsPerPageFromHeaders, configuration::getMaxResultsPerPage, exchange);
     }
 
     public ListBlobsOptions getListBlobOptions(final Exchange exchange) {
@@ -136,7 +134,7 @@ public class BlobConfigurationProxy {
     }
 
     public String getFileDir(final Exchange exchange) {
-        return ObjectHelper.isEmpty(BlobExchangeHeaders.getFileDirFromHeaders(exchange)) ? configuration.getFileDir() : BlobExchangeHeaders.getFileDirFromHeaders(exchange);
+        return getOption(BlobExchangeHeaders::getFileDirFromHeaders, configuration::getFileDir, exchange);
     }
 
     public ParallelTransferOptions getParallelTransferOptions(final Exchange exchange) {
@@ -148,54 +146,56 @@ public class BlobConfigurationProxy {
     }
 
     public Long getDownloadLinkExpiration(final Exchange exchange) {
-        return BlobExchangeHeaders.getDownloadLinkExpirationFromHeaders(exchange);
+        return getOption(BlobExchangeHeaders::getDownloadLinkExpirationFromHeaders, configuration::getDownloadLinkExpiration, exchange);
     }
 
     public boolean isCommitBlockListLater(final Exchange exchange) {
-        return BlobExchangeHeaders.getCommitBlockListFlagFromHeaders(exchange);
+        return getOption(BlobExchangeHeaders::getCommitBlockListFlagFromHeaders, configuration::isCommitBlockListLater, exchange);
     }
 
     public BlockListType getBlockListType(final Exchange exchange) {
-        return BlobExchangeHeaders.getBlockListTypeFromHeaders(exchange) == null ? BlockListType.COMMITTED : BlobExchangeHeaders.getBlockListTypeFromHeaders(exchange);
+        return getOption(BlobExchangeHeaders::getBlockListTypeFromHeaders, configuration::getBlockListType, exchange);
     }
 
     public boolean isCreateAppendBlob(final Exchange exchange) {
-        return BlobExchangeHeaders.getCreateAppendBlobFlagFromHeaders(exchange);
+        return getOption(BlobExchangeHeaders::getCreateAppendBlobFlagFromHeaders, configuration::isCreateAppendBlob, exchange);
     }
 
     public Long getPageBlobSize(final Exchange exchange) {
-        final Long pageSize = BlobExchangeHeaders.getPageBlobSize(exchange);
-
-        if (pageSize != null) {
-            return pageSize;
-        }
-
-        return BlobConstants.PAGE_BLOB_DEFAULT_SIZE;
+        return getOption(BlobExchangeHeaders::getPageBlobSize, configuration::getPageBlobSize, exchange);
     }
 
     public Long getBlobSequenceNumber(final Exchange exchange) {
-        return BlobExchangeHeaders.getBlobSequenceNumberFromHeaders(exchange);
+        return getOption(BlobExchangeHeaders::getBlobSequenceNumberFromHeaders, configuration::getBlobSequenceNumber, exchange);
     }
 
     public boolean isCreatePageBlob(final Exchange exchange) {
-        return BlobExchangeHeaders.getCreatePageBlobFlagFromHeaders(exchange);
+        return getOption(BlobExchangeHeaders::getCreatePageBlobFlagFromHeaders, configuration::isCreatePageBlob, exchange);
     }
 
     public String getBlobName(final Exchange exchange) {
-        return ObjectHelper.isEmpty(BlobExchangeHeaders.getBlobNameFromHeaders(exchange)) ? configuration.getBlobName()
-                : BlobExchangeHeaders.getBlobNameFromHeaders(exchange);
+        return getOption(BlobExchangeHeaders::getBlobNameFromHeaders, configuration::getBlobName, exchange);
     }
 
     public String getContainerName(final Exchange exchange) {
-        return ObjectHelper.isEmpty(BlobExchangeHeaders.getBlobContainerNameFromHeaders(exchange)) ? configuration.getContainerName()
-                : BlobExchangeHeaders.getBlobContainerNameFromHeaders(exchange);
+        return getOption(BlobExchangeHeaders::getBlobContainerNameFromHeaders, configuration::getContainerName, exchange);
     }
 
     public BlobOperationsDefinition getOperation(final Exchange exchange) {
-        final BlobOperationsDefinition operation = BlobExchangeHeaders.getBlobOperationsDefinitionFromHeaders(exchange);
-        if (operation != null) {
-            return operation;
-        }
-        return configuration.getOperation();
+        return getOption(BlobExchangeHeaders::getBlobOperationsDefinitionFromHeaders, configuration::getOperation, exchange);
+    }
+
+    public int getMaxRetryRequests() {
+        return configuration.getMaxRetryRequests();
+    }
+
+    public BlobConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    private <R> R getOption(final Function<Exchange, R> exchangeFn, final Supplier<R> fallbackFn, final Exchange exchange) {
+        // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a function or constant
+        return ObjectHelper.isEmpty(exchangeFn.apply(exchange)) ? fallbackFn.get()
+                : exchangeFn.apply(exchange);
     }
 }

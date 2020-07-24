@@ -158,6 +158,21 @@ public interface AzureStorageBlobComponentBuilderFactory {
             return this;
         }
         /**
+         * Specifies the maximum number of blobs to return, including all
+         * BlobPrefix elements. If the request does not specify
+         * maxResultsPerPage or specifies a value greater than 5,000, the server
+         * will return up to 5,000 items.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         */
+        default AzureStorageBlobComponentBuilder maxResultsPerPage(
+                java.lang.Integer maxResultsPerPage) {
+            doSetProperty("maxResultsPerPage", maxResultsPerPage);
+            return this;
+        }
+        /**
          * Specifies the maximum number of additional HTTP Get requests that
          * will be made while reading the data from a response body.
          * 
@@ -169,6 +184,18 @@ public interface AzureStorageBlobComponentBuilderFactory {
         default AzureStorageBlobComponentBuilder maxRetryRequests(
                 int maxRetryRequests) {
             doSetProperty("maxRetryRequests", maxRetryRequests);
+            return this;
+        }
+        /**
+         * Filters the results to return only blobs whose names begin with the
+         * specified prefix. May be null to return all blobs.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default AzureStorageBlobComponentBuilder prefix(java.lang.String prefix) {
+            doSetProperty("prefix", prefix);
             return this;
         }
         /**
@@ -193,6 +220,19 @@ public interface AzureStorageBlobComponentBuilderFactory {
             return this;
         }
         /**
+         * An optional timeout value beyond which a RuntimeException will be
+         * raised.
+         * 
+         * The option is a: <code>java.time.Duration</code> type.
+         * 
+         * Group: common
+         */
+        default AzureStorageBlobComponentBuilder timeout(
+                java.time.Duration timeout) {
+            doSetProperty("timeout", timeout);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -212,6 +252,35 @@ public interface AzureStorageBlobComponentBuilderFactory {
             return this;
         }
         /**
+         * A user-controlled value that you can use to track requests. The value
+         * of the sequence number must be between 0 and 263 - 1.The default
+         * value is 0.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         */
+        default AzureStorageBlobComponentBuilder blobSequenceNumber(
+                java.lang.Long blobSequenceNumber) {
+            doSetProperty("blobSequenceNumber", blobSequenceNumber);
+            return this;
+        }
+        /**
+         * Specifies which type of blocks to return.
+         * 
+         * The option is a:
+         * <code>com.azure.storage.blob.models.BlockListType</code> type.
+         * 
+         * Default: committed
+         * Group: producer
+         */
+        default AzureStorageBlobComponentBuilder blockListType(
+                com.azure.storage.blob.models.BlockListType blockListType) {
+            doSetProperty("blockListType", blockListType);
+            return this;
+        }
+        /**
          * Close the stream after write or keep it open, default is true.
          * 
          * The option is a: <code>boolean</code> type.
@@ -222,6 +291,60 @@ public interface AzureStorageBlobComponentBuilderFactory {
         default AzureStorageBlobComponentBuilder closeStreamAfterWrite(
                 boolean closeStreamAfterWrite) {
             doSetProperty("closeStreamAfterWrite", closeStreamAfterWrite);
+            return this;
+        }
+        /**
+         * When is set to true, the staged blocks will not be committed
+         * directly.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         */
+        default AzureStorageBlobComponentBuilder commitBlockListLater(
+                boolean commitBlockListLater) {
+            doSetProperty("commitBlockListLater", commitBlockListLater);
+            return this;
+        }
+        /**
+         * When is set to true, the append blocks will be created when
+         * committing append blocks.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         */
+        default AzureStorageBlobComponentBuilder createAppendBlob(
+                boolean createAppendBlob) {
+            doSetProperty("createAppendBlob", createAppendBlob);
+            return this;
+        }
+        /**
+         * When is set to true, the page blob will be created when uploading
+         * page blob.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         */
+        default AzureStorageBlobComponentBuilder createPageBlob(
+                boolean createPageBlob) {
+            doSetProperty("createPageBlob", createPageBlob);
+            return this;
+        }
+        /**
+         * Override the default expiration (millis) of URL download link.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
+         */
+        default AzureStorageBlobComponentBuilder downloadLinkExpiration(
+                java.lang.Long downloadLinkExpiration) {
+            doSetProperty("downloadLinkExpiration", downloadLinkExpiration);
             return this;
         }
         /**
@@ -258,6 +381,20 @@ public interface AzureStorageBlobComponentBuilderFactory {
         default AzureStorageBlobComponentBuilder operation(
                 org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition operation) {
             doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * Specifies the maximum size for the page blob, up to 8 TB. The page
+         * blob size must be aligned to a 512-byte boundary.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Default: 512
+         * Group: producer
+         */
+        default AzureStorageBlobComponentBuilder pageBlobSize(
+                java.lang.Long pageBlobSize) {
+            doSetProperty("pageBlobSize", pageBlobSize);
             return this;
         }
         /**
@@ -319,12 +456,22 @@ public interface AzureStorageBlobComponentBuilderFactory {
             case "credentials": getOrCreateConfiguration((BlobComponent) component).setCredentials((com.azure.storage.common.StorageSharedKeyCredential) value); return true;
             case "dataCount": getOrCreateConfiguration((BlobComponent) component).setDataCount((java.lang.Long) value); return true;
             case "fileDir": getOrCreateConfiguration((BlobComponent) component).setFileDir((java.lang.String) value); return true;
+            case "maxResultsPerPage": getOrCreateConfiguration((BlobComponent) component).setMaxResultsPerPage((java.lang.Integer) value); return true;
             case "maxRetryRequests": getOrCreateConfiguration((BlobComponent) component).setMaxRetryRequests((int) value); return true;
+            case "prefix": getOrCreateConfiguration((BlobComponent) component).setPrefix((java.lang.String) value); return true;
             case "serviceClient": getOrCreateConfiguration((BlobComponent) component).setServiceClient((com.azure.storage.blob.BlobServiceClient) value); return true;
+            case "timeout": getOrCreateConfiguration((BlobComponent) component).setTimeout((java.time.Duration) value); return true;
             case "bridgeErrorHandler": ((BlobComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "blobSequenceNumber": getOrCreateConfiguration((BlobComponent) component).setBlobSequenceNumber((java.lang.Long) value); return true;
+            case "blockListType": getOrCreateConfiguration((BlobComponent) component).setBlockListType((com.azure.storage.blob.models.BlockListType) value); return true;
             case "closeStreamAfterWrite": getOrCreateConfiguration((BlobComponent) component).setCloseStreamAfterWrite((boolean) value); return true;
+            case "commitBlockListLater": getOrCreateConfiguration((BlobComponent) component).setCommitBlockListLater((boolean) value); return true;
+            case "createAppendBlob": getOrCreateConfiguration((BlobComponent) component).setCreateAppendBlob((boolean) value); return true;
+            case "createPageBlob": getOrCreateConfiguration((BlobComponent) component).setCreatePageBlob((boolean) value); return true;
+            case "downloadLinkExpiration": getOrCreateConfiguration((BlobComponent) component).setDownloadLinkExpiration((java.lang.Long) value); return true;
             case "lazyStartProducer": ((BlobComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((BlobComponent) component).setOperation((org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition) value); return true;
+            case "pageBlobSize": getOrCreateConfiguration((BlobComponent) component).setPageBlobSize((java.lang.Long) value); return true;
             case "basicPropertyBinding": ((BlobComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((BlobComponent) component).setAccessKey((java.lang.String) value); return true;
             default: return false;

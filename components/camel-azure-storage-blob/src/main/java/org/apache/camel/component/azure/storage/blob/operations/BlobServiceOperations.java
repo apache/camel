@@ -20,8 +20,8 @@ import java.time.Duration;
 
 import com.azure.storage.blob.models.ListBlobContainersOptions;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.azure.storage.blob.BlobConfigurationProxy;
-import org.apache.camel.component.azure.storage.blob.BlobExchangeHeaders;
+import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
+import org.apache.camel.component.azure.storage.blob.BlobConfigurationOptionsProxy;
 import org.apache.camel.component.azure.storage.blob.client.BlobServiceClientWrapper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -31,12 +31,13 @@ import org.apache.camel.util.ObjectHelper;
 public class BlobServiceOperations {
 
     private final BlobServiceClientWrapper client;
-    private final BlobConfigurationProxy configurationProxy = new BlobConfigurationProxy();
+    private final BlobConfigurationOptionsProxy configurationProxy;
 
-    public BlobServiceOperations(final BlobServiceClientWrapper client) {
+    public BlobServiceOperations(final BlobConfiguration configuration, final BlobServiceClientWrapper client) {
         ObjectHelper.notNull(client, "client cannot be null");
 
         this.client = client;
+        this.configurationProxy = new BlobConfigurationOptionsProxy(configuration);
     }
 
     public BlobOperationResponse listBlobContainers(final Exchange exchange) {

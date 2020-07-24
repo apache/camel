@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 public class BlobProducer extends DefaultProducer {
 
     private final BlobConfiguration configuration;
-    private final BlobConfigurationProxy configurationProxy;
+    private final BlobConfigurationOptionsProxy configurationProxy;
     private final BlobServiceOperations blobServiceOperations;
     private final BlobServiceClientWrapper blobServiceClientWrapper;
 
@@ -41,8 +41,8 @@ public class BlobProducer extends DefaultProducer {
         super(endpoint);
         this.configuration = getEndpoint().getConfiguration();
         this.blobServiceClientWrapper = new BlobServiceClientWrapper(getEndpoint().getBlobServiceClient());
-        this.blobServiceOperations = new BlobServiceOperations(blobServiceClientWrapper);
-        this.configurationProxy = new BlobConfigurationProxy(configuration);
+        this.blobServiceOperations = new BlobServiceOperations(configuration, blobServiceClientWrapper);
+        this.configurationProxy = new BlobConfigurationOptionsProxy(configuration);
     }
 
     @Override
@@ -133,11 +133,11 @@ public class BlobProducer extends DefaultProducer {
     }
 
     private BlobOperationsDefinition determineOperation(final Exchange exchange) {
-       return configurationProxy.getOperation(exchange);
+        return configurationProxy.getOperation(exchange);
     }
 
     private BlobContainerOperations getContainerOperations(final Exchange exchange) {
-        return new BlobContainerOperations(blobServiceClientWrapper.getBlobContainerClientWrapper(determineContainerName(exchange)));
+        return new BlobContainerOperations(configuration, blobServiceClientWrapper.getBlobContainerClientWrapper(determineContainerName(exchange)));
     }
 
     private BlobOperations getBlobOperations(final Exchange exchange) {
