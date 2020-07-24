@@ -24,8 +24,8 @@ import java.util.Map;
 import org.apache.camel.component.wordpress.api.WordpressServiceProvider;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +41,7 @@ public abstract class WordpressMockServerTestSupport {
 
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpMockServer() throws IOException {
         // @formatter:off
         int i = 0;
@@ -89,7 +89,7 @@ public abstract class WordpressMockServerTestSupport {
         // @formatter:on
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownMockServer() {
         LOGGER.info("Stopping local server");
         if (localServer != null) {
