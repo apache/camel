@@ -23,11 +23,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CamelTwitterTestSupport extends CamelTestSupport {
 
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     protected String consumerKey;
     protected String consumerSecret;
     protected String accessToken;
