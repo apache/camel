@@ -23,13 +23,12 @@ import javax.xml.namespace.QName;
 
 import net.javacrumbs.smock.springws.client.AbstractSmockClientTest;
 import org.apache.camel.ProducerTemplate;
-import org.junit.After;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.test.client.RequestMatcher;
 
@@ -37,7 +36,7 @@ import org.springframework.ws.test.client.RequestMatcher;
  * Check if the MessageFilter is used and resolved from endpoint uri or global
  * context configuration.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@CamelSpringTest
 @ContextConfiguration(locations = {"classpath:org/apache/camel/component/spring/ws/DefaultMessageFilter-context.xml"})
 public class MessageFilterResolvingDefaultsTest extends AbstractSmockClientTest {
 
@@ -76,7 +75,7 @@ public class MessageFilterResolvingDefaultsTest extends AbstractSmockClientTest 
     }
 
     @Override
-    @After
+    @AfterEach
     public void verify() {
         super.verify();
     }

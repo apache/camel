@@ -24,17 +24,21 @@ import org.apache.camel.component.spring.ws.jaxb.QuoteResponse;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @ContextConfiguration
-@RunWith(SpringJUnit4ClassRunner.class)
+@CamelSpringTest
 public class ConsumerMarshallingRouteTest extends CamelTestSupport {
 
     @Autowired
@@ -44,7 +48,7 @@ public class ConsumerMarshallingRouteTest extends CamelTestSupport {
     private WebServiceTemplate webServiceTemplate;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         context.setTracing(true);

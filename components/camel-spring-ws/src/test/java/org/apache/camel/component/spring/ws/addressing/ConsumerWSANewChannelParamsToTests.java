@@ -18,11 +18,13 @@ package org.apache.camel.component.spring.ws.addressing;
 
 import java.net.URISyntaxException;
 
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.ws.soap.addressing.client.ActionCallback;
 import org.springframework.ws.soap.addressing.core.MessageAddressingProperties;
 
+@CamelSpringTest
 public class ConsumerWSANewChannelParamsToTests extends AbstractConsumerTests {
 
     @Override

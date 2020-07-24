@@ -23,19 +23,23 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.spring.ws.utils.OutputChannelReceiver;
 import org.apache.camel.component.spring.ws.utils.TestUtil;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.fest.assertions.Assertions;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.addressing.client.ActionCallback;
 import org.springframework.ws.soap.addressing.core.MessageAddressingProperties;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
  * Provides abstract test for fault and output params for spring-ws:to: and
  * spring-ws:action: endpoints
  */
+@CamelSpringTest
 public class CamelDirectSenderTest extends AbstractWSATests {
 
     private OutputChannelReceiver customChannel;
@@ -44,7 +48,7 @@ public class CamelDirectSenderTest extends AbstractWSATests {
     private MockEndpoint endpointCamelDirect;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         // initialize beans for catching results
