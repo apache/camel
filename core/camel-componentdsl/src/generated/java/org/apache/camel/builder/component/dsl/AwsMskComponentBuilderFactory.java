@@ -47,6 +47,21 @@ public interface AwsMskComponentBuilderFactory {
      */
     interface AwsMskComponentBuilder extends ComponentBuilder<MSKComponent> {
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default AwsMskComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -216,6 +231,7 @@ public interface AwsMskComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "autoDiscoverClient": getOrCreateConfiguration((MSKComponent) component).setAutoDiscoverClient((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((MSKComponent) component).setAccessKey((java.lang.String) value); return true;
             case "configuration": ((MSKComponent) component).setConfiguration((org.apache.camel.component.aws.msk.MSKConfiguration) value); return true;
             case "lazyStartProducer": ((MSKComponent) component).setLazyStartProducer((boolean) value); return true;

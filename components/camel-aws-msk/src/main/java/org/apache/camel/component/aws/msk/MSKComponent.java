@@ -50,7 +50,9 @@ public class MSKComponent extends DefaultComponent {
         MSKConfiguration configuration = this.configuration != null ? this.configuration.copy() : new MSKConfiguration();
         MSKEndpoint endpoint = new MSKEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration);
+        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(configuration);
+        }
         if (configuration.getMskClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon msk client or accessKey and secretKey must be specified");
         }

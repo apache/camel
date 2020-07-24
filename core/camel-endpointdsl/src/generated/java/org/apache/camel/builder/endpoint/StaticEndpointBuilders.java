@@ -1334,7 +1334,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path label
      */
-    static org.apache.camel.builder.endpoint.dsl.MQ2EndpointBuilderFactory.MQ2EndpointBuilder aws2Mq(
+    public static org.apache.camel.builder.endpoint.dsl.MQ2EndpointBuilderFactory.MQ2EndpointBuilder aws2Mq(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.MQ2EndpointBuilderFactory.endpointBuilder("aws2-mq", path);
     }
@@ -1355,7 +1355,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path label
      */
-    static org.apache.camel.builder.endpoint.dsl.MQ2EndpointBuilderFactory.MQ2EndpointBuilder aws2Mq(
+    public static org.apache.camel.builder.endpoint.dsl.MQ2EndpointBuilderFactory.MQ2EndpointBuilder aws2Mq(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.MQ2EndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -2119,7 +2119,7 @@ public class StaticEndpointBuilders {
      * 
      * @param path label
      */
-    public static org.apache.camel.builder.endpoint.dsl.MSKEndpointBuilderFactory.MSKEndpointBuilder awsMsk(
+    static org.apache.camel.builder.endpoint.dsl.MSKEndpointBuilderFactory.MSKEndpointBuilder awsMsk(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.MSKEndpointBuilderFactory.endpointBuilder("aws-msk", path);
     }
@@ -2140,7 +2140,7 @@ public class StaticEndpointBuilders {
      * instead of the default name
      * @param path label
      */
-    public static org.apache.camel.builder.endpoint.dsl.MSKEndpointBuilderFactory.MSKEndpointBuilder awsMsk(
+    static org.apache.camel.builder.endpoint.dsl.MSKEndpointBuilderFactory.MSKEndpointBuilder awsMsk(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.MSKEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -20,6 +20,8 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MSKComponentClientRegistryTest extends CamelTestSupport {
@@ -41,5 +43,27 @@ public class MSKComponentClientRegistryTest extends CamelTestSupport {
         MSKComponent component = context.getComponent("aws-msk", MSKComponent.class);
         assertThrows(IllegalArgumentException.class,
             () -> component.createEndpoint("aws-msk://label"));
+    }
+    
+    @Test
+    public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
+
+        AmazonMSKClientMock awsMSKClient = new AmazonMSKClientMock();
+        context.getRegistry().bind("awsMskClient", awsMSKClient);
+        MSKComponent component = context.getComponent("aws-msk", MSKComponent.class);
+        MSKEndpoint endpoint = (MSKEndpoint) component.createEndpoint("aws-msk://label?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
+
+        assertNotSame(awsMSKClient, endpoint.getConfiguration().getMskClient());
+    }
+    
+    @Test
+    public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
+
+        AmazonMSKClientMock awsMSKClient = new AmazonMSKClientMock();
+        context.getRegistry().bind("awsMskClient", awsMSKClient);
+        MSKComponent component = context.getComponent("aws-msk", MSKComponent.class);
+        MSKEndpoint endpoint = (MSKEndpoint) component.createEndpoint("aws-msk://label?accessKey=xxx&secretKey=yyy");
+
+        assertSame(awsMSKClient, endpoint.getConfiguration().getMskClient());
     }
 }
