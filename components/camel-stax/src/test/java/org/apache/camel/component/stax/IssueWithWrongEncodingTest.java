@@ -24,10 +24,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.stax.model.Product;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.stax.StAXBuilder.stax;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class IssueWithWrongEncodingTest extends CamelTestSupport {
 
@@ -43,6 +45,7 @@ public class IssueWithWrongEncodingTest extends CamelTestSupport {
             + "</products>";
 
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/encoding");
         super.setUp();
