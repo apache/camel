@@ -26,34 +26,37 @@ import javax.websocket.server.ServerEndpoint;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.meecrowave.Meecrowave;
-import org.apache.meecrowave.junit.MeecrowaveRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
+import org.apache.meecrowave.junit5.MeecrowaveConfig;
+import org.apache.meecrowave.testing.ConfigurationInject;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@MeecrowaveConfig(scanningPackageIncludes = "org.apache.camel.websocket.jsr356.JSR356ProducerTest$")
 public class JSR356ProducerTest extends CamelTestSupport {
 
     private static LinkedBlockingQueue<String> messages = new LinkedBlockingQueue<>();
 
-    @Rule
-    public final MeecrowaveRule servlet = new MeecrowaveRule(new Meecrowave.Builder() {
-        {
-            randomHttpPort();
-            setScanningPackageIncludes("org.apache.camel.websocket.jsr356.JSR356ProducerTest$"); 
-        }
-    }, "");
+    @ConfigurationInject
+    protected Meecrowave.Builder configuration;
 
-    @Rule
-    public final TestName testName = new TestName();
+    protected String testMethodName;
 
     @Produce("direct:ensureServerModeSendsProperly")
     private ProducerTemplate serverProducer;
 
+    @Override
+    public void beforeEach(ExtensionContext context) throws Exception {
+        super.beforeEach(context);
+        testMethodName = context.getRequiredTestMethod().getName();
+    }
+
     @Test
     public void ensureServerModeSendsProperly() throws Exception {
-        final String body = getClass().getName() + "#" + testName.getMethodName();
+        final String body = getClass().getName() + "#" + testMethodName;
         serverProducer.sendBody(body);
         assertEquals(body, messages.poll(10, TimeUnit.SECONDS));
     }
@@ -63,7 +66,7 @@ public class JSR356ProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:ensureServerModeSendsProperly").id("camel_consumer_acts_as_client").convertBodyTo(String.class)
-                    .to("websocket-jsr356://ws://localhost:" + servlet.getConfiguration().getHttpPort() + "/existingserver?sessionCount=5");
+                    .to("websocket-jsr356://ws://localhost:" + configuration.getHttpPort() + "/existingserver?sessionCount=5");
             }
         };
     }
