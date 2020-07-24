@@ -28,7 +28,7 @@ import org.apache.camel.component.thrift.generated.Calculator;
 import org.apache.camel.component.thrift.generated.Operation;
 import org.apache.camel.component.thrift.generated.Work;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.thrift.TException;
 import org.apache.thrift.async.AsyncMethodCallback;
 import org.apache.thrift.async.TAsyncClientManager;
@@ -40,9 +40,12 @@ import org.apache.thrift.transport.TNonblockingTransport;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ThriftConsumerConcurrentTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftConsumerConcurrentTest.class);
@@ -83,7 +86,7 @@ public class ThriftConsumerConcurrentTest extends CamelTestSupport {
                     LOG.info("Exception", e);
                 }
                 
-                assertNotNull("instanceId = " + instanceId, calculateResponse);
+                assertNotNull(calculateResponse, "instanceId = " + instanceId);
                 assertEquals(instanceId * THRIFT_TEST_NUM1, calculateResponse);
 
                 transport.close();
@@ -114,7 +117,7 @@ public class ThriftConsumerConcurrentTest extends CamelTestSupport {
                 latch.await(5, TimeUnit.SECONDS);
                 
                 int calculateResponse = calculateCallback.getCalculateResponse();
-                assertNotNull("instanceId = " + instanceId, calculateResponse);
+                assertNotNull(calculateResponse, "instanceId = " + instanceId);
                 assertEquals(instanceId * THRIFT_TEST_NUM1, calculateResponse);
 
                 transport.close();
