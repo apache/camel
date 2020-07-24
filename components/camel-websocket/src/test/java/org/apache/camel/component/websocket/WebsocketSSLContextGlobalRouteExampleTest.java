@@ -36,7 +36,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.AsyncHttpClientConfig;
 import org.asynchttpclient.DefaultAsyncHttpClient;
@@ -44,20 +44,27 @@ import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.ws.WebSocket;
 import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WebsocketSSLContextGlobalRouteExampleTest extends CamelTestSupport {
 
     private static List<String> received = new ArrayList<>();
     private static CountDownLatch latch = new CountDownLatch(10);
+
     private String pwd = "changeit";
     private String uri;
     private String server = "127.0.0.1";
     private int port;
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
 

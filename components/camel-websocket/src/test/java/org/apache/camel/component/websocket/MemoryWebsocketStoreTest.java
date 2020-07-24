@@ -18,20 +18,21 @@ package org.apache.camel.component.websocket;
 
 import java.util.Collection;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class MemoryWebsocketStoreTest {
 
     private static final String KEY_1 = "one";
@@ -48,7 +49,7 @@ public class MemoryWebsocketStoreTest {
 
     private MemoryWebsocketStore store;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         store = new MemoryWebsocketStore();
         when(websocket1.getConnectionKey()).thenReturn(KEY_1);
@@ -66,9 +67,11 @@ public class MemoryWebsocketStoreTest {
         assertEquals(websocket2, store.get(KEY_2));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testAddNullValue() {
-        store.add(null);
+        assertThrows(NullPointerException.class, () -> {
+            store.add(null);
+        });
     }
 
     @Test

@@ -19,23 +19,22 @@ package org.apache.camel.component.websocket;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings
 public class WebsocketEndpointTest {
 
     private static final String REMAINING = "foo/bar";
@@ -49,7 +48,7 @@ public class WebsocketEndpointTest {
 
     private WebsocketEndpoint websocketEndpoint;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         websocketEndpoint = new WebsocketEndpoint(component, URI, REMAINING, null);
         component = new WebsocketComponent();
