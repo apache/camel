@@ -21,6 +21,8 @@ public class Lambda2EndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "awslambdaclient":
         case "awsLambdaClient": target.getConfiguration().setAwsLambdaClient(property(camelContext, software.amazon.awssdk.services.lambda.LambdaClient.class, value)); return true;
         case "basicpropertybinding":
@@ -50,6 +52,7 @@ public class Lambda2EndpointConfigurer extends PropertyConfigurerSupport impleme
     public Map<String, Object> getAllOptions(Object target) {
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("accessKey", java.lang.String.class);
+        answer.put("autoDiscoverClient", boolean.class);
         answer.put("awsLambdaClient", software.amazon.awssdk.services.lambda.LambdaClient.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("lazyStartProducer", boolean.class);
@@ -71,6 +74,8 @@ public class Lambda2EndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return target.getConfiguration().getAccessKey();
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "awslambdaclient":
         case "awsLambdaClient": return target.getConfiguration().getAwsLambdaClient();
         case "basicpropertybinding":
