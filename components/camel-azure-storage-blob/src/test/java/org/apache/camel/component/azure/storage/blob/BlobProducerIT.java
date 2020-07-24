@@ -162,6 +162,15 @@ public class BlobProducerIT extends CamelTestSupport {
         assertNotNull(result.getExchanges().get(0).getMessage().getHeader(BlobConstants.E_TAG));
     }
 
+    @Test
+    public void testUploadBlockBlobWithConfigUri() throws InterruptedException {
+        result.expectedMessageCount(1);
+
+        template.send("direct:uploadBlockBlobWithConfigUri", ExchangePattern.InOnly, exchange -> exchange.getIn().setBody("Block Blob"));
+
+        result.assertIsSatisfied();
+    }
+
 
     @AfterAll
     public void tearDown() {
@@ -195,6 +204,10 @@ public class BlobProducerIT extends CamelTestSupport {
 
                 from("direct:uploadPageBlob")
                         .to(componentUri("uploadPageBlob"))
+                        .to(resultName);
+
+                from("direct:uploadBlockBlobWithConfigUri")
+                        .to(componentUri("uploadBlockBlob") + "&blobName=uploadBlockName")
                         .to(resultName);
             }
         };

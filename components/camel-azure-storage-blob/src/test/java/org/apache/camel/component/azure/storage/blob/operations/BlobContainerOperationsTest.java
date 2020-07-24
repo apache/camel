@@ -58,7 +58,7 @@ class BlobContainerOperationsTest {
     public void testCreateContainer() {
         when(client.createContainer(any(), any(), any())).thenReturn(createContainerMock());
 
-        final BlobContainerOperations blobContainerOperations = new BlobContainerOperations(client);
+        final BlobContainerOperations blobContainerOperations = new BlobContainerOperations(configuration, client);
         final BlobOperationResponse response = blobContainerOperations.createContainer(null);
 
         assertNotNull(response);
@@ -70,7 +70,7 @@ class BlobContainerOperationsTest {
     public void testDeleteContainer() {
         when(client.deleteContainer(any(), any())).thenReturn(deleteContainerMock());
 
-        final BlobContainerOperations blobContainerOperations = new BlobContainerOperations(client);
+        final BlobContainerOperations blobContainerOperations = new BlobContainerOperations(configuration, client);
         final BlobOperationResponse response = blobContainerOperations.deleteContainer(null);
 
         assertNotNull(response);
@@ -82,7 +82,7 @@ class BlobContainerOperationsTest {
     public void testListBlob() {
         when(client.listBlobs(any(), any())).thenReturn(listBlobsMock());
 
-        final BlobContainerOperations blobContainerOperations = new BlobContainerOperations(client);
+        final BlobContainerOperations blobContainerOperations = new BlobContainerOperations(configuration, client);
         final BlobOperationResponse response = blobContainerOperations.listBlobs(null);
 
         assertNotNull(response);
