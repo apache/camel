@@ -24,19 +24,21 @@ import org.apache.camel.component.spring.ws.jaxb.QuoteRequest;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
-@Ignore("TODO: investigate for Camel 3.0")
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@Disabled("TODO: investigate for Camel 3.0")
 @ContextConfiguration
-@RunWith(SpringJUnit4ClassRunner.class)
+@CamelSpringTest
 public class ConsumerBreadcrumbIdTest extends CamelTestSupport {
 
     @Autowired
@@ -46,7 +48,7 @@ public class ConsumerBreadcrumbIdTest extends CamelTestSupport {
     private WebServiceTemplate webServiceTemplate;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         context.setTracing(true);

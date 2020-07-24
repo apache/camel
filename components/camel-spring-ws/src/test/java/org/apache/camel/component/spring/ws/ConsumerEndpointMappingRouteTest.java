@@ -25,15 +25,17 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.ws.client.WebServiceIOException;
 import org.springframework.ws.client.core.SourceExtractor;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ConsumerEndpointMappingRouteTest extends CamelSpringTestSupport {
 
@@ -65,7 +67,7 @@ public class ConsumerEndpointMappingRouteTest extends CamelSpringTestSupport {
     private WebServiceTemplate webServiceTemplate;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         webServiceTemplate = applicationContext.getBean("webServiceTemplate", WebServiceTemplate.class);
@@ -86,10 +88,12 @@ public class ConsumerEndpointMappingRouteTest extends CamelSpringTestSupport {
         resultEndpointSoapAction.assertIsSatisfied();
     }
 
-    @Test(expected = WebServiceIOException.class)
+    @Test
     public void testWrongSoapAction() throws Exception {
-        webServiceTemplate.sendSourceAndReceive(getDefaultXmlRequestSource(), new SoapActionCallback("http://this-is-a-wrong-soap-action"), NOOP_SOURCE_EXTRACTOR);
-        resultEndpointSoapAction.assertIsNotSatisfied();
+        assertThrows(WebServiceIOException.class, () -> {
+            webServiceTemplate.sendSourceAndReceive(getDefaultXmlRequestSource(), new SoapActionCallback("http://this-is-a-wrong-soap-action"), NOOP_SOURCE_EXTRACTOR);
+            resultEndpointSoapAction.assertIsNotSatisfied();
+        });
     }
 
     @Test
@@ -127,10 +131,12 @@ public class ConsumerEndpointMappingRouteTest extends CamelSpringTestSupport {
         resultEndpointUriPath.assertIsSatisfied();
     }
 
-    @Test(expected = WebServiceIOException.class)
+    @Test
     public void testWrongUri() throws Exception {
-        webServiceTemplate.sendSourceAndReceive("http://localhost/wrong", getDefaultXmlRequestSource(), NOOP_SOURCE_EXTRACTOR);
-        resultEndpointUri.assertIsNotSatisfied();
+        assertThrows(WebServiceIOException.class, () -> {
+            webServiceTemplate.sendSourceAndReceive("http://localhost/wrong", getDefaultXmlRequestSource(), NOOP_SOURCE_EXTRACTOR);
+            resultEndpointUri.assertIsNotSatisfied();
+        });
     }
 
     @Override

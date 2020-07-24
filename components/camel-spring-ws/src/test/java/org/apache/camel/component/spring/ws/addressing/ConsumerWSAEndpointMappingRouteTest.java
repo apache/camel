@@ -24,9 +24,9 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.spring.ws.utils.TestUtil;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.ws.client.WebServiceIOException;
@@ -34,6 +34,8 @@ import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.addressing.client.ActionCallback;
 import org.springframework.ws.soap.addressing.version.Addressing10;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ConsumerWSAEndpointMappingRouteTest extends CamelSpringTestSupport {
 
@@ -69,7 +71,7 @@ public class ConsumerWSAEndpointMappingRouteTest extends CamelSpringTestSupport 
     private WebServiceTemplate webServiceTemplate;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         webServiceTemplate = applicationContext.getBean("webServiceTemplate", WebServiceTemplate.class);
@@ -156,11 +158,13 @@ public class ConsumerWSAEndpointMappingRouteTest extends CamelSpringTestSupport 
         resultOutputAndFault2.assertIsSatisfied();
     }
 
-    @Test(expected = WebServiceIOException.class)
+    @Test
     public void testWrongWSAddressingAction() throws Exception {
-        StreamSource source = new StreamSource(new StringReader(xmlBody));
-        webServiceTemplate.sendSourceAndReceive(source, new ActionCallback("http://this-is-a-wrong-ws-addressing-action"), TestUtil.NOOP_SOURCE_EXTRACTOR);
-        resultEndpointAction.assertIsSatisfied();
+        assertThrows(WebServiceIOException.class, () -> {
+            StreamSource source = new StreamSource(new StringReader(xmlBody));
+            webServiceTemplate.sendSourceAndReceive(source, new ActionCallback("http://this-is-a-wrong-ws-addressing-action"), TestUtil.NOOP_SOURCE_EXTRACTOR);
+            resultEndpointAction.assertIsSatisfied();
+        });
     }
 
     @Test
