@@ -19,18 +19,18 @@ package org.apache.camel.component.wordpress;
 import java.io.IOException;
 
 import org.apache.camel.component.wordpress.api.test.WordpressMockServerTestSupport;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 public class WordpressComponentTestSupport extends CamelTestSupport {
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws IOException {
         WordpressMockServerTestSupport.setUpMockServer();
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         WordpressMockServerTestSupport.tearDownMockServer();
     }
