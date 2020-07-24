@@ -41,6 +41,8 @@ public class LambdaConfiguration implements Cloneable {
     private Integer proxyPort;
     @UriParam(label = "advanced")
     private AWSLambda awsLambdaClient;
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean autoDiscoverClient = true;
 
     public AWSLambda getAwsLambdaClient() {
         return awsLambdaClient;
@@ -129,6 +131,19 @@ public class LambdaConfiguration implements Cloneable {
      */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
+    }
+    
+    public boolean isAutoDiscoverClient() {
+        return autoDiscoverClient;
+    }
+
+    /**
+     * Setting the autoDiscoverClient mechanism, if true, the component will
+     * look for a client instance in the registry automatically otherwise it
+     * will skip that checking.
+     */
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
     }
     
     // *************************************************

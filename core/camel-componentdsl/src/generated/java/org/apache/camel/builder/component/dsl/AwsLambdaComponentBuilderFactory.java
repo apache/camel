@@ -49,6 +49,21 @@ public interface AwsLambdaComponentBuilderFactory {
             extends
                 ComponentBuilder<LambdaComponent> {
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default AwsLambdaComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * The AWS Lambda default configuration.
          * 
          * The option is a:
@@ -219,6 +234,7 @@ public interface AwsLambdaComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "autoDiscoverClient": getOrCreateConfiguration((LambdaComponent) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((LambdaComponent) component).setConfiguration((org.apache.camel.component.aws.lambda.LambdaConfiguration) value); return true;
             case "lazyStartProducer": ((LambdaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((LambdaComponent) component).setOperation((org.apache.camel.component.aws.lambda.LambdaOperations) value); return true;
