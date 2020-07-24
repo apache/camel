@@ -25,10 +25,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DecisionTreeTest extends AbstractWekaTest {
     
@@ -60,11 +61,11 @@ public class DecisionTreeTest extends AbstractWekaTest {
             Dataset dataset = producer.requestBody("direct:start", inpath, Dataset.class);
             
             Classifier classifier = dataset.getClassifier();
-            Assert.assertNotNull(classifier);
+            assertNotNull(classifier);
             logInfo("{}", classifier);
             
             Evaluation evaluation = dataset.getEvaluation();
-            Assert.assertNotNull(evaluation);
+            assertNotNull(evaluation);
             logInfo("{}", evaluation);
         }
     }
@@ -97,11 +98,11 @@ public class DecisionTreeTest extends AbstractWekaTest {
             Dataset dataset = producer.requestBody("direct:start", inpath, Dataset.class);
             
             Classifier classifier = dataset.getClassifier();
-            Assert.assertNotNull(classifier);
+            assertNotNull(classifier);
             logInfo("{}", classifier);
             
             Evaluation evaluation = dataset.getEvaluation();
-            Assert.assertNotNull(evaluation);
+            assertNotNull(evaluation);
             logInfo("{}", evaluation);
         }
     }
@@ -131,11 +132,11 @@ public class DecisionTreeTest extends AbstractWekaTest {
             Dataset dataset = producer.requestBody("direct:start", inpath, Dataset.class);
             
             Classifier classifier = dataset.getClassifier();
-            Assert.assertNotNull(classifier);
+            assertNotNull(classifier);
             logInfo("{}", classifier);
             
             Evaluation evaluation = dataset.getEvaluation();
-            Assert.assertNotNull(evaluation);
+            assertNotNull(evaluation);
             logInfo("{}", evaluation);
         }
     }

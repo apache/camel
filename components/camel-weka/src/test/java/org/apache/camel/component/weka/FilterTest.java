@@ -26,9 +26,10 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import weka.core.Instances;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FilterTest {
 
@@ -64,10 +65,10 @@ public class FilterTest {
 
             ConsumerTemplate consumer = camelctx.createConsumerTemplate();
             Dataset dataset = consumer.receiveBody("direct:end", Dataset.class);
-            Assert.assertEquals("sfny", dataset.getInstances().relationName());
+            assertEquals("sfny", dataset.getInstances().relationName());
             
             Instances instances = DatasetUtils.read("target/data/sfny.arff");
-            Assert.assertEquals("sfny", instances.relationName());
+            assertEquals("sfny", instances.relationName());
         }
     }
 
@@ -103,10 +104,10 @@ public class FilterTest {
 
             ProducerTemplate producer = camelctx.createProducerTemplate();
             Dataset dataset = producer.requestBody("direct:start", inpath, Dataset.class);
-            Assert.assertEquals("sfny", dataset.getInstances().relationName());
+            assertEquals("sfny", dataset.getInstances().relationName());
             
             Instances instances = DatasetUtils.read("target/data/sfny.arff");
-            Assert.assertEquals("sfny", instances.relationName());
+            assertEquals("sfny", instances.relationName());
         }
     }
 }
