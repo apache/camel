@@ -27,11 +27,13 @@ import org.fusesource.hawtbuf.AsciiBuffer;
 import org.fusesource.stomp.client.BlockingConnection;
 import org.fusesource.stomp.client.Stomp;
 import org.fusesource.stomp.codec.StompFrame;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.fusesource.stomp.client.Constants.DESTINATION;
 import static org.fusesource.stomp.client.Constants.ID;
 import static org.fusesource.stomp.client.Constants.SUBSCRIBE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StompProducerTest extends StompBaseTest {
 
@@ -62,7 +64,6 @@ public class StompProducerTest extends StompBaseTest {
                 for (int i = 0; i < numberOfMessages; i++) {
                     try {
                         StompFrame frame = subscribeConnection.receive();
-                        frame.contentAsString().startsWith("test message ");
                         assertTrue(frame.contentAsString().startsWith("test message "));
                         assertTrue(frame.getHeader(new AsciiBuffer(HEADER)).ascii().toString().startsWith(HEADER_VALUE));
                         latch.countDown();
@@ -85,7 +86,7 @@ public class StompProducerTest extends StompBaseTest {
         }
         latch.await(20, TimeUnit.SECONDS);
 
-        assertTrue("Messages not consumed = " + latch.getCount(), latch.getCount() == 0);
+        assertEquals(0, latch.getCount(), "Messages not consumed = " + latch.getCount());
     }
 
     @Override
