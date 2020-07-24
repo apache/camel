@@ -21,17 +21,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.stax.model.Record;
 import org.apache.camel.component.stax.model.RecordsUtil;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.stax.StAXBuilder.stax;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StAXJAXBIteratorExpressionTest extends CamelTestSupport {
     @EndpointInject("mock:records")
     private MockEndpoint recordsEndpoint;
 
-    @BeforeClass
+    @BeforeAll
     public static void initRouteExample() {
         RecordsUtil.createXMLFile();
     }
