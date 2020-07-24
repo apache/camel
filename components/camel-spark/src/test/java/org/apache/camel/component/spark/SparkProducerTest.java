@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.camel.component.spark.annotations.RddCallback;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaRDDLike;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -31,8 +31,8 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.hive.HiveContext;
 import org.assertj.core.api.Assertions;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import static java.lang.Boolean.parseBoolean;
 import static java.util.Arrays.asList;
@@ -40,7 +40,7 @@ import static org.apache.camel.component.spark.SparkConstants.SPARK_DATAFRAME_CA
 import static org.apache.camel.component.spark.SparkConstants.SPARK_RDD_CALLBACK_HEADER;
 import static org.apache.camel.component.spark.Sparks.createLocalSparkContext;
 import static org.apache.camel.component.spark.annotations.AnnotatedRddCallback.annotatedRddCallback;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class SparkProducerTest extends CamelTestSupport {
 
@@ -60,7 +60,7 @@ public class SparkProducerTest extends CamelTestSupport {
 
     int numberOfLinesInTestFile = 19;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         if (shouldRunHive) {
             hiveContext = new HiveContext(sparkContext.sc());
