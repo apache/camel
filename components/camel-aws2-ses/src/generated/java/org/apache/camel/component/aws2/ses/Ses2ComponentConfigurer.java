@@ -30,6 +30,8 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonsesclient":
         case "amazonSESClient": getOrCreateConfiguration(target).setAmazonSESClient(property(camelContext, software.amazon.awssdk.services.ses.SesClient.class, value)); return true;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.ses.Ses2Configuration.class, value)); return true;
@@ -61,6 +63,7 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("accessKey", java.lang.String.class);
         answer.put("amazonSESClient", software.amazon.awssdk.services.ses.SesClient.class);
+        answer.put("autoDiscoverClient", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("configuration", org.apache.camel.component.aws2.ses.Ses2Configuration.class);
         answer.put("lazyStartProducer", boolean.class);
@@ -85,6 +88,8 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazonsesclient":
         case "amazonSESClient": return getOrCreateConfiguration(target).getAmazonSESClient();
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "configuration": return target.getConfiguration();

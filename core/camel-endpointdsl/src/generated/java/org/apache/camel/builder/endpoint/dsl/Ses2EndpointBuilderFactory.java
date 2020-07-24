@@ -63,6 +63,35 @@ public interface Ses2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default Ses2EndpointBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default Ses2EndpointBuilder autoDiscoverClient(String autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during

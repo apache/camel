@@ -23,6 +23,8 @@ public class Ses2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonsesclient":
         case "amazonSESClient": target.getConfiguration().setAmazonSESClient(property(camelContext, software.amazon.awssdk.services.ses.SesClient.class, value)); return true;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -54,6 +56,7 @@ public class Ses2EndpointConfigurer extends PropertyConfigurerSupport implements
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("accessKey", java.lang.String.class);
         answer.put("amazonSESClient", software.amazon.awssdk.services.ses.SesClient.class);
+        answer.put("autoDiscoverClient", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("proxyHost", java.lang.String.class);
@@ -78,6 +81,8 @@ public class Ses2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazonsesclient":
         case "amazonSESClient": return target.getConfiguration().getAmazonSESClient();
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
