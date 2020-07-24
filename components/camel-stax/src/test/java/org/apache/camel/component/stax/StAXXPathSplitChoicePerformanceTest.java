@@ -26,20 +26,25 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.stax.model.Order;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.stax.StAXBuilder.stax;
+import static org.apache.camel.test.junit5.TestSupport.createDirectory;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
-@Ignore("this is a manual test")
+@Disabled("this is a manual test")
 public class StAXXPathSplitChoicePerformanceTest extends CamelTestSupport {
 
     private int size = 20 * 1000;
@@ -48,9 +53,10 @@ public class StAXXPathSplitChoicePerformanceTest extends CamelTestSupport {
     private final AtomicInteger med = new AtomicInteger();
     private final AtomicInteger large = new AtomicInteger();
     private final StopWatch watch = new StopWatch();
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         createDataFile(log, size);
         super.setUp();
@@ -73,7 +79,7 @@ public class StAXXPathSplitChoicePerformanceTest extends CamelTestSupport {
         assertEquals((size / 10) * 3, med.get());
         assertEquals((size / 10) * 1, large.get());
 
-        assertTrue("Should complete route", matches);
+        assertTrue(matches, "Should complete route");
     }
 
     @Override
@@ -94,7 +100,7 @@ public class StAXXPathSplitChoicePerformanceTest extends CamelTestSupport {
                                 .process(new Processor() {
                                     public void process(Exchange exchange) throws Exception {
                                         String xml = exchange.getIn().getBody(String.class);
-                                        assertTrue(xml, xml.contains("<amount>3</amount>"));
+                                        assertTrue(xml.contains("<amount>3</amount>"), xml);
 
                                         int num = tiny.incrementAndGet();
                                         if (num % 100 == 0) {
@@ -107,7 +113,7 @@ public class StAXXPathSplitChoicePerformanceTest extends CamelTestSupport {
                                 .process(new Processor() {
                                     public void process(Exchange exchange) throws Exception {
                                         String xml = exchange.getIn().getBody(String.class);
-                                        assertTrue(xml, xml.contains("<amount>44</amount>"));
+                                        assertTrue(xml.contains("<amount>44</amount>"), xml);
 
                                         int num = small.incrementAndGet();
                                         if (num % 100 == 0) {
@@ -120,7 +126,7 @@ public class StAXXPathSplitChoicePerformanceTest extends CamelTestSupport {
                                 .process(new Processor() {
                                     public void process(Exchange exchange) throws Exception {
                                         String xml = exchange.getIn().getBody(String.class);
-                                        assertTrue(xml, xml.contains("<amount>88</amount>"));
+                                        assertTrue(xml.contains("<amount>88</amount>"), xml);
 
                                         int num = med.incrementAndGet();
                                         if (num % 100 == 0) {
@@ -133,7 +139,7 @@ public class StAXXPathSplitChoicePerformanceTest extends CamelTestSupport {
                                 .process(new Processor() {
                                     public void process(Exchange exchange) throws Exception {
                                         String xml = exchange.getIn().getBody(String.class);
-                                        assertTrue(xml, xml.contains("<amount>123</amount>"));
+                                        assertTrue(xml.contains("<amount>123</amount>"), xml);
 
                                         int num = large.incrementAndGet();
                                         if (num % 100 == 0) {
