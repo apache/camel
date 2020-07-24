@@ -60,6 +60,21 @@ public interface Aws2MqComponentBuilderFactory {
             return this;
         }
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default Aws2MqComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * Component configuration.
          * 
          * The option is a:
@@ -245,6 +260,7 @@ public interface Aws2MqComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "amazonMqClient": getOrCreateConfiguration((MQ2Component) component).setAmazonMqClient((software.amazon.awssdk.services.mq.MqClient) value); return true;
+            case "autoDiscoverClient": getOrCreateConfiguration((MQ2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((MQ2Component) component).setConfiguration((org.apache.camel.component.aws2.mq.MQ2Configuration) value); return true;
             case "lazyStartProducer": ((MQ2Component) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((MQ2Component) component).setOperation((org.apache.camel.component.aws2.mq.MQ2Operations) value); return true;
