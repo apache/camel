@@ -22,9 +22,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -33,6 +33,11 @@ import static org.apache.camel.Exchange.FILE_NAME;
 import static org.apache.camel.dataformat.tarfile.TarUtils.TEXT;
 import static org.apache.camel.dataformat.tarfile.TarUtils.getBytes;
 import static org.apache.camel.dataformat.tarfile.TarUtils.getTaredText;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpringTarFileDataFormatTest extends CamelSpringTestSupport {
     private static final File TEST_DIR = new File("target/springtar");
@@ -157,7 +162,7 @@ public class SpringTarFileDataFormatTest extends CamelSpringTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory(TEST_DIR);
         super.setUp();
