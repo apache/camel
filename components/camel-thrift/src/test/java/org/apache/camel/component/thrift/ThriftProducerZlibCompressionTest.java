@@ -28,17 +28,22 @@ import org.apache.camel.component.thrift.generated.Operation;
 import org.apache.camel.component.thrift.generated.Work;
 import org.apache.camel.component.thrift.impl.CalculatorSyncServerImpl;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TZlibTransport;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftProducerZlibCompressionTest.class);
@@ -53,7 +58,7 @@ public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
     private static final int THRIFT_TEST_NUM2 = 13;
     private static final int THRIFT_CLIENT_TIMEOUT = 2000;
     
-    @BeforeClass
+    @BeforeAll
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static void startThriftServer() throws Exception {
         processor = new Calculator.Processor(new CalculatorSyncServerImpl());
@@ -74,7 +79,7 @@ public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
         new Thread(simple).start();
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopThriftServer() throws IOException {
         if (server != null) {
             server.stop();

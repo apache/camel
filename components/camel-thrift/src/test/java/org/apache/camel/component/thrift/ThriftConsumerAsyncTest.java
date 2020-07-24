@@ -30,18 +30,22 @@ import org.apache.camel.component.thrift.generated.Calculator;
 import org.apache.camel.component.thrift.generated.Operation;
 import org.apache.camel.component.thrift.generated.Work;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.thrift.async.AsyncMethodCallback;
 import org.apache.thrift.async.TAsyncClientManager;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.transport.TNonblockingSocket;
 import org.apache.thrift.transport.TNonblockingTransport;
 import org.apache.thrift.transport.TTransportException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ThriftConsumerAsyncTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftConsumerAsyncTest.class);
@@ -57,7 +61,7 @@ public class ThriftConsumerAsyncTest extends CamelTestSupport {
     private int allTypesResult;
     private Work echoResult;
 
-    @Before
+    @BeforeEach
     public void startThriftClient() throws IOException, TTransportException {
         if (transport == null) {
             LOG.info("Connecting to the Thrift server on port: {}", THRIFT_TEST_PORT);
@@ -66,7 +70,7 @@ public class ThriftConsumerAsyncTest extends CamelTestSupport {
         }
     }
 
-    @After
+    @AfterEach
     public void stopThriftClient() throws Exception {
         if (transport != null) {
             transport.close();

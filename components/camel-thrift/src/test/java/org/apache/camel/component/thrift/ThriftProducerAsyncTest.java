@@ -30,9 +30,14 @@ import org.apache.camel.component.thrift.generated.InvalidOperation;
 import org.apache.camel.component.thrift.generated.Operation;
 import org.apache.camel.component.thrift.generated.Work;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ThriftProducerAsyncTest extends ThriftProducerBaseTest {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftProducerAsyncTest.class);
@@ -130,7 +135,7 @@ public class ThriftProducerAsyncTest extends ThriftProducerBaseTest {
         });
         latch.await(5, TimeUnit.SECONDS);
         
-        assertTrue("Get an InvalidOperation exception", responseBody instanceof InvalidOperation);
+        assertTrue(responseBody instanceof InvalidOperation, "Get an InvalidOperation exception");
  
     }
     
