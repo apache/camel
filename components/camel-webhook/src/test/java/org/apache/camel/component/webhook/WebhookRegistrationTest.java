@@ -23,8 +23,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.webhook.support.TestComponent;
 import org.apache.camel.spi.Registry;
 import org.awaitility.Awaitility;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WebhookRegistrationTest extends WebhookTestBase {
 
@@ -32,7 +34,7 @@ public class WebhookRegistrationTest extends WebhookTestBase {
 
     private AtomicInteger unregistered;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.registered = new AtomicInteger(0);
         this.unregistered = new AtomicInteger(0);
