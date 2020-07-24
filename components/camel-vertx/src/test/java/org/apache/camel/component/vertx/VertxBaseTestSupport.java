@@ -17,14 +17,18 @@
 package org.apache.camel.component.vertx;
 
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.BeforeClass;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VertxBaseTestSupport extends CamelTestSupport {
 
     protected static int port;
 
-    @BeforeClass
+    protected final Logger log = LoggerFactory.getLogger(getClass());
+
+    @BeforeAll
     public static void initPort() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
     }
