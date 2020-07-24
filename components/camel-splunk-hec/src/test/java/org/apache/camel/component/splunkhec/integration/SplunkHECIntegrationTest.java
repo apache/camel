@@ -30,11 +30,13 @@ import org.apache.camel.component.splunkhec.SplunkHECProducer;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("run manually since it requires a running local splunk server")
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@Disabled("run manually since it requires a running local splunk server")
 public class SplunkHECIntegrationTest extends CamelTestSupport {
 
     @Test
