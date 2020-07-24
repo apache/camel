@@ -27,8 +27,10 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ReadWriteTest {
 
@@ -48,7 +50,7 @@ public class ReadWriteTest {
 
             ProducerTemplate producer = camelctx.createProducerTemplate();
             String res = producer.requestBody("direct:start", null, String.class);
-            Assert.assertTrue(res.startsWith("3.8"));
+            assertTrue(res.startsWith("3.8"));
         }
     }
 
@@ -69,7 +71,7 @@ public class ReadWriteTest {
 
             ConsumerTemplate consumer = camelctx.createConsumerTemplate();
             Dataset dataset = consumer.receiveBody("direct:end", Dataset.class);
-            Assert.assertNotNull(dataset);
+            assertNotNull(dataset);
         }
     }
 
@@ -92,7 +94,7 @@ public class ReadWriteTest {
 
             ProducerTemplate producer = camelctx.createProducerTemplate();
             Dataset dataset = producer.requestBody("direct:start", sourceUrl, Dataset.class);
-            Assert.assertNotNull(dataset);
+            assertNotNull(dataset);
         }
     }
 
@@ -115,7 +117,7 @@ public class ReadWriteTest {
 
             ProducerTemplate producer = camelctx.createProducerTemplate();
             Dataset dataset = producer.requestBody("direct:start", input, Dataset.class);
-            Assert.assertNotNull(dataset);
+            assertNotNull(dataset);
         }
     }
 
@@ -135,7 +137,7 @@ public class ReadWriteTest {
 
             ProducerTemplate producer = camelctx.createProducerTemplate();
             Dataset dataset = producer.requestBody("direct:start", null, Dataset.class);
-            Assert.assertNotNull(dataset);
+            assertNotNull(dataset);
         }
     }
 
@@ -158,7 +160,7 @@ public class ReadWriteTest {
 
             ProducerTemplate producer = camelctx.createProducerTemplate();
             Dataset dataset = producer.requestBody("direct:start", input, Dataset.class);
-            Assert.assertNotNull(dataset);
+            assertNotNull(dataset);
         }
     }
 
@@ -184,7 +186,7 @@ public class ReadWriteTest {
 
             Path outpath = Paths.get("target/data/sfny.arff");
             dataset = Dataset.create(outpath);
-            Assert.assertNotNull(dataset);
+            assertNotNull(dataset);
         }
     }
 
@@ -211,7 +213,7 @@ public class ReadWriteTest {
 
             Path outpath = Paths.get("target/data/sfny.arff");
             dataset = Dataset.create(outpath);
-            Assert.assertNotNull(dataset);
+            assertNotNull(dataset);
         }
     }
 
@@ -237,7 +239,7 @@ public class ReadWriteTest {
 
             Path outpath = Paths.get("target/data/sfny.arff");
             dataset = Dataset.create(outpath);
-            Assert.assertNotNull(dataset);
+            assertNotNull(dataset);
         }
     }
 }
