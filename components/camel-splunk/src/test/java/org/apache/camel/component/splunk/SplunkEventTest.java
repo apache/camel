@@ -21,10 +21,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.component.splunk.event.SplunkEvent;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class SplunkEventTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class SplunkEventTest {
 
     @Test
     public void testEventDataWithQuotedValues() {
@@ -33,10 +35,10 @@ public class SplunkEventTest extends Assert {
         event.addPair("key1", "value1");
         event.addPair("key2", "value2 with whitespace");
         event.addPair(SplunkEvent.COMMON_DVC_TIME, now);
-        assertEquals("Values should be quoted", "name=\"testevent\" event_id=\"123\" key1=\"value1\" key2=\"value2 with whitespace\" dvc_time=\"" + now.toString() + "\"\n",
-                     event.toString());
+        assertEquals("name=\"testevent\" event_id=\"123\" key1=\"value1\" key2=\"value2 with whitespace\" dvc_time=\"" + now.toString() + "\"\n",
+                     event.toString(), "Values should be quoted");
         assertEquals(5, event.getEventData().size());
-        assertTrue(event.getEventData().get("key2").equals("value2 with whitespace"));
+        assertEquals("value2 with whitespace", event.getEventData().get("key2"));
     }
 
     @Test

@@ -18,8 +18,13 @@ package org.apache.camel.component.splunk;
 
 import com.splunk.SSLSecurityProtocol;
 import com.splunk.Service;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SplunkComponentConfigurationTest extends CamelTestSupport {
 
@@ -39,10 +44,11 @@ public class SplunkComponentConfigurationTest extends CamelTestSupport {
         assertEquals(SSLSecurityProtocol.TLSv1_2, endpoint.getConfiguration().getSslProtocol());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createProducerWithoutUserAndPassword() throws Exception {
         SplunkComponent component = context.getComponent("splunk", SplunkComponent.class);
-        component.createEndpoint("splunk://test");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("splunk://test"));
     }
 
     @Test

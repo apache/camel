@@ -19,10 +19,10 @@ package org.apache.camel.component.splunk.integration;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.splunk.event.SplunkEvent;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("run manually since it requires a running local splunk server")
+@Disabled("run manually since it requires a running local splunk server")
 public class SplunkProducerTest extends SplunkTest {
 
     // Splunk tcp receiver port configured in Splunk
