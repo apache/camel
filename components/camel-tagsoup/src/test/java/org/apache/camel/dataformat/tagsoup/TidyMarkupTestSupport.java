@@ -56,12 +56,6 @@ public final class TidyMarkupTestSupport {
 
     /**
      * Convert XML String to a Document.
-     * 
-     * @param xmlString
-     * @return document Document
-     * @throws IOException
-     * @throws SAXException
-     * @throws ParserConfigurationException
      */
     public static Document stringToXml(String xmlString) throws SAXException, IOException, ParserConfigurationException {
         return createDocumentBuilder().parse(new InputSource(new StringReader(xmlString)));
@@ -69,9 +63,6 @@ public final class TidyMarkupTestSupport {
 
     /**
      * Static to generate a documentBuilder
-     * 
-     * @return
-     * @throws ParserConfigurationException
      */
     public static DocumentBuilder createDocumentBuilder() throws ParserConfigurationException {
 
