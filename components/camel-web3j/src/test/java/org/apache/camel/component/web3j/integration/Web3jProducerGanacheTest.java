@@ -24,8 +24,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.web3j.protocol.core.methods.response.EthBlock;
 import org.web3j.protocol.core.methods.response.EthCompileSolidity;
 import org.web3j.protocol.core.methods.response.EthLog;
@@ -117,8 +117,9 @@ import static org.apache.camel.component.web3j.Web3jConstants.TTL;
 import static org.apache.camel.component.web3j.Web3jConstants.VALUE;
 import static org.apache.camel.component.web3j.Web3jConstants.WEB3_CLIENT_VERSION;
 import static org.apache.camel.component.web3j.Web3jConstants.WEB3_SHA3;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Ignore("Requires a locally running Ganache instance")
+@Disabled("Requires a locally running Ganache instance")
 public class Web3jProducerGanacheTest extends Web3jIntegrationTestSupport {
 
     @Produce("direct:start")
@@ -158,7 +159,7 @@ public class Web3jProducerGanacheTest extends Web3jIntegrationTestSupport {
     }
 
     //a bug in Ganache returns wrong formatted data
-    @Ignore
+    @Disabled
     @Test
     public void ethNetPeerCountTest() throws Exception {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, NET_PEER_COUNT);
@@ -271,7 +272,7 @@ public class Web3jProducerGanacheTest extends Web3jIntegrationTestSupport {
     }
 
     //a bug in Ganache returns wrong formatted data
-    @Ignore
+    @Disabled
     @Test
     public void ethGetBlockTransactionCountByHashTest() throws Exception {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, ETH_GET_BLOCK_TRANSACTION_COUNT_BY_HASH);
@@ -282,7 +283,7 @@ public class Web3jProducerGanacheTest extends Web3jIntegrationTestSupport {
     }
 
     //a bug in Ganache returns wrong formatted data
-    @Ignore
+    @Disabled
     @Test
     public void ethGetBlockTransactionCountByNumberTest() throws Exception {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, ETH_GET_BLOCK_TRANSACTION_COUNT_BY_NUMBER);
@@ -293,7 +294,7 @@ public class Web3jProducerGanacheTest extends Web3jIntegrationTestSupport {
     }
 
     //not supported operation by Ganache
-    @Ignore
+    @Disabled
     @Test
     public void ethGetUncleCountByBlockHashTest() throws Exception {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, ETH_GET_UNCLE_COUNT_BY_BLOCK_HASH);
@@ -304,7 +305,7 @@ public class Web3jProducerGanacheTest extends Web3jIntegrationTestSupport {
     }
 
     //not supported operation by Ganache
-    @Ignore
+    @Disabled
     @Test
     public void ethGetUncleCountByBlockNumberTest() throws Exception {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, ETH_GET_UNCLE_COUNT_BY_BLOCK_HASH);
@@ -352,7 +353,7 @@ public class Web3jProducerGanacheTest extends Web3jIntegrationTestSupport {
     }
 
     //wrong reminder
-    @Ignore
+    @Disabled
     @Test
     public void ethSendRawTransactionTest() throws Exception {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, ETH_SEND_RAW_TRANSACTION);
@@ -447,7 +448,7 @@ public class Web3jProducerGanacheTest extends Web3jIntegrationTestSupport {
     }
 
     //not supported operation by Ganache
-    @Ignore
+    @Disabled
     @Test
     public void ethGetUncleByBlockHashAndIndexTest() throws Exception {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, ETH_GET_UNCLE_BY_BLOCK_HASH_AND_INDEX);
@@ -460,7 +461,7 @@ public class Web3jProducerGanacheTest extends Web3jIntegrationTestSupport {
     }
 
     //not supported operation by Ganache
-    @Ignore
+    @Disabled
     @Test
     public void ethGetUncleByBlockNumberAndIndexTest() throws Exception {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, ETH_GET_UNCLE_BY_BLOCK_NUMBER_AND_INDEX);
@@ -482,7 +483,7 @@ public class Web3jProducerGanacheTest extends Web3jIntegrationTestSupport {
     }
 
     //not supported operation by Ganache
-    @Ignore
+    @Disabled
     @Test
     public void ethCompileSolidityTest() throws Exception {
         String soliditySample =
@@ -501,7 +502,7 @@ public class Web3jProducerGanacheTest extends Web3jIntegrationTestSupport {
     }
 
     //not supported operation by Ganache
-    @Ignore
+    @Disabled
     @Test
     public void ethCompileLLLTest() throws Exception {
         String sampleCode = "(returnlll (suicide (caller)))";
@@ -513,7 +514,7 @@ public class Web3jProducerGanacheTest extends Web3jIntegrationTestSupport {
     }
 
     //not supported operation by Ganache
-    @Ignore
+    @Disabled
     @Test
     public void ethCompileSerpentTest() throws Exception {
         String serpentSample = "(returnlll (suicide (caller)))";
@@ -640,7 +641,7 @@ public class Web3jProducerGanacheTest extends Web3jIntegrationTestSupport {
     }
 
     //not supported operation by Ganache
-    @Ignore
+    @Disabled
     @Test
     public void shhPostTest() throws Exception {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, SHH_POST);
@@ -657,7 +658,7 @@ public class Web3jProducerGanacheTest extends Web3jIntegrationTestSupport {
     }
 
     //not supported operation by Ganache
-    @Ignore
+    @Disabled
     @Test
     public void shhNewIdentityTest() throws Exception {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, SHH_NEW_IDENTITY);
@@ -668,7 +669,7 @@ public class Web3jProducerGanacheTest extends Web3jIntegrationTestSupport {
     }
 
     //not supported operation by Ganache
-    @Ignore
+    @Disabled
     @Test
     public void shhHasIdentityTest() throws Exception {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, SHH_HAS_IDENTITY);
@@ -680,7 +681,7 @@ public class Web3jProducerGanacheTest extends Web3jIntegrationTestSupport {
     }
 
     //not supported operation by Ganache
-    @Ignore
+    @Disabled
     @Test
     public void shhNewGroupTest() throws Exception {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, SHH_NEW_GROUP);
@@ -691,7 +692,7 @@ public class Web3jProducerGanacheTest extends Web3jIntegrationTestSupport {
     }
 
     //not supported operation by Ganache
-    @Ignore
+    @Disabled
     @Test
     public void shhAddToGroupTest() throws Exception {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, SHH_ADD_TO_GROUP);
@@ -703,7 +704,7 @@ public class Web3jProducerGanacheTest extends Web3jIntegrationTestSupport {
     }
 
     //not supported operation by Ganache
-    @Ignore
+    @Disabled
     @Test
     public void shhNewFilterTest() throws Exception {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, SHH_NEW_FILTER);
@@ -716,7 +717,7 @@ public class Web3jProducerGanacheTest extends Web3jIntegrationTestSupport {
     }
 
     //not supported operation by Ganache
-    @Ignore
+    @Disabled
     @Test
     public void shhUninstallFilterTest() throws Exception {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, SHH_UNINSTALL_FILTER);
