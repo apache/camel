@@ -23,6 +23,8 @@ public class MQEndpointConfigurer extends PropertyConfigurerSupport implements G
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonmqclient":
         case "amazonMqClient": target.getConfiguration().setAmazonMqClient(property(camelContext, com.amazonaws.services.mq.AmazonMQ.class, value)); return true;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -47,6 +49,7 @@ public class MQEndpointConfigurer extends PropertyConfigurerSupport implements G
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("accessKey", java.lang.String.class);
         answer.put("amazonMqClient", com.amazonaws.services.mq.AmazonMQ.class);
+        answer.put("autoDiscoverClient", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("operation", org.apache.camel.component.aws.mq.MQOperations.class);
@@ -67,6 +70,8 @@ public class MQEndpointConfigurer extends PropertyConfigurerSupport implements G
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazonmqclient":
         case "amazonMqClient": return target.getConfiguration().getAmazonMqClient();
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":

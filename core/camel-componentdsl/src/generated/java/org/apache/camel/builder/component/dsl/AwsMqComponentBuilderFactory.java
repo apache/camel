@@ -47,6 +47,21 @@ public interface AwsMqComponentBuilderFactory {
      */
     interface AwsMqComponentBuilder extends ComponentBuilder<MQComponent> {
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default AwsMqComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -216,6 +231,7 @@ public interface AwsMqComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "autoDiscoverClient": getOrCreateConfiguration((MQComponent) component).setAutoDiscoverClient((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((MQComponent) component).setAccessKey((java.lang.String) value); return true;
             case "amazonMqClient": getOrCreateConfiguration((MQComponent) component).setAmazonMqClient((com.amazonaws.services.mq.AmazonMQ) value); return true;
             case "configuration": ((MQComponent) component).setConfiguration((org.apache.camel.component.aws.mq.MQConfiguration) value); return true;
