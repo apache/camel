@@ -18,10 +18,10 @@ package org.apache.camel.component.spring.integration;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.messaging.support.MessageBuilder;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpringIntegrationMessageTest {
 
