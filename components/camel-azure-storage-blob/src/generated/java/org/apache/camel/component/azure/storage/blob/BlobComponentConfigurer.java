@@ -34,27 +34,45 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "blobName": getOrCreateConfiguration(target).setBlobName(property(camelContext, java.lang.String.class, value)); return true;
         case "bloboffset":
         case "blobOffset": getOrCreateConfiguration(target).setBlobOffset(property(camelContext, long.class, value)); return true;
+        case "blobsequencenumber":
+        case "blobSequenceNumber": getOrCreateConfiguration(target).setBlobSequenceNumber(property(camelContext, java.lang.Long.class, value)); return true;
         case "blobtype":
         case "blobType": getOrCreateConfiguration(target).setBlobType(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobType.class, value)); return true;
+        case "blocklisttype":
+        case "blockListType": getOrCreateConfiguration(target).setBlockListType(property(camelContext, com.azure.storage.blob.models.BlockListType.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "closestreamafterread":
         case "closeStreamAfterRead": getOrCreateConfiguration(target).setCloseStreamAfterRead(property(camelContext, boolean.class, value)); return true;
         case "closestreamafterwrite":
         case "closeStreamAfterWrite": getOrCreateConfiguration(target).setCloseStreamAfterWrite(property(camelContext, boolean.class, value)); return true;
+        case "commitblocklistlater":
+        case "commitBlockListLater": getOrCreateConfiguration(target).setCommitBlockListLater(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobConfiguration.class, value)); return true;
+        case "createappendblob":
+        case "createAppendBlob": getOrCreateConfiguration(target).setCreateAppendBlob(property(camelContext, boolean.class, value)); return true;
+        case "createpageblob":
+        case "createPageBlob": getOrCreateConfiguration(target).setCreatePageBlob(property(camelContext, boolean.class, value)); return true;
         case "credentials": getOrCreateConfiguration(target).setCredentials(property(camelContext, com.azure.storage.common.StorageSharedKeyCredential.class, value)); return true;
         case "datacount":
         case "dataCount": getOrCreateConfiguration(target).setDataCount(property(camelContext, java.lang.Long.class, value)); return true;
+        case "downloadlinkexpiration":
+        case "downloadLinkExpiration": getOrCreateConfiguration(target).setDownloadLinkExpiration(property(camelContext, java.lang.Long.class, value)); return true;
         case "filedir":
         case "fileDir": getOrCreateConfiguration(target).setFileDir(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxresultsperpage":
+        case "maxResultsPerPage": getOrCreateConfiguration(target).setMaxResultsPerPage(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxretryrequests":
         case "maxRetryRequests": getOrCreateConfiguration(target).setMaxRetryRequests(property(camelContext, int.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class, value)); return true;
+        case "pageblobsize":
+        case "pageBlobSize": getOrCreateConfiguration(target).setPageBlobSize(property(camelContext, java.lang.Long.class, value)); return true;
+        case "prefix": getOrCreateConfiguration(target).setPrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceclient":
         case "serviceClient": getOrCreateConfiguration(target).setServiceClient(property(camelContext, com.azure.storage.blob.BlobServiceClient.class, value)); return true;
+        case "timeout": getOrCreateConfiguration(target).setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         default: return false;
         }
     }
@@ -66,18 +84,28 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("blobName", java.lang.String.class);
         answer.put("blobOffset", long.class);
+        answer.put("blobSequenceNumber", java.lang.Long.class);
         answer.put("blobType", org.apache.camel.component.azure.storage.blob.BlobType.class);
+        answer.put("blockListType", com.azure.storage.blob.models.BlockListType.class);
         answer.put("bridgeErrorHandler", boolean.class);
         answer.put("closeStreamAfterRead", boolean.class);
         answer.put("closeStreamAfterWrite", boolean.class);
+        answer.put("commitBlockListLater", boolean.class);
         answer.put("configuration", org.apache.camel.component.azure.storage.blob.BlobConfiguration.class);
+        answer.put("createAppendBlob", boolean.class);
+        answer.put("createPageBlob", boolean.class);
         answer.put("credentials", com.azure.storage.common.StorageSharedKeyCredential.class);
         answer.put("dataCount", java.lang.Long.class);
+        answer.put("downloadLinkExpiration", java.lang.Long.class);
         answer.put("fileDir", java.lang.String.class);
         answer.put("lazyStartProducer", boolean.class);
+        answer.put("maxResultsPerPage", java.lang.Integer.class);
         answer.put("maxRetryRequests", int.class);
         answer.put("operation", org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class);
+        answer.put("pageBlobSize", java.lang.Long.class);
+        answer.put("prefix", java.lang.String.class);
         answer.put("serviceClient", com.azure.storage.blob.BlobServiceClient.class);
+        answer.put("timeout", java.time.Duration.class);
         return answer;
     }
 
@@ -93,27 +121,45 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "blobName": return getOrCreateConfiguration(target).getBlobName();
         case "bloboffset":
         case "blobOffset": return getOrCreateConfiguration(target).getBlobOffset();
+        case "blobsequencenumber":
+        case "blobSequenceNumber": return getOrCreateConfiguration(target).getBlobSequenceNumber();
         case "blobtype":
         case "blobType": return getOrCreateConfiguration(target).getBlobType();
+        case "blocklisttype":
+        case "blockListType": return getOrCreateConfiguration(target).getBlockListType();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "closestreamafterread":
         case "closeStreamAfterRead": return getOrCreateConfiguration(target).isCloseStreamAfterRead();
         case "closestreamafterwrite":
         case "closeStreamAfterWrite": return getOrCreateConfiguration(target).isCloseStreamAfterWrite();
+        case "commitblocklistlater":
+        case "commitBlockListLater": return getOrCreateConfiguration(target).isCommitBlockListLater();
         case "configuration": return target.getConfiguration();
+        case "createappendblob":
+        case "createAppendBlob": return getOrCreateConfiguration(target).isCreateAppendBlob();
+        case "createpageblob":
+        case "createPageBlob": return getOrCreateConfiguration(target).isCreatePageBlob();
         case "credentials": return getOrCreateConfiguration(target).getCredentials();
         case "datacount":
         case "dataCount": return getOrCreateConfiguration(target).getDataCount();
+        case "downloadlinkexpiration":
+        case "downloadLinkExpiration": return getOrCreateConfiguration(target).getDownloadLinkExpiration();
         case "filedir":
         case "fileDir": return getOrCreateConfiguration(target).getFileDir();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxresultsperpage":
+        case "maxResultsPerPage": return getOrCreateConfiguration(target).getMaxResultsPerPage();
         case "maxretryrequests":
         case "maxRetryRequests": return getOrCreateConfiguration(target).getMaxRetryRequests();
         case "operation": return getOrCreateConfiguration(target).getOperation();
+        case "pageblobsize":
+        case "pageBlobSize": return getOrCreateConfiguration(target).getPageBlobSize();
+        case "prefix": return getOrCreateConfiguration(target).getPrefix();
         case "serviceclient":
         case "serviceClient": return getOrCreateConfiguration(target).getServiceClient();
+        case "timeout": return getOrCreateConfiguration(target).getTimeout();
         default: return null;
         }
     }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.time.Duration;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -243,6 +244,37 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies the maximum number of blobs to return, including all
+         * BlobPrefix elements. If the request does not specify
+         * maxResultsPerPage or specifies a value greater than 5,000, the server
+         * will return up to 5,000 items.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder maxResultsPerPage(
+                Integer maxResultsPerPage) {
+            doSetProperty("maxResultsPerPage", maxResultsPerPage);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of blobs to return, including all
+         * BlobPrefix elements. If the request does not specify
+         * maxResultsPerPage or specifies a value greater than 5,000, the server
+         * will return up to 5,000 items.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder maxResultsPerPage(
+                String maxResultsPerPage) {
+            doSetProperty("maxResultsPerPage", maxResultsPerPage);
+            return this;
+        }
+        /**
          * Specifies the maximum number of additional HTTP Get requests that
          * will be made while reading the data from a response body.
          * 
@@ -268,6 +300,18 @@ public interface BlobEndpointBuilderFactory {
         default BlobEndpointConsumerBuilder maxRetryRequests(
                 String maxRetryRequests) {
             doSetProperty("maxRetryRequests", maxRetryRequests);
+            return this;
+        }
+        /**
+         * Filters the results to return only blobs whose names begin with the
+         * specified prefix. May be null to return all blobs.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder prefix(String prefix) {
+            doSetProperty("prefix", prefix);
             return this;
         }
         /**
@@ -308,6 +352,31 @@ public interface BlobEndpointBuilderFactory {
          */
         default BlobEndpointConsumerBuilder serviceClient(String serviceClient) {
             doSetProperty("serviceClient", serviceClient);
+            return this;
+        }
+        /**
+         * An optional timeout value beyond which a RuntimeException will be
+         * raised.
+         * 
+         * The option is a: <code>java.time.Duration</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder timeout(Duration timeout) {
+            doSetProperty("timeout", timeout);
+            return this;
+        }
+        /**
+         * An optional timeout value beyond which a RuntimeException will be
+         * raised.
+         * 
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder timeout(String timeout) {
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -698,6 +767,37 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies the maximum number of blobs to return, including all
+         * BlobPrefix elements. If the request does not specify
+         * maxResultsPerPage or specifies a value greater than 5,000, the server
+         * will return up to 5,000 items.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder maxResultsPerPage(
+                Integer maxResultsPerPage) {
+            doSetProperty("maxResultsPerPage", maxResultsPerPage);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of blobs to return, including all
+         * BlobPrefix elements. If the request does not specify
+         * maxResultsPerPage or specifies a value greater than 5,000, the server
+         * will return up to 5,000 items.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder maxResultsPerPage(
+                String maxResultsPerPage) {
+            doSetProperty("maxResultsPerPage", maxResultsPerPage);
+            return this;
+        }
+        /**
          * Specifies the maximum number of additional HTTP Get requests that
          * will be made while reading the data from a response body.
          * 
@@ -723,6 +823,18 @@ public interface BlobEndpointBuilderFactory {
         default BlobEndpointProducerBuilder maxRetryRequests(
                 String maxRetryRequests) {
             doSetProperty("maxRetryRequests", maxRetryRequests);
+            return this;
+        }
+        /**
+         * Filters the results to return only blobs whose names begin with the
+         * specified prefix. May be null to return all blobs.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder prefix(String prefix) {
+            doSetProperty("prefix", prefix);
             return this;
         }
         /**
@@ -766,6 +878,88 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * An optional timeout value beyond which a RuntimeException will be
+         * raised.
+         * 
+         * The option is a: <code>java.time.Duration</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder timeout(Duration timeout) {
+            doSetProperty("timeout", timeout);
+            return this;
+        }
+        /**
+         * An optional timeout value beyond which a RuntimeException will be
+         * raised.
+         * 
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder timeout(String timeout) {
+            doSetProperty("timeout", timeout);
+            return this;
+        }
+        /**
+         * A user-controlled value that you can use to track requests. The value
+         * of the sequence number must be between 0 and 263 - 1.The default
+         * value is 0.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         */
+        default BlobEndpointProducerBuilder blobSequenceNumber(
+                Long blobSequenceNumber) {
+            doSetProperty("blobSequenceNumber", blobSequenceNumber);
+            return this;
+        }
+        /**
+         * A user-controlled value that you can use to track requests. The value
+         * of the sequence number must be between 0 and 263 - 1.The default
+         * value is 0.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         */
+        default BlobEndpointProducerBuilder blobSequenceNumber(
+                String blobSequenceNumber) {
+            doSetProperty("blobSequenceNumber", blobSequenceNumber);
+            return this;
+        }
+        /**
+         * Specifies which type of blocks to return.
+         * 
+         * The option is a:
+         * <code>com.azure.storage.blob.models.BlockListType</code> type.
+         * 
+         * Default: committed
+         * Group: producer
+         */
+        default BlobEndpointProducerBuilder blockListType(
+                BlockListType blockListType) {
+            doSetProperty("blockListType", blockListType);
+            return this;
+        }
+        /**
+         * Specifies which type of blocks to return.
+         * 
+         * The option will be converted to a
+         * <code>com.azure.storage.blob.models.BlockListType</code> type.
+         * 
+         * Default: committed
+         * Group: producer
+         */
+        default BlobEndpointProducerBuilder blockListType(String blockListType) {
+            doSetProperty("blockListType", blockListType);
+            return this;
+        }
+        /**
          * Close the stream after write or keep it open, default is true.
          * 
          * The option is a: <code>boolean</code> type.
@@ -789,6 +983,113 @@ public interface BlobEndpointBuilderFactory {
         default BlobEndpointProducerBuilder closeStreamAfterWrite(
                 String closeStreamAfterWrite) {
             doSetProperty("closeStreamAfterWrite", closeStreamAfterWrite);
+            return this;
+        }
+        /**
+         * When is set to true, the staged blocks will not be committed
+         * directly.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         */
+        default BlobEndpointProducerBuilder commitBlockListLater(
+                boolean commitBlockListLater) {
+            doSetProperty("commitBlockListLater", commitBlockListLater);
+            return this;
+        }
+        /**
+         * When is set to true, the staged blocks will not be committed
+         * directly.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         */
+        default BlobEndpointProducerBuilder commitBlockListLater(
+                String commitBlockListLater) {
+            doSetProperty("commitBlockListLater", commitBlockListLater);
+            return this;
+        }
+        /**
+         * When is set to true, the append blocks will be created when
+         * committing append blocks.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         */
+        default BlobEndpointProducerBuilder createAppendBlob(
+                boolean createAppendBlob) {
+            doSetProperty("createAppendBlob", createAppendBlob);
+            return this;
+        }
+        /**
+         * When is set to true, the append blocks will be created when
+         * committing append blocks.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         */
+        default BlobEndpointProducerBuilder createAppendBlob(
+                String createAppendBlob) {
+            doSetProperty("createAppendBlob", createAppendBlob);
+            return this;
+        }
+        /**
+         * When is set to true, the page blob will be created when uploading
+         * page blob.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         */
+        default BlobEndpointProducerBuilder createPageBlob(
+                boolean createPageBlob) {
+            doSetProperty("createPageBlob", createPageBlob);
+            return this;
+        }
+        /**
+         * When is set to true, the page blob will be created when uploading
+         * page blob.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         */
+        default BlobEndpointProducerBuilder createPageBlob(String createPageBlob) {
+            doSetProperty("createPageBlob", createPageBlob);
+            return this;
+        }
+        /**
+         * Override the default expiration (millis) of URL download link.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
+         */
+        default BlobEndpointProducerBuilder downloadLinkExpiration(
+                Long downloadLinkExpiration) {
+            doSetProperty("downloadLinkExpiration", downloadLinkExpiration);
+            return this;
+        }
+        /**
+         * Override the default expiration (millis) of URL download link.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
+         */
+        default BlobEndpointProducerBuilder downloadLinkExpiration(
+                String downloadLinkExpiration) {
+            doSetProperty("downloadLinkExpiration", downloadLinkExpiration);
             return this;
         }
         /**
@@ -860,6 +1161,32 @@ public interface BlobEndpointBuilderFactory {
          */
         default BlobEndpointProducerBuilder operation(String operation) {
             doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * Specifies the maximum size for the page blob, up to 8 TB. The page
+         * blob size must be aligned to a 512-byte boundary.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Default: 512
+         * Group: producer
+         */
+        default BlobEndpointProducerBuilder pageBlobSize(Long pageBlobSize) {
+            doSetProperty("pageBlobSize", pageBlobSize);
+            return this;
+        }
+        /**
+         * Specifies the maximum size for the page blob, up to 8 TB. The page
+         * blob size must be aligned to a 512-byte boundary.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Default: 512
+         * Group: producer
+         */
+        default BlobEndpointProducerBuilder pageBlobSize(String pageBlobSize) {
+            doSetProperty("pageBlobSize", pageBlobSize);
             return this;
         }
         /**
@@ -1153,6 +1480,35 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies the maximum number of blobs to return, including all
+         * BlobPrefix elements. If the request does not specify
+         * maxResultsPerPage or specifies a value greater than 5,000, the server
+         * will return up to 5,000 items.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointBuilder maxResultsPerPage(Integer maxResultsPerPage) {
+            doSetProperty("maxResultsPerPage", maxResultsPerPage);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of blobs to return, including all
+         * BlobPrefix elements. If the request does not specify
+         * maxResultsPerPage or specifies a value greater than 5,000, the server
+         * will return up to 5,000 items.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointBuilder maxResultsPerPage(String maxResultsPerPage) {
+            doSetProperty("maxResultsPerPage", maxResultsPerPage);
+            return this;
+        }
+        /**
          * Specifies the maximum number of additional HTTP Get requests that
          * will be made while reading the data from a response body.
          * 
@@ -1176,6 +1532,18 @@ public interface BlobEndpointBuilderFactory {
          */
         default BlobEndpointBuilder maxRetryRequests(String maxRetryRequests) {
             doSetProperty("maxRetryRequests", maxRetryRequests);
+            return this;
+        }
+        /**
+         * Filters the results to return only blobs whose names begin with the
+         * specified prefix. May be null to return all blobs.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointBuilder prefix(String prefix) {
+            doSetProperty("prefix", prefix);
             return this;
         }
         /**
@@ -1216,6 +1584,31 @@ public interface BlobEndpointBuilderFactory {
          */
         default BlobEndpointBuilder serviceClient(String serviceClient) {
             doSetProperty("serviceClient", serviceClient);
+            return this;
+        }
+        /**
+         * An optional timeout value beyond which a RuntimeException will be
+         * raised.
+         * 
+         * The option is a: <code>java.time.Duration</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointBuilder timeout(Duration timeout) {
+            doSetProperty("timeout", timeout);
+            return this;
+        }
+        /**
+         * An optional timeout value beyond which a RuntimeException will be
+         * raised.
+         * 
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointBuilder timeout(String timeout) {
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -1307,6 +1700,16 @@ public interface BlobEndpointBuilderFactory {
         blockblob,
         appendblob,
         pageblob;
+    }
+
+    /**
+     * Proxy enum for <code>com.azure.storage.blob.models.BlockListType</code>
+     * enum.
+     */
+    enum BlockListType {
+        COMMITTED,
+        UNCOMMITTED,
+        ALL;
     }
 
     /**

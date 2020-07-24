@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.azure.storage.blob;
 
+import java.time.Duration;
+
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.models.BlockListType;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
@@ -52,12 +55,32 @@ public class BlobConfiguration implements Cloneable {
     private long blobOffset;
     @UriParam(label = "common")
     private Long dataCount;
+    @UriParam(label = "common")
+    private Duration timeout;
+    @UriParam(label = "common")
+    private String prefix;
+    @UriParam(label = "common")
+    private Integer maxResultsPerPage;
     @UriParam(label = "common", defaultValue = "0")
     private int maxRetryRequests;
     @UriParam(defaultValue = "true")
     private boolean closeStreamAfterRead = true;
     @UriParam(label = "producer", defaultValue = "true")
     private boolean closeStreamAfterWrite = true;
+    @UriParam(label = "producer")
+    private Long downloadLinkExpiration;
+    @UriParam(label = "producer", defaultValue = "true")
+    private boolean commitBlockListLater = true;
+    @UriParam(label = "producer", defaultValue = "true")
+    private boolean createAppendBlob = true;
+    @UriParam(label = "producer", defaultValue = "true")
+    private boolean createPageBlob = true;
+    @UriParam(label = "producer", defaultValue = "0")
+    private Long blobSequenceNumber;
+    @UriParam(label = "producer", defaultValue = "512")
+    private Long pageBlobSize = BlobConstants.PAGE_BLOB_DEFAULT_SIZE;
+    @UriParam(label = "producer", enums = "committed,uncommitted,all", defaultValue = "committed")
+    private BlockListType blockListType = BlockListType.COMMITTED;
 
 
     /**
@@ -199,6 +222,39 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
+     * An optional timeout value beyond which a {@link RuntimeException} will be raised.
+     */
+    public Duration getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(Duration timeout) {
+        this.timeout = timeout;
+    }
+
+    /**
+     * Filters the results to return only blobs whose names begin with the specified prefix. May be null to return all blobs.
+     */
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    /**
+     * Specifies the maximum number of blobs to return, including all BlobPrefix elements. If the request does not specify maxResultsPerPage or specifies a value greater than 5,000, the server will return up to 5,000 items.
+     */
+    public Integer getMaxResultsPerPage() {
+        return maxResultsPerPage;
+    }
+
+    public void setMaxResultsPerPage(Integer maxResultsPerPage) {
+        this.maxResultsPerPage = maxResultsPerPage;
+    }
+
+    /**
      * Close the stream after read or keep it open, default is true
      */
     public boolean isCloseStreamAfterRead() {
@@ -218,6 +274,83 @@ public class BlobConfiguration implements Cloneable {
 
     public void setCloseStreamAfterWrite(boolean closeStreamAfterWrite) {
         this.closeStreamAfterWrite = closeStreamAfterWrite;
+    }
+
+    /**
+     * Specifies the maximum size for the page blob, up to 8 TB. The page blob size must be aligned to a 512-byte boundary.
+     */
+    public Long getPageBlobSize() {
+        return pageBlobSize;
+    }
+
+    public void setPageBlobSize(Long pageBlobSize) {
+        this.pageBlobSize = pageBlobSize;
+    }
+
+    /**
+     * Override the default expiration (millis) of URL download link.
+     */
+    public Long getDownloadLinkExpiration() {
+        return downloadLinkExpiration;
+    }
+
+    public void setDownloadLinkExpiration(Long downloadLinkExpiration) {
+        this.downloadLinkExpiration = downloadLinkExpiration;
+    }
+
+    /**
+     * When is set to `true`, the staged blocks will not be committed directly.
+     */
+    public boolean isCommitBlockListLater() {
+        return commitBlockListLater;
+    }
+
+    public void setCommitBlockListLater(boolean commitBlockListLater) {
+        this.commitBlockListLater = commitBlockListLater;
+    }
+
+    /**
+     * When is set to `true`, the append blocks will be created when committing append blocks.
+     */
+    public boolean isCreateAppendBlob() {
+        return createAppendBlob;
+    }
+
+    public void setCreateAppendBlob(boolean createAppendBlob) {
+        this.createAppendBlob = createAppendBlob;
+    }
+
+    /**
+     * When is set to `true`, the page blob will be created when uploading page blob.
+     */
+    public boolean isCreatePageBlob() {
+        return createPageBlob;
+    }
+
+    public void setCreatePageBlob(boolean createPageBlob) {
+        this.createPageBlob = createPageBlob;
+    }
+
+    /**
+     * A user-controlled value that you can use to track requests. The value of the sequence number must be between 0 and 2^63 - 1.The default value is 0.
+     */
+    public Long getBlobSequenceNumber() {
+        return blobSequenceNumber;
+    }
+
+    public void setBlobSequenceNumber(Long blobSequenceNumber) {
+        this.blobSequenceNumber = blobSequenceNumber;
+    }
+
+    /**
+     *  Specifies which type of blocks to return.
+     */
+    public BlockListType getBlockListType() {
+        return blockListType;
+    }
+
+    public void setBlockListType(BlockListType blockListType) {
+        this.blockListType = blockListType;
     }
 
     // *************************************************
