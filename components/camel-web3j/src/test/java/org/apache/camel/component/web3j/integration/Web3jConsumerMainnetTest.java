@@ -22,14 +22,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.web3j.protocol.core.methods.response.EthBlock;
 
 import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
 import static org.apache.camel.component.web3j.Web3jConstants.REPLAY_BLOCKS_OBSERVABLE;
 
-@Ignore("Requires a local node or registration at Infura")
+@Disabled("Requires a local node or registration at Infura")
 public class Web3jConsumerMainnetTest extends Web3jIntegrationTestSupport {
 
     @Override
