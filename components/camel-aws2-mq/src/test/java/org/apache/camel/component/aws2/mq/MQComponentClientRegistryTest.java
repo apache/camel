@@ -20,6 +20,8 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MQComponentClientRegistryTest extends CamelTestSupport {
@@ -42,5 +44,27 @@ public class MQComponentClientRegistryTest extends CamelTestSupport {
         assertThrows(IllegalArgumentException.class, () -> {
             component.createEndpoint("aws2-mq://MyQueue");
         });
+    }
+    
+    @Test
+    public void createEndpointWithAutoDiscoverFalse() throws Exception {
+
+        AmazonMQClientMock awsMQClient = new AmazonMQClientMock();
+        context.getRegistry().bind("awsMQClient", awsMQClient);
+        MQ2Component component = context.getComponent("aws2-mq", MQ2Component.class);
+        MQ2Endpoint endpoint = (MQ2Endpoint)component.createEndpoint("aws2-mq://MyQueue?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
+
+        assertNotSame(awsMQClient, endpoint.getConfiguration().getAmazonMqClient());
+    }
+    
+    @Test
+    public void createEndpointWithAutoDiscoverTrue() throws Exception {
+
+        AmazonMQClientMock awsMQClient = new AmazonMQClientMock();
+        context.getRegistry().bind("awsMQClient", awsMQClient);
+        MQ2Component component = context.getComponent("aws2-mq", MQ2Component.class);
+        MQ2Endpoint endpoint = (MQ2Endpoint)component.createEndpoint("aws2-mq://MyQueue?accessKey=xxx&secretKey=yyy");
+
+        assertSame(awsMQClient, endpoint.getConfiguration().getAmazonMqClient());
     }
 }
