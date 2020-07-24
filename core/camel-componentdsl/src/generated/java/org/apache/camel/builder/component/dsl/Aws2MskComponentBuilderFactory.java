@@ -47,6 +47,21 @@ public interface Aws2MskComponentBuilderFactory {
      */
     interface Aws2MskComponentBuilder extends ComponentBuilder<MSK2Component> {
         /**
+         * Setting the autoDiscoverClient mechanism, if true, the component will
+         * look for a client instance in the registry automatically otherwise it
+         * will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default Aws2MskComponentBuilder autoDiscoverClient(
+                boolean autoDiscoverClient) {
+            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
          * Component configuration.
          * 
          * The option is a:
@@ -243,6 +258,7 @@ public interface Aws2MskComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "autoDiscoverClient": getOrCreateConfiguration((MSK2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((MSK2Component) component).setConfiguration((org.apache.camel.component.aws2.msk.MSK2Configuration) value); return true;
             case "lazyStartProducer": ((MSK2Component) component).setLazyStartProducer((boolean) value); return true;
             case "mskClient": getOrCreateConfiguration((MSK2Component) component).setMskClient((software.amazon.awssdk.services.kafka.KafkaClient) value); return true;
