@@ -24,7 +24,10 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.webhook.support.TestComponent;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class WebhookHttpBindingTest extends WebhookTestBase {
 
@@ -39,10 +42,11 @@ public class WebhookHttpBindingTest extends WebhookTestBase {
         assertEquals("msg: webhook", result);
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void testGetError() {
-        template.requestBodyAndHeader("netty-http:http://localhost:" + port, "",
-                Exchange.HTTP_METHOD, "GET", String.class);
+        assertThrows(CamelExecutionException.class, () ->
+            template.requestBodyAndHeader("netty-http:http://localhost:" + port, "",
+                Exchange.HTTP_METHOD, "GET", String.class));
     }
 
     @Override
