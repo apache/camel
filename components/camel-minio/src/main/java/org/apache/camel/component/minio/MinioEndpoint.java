@@ -49,7 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Store and retrie objects from Minio Storage Service using Minio SDK.
+ * Store and retrieve objects from Minio Storage Service using Minio SDK.
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "minio", title = "Minio Storage Service", syntax = "minio://bucketName",
         category = {Category.CLOUD, Category.FILE})
