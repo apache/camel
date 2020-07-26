@@ -277,6 +277,7 @@
         <include>org.apache.camel:camel-netty-http</include>
         <include>org.apache.camel:camel-nitrite</include>
         <include>org.apache.camel:camel-nsq</include>
+        <include>org.apache.camel:camel-oaipmh</include>
         <include>org.apache.camel:camel-ognl</include>
         <include>org.apache.camel:camel-olingo2</include>
         <include>org.apache.camel:camel-olingo2-api</include>

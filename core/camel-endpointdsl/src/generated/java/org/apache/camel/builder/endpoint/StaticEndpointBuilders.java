@@ -10739,6 +10739,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * OAIPMH (camel-oaipmh)
+     * Represents a OAIPMH endpoint. Component for do OAI-PMH request
+     * 
+     * Category: endpoint,webservice,batch
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-oaipmh
+     * 
+     * Syntax: <code>oaipmh:name</code>
+     * 
+     * Path parameter: url (required)
+     * Base URL of the repository to which the request is made through the
+     * OAI-PMH protocol.
+     * 
+     * @param path name
+     */
+    public static org.apache.camel.builder.endpoint.dsl.OAIPMHEndpointBuilderFactory.OAIPMHEndpointBuilder oaipmh(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.OAIPMHEndpointBuilderFactory.endpointBuilder("oaipmh", path);
+    }
+    /**
+     * OAIPMH (camel-oaipmh)
+     * Represents a OAIPMH endpoint. Component for do OAI-PMH request
+     * 
+     * Category: endpoint,webservice,batch
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-oaipmh
+     * 
+     * Syntax: <code>oaipmh:name</code>
+     * 
+     * Path parameter: url (required)
+     * Base URL of the repository to which the request is made through the
+     * OAI-PMH protocol.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path name
+     */
+    public static org.apache.camel.builder.endpoint.dsl.OAIPMHEndpointBuilderFactory.OAIPMHEndpointBuilder oaipmh(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.OAIPMHEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Olingo2 (camel-olingo2)
      * Communicate with OData 2.0 services using Apache Olingo.
      * 

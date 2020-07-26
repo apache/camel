@@ -2772,6 +2772,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.NsqComponentBuilderFactory.nsq();
     }
     /**
+     * OAIPMH (camel-oaipmh)
+     * Represents a OAIPMH endpoint. Component for do OAI-PMH request
+     * 
+     * Category: endpoint,webservice,batch
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-oaipmh
+     */
+    static org.apache.camel.builder.component.dsl.OaipmhComponentBuilderFactory.OaipmhComponentBuilder oaipmh() {
+        return org.apache.camel.builder.component.dsl.OaipmhComponentBuilderFactory.oaipmh();
+    }
+    /**
      * Olingo2 (camel-olingo2)
      * Communicate with OData 2.0 services using Apache Olingo.
      * 

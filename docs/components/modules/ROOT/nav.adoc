@@ -246,6 +246,7 @@
 ** xref:netty-http-component.adoc[Netty HTTP]
 ** xref:nitrite-component.adoc[Nitrite]
 ** xref:nsq-component.adoc[NSQ]
+** xref:oaipmh-component.adoc[OAIPMH]
 ** xref:olingo2-component.adoc[Olingo2]
 ** xref:olingo4-component.adoc[Olingo4]
 ** xref:milo-client-component.adoc[OPC UA Client]
