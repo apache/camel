@@ -29,6 +29,8 @@ public class SqsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "attributeNames": target.getConfiguration().setAttributeNames(property(camelContext, java.lang.String.class, value)); return true;
         case "autocreatequeue":
         case "autoCreateQueue": target.getConfiguration().setAutoCreateQueue(property(camelContext, boolean.class, value)); return true;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
         case "backoffidlethreshold":
@@ -139,6 +141,7 @@ public class SqsEndpointConfigurer extends PropertyConfigurerSupport implements 
         answer.put("amazonSQSClient", com.amazonaws.services.sqs.AmazonSQS.class);
         answer.put("attributeNames", java.lang.String.class);
         answer.put("autoCreateQueue", boolean.class);
+        answer.put("autoDiscoverClient", boolean.class);
         answer.put("backoffErrorThreshold", int.class);
         answer.put("backoffIdleThreshold", int.class);
         answer.put("backoffMultiplier", int.class);
@@ -209,6 +212,8 @@ public class SqsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "attributeNames": return target.getConfiguration().getAttributeNames();
         case "autocreatequeue":
         case "autoCreateQueue": return target.getConfiguration().isAutoCreateQueue();
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":

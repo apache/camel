@@ -47,6 +47,8 @@ public class SqsConfiguration implements Cloneable {
     private Integer proxyPort;
     @UriParam(defaultValue = "true")
     private boolean autoCreateQueue = true;
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean autoDiscoverClient = true;
 
     // consumer properties
     @UriParam(label = "consumer", defaultValue = "true")
@@ -557,6 +559,19 @@ public class SqsConfiguration implements Cloneable {
      */
     public void setProtocol(String protocol) {
         this.protocol = protocol;
+    }
+    
+    public boolean isAutoDiscoverClient() {
+        return autoDiscoverClient;
+    }
+
+    /**
+     * Setting the autoDiscoverClient mechanism, if true, the component will
+     * look for a client instance in the registry automatically otherwise it
+     * will skip that checking.
+     */
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
     }
 
     // *************************************************

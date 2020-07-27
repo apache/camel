@@ -36,6 +36,8 @@ public class SqsComponentConfigurer extends PropertyConfigurerSupport implements
         case "attributeNames": getOrCreateConfiguration(target).setAttributeNames(property(camelContext, java.lang.String.class, value)); return true;
         case "autocreatequeue":
         case "autoCreateQueue": getOrCreateConfiguration(target).setAutoCreateQueue(property(camelContext, boolean.class, value)); return true;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -109,6 +111,7 @@ public class SqsComponentConfigurer extends PropertyConfigurerSupport implements
         answer.put("amazonSQSClient", com.amazonaws.services.sqs.AmazonSQS.class);
         answer.put("attributeNames", java.lang.String.class);
         answer.put("autoCreateQueue", boolean.class);
+        answer.put("autoDiscoverClient", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("bridgeErrorHandler", boolean.class);
         answer.put("concurrentConsumers", int.class);
@@ -159,6 +162,8 @@ public class SqsComponentConfigurer extends PropertyConfigurerSupport implements
         case "attributeNames": return getOrCreateConfiguration(target).getAttributeNames();
         case "autocreatequeue":
         case "autoCreateQueue": return getOrCreateConfiguration(target).isAutoCreateQueue();
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
