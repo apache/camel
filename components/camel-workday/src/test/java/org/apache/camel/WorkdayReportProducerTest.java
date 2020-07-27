@@ -20,8 +20,11 @@ import org.apache.camel.component.workday.WorkdayComponent;
 import org.apache.camel.component.workday.WorkdayConfiguration;
 import org.apache.camel.component.workday.WorkdayEndpoint;
 import org.apache.camel.component.workday.producer.WorkdayReportProducer;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class WorkdayReportProducerTest extends CamelTestSupport {
 
@@ -60,7 +63,7 @@ public class WorkdayReportProducerTest extends CamelTestSupport {
             return;
         }
 
-        assertTrue("Required parameters validation failed.", false);
+        fail("Required parameters validation failed.");
     }
 
     @Test
