@@ -21,9 +21,7 @@ import java.util.List;
 
 import org.apache.camel.BindToRegistry;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.data.redis.core.RedisTemplate;
 
