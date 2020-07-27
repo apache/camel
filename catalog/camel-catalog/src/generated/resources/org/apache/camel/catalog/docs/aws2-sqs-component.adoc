@@ -42,7 +42,7 @@ The queue will be created if they don't already exists. +
 
 
 // component options: START
-The AWS 2 Simple Queue Service (SQS) component supports 39 options, which are listed below.
+The AWS 2 Simple Queue Service (SQS) component supports 40 options, which are listed below.
 
 
 
@@ -52,6 +52,7 @@ The AWS 2 Simple Queue Service (SQS) component supports 39 options, which are li
 | *amazonAWSHost* (common) | The hostname of the Amazon AWS cloud. | amazonaws.com | String
 | *amazonSQSClient* (common) | To use the AmazonSQS as client |  | SqsClient
 | *autoCreateQueue* (common) | Setting the autocreation of the queue | true | boolean
+| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *configuration* (common) | The AWS SQS default configuration |  | Sqs2Configuration
 | *protocol* (common) | The underlying protocol used to communicate with SQS | https | String
 | *proxyProtocol* (common) | To define a proxy protocol when instantiating the SQS client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
@@ -117,7 +118,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (59 parameters):
+=== Query Parameters (60 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -126,6 +127,7 @@ with the following path and query parameters:
 | *amazonAWSHost* (common) | The hostname of the Amazon AWS cloud. | amazonaws.com | String
 | *amazonSQSClient* (common) | To use the AmazonSQS as client |  | SqsClient
 | *autoCreateQueue* (common) | Setting the autocreation of the queue | true | boolean
+| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *headerFilterStrategy* (common) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
 | *protocol* (common) | The underlying protocol used to communicate with SQS | https | String
 | *proxyProtocol* (common) | To define a proxy protocol when instantiating the SQS client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
