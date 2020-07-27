@@ -27,7 +27,7 @@
   <bean id="mockTracer" class="io.opentracing.mock.MockTracer"/>
 
   <!-- setup opentracing tracer -->
-  <bean id="ottracer" class="org.apache.camel.opentracing.OpenTracingTracer">
+  <bean id="ottracer" class="org.apache.camel.opentelemetry.OpenTracingTracer">
     <property name="tracer" ref="mockTracer"/>
   </bean>
 
