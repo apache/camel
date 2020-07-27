@@ -34,7 +34,7 @@
     <packaging>maven-archetype</packaging>
 
     <properties>
-         <spring-boot-version>2.3.0.RELEASE</spring-boot-version>
+         <spring-boot-version>2.3.2.RELEASE</spring-boot-version>
     </properties>
 
     <build>
