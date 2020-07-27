@@ -32,8 +32,8 @@ import org.openstack4j.api.compute.KeypairService;
 import org.openstack4j.model.compute.Keypair;
 import org.openstack4j.openstack.compute.domain.NovaKeypair;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
