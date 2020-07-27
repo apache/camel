@@ -23,13 +23,24 @@ import java.util.concurrent.TimeoutException;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Resilience using timeout and custom thread pool with Java DSL
  */
 public class ResilienceTimeoutThreadPoolTest extends CamelTestSupport {
+
+    protected Logger log = LoggerFactory.getLogger(getClass());
 
     @BindToRegistry
     public ExecutorService myThreadPool() {
