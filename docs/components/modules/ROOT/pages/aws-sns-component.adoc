@@ -41,7 +41,7 @@ The topic will be created if they don't already exists. +
 
 
 // component options: START
-The AWS Simple Notification System (SNS) component supports 19 options, which are listed below.
+The AWS Simple Notification System (SNS) component supports 20 options, which are listed below.
 
 
 
@@ -51,6 +51,7 @@ The AWS Simple Notification System (SNS) component supports 19 options, which ar
 | *amazonSNSClient* (producer) | To use the AmazonSNS as the client |  | AmazonSNS
 | *amazonSQSClient* (producer) | An SQS Client to use as bridge between SNS and SQS |  | AmazonSQS
 | *autoCreateTopic* (producer) | Setting the autocreation of the topic | true | boolean
+| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *configuration* (producer) | The component configuration |  | SnsConfiguration
 | *kmsMasterKeyId* (producer) | The ID of an AWS-managed customer master key (CMK) for Amazon SNS or a custom CMK. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
@@ -93,7 +94,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (20 parameters):
+=== Query Parameters (21 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -102,6 +103,7 @@ with the following path and query parameters:
 | *amazonSNSClient* (producer) | To use the AmazonSNS as the client |  | AmazonSNS
 | *amazonSQSClient* (producer) | An SQS Client to use as bridge between SNS and SQS |  | AmazonSQS
 | *autoCreateTopic* (producer) | Setting the autocreation of the topic | true | boolean
+| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *headerFilterStrategy* (producer) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
 | *kmsMasterKeyId* (producer) | The ID of an AWS-managed customer master key (CMK) for Amazon SNS or a custom CMK. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
