@@ -23,14 +23,14 @@ import java.util.UUID;
 
 import org.apache.camel.component.openstack.AbstractProducerTestSupport;
 import org.apache.camel.component.openstack.common.OpenstackConstants;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.image.ImageService;
 import org.openstack4j.model.common.Payload;
@@ -47,7 +47,7 @@ import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class GlanceProducerTest extends AbstractProducerTestSupport {
 
     @Mock
@@ -73,7 +73,7 @@ public class GlanceProducerTest extends AbstractProducerTestSupport {
     @Spy
     private Image osImage = Builders.image().build();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         producer = new GlanceProducer(endpoint, client);
         when(client.images()).thenReturn(imageService);
